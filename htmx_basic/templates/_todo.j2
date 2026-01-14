@@ -1,0 +1,9 @@
+<li id="todo-{{ todo.id }}" class="list-group-item d-flex justify-content-between">
+    <span class="display-6">{{ todo.title }}</span>
+    <button hx-post="/delete/{{ todo.id }}"
+            hx-target="#todo-{{ todo.id }}"
+            hx-swap="outerHTML"
+            class="btn btn-outline-secondary">
+        ✕
+    </button>
+</li>
