@@ -1,0 +1,36 @@
+{% extends "base.j2" %}
+
+{% block page_title %}
+<div class="my-5">
+    <h1 class="font-weight-light">メイン画像の変更</h1>
+    <p class="lead text-muted">スライドする画像を追加変更できます。以下のボックス内に画像をドラッグ＆ドロップしてください。推奨幅は1200px、高さ300pxです。</p>
+</div>
+{% endblock page_title %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/basic.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.css" />
+
+<div class="container">
+    <form action="{{ url_for('drop') }}" class="dropzone my-5" id="myDropzone"></form>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.js"></script>
+<script>
+    Dropzone.options.myDropzone = {
+        paramName: "file",
+        maxFilesize: 5, // MB
+        acceptedFiles: ".png,.jpg,.jpeg,.gif",
+
+        init: function() {
+            this.on("success", function(file, response) {
+                console.log("Uploaded:", response);
+            });
+
+            this.on("error", function(file, message) {
+                console.error("Error:", message);
+            });
+        }
+    };
+</script>
+{% endblock content %}

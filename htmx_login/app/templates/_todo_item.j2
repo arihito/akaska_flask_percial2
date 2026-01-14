@@ -1,0 +1,8 @@
+<li id="todo-{{ todo.id }}">
+  {{ todo.title }}
+  <button hx-post="/delete/{{ todo.id }}"
+          hx-target="#todo-{{ todo.id }}"
+          hx-swap="outerHTML">
+    ✕
+  </button>
+</li>

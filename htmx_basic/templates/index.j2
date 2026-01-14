@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+    <body>
+        <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+        <form hx-post="/hello" hx-target="#result" hx-swap="innerHTML">
+            <input type="text" name="name">
+            <button type="submit">送信</button>
+        </form>
+        <div id="result"></div>
+    </body>
+</html>

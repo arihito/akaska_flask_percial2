@@ -1,0 +1,115 @@
+{% extends "base.j2" %}
+
+{% block page_title %}
+<div class="my-5">
+  <h1 class="font-weight-light">商品詳細</h1>
+  <p class="lead text-muted">商品の詳細を変更できます。</p>
+</div>
+{% endblock page_title %}
+
+{% block content %}
+<div class="container">
+
+    <div class="mb-5">
+        <div class="row">
+            <div class="col-md-9">
+                    <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+                        <div class="col p-4 d-flex flex-column position-static">
+                        <h3 class="mb-0">{{ item.title }}</h3>
+                        <div class="mb-1 text-body-secondary">{{ item.price }}円</div>
+                        <p class="card-text mb-auto">{{ item.text }}</p>
+                        <a href="https://www.google.com/search?q={{ item.title }}" target="_blank" class="icon-link gap-1 icon-link-hover stretched-link">
+                            <i class="fa fa-search"></i>  google検索
+                            <svg class="bi"><use xlink:href="#chevron-right"/></svg>
+                        </a>
+                        </div>
+                        <div class="col-auto d-none d-lg-block">
+                            <img src="{{ url_for('static', filename=img_path_item + item.file) }}" alt="{{ item.title }}" height="200">
+                        </div>
+                    </div>
+            </div>
+            <div class="col-md-3">
+                <h3 class="text-body-emphasis">画像のアップロード</h3>
+                <p class="fs-5">商品画像を以下から更新してください。</p>
+                <hr>
+                <form method="post" action="{{ url_for('upload', id=item.id) }}" enctype="multipart/form-data">
+                    <input type="file" name="img" class="form-control">
+                    <button type="submit"  class="btn btn-secondary btn-lg px-4 my-2 w-100">アップロード</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <hr class="col-12 mb-5">
+
+    <div class="row g-5 mb-5">
+      <div class="col-md-6">
+        <h2 class="text-body-emphasis">スタータープロジェクト</h2>
+<p>スターターテンプレートの次に進む準備はできましたか？以下のオープンソースプロジェクトを使えば、GitHub リポジトリとしてすぐに複製できます。</p>
+<ul class="list-unstyled ps-0">
+  <li>
+    <a class="icon-link mb-1" href="https://github.com/twbs/examples/tree/main/icons-font" rel="noopener" target="_blank">
+      <svg class="bi" width="16" height="16"><use xlink:href="#arrow-right-circle"/></svg>
+      Bootstrap npm スターター
+    </a>
+  </li>
+  <li>
+    <a class="icon-link mb-1" href="https://github.com/twbs/examples/tree/main/parcel" rel="noopener" target="_blank">
+      <svg class="bi" width="16" height="16"><use xlink:href="#arrow-right-circle"/></svg>
+      Bootstrap Parcel スターター
+    </a>
+  </li>
+  <li>
+    <a class="icon-link mb-1" href="https://github.com/twbs/examples/tree/main/vite" rel="noopener" target="_blank">
+      <svg class="bi" width="16" height="16"><use xlink:href="#arrow-right-circle"/></svg>
+      Bootstrap Vite スターター
+    </a>
+  </li>
+  <li>
+    <a class="icon-link mb-1" href="https://github.com/twbs/examples/tree/main/webpack" rel="noopener" target="_blank">
+      <svg class="bi" width="16" height="16"><use xlink:href="#arrow-right-circle"/></svg>
+      Bootstrap Webpack スターター
+    </a>
+  </li>
+</ul>
+</div>
+
+<div class="col-md-6">
+<h2 class="text-body-emphasis">ガイド</h2>
+<p>Bootstrap の利用方法やコントリビュート方法について、より詳しい手順やドキュメントはこちらをご覧ください。</p>
+<ul class="list-unstyled ps-0">
+  <li>
+    <a class="icon-link mb-1" href="/docs/5.3/getting-started/introduction/">
+      <svg class="bi" width="16" height="16"><use xlink:href="#arrow-right-circle"/></svg>
+      Bootstrap クイックスタートガイド
+    </a>
+  </li>
+  <li>
+    <a class="icon-link mb-1" href="/docs/5.3/getting-started/webpack/">
+      <svg class="bi" width="16" height="16"><use xlink:href="#arrow-right-circle"/></svg>
+      Bootstrap Webpack ガイド
+    </a>
+  </li>
+  <li>
+    <a class="icon-link mb-1" href="/docs/5.3/getting-started/parcel/">
+      <svg class="bi" width="16" height="16"><use xlink:href="#arrow-right-circle"/></svg>
+      Bootstrap Parcel ガイド
+    </a>
+  </li>
+  <li>
+    <a class="icon-link mb-1" href="/docs/5.3/getting-started/vite/">
+      <svg class="bi" width="16" height="16"><use xlink:href="#arrow-right-circle"/></svg>
+      Bootstrap Vite ガイド
+    </a>
+  </li>
+  <li>
+    <a class="icon-link mb-1" href="/docs/5.3/getting-started/contribute/">
+      <svg class="bi" width="16" height="16"><use xlink:href="#arrow-right-circle"/></svg>
+      Bootstrap への貢献方法
+    </a>
+  </li>
+</ul>
+      </div>
+    </div>
+    </div>
+{% endblock content %}

@@ -1,0 +1,40 @@
+{% extends "base.j2" %}
+
+{% block page_title %}
+<div class="my-5">
+    <h1 class="font-weight-light">商品情報の追加</h1>
+    <p class="lead text-muted">商品の文章情報のみを追加できます。画像は商品追加後に商品詳細画面にてアップロードしてください。</p>
+</div>
+{% endblock page_title %}
+
+{% block content %}
+<form action="{{ url_for('item_create') }}" method="post" novalidate>
+    <div class="row mb-5">
+        <div class="col-lg-6">
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">商品名</span>
+                <input type="text" class="form-control" name="title" placeholder="冷蔵庫" autofocus>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">簡易説明</span>
+                <input type="text" class="form-control" name="detail" placeholder="食材を冷やします">
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="input-group">
+                <span class="input-group-text">商品詳細</span>
+                <textarea class="form-control" name="text" rows="4"></textarea>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">価格</span>
+                <input type="number" class="form-control" placeholder="10000">
+            </div>
+            <input type="submit" class="btn btn-secondary w-100 h-50" value="送信">
+        </div>
+    </div>
+</form>
+{% endblock content %}

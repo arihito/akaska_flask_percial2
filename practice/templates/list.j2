@@ -1,0 +1,40 @@
+{% extends "base.j2" %}
+
+{% block page_title %}
+<div class="my-5">
+    <h1 class="font-weight-light text-dark">商品一覧</h1>
+    <p class="lead text-muted">Flaskの練習</p>
+</div>
+{% endblock page_title %}
+
+{% block content %}
+    <div class="album py-5 bg-light">
+        <div class="container">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                {% for i in items %}
+                    <div class="col">
+                        <a href="{{ url_for('item_detail', id=i.id) }}">
+                            <div class="card shadow-sm">
+                                <img src="{{ url_for('static', filename=img_path_item + i.file) }}" alt="{{ i.title }}" height="200">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center">
+                                        <h4 class="card-title me-3">{{ i.title }}</h4>
+                                        <p class="card-text">{{ i.detail }}</p>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mt-3">
+                                        <div>
+                                            <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('item_detail', id=i.id) }}">詳細</a>
+                                            <a class="btn btn-sm btn-outline-secondary" href="https://www.google.com/search?q={{ i.title }}">Google検索</a>
+                                        </div>
+                                        <small class="text-muted ms-auto">{{ i.price }} 円</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}

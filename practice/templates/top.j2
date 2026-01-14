@@ -1,0 +1,88 @@
+{% extends "base.j2" %}
+
+{% block page_title %}
+<section class="pb-5 text-center container">
+    <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+      <div class="carousel-indicators">
+  {% for img in images %}
+    <button
+      type="button"
+      data-bs-target="#carouselExampleCaptions"
+      data-bs-slide-to="{{ loop.index0 }}"
+      class="{% if loop.first %}active{% endif %}">
+    </button>
+  {% endfor %}
+</div>
+    </div>
+    <div class="carousel-inner">
+      {% for img in images %}
+          <div class="carousel-item {% if loop.first %}active{% endif %}">
+            <img src="{{ url_for('static', filename=img) }}" class="d-block w-100 fade-img" alt="{{ img }}">
+          <div class="carousel-caption d-none d-md-block">
+              <h1 class="font-weight-light text-dark">商品一覧の練習</h1>
+              <p class="lead text-muted">商品の一覧を確認してください。</p>
+              <p>
+                  <a href="{{ url_for('index') }}" class="btn btn-secondary my-2">トップ</a></li>
+                  <a href="{{ url_for('item_list') }}" class="btn btn-secondary my-2">商品一覧</a></li>
+              </p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+    </div>
+</section>
+
+<div class="mt-3 mb-5">
+    <h1 class="font-weight-light text-dark">トップ</h1>
+    <p class="lead text-muted">商品の一覧を確認してください。</p>
+</div>
+{% endblock page_title %}
+
+{% block content %}
+      <div class="ml-sm-auto px-md-4">
+
+        <h2>商品一覧</h2>
+        <div class="d-flex justify-content-center mb-5">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>タイトル</th>
+                <th>詳細概要</th>
+                <th>商品価格</th>
+                <th>詳細</th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for i in items %}
+              <tr>
+                <td>{{ i.id }}</td>
+                <td><h5 class="display-7">{{ i.title }}</h5></td>
+                <td><strong>{{ i.detail }}</strong><br>{{ i.text }}</td>
+                <td>{{ i.price }}</td>
+                <td><a class="btn btn-secondary" href="{{ url_for('item_detail', id=i.id) }}">詳細</a></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <script>
+      document.addEventListener("DOMContentLoaded", () => {
+          document.querySelectorAll(".fade-img").forEach((img, index) => {
+              setTimeout(() => {
+                  img.classList.add("is-visible");
+              }, index * 100);
+          });
+      });
+    </script>
+{% endblock content %}
