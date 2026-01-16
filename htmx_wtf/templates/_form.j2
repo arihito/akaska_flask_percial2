@@ -1,0 +1,12 @@
+<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+<div id="form-area">
+    <form hx-post="/" hx-target="#form-area" hx-swap="outerHTML" novalidate>
+        {{ form.hidden_tag() }}
+        {{ form.name.label }}
+        {{ form.name }}
+        <button>送信</button>
+        {% for error in form.name.errors %}
+        <p style="color:red">{{ error }}</p>
+        {% endfor %}
+    </form>
+</div>
