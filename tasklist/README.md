@@ -53,6 +53,9 @@ flask db init && flask db migrate && flask db upgrade && flask run
 - タスクの新しい順に並び替え
 - タスクの古い順に並び替え
 
+- チェックボックスで複数選択削除
+- タスクの更新
+
 
 ## 学習のコツ
 
