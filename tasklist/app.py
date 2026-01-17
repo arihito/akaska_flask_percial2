@@ -1,5 +1,5 @@
-import os 
-from flask import Flask, render_template, redirect, request, url_for
+import os
+from flask import Flask, render_template, redirect, request, session, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from datetime import datetime # 日付クラス
@@ -23,11 +23,17 @@ class Task(db.Model):
     def __str__(self):
         return f'課題ID:{ self.id } 内容：{ self.content }'
     
+PER_PAGE = 3
+
 @app.route('/')
 def index():
-    uncompleted_tasks = Task.query.filter_by(is_completed=False).all()
+    page = request.args.get('page', 1, type=int)
+    pagination = Task.query.filter_by(is_completed=False).paginate(page=page, per_page=PER_PAGE)
+    uncompleted_tasks = pagination.items
+    total_pages = pagination.pages
     completed_tasks = Task.query.filter_by(is_completed=True).all()
-    return render_template('index.j2', uncompleted_tasks=uncompleted_tasks, completed_tasks=completed_tasks)
+    editing_task_id = request.args.get('editing_task_id', type=int)
+    return render_template('index.j2', uncompleted_tasks=uncompleted_tasks, completed_tasks=completed_tasks, total_pages=total_pages, page=page, editing_task_id=editing_task_id)
 
 @app.route('/new', methods=['POST'])
 def new_task():
@@ -40,9 +46,27 @@ def new_task():
 @app.route('/search', methods=['POST'])
 def search_task():
     search = request.form['search']
-    uncompleted_tasks = Task.query.filter(Task.content.like(f'%{search}%')).filter_by(is_completed=False).all()
+    page = request.args.get('page', 1, type=int)
+    pagination = Task.query.filter(Task.content.like(f'%{search}%')).filter_by(is_completed=False).paginate(page=page, per_page=PER_PAGE)
+    uncompleted_tasks = pagination.items
+    total_pages = pagination.pages
     completed_tasks = Task.query.filter(Task.content.like(f'%{search}%')).filter_by(is_completed=True).all()
-    return render_template('index.j2', search=search, uncompleted_tasks=uncompleted_tasks, completed_tasks=completed_tasks)
+    return render_template('index.j2', search=search, uncompleted_tasks=uncompleted_tasks, completed_tasks=completed_tasks, total_pages=total_pages, page=page)
+
+@app.route('/tasks/<int:task_id>/edit', methods=['POST'])
+def edit_task(task_id):
+    return redirect(url_for('index', editing_task_id=task_id))
+
+@app.route('/tasks/edit_cancel', methods=['POST'])
+def edit_cancel():
+    return redirect(url_for('index'))
+
+@app.route('/tasks/<int:task_id>/update', methods=['POST'])
+def update_task(task_id):
+    task = Task.query.get_or_404(task_id)
+    task.content = request.form['update']
+    db.session.commit()
+    return redirect(url_for('index'))
 
 @app.route('/tasks/<int:task_id>/complete', methods=['POST'])
 def complete_task(task_id):
@@ -78,6 +102,19 @@ def all_complete_task():
     db.session.commit()
     return redirect(url_for('index'))
     
+@app.route('/tasks/remove_checks', methods=['POST'])
+def remove_checks():
+    if request.method == 'POST':
+        del_checks = request.form.getlist('del_checks')
+        if not del_checks:
+            return redirect(url_for('index'))
+        for check_id in del_checks:
+            task = Task.query.get(int(check_id))
+            if task:
+                db.session.delete(task)
+        db.session.commit()
+        return redirect(url_for("index"))
+
 @app.route('/tasks/<int:task_id>/remove', methods=['POST'])
 def remove_task(task_id):
     if request.method == 'POST':
@@ -94,11 +131,19 @@ def clear_tasks():
 
 @app.route('/tasks/sort')
 def sort():
-    sort = request.args.get('sort', 'desc')
+    if 'sort' in session:
+        sort = session['sort']
+    elif request.args.get('sort'):     
+        sort = request.args.get('sort', 'desc')
+    else:
+        sort = 'desc'
+    page = request.args.get('page', 1, type=int)
     order = Task.created_at.desc() if sort == 'desc' else Task.created_at.asc()
-    uncompleted_tasks = Task.query.filter_by(is_completed=False).order_by(order).all()
+    pagination = Task.query.filter_by(is_completed=False).order_by(order).paginate(page=page, per_page=PER_PAGE)
+    uncompleted_tasks = pagination.items
+    total_pages = pagination.pages
     completed_tasks = Task.query.filter_by(is_completed=True).order_by(order).all()
-    return render_template('index.j2', uncompleted_tasks=uncompleted_tasks, completed_tasks=completed_tasks)
+    return render_template('index.j2', uncompleted_tasks=uncompleted_tasks, completed_tasks=completed_tasks, total_pages=total_pages, page=page)
 
 if __name__ == '__main__':
     app.run(debug=True)

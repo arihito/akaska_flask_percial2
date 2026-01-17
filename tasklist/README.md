@@ -10,6 +10,11 @@
 
 ```
 mkdir -p tasklist/templates && touch tasklist/app.py tasklist/templates/index.j2 && cd tasklist && pip install flask Flask-SQLAlchemy pytz
+
+[ tasklist ]
+   ├─ 📁templates
+   │     └─ 📄index.j2
+   └─ 📄app.py
 ```
 
 - app.pyとtemplates/index.j2の各コードを右上のコピーボタンから一括コピーしてファイルに貼り付ける。
