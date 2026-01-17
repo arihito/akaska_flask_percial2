@@ -4,6 +4,10 @@
 ![](https://img.shields.io/badge/Python-3.1.2-006400.svg)
 ![](https://img.shields.io/badge/Werkzeug-3.1.4-666666.svg)
 
+## ビルドイメージ
+
+![完成図](img.png)
+
 ## 環境構築
 
 - 作業環境にて以下をコンソールにコピペし実行
