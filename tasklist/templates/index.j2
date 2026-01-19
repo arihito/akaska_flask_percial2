@@ -263,9 +263,9 @@
                     const listItem = checkbox.closest(".list-group-item");
 
                     if (checkbox.checked) {
-                    listItem.classList.add("checked");
+                        listItem.classList.add("checked");
                     } else {
-                    listItem.classList.remove("checked");
+                        listItem.classList.remove("checked");
                     }
                 });
 
@@ -295,6 +295,7 @@
             });
 
             document.body.appendChild(form);
+            localStorage.removeItem("checked_task_ids");
             form.submit();
         }
         </script>
