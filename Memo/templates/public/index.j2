@@ -1,0 +1,111 @@
+{% extends "base.j2" %}
+{% block content %}
+    <div class="p-4 p-md-5 mb-4 rounded text-body-emphasis bg-body-secondary">
+        <div class="col-lg-6 px-0">
+            <h1 class="display-4 fst-italic">Flaskアプリ設計のベストプラクティス</h1>
+            <p class="lead my-3">Flaskで中規模以上のWebアプリを構築する際に押さえておきたい設計指針とディレクトリ構成、Blueprintの使いどころを解説します。</p>
+            <p class="lead mb-0">
+                <a href="#" class="text-body-emphasis fw-bold">続きを読む...</a>
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-9">
+            {% if top1 %}
+                <div class="card rounded shadow">
+                    <div class="row g-0 h-100">
+                        <div class="col-md-8">
+                            <div class="card-body p-4">
+                                <h3 class="pb-4 mb-4 fst-italic border-bottom">
+                                    <i class="fa fa-calendar-o"></i>今週のオススメ記事
+                                </h3>
+                                <h2 class="card-title display-5 link-body-emphasis mb-1">{{ top1.memo.title }}</h2>
+                                <p class="blog-post-meta">
+                                    {{ top1.memo.created_at.strftime("%Y-%m-%d") }} by <a href="#">{{ top1.memo.user.username }}</a>❤️ {{ top1.like_count }} いいね
+                                </p>
+                                <p class="card-text">{{ top1.memo.content }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="h-100">
+                                <img class="w-100 h-100 rounded-end"
+                                     src="https://placehold.co/600x400"
+                                     alt=""
+                                     width=""
+                                     height=""
+                                     style="object-fit: cover">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            <div class="row mt-3">
+                {% for row in memos %}
+                    {% set memo = row.memo %}
+                    {% set like_count = row.like_count %}
+                    <div class="col-md-6">
+                        <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-300 position-relative">
+                            <div class="col-auto">
+                                <img src="https://placehold.co/600x400" alt="" width="100%" height="100%">
+                            </div>
+                            <div class="col p-4 d-flex flex-column position-static">
+                                <strong class="d-inline-block mb-2 text-primary-emphasis">{{ memo.user.username }}</strong>
+                                <h3 class="mb-0">{{ memo.title }}</h3>
+                                <div class="mb-1 text-body-secondary">{{ memo.created_at.strftime("%Y-%m-%d") }}</div>
+                                <p class="card-text mb-auto">{{ memo.content }}</p>
+                                {% if current_user.is_authenticated and memo.user_id != current_user.id %}
+                                    <div class="like-area" data-memo-id="{{ memo.id }}">
+                                        {% if memo.id in favorite_memo_ids %}
+                                            <button class="btn-like active" data-action="remove">
+                                                ❤️ <span class="like-count">{{ like_count }}</span>
+                                            </button>
+                                        {% else %}
+                                            <button class="btn-like" data-action="add">
+                                                🤍 <span class="like-count">{{ like_count }}</span>
+                                            </button>
+                                        {% endif %}
+                                    </div>
+                                {% elif current_user.is_authenticated and memo.user_id == current_user.id %}
+                                    <small>❤️ {{ like_count }} いいね</small>
+                                {% else %}
+                                    <a href="{{ url_for('auth.login') }}">❤️ {{ like_count }} いいね（ログインして評価）</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <nav class="blog-pagination" aria-label="Pagination">
+                <a class="btn btn-outline-primary rounded-pill" href="#">過去の記事</a>
+                <a class="btn btn-outline-secondary rounded-pill disabled">最新</a>
+            </nav>
+        </div>
+        <aside class="sidebar col-md-3">
+            <div class="position-sticky" style="top: 2rem;">
+                <div class="mb-3">
+                    <h4 class="fst-italic">❤️いいねランキングTOP10</h4>
+                    <p class="mb-0">皆さんが「いいね」を押した数の多い順上位10個の記事を紹介しています。</p>
+                </div>
+                <ul class="list-unstyled">
+                    {% for row in top10 %}
+                        <li>
+                            <a class="d-flex flex-column flex-lg-row gap-3 align-items-start align-items-lg-center py-3 link-body-emphasis text-decoration-none border-top"
+                               href="{{ url_for('public.detail', memo_id=row.memo.id) }}">
+                                <img src="https://placehold.co/200x200"
+                                     class="bd-placeholder-img"
+                                     width="100%"
+                                     height="96"
+                                     alt="">
+                                <div class="col-lg-8">
+                                    <h6 class="mb-0">{{ row.memo.title }}</h6>
+                                    <small class="text-body-secondary">{{ row.memo.created_at.strftime("%Y-%m-%d") }}</small>
+                                    <span>❤️ {{ row.like_count }}</span>
+                                </div>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </aside>
+    </div>
+{% endblock content %}

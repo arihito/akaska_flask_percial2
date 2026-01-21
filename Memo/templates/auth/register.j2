@@ -1,0 +1,17 @@
+{% extends "base.j2" %}
+{% block content %}
+    {% from '_formhelpers.j2' import render_field %}
+    <div class="d-flex align-items-center py-4 m-5">
+        <div class="form-signin p-5 w-50 m-auto">
+            <form action="{{ url_for('auth.register') }}" method="post" novalidate>
+                {% from "_formhelpers.j2" import render_floating_field %}
+                {{ form.hidden_tag() }}
+                <h1 class="h3 mb-3 fw-normal">新規登録</h1>
+                {{ render_floating_field(form.username, "Email address") }}
+                {{ render_floating_field(form.password, "Password") }}
+                {{ form.submit(class="btn btn-outline-secondary w-100") }}
+                <p class="my-4">すでにアカウントをお持ちの場合は<a class="mt-5 mb-3 text-body-secondary" href="{{ url_for('auth.login') }}">こちら</a>からログインしてください。</p>
+            </form>
+        </div>
+    </div>
+{% endblock content %}

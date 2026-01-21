@@ -1,0 +1,21 @@
+{% extends "base.j2" %}
+{% block content %}
+    <h1>{{ user.username }}さんのメモ一覧</h1>
+    {% if memos == [] %}
+        <p>メモは登録されていません</p>
+    {% else %}
+        <ul>
+            {% for memo in memos %}
+                <li>
+                    <h3>{{ memo.title }}</h3>
+                    <p>{{ memo.content }}</p>
+                    <p>{{ memo.created_at }}</p>
+                    <a href="{{ url_for('memo.update', memo_id=memo.id) }}">編集</a>
+                    <a href="{{ url_for('memo.delete', memo_id=memo.id) }}">削除</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <a href="{{ url_for('memo.create') }}">新しいメモを作成</a>
+    <a href="{{ url_for('public.public_index') }}">他の人の投稿一覧</a>
+{% endblock content %}
