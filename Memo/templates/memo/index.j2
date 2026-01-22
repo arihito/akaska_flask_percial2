@@ -1,39 +1,63 @@
 {% extends "memo/base.j2" %}
+{% block title %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mt-4 mb-3 border-bottom">
+        <h1>{{ user.username }}さんの記事一覧</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group mr-2 gap-2">
+                <button type="button" class="btn btn-sm btn-outline-secondary">新しい順</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary">いいね順</button>
+            </div>
+        </div>
+    </div>
+{% endblock title %}
 {% block content %}
-    <h1>{{ user.username }}さんの記事一覧</h1>
     {% if memos == [] %}
         <p>メモは登録されていません</p>
     {% else %}
         <div class="table-responsive">
-        <table class="table  table-dark table-striped table-hover table-sm">
-            <thead>
-                <tr>
-                    <th>番号</th>
-                    <th>見出し</th>
-                    <th>本文</th>
-                    <th>いいね</th>
-                    <th>画像</th>
-                    <th>日時</th>
-                    <th>編集</th>
-                    <th>削除</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for memo in memos %}
-                <tr>
-                    <td>{{ memo.id }}</td>
-                    <td>{{ memo.title }}</td>
-                    <td>{{ memo.content }}</td>
-                    <td>0</td>
-                    <td><img src="{{ url_for('static', filename='images/nofile.jpg') }}" height="" width="" alt=""></td>
-                    <td>2026年1月22日(金)</td>
-                    <td><a class="btn btn-outline-secondary" href="{{ url_for('memo.update', memo_id=memo.id) }}">編集</a></td>
-                    <td><a class="btn btn-outline-secondary" href="{{ url_for('memo.delete', memo_id=memo.id) }}">削除</a></td>
-                </tr>
-            {% endfor %}
-        </tbody>
-        </table>
-    </div>
+            <table class="table  table-dark table-striped table-hover table-sm">
+                <thead>
+                    <tr>
+                        <th>番号</th>
+                        <th>見出し</th>
+                        <th>本文</th>
+                        <th>いいね</th>
+                        <th>画像</th>
+                        <th>日時</th>
+                        <th>編集</th>
+                        <th>削除</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for memo in memos %}
+                        <tr>
+                            <td>{{ memo.id }}</td>
+                            <td><h6 class="font-bold">{{ memo.title }}</h6></td>
+                            <td>{{ memo.content }}</td>
+                            <td>0</td>
+                            <td>
+                                {% if memo.image_filename %}
+                                    <img src="{{ url_for('static', filename='images/memo/' ~ memo.image_filename) }}"
+                                    class="img-fluid rounded mb-3"
+                                    width="100"
+                                    height=""
+                                    alt="記事画像">
+                                {% endif %}
+                            </td>
+                            <td>2026年1月22日(金)</td>
+                            <td>
+                                <a class="btn btn-outline-secondary"
+                                   href="{{ url_for('memo.update', memo_id=memo.id) }}">編集</a>
+                            </td>
+                            <td>
+                                <a class="btn btn-outline-secondary"
+                                   href="{{ url_for('memo.delete', memo_id=memo.id) }}">削除</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     {% endif %}
+    
 {% endblock content %}
-

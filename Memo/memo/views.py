@@ -1,10 +1,19 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+import os
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from models import db, Memo, User, Favorite
 from flask_login import login_required, current_user
 from forms import MemoForm
+from werkzeug.utils import secure_filename
+import uuid
 
 # 第一引数がurl_for、第三引数がrender_templateで使用する接頭辞
 memo_bp = Blueprint('memo', __name__, url_prefix='/memo')
+
+def allowed_file(filename):
+    return (
+        "." in filename and
+        filename.rsplit(".", 1)[1].lower() in current_app.config["ALLOWED_EXTENSIONS"]
+    )
 
 @memo_bp.route('/')
 @login_required
@@ -18,10 +27,19 @@ def index():
 def create():
     form = MemoForm()
     if form.validate_on_submit():
+        image_file = form.image.data
+        filename = "nofile.jpg"
+        if image_file and allowed_file(image_file.filename):
+            original = secure_filename(image_file.filename)
+            ext = original.rsplit(".", 1)[1].lower()
+            filename = f"{uuid.uuid4().hex}.{ext}"
+            save_path = os.path.join(current_app.config["UPLOAD_FOLDER"], filename)
+            image_file.save(save_path)
         memo = Memo(
             title=form.title.data,
             content=form.content.data,
-            user_id=current_user.id
+            user_id=current_user.id,
+            image_filename=filename
         )
         db.session.add(memo)
         db.session.commit()

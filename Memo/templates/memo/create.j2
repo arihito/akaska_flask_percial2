@@ -4,10 +4,11 @@
         <div class="form-signin p-5 w-50 m-auto">
             <h1>記事を投稿</h1>
             {% from 'memo/_formhelpers.j2' import render_field %}
-            <form action="{{ url_for('memo.create') }}" method="post" novalidate>
+            <form action="{{ url_for('memo.create') }}" method="post" enctype="multipart/form-data" novalidate>
                 {{ form.hidden_tag() }}
                 {{ render_field(form.title) }}
                 {{ render_field(form.content, rows=5, cols=50) }}
+                {{ render_field(form.image) }}
                 {{ form.submit(class="btn btn-outline-secondary w-100") }}
             </form>
         </div>

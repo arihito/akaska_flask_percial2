@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, SubmitField, PasswordField
+from flask_wtf.file import FileField, FileAllowed
 from wtforms.validators import DataRequired, Length, ValidationError
 from models import Memo, User, Favorite
 
@@ -12,7 +13,13 @@ class MemoForm(FlaskForm):
         ],
     )
     content = TextAreaField("内容：")
-    submit = SubmitField("返信")
+    image = FileField(
+        "画像",
+        validators=[
+            FileAllowed(["jpg", "jpeg", "png", "gif"], "画像ファイルのみアップロードできます")
+        ]
+    )
+    submit = SubmitField("追加")
 
     def validate_title(self, title):
 		# filter_byにオリジナルの判定条件を指定

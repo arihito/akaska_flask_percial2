@@ -28,15 +28,6 @@
             {% include 'layout/sidemenu.j2' %}
             <main class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
                 {% block title %}
-                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                        <h1 class="h2">記事グラフ</h1>
-                        <div class="btn-toolbar mb-2 mb-md-0">
-                            <div class="btn-group mr-2 gap-2">
-                                <button type="button" class="btn btn-sm btn-outline-secondary">新しい順</button>
-                                <button type="button" class="btn btn-sm btn-outline-secondary">いいね順</button>
-                            </div>
-                        </div>
-                    </div>
                 {% endblock title %}
                 {% for message in get_flashed_messages() %}<div>{{ message }}</div>{% endfor %}
                 {% block content %}

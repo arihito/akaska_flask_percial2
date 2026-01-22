@@ -16,6 +16,7 @@ class Memo(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(pytz.timezone('Asia/Tokyo')))
     user = relationship('User', back_populates='memos')
     favorites = relationship('Favorite', back_populates='memo', cascade="all, delete-orphan")
+    image_filename = db.Column(db.String(255), nullable=False, default="nofile.jpg")
 
 class Favorite(db.Model):
     __tablename__ = 'favorites'

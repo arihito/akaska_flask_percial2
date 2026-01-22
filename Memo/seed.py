@@ -1,9 +1,13 @@
 import random
-from app import app
-from models import db, User, Memo, Favorite
+from datetime import datetime, timedelta
+# seed用にFlaskアプリを1つ生成しconfigを読み込みdb/login_manager/Blueprintを初期化する
+from app import app, db
+from models import User, Memo, Favorite
 from datetime import datetime, timedelta
 # from factory import UserFactory, MemoFactory, FavoriteFactory 
 import pytz
+
+app.app_context().push()
 
 TZ = pytz.timezone("Asia/Tokyo")
 
@@ -65,6 +69,16 @@ MEMO_CONTENT_FACTORY = [
     "Flaskで簡易的な管理画面を構築する方法を解説します。CRUD機能とアクセス制限を組み合わせた実装例を紹介します。"
 ]
 
+IMAGE_POOL = [f"{i:02}.png" for i in range(1, 16)]
+
+# --- ランダム日付生成関数 ---
+def random_date(start, end):
+    delta = end - start
+    random_days = random.randint(0, delta.days)
+    random_seconds = random.randint(0, 86399)
+    return start + timedelta(days=random_days, seconds=random_seconds)
+start_date = datetime(2025, 1, 1)
+end_date = datetime.now()
 
 # ------------------------------
 # Seed処理
@@ -95,7 +109,8 @@ def seed_data():
                 title=random.choice(MEMO_TITLE_FACTORY),
                 content=random.choice(MEMO_CONTENT_FACTORY),
                 user_id=user.id,
-                created_at=datetime.now(TZ)
+                image_filename=random.choice(IMAGE_POOL),
+                created_at = random_date(start_date, end_date)
             )
             db.session.add(memo)
             memos.append(memo)
