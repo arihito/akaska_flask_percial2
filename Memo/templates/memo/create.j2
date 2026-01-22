@@ -1,14 +1,15 @@
-{% extends "base.j2" %}
+{% extends "memo/base.j2" %}
 {% block content %}
-    <h1>新しいメモを作成</h1>
-    {% from '_formhelpers.j2' import render_field %}
-    <form action="{{ url_for('memo.create') }}" method="post" novalidate>
-        {{ form.hidden_tag() }}
-        {{ render_field(form.title) }}
-        {{ render_field(form.content, rows=5, cols=50) }}
-        {{ form.submit }}
-    </form>
-    <p>
-        <a href="{{ url_for('memo.index') }}">一覧ページへ戻る</a>
-    </p>
+    <div class="d-flex align-items-center py-4 m-5">
+        <div class="form-signin p-5 w-50 m-auto">
+            <h1>記事を投稿</h1>
+            {% from 'memo/_formhelpers.j2' import render_field %}
+            <form action="{{ url_for('memo.create') }}" method="post" novalidate>
+                {{ form.hidden_tag() }}
+                {{ render_field(form.title) }}
+                {{ render_field(form.content, rows=5, cols=50) }}
+                {{ form.submit(class="btn btn-outline-secondary w-100") }}
+            </form>
+        </div>
+    </div>
 {% endblock content %}

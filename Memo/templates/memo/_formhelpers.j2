@@ -1,0 +1,18 @@
+{% macro render_field(field, placeholder=None, attrs={}, rows={}, cols={}) %}
+    {# 常にform-controlを付けつつ、追加で渡されたclassがあればそれも連結(jinja記法) #}
+    {% set css_class = "form-control " ~ (attrs.get("class", "")) %}
+    <div class="form-floating mb-3">
+        {{ field(class=css_class,
+                placeholder=placeholder if placeholder else field.label.text,
+                id=field.id,
+                **attrs) }}
+        <label for="{{ field.id }}">{{ field.label.text }}</label>
+        {% if field.errors %}
+            <div class="alert alert-danger small mt-1">
+                <i class="fa fa-exclamation-triangle"></i>
+                {% for error in field.errors %}{{ error }}{% endfor %}
+            </div>
+        {% endif %}
+    </div>
+{% endmacro %}
+    

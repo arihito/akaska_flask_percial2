@@ -3,7 +3,7 @@
     <div class="d-flex align-items-center py-4 m-5">
         <div class="form-signin p-5 w-50 m-auto">
             <form action="{{ url_for('auth.login') }}" method="post" novalidate>
-                {% from "_formhelpers.j2" import render_floating_field %}
+                {% from "auth/_formhelpers.j2" import render_floating_field %}
                 {{ form.hidden_tag() }}
                 <h1 class="h3 mb-3 fw-normal">ログイン</h1>
                 {{ render_floating_field(form.username, "Email address") }}

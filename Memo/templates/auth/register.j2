@@ -1,6 +1,6 @@
 {% extends "base.j2" %}
 {% block content %}
-    {% from '_formhelpers.j2' import render_field %}
+    {% from 'auth/_formhelpers.j2' import render_field %}
     <div class="d-flex align-items-center py-4 m-5">
         <div class="form-signin p-5 w-50 m-auto">
             <form action="{{ url_for('auth.register') }}" method="post" novalidate>

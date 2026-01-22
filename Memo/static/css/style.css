@@ -143,6 +143,12 @@ h6 {
     color: crimson;
 }
 
+/* dark モード時のリンク色を白にする */
+[data-bs-theme="dark"] {
+    --bs-link-color: #ffffff;
+    --bs-link-hover-color: #e0e0e0;
+}
+
 .heart-burst {
     position: absolute;
     font-size: 1.5rem;
@@ -163,4 +169,32 @@ h6 {
         transform: scale(1) translateY(-25px);
         opacity: 0;
     }
+}
+
+/* ===== サイドメニュー：ホバー演出 ===== */
+#sidebarMenu .nav-link {
+    border-radius: 0.5rem;
+    margin: 0.15rem 0.75rem;
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
+}
+
+/* ホバー時 */
+#sidebarMenu .nav-link:hover {
+    background-color: var(--bs-secondary-bg);
+    color: var(--bs-body-color);
+    text-decoration: none;
+}
+
+/* アクティブ状態 */
+#sidebarMenu .nav-link.active {
+    background-color: var(--bs-secondary-bg-subtle);
+    color: var(--bs-secondary-text-emphasis);
+    font-weight: 600;
+}
+
+/* アイコンと文字の間隔 */
+#sidebarMenu .nav-link i {
+    margin-right: 0.5rem;
 }

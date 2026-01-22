@@ -1,0 +1,19 @@
+<nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-body-tertiary sidebar collapse vh-100">
+    <div class="position-sticky top-0 h-100 pt-3">
+        <ul class="nav flex-column">
+            <li class="nav-item"><a class="nav-link {% if request.endpoint == 'public.public_index' %}active{% endif %}" href="{{ url_for('public.public_index') }}"><i class="fa fa-list-alt"></i>全体一覧</a></li>
+            <li class="nav-item"><a class="nav-link {% if request.endpoint == 'memo.index' %}active{% endif %}" href="{{ url_for('memo.index') }}"><i class="fa fa-list"></i>投稿一覧</a></li>
+            <li class="nav-item"><a class="nav-link {% if request.endpoint == 'memo.create' %}active{% endif %}" href="{{ url_for('memo.create') }}"><i class="fa fa-plus"></i>記事追加</a></li>
+            <li class="nav-item"><a class="nav-link" href=""><i class="fa fa-user"></i>ユーザ管理</a></li>
+        </ul>
+        <hr>
+        <h6 class="text-muted">開発管理</h6>
+        <ul class="nav flex-column">
+            <li class="nav-item"><a class="nav-link" href=""><i class="fa fa-"></i>要件定義</a></li>
+            <li class="nav-item"><a class="nav-link" href=""><i class="fa fa-"></i>画面設計図</a></li>
+            <li class="nav-item"><a class="nav-link" href=""><i class="fa fa-"></i>ER図</a></li>
+            <li class="nav-item"><a class="nav-link" href=""><i class="fa fa-"></i>クラス設計図</a></li>
+            <li class="nav-item"><a class="nav-link" href="https://github.com/arihito/akaska_flask_percial2" target="_blank"><i class="fa fa-github"></i>GitHub</a></li>
+        </ul>
+    </div>
+</nav>
