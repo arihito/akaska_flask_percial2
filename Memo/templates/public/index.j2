@@ -91,11 +91,12 @@
                         <li>
                             <a class="d-flex flex-column flex-lg-row gap-3 align-items-start align-items-lg-center py-3 link-body-emphasis text-decoration-none border-top"
                                href="{{ url_for('public.detail', memo_id=row.memo.id) }}">
-                                <img src="https://placehold.co/200x200"
-                                     class="bd-placeholder-img"
-                                     width="100%"
+                                <img class="rounded-end"
+                                     src="{{ url_for('static', filename='images/memo/' ~ row.memo.image_filename) }}"
+                                     width="96"
                                      height="96"
-                                     alt="">
+                                     alt="記事画像"
+                                     style="object-fit: cover">
                                 <div class="col-lg-8">
                                     <h6 class="mb-0">{{ row.memo.title }}</h6>
                                     <small class="text-body-secondary">{{ row.memo.created_at.strftime("%Y-%m-%d") }}</small>

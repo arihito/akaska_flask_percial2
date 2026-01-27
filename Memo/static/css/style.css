@@ -213,6 +213,10 @@ h6 {
     height: 100%;
     object-fit: cover;
     display: block;
+}
+
+.sidebar img,
+.memo-img-wrap img {
     filter: grayscale(100%)
 }
 

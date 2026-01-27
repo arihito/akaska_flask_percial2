@@ -1,18 +1,24 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SubmitField, PasswordField
+from wtforms import StringField, TextAreaField, SubmitField, PasswordField, HiddenField
 from flask_wtf.file import FileField, FileAllowed
+from flask_login import current_user
 from wtforms.validators import DataRequired, Length, ValidationError
 from models import Memo, User, Favorite
 
 class MemoForm(FlaskForm):
+    id = HiddenField()
     title = StringField(
         "タイトル：",
         validators=[
             DataRequired("タイトルは必須入力です"),
-            Length(max=10, message="10文字以下で入力してください"),
+            Length(max=30, message="30文字以下で入力してください"),
         ],
     )
-    content = TextAreaField("内容：")
+    content = TextAreaField("内容：",
+        validators=[
+            DataRequired("説明は必須入力です"),
+        ],
+    )
     image = FileField(
         "画像",
         validators=[
@@ -20,14 +26,15 @@ class MemoForm(FlaskForm):
         ]
     )
     submit = SubmitField("追加")
-
+            
     def validate_title(self, title):
-		# filter_byにオリジナルの判定条件を指定
-        memo = Memo.query.filter_by(title=title.data).first()
+        query = Memo.query.filter_by(title=title.data, user_id=current_user.id)
+        # 編集時のみ：自分自身を除外
+        if self.id.data:
+            query = query.filter(Memo.id != self.id.data)
+        memo = query.first()
         if memo:
-            raise ValidationError(
-                f"タイトル「{title.data}」は既に存在します。別のタイトルを入力してください。"
-            )
+            raise ValidationError(f"タイトル「{title.data}」は既に存在します。別のタイトルを入力してください。")
             
 class LoginForm(FlaskForm):
 	username = StringField('ユーザ名：', validators=[DataRequired('ユーザ名は必須入力です。')])

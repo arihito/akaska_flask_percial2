@@ -55,6 +55,13 @@ def update(memo_id):
     if form.validate_on_submit():
         memo.title = request.form['title']
         memo.content = request.form['content']
+        image_file = form.image.data
+        if image_file and allowed_file(image_file.filename):
+            original = secure_filename(image_file.filename)
+            save_path = os.path.join(current_app.config["UPLOAD_FOLDER"], original)
+            # 同名ファイルはそのまま上書き保存される
+            image_file.save(save_path)
+            memo.image_filename = original
         db.session.commit()
         flash('変更しました')
         return redirect(url_for('memo.index'))

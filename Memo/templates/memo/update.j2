@@ -1,16 +1,32 @@
 {% extends "memo/base.j2" %}
 {% block content %}
     <h1>メモを編集</h1>
-    {% from '_formhelpers.j2' import render_field %}
-    <form action="{{ url_for('memo.update', memo_id=memo.id) }}"
-          method="post"
-          novalidate>
-        {{ form.hidden_tag() }}
-        {{ render_field(form.title) }}
-        {{ render_field(form.content, row=5, cols=50) }}
-        {{ form.submit }}
-    </form>
-    <p>
-        <a href="{{ url_for('memo.index') }}">一覧ページへ戻る</a>
-    </p>
+    {% from 'memo/_formhelpers.j2' import render_field %}
+    <div class="d-flex align-items-center py-4 m-5">
+        <div class="form-signin p-5 w-50 m-auto">
+            <form action="{{ url_for('memo.update', memo_id=memo.id) }}"
+                method="post"
+                enctype="multipart/form-data"
+                novalidate>
+                {{ form.hidden_tag() }}
+                {{ render_field(form.title) }}
+                {{ render_field(form.content,
+                                attrs={"rows": 5, "class": "form-control form-control-lg"}) }}
+                <div class="d-flex justify-content-between">
+                    {{ render_field(form.image) }}
+                    {% if memo.image_filename %}
+                        <img src="{{ url_for('static', filename='images/memo/' ~ memo.image_filename) }}"
+                        class="image-fluid rounded"
+                        width="100"
+                        height=""
+                        alt="記事画像">
+                    {% endif %}
+                </div>
+                <div class="row p-3">
+                    {{ form.submit(class="col-9 btn btn-secondary") }}
+                    <a class="col-3 btn btn-outline-secondary" href="{{ url_for('memo.index') }}">一覧ページへ戻る</a>
+                </div>
+            </form>
+        </div>
+    </div>
 {% endblock content %}
