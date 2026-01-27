@@ -4,10 +4,49 @@
         <h1>
             <i class="fa fa-list-alt"></i> {{ user.username }}さんの記事一覧
         </h1>
-        <div class="btn-toolbar mb-2 mb-md-0">
-            <div class="btn-group mr-2 gap-2">
-                <button type="button" class="btn btn-sm btn-outline-secondary">新しい順</button>
-                <button type="button" class="btn btn-sm btn-outline-secondary">いいね順</button>
+        <div class="d-flex align-items-center my-1">
+            <form method="get"
+                  action="{{ url_for('memo.index') }}"
+                  class="input-group me-3">
+                <span class="input-group-text">検索</span>
+                <div class="form-floating">
+                    <input type="text"
+                           name="q"
+                           placeholder="タイトル・本文を検索"
+                           value="{{ q }}"
+                           class="form-control"
+                           id="floatingInputGroup1">
+                    <label for="floatingInputGroup1">検索ワード</label>
+                </div>
+                <button class="btn btn-outline-secondary" type="submit">探す</button>
+            </form>
+            <div class="btn-toolbar mb-2 mb-md-0">
+                <div class="btn-group mr-2 gap-2">
+                    {% set current_order = request.args.get('order', 'desc') %}
+                    {% if current_order == 'desc' %}
+                        <a class="btn btn-outline-secondary btn-sm"
+                           href="{{ url_for('memo.index', order='asc') }}">
+                            <i class="fa fa-arrow-up"></i> 投稿日の古い順
+                        </a>
+                    {% else %}
+                        <a class="btn btn-outline-secondary btn-sm"
+                           href="{{ url_for('memo.index', order='desc') }}">
+                            <i class="fa fa-arrow-down"></i> 投稿日の新しい順
+                        </a>
+                    {% endif %}
+                    {% set current_likes = request.args.get('likes', 'desc') %}
+                    {% if current_likes == 'desc' %}
+                        <a class="btn btn-outline-secondary btn-sm"
+                           href="{{ url_for('memo.index', likes='asc') }}">
+                            <i class="fa fa-sort-amount-asc"></i> いいね多い順
+                        </a>
+                    {% else %}
+                        <a class="btn btn-outline-secondary btn-sm"
+                           href="{{ url_for('memo.index', likes='desc') }}">
+                            <i class="fa fa-sort-amount-desc"></i> いいね少ない順
+                        </a>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
@@ -37,10 +76,12 @@
                         <tr>
                             <td>{{ memo.id }}</td>
                             <td style="text-align:left">
-                                <h6 class="font-bold" style="font-size:1.4rem">{{ memo.title }}</h6>
+                                <h6 class="font-bold" style="font-size:1.4rem">{{ memo.marked_title | safe }}</h6>
                             </td>
-                            <td class="w-25" style="text-align:left">{{ memo.content }}</td>
-                            <td><small>❤️ {{ like_count }} いいね</small></td>
+                            <td class="w-25" style="text-align:left">{{ memo.marked_content | safe }}</td>
+                            <td>
+                                <small><i class="fa fa-heart" style="color:pink"></i> {{ like_count }} いいね</small>
+                            </td>
                             <td>
                                 {% if memo.image_filename %}
                                     <img src="{{ url_for('static', filename='images/memo/' ~ memo.image_filename) }}"

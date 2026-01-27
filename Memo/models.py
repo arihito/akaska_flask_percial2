@@ -33,7 +33,7 @@ class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(50), unique=True, nullable=True)
-    password = db.Column(db.String(120), nullable=False)
+    password = db.Column(db.String(12), nullable=False)
     memos = relationship('Memo', back_populates='user')
     favorites = relationship('Favorite', back_populates='user', cascade="all, delete-orphan")
     def set_password(self, password):

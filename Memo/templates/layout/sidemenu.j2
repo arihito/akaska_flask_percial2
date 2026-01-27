@@ -15,7 +15,7 @@
                    href="{{ url_for('memo.create') }}"><i class="fa fa-plus"></i>記事追加</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href=""><i class="fa fa-user"></i>ユーザ管理</a>
+                <a class="nav-link {% if request.endpoint == 'auth.edit' %}active{% endif %}" href="{{ url_for('auth.edit') }}"><i class="fa fa-user"></i>ユーザ管理</a>
             </li>
         </ul>
         <hr>
@@ -28,7 +28,7 @@
                             data-bs-toggle="collapse"
                             data-bs-target="#panelsStayOpen-collapseOne"
                             aria-expanded="true"
-                            aria-controls="panelsStayOpen-collapseOne">成果物</button>
+                            aria-controls="panelsStayOpen-collapseOne"><i class="fa fa-files-o"></i>成果物</button>
                 </h2>
                 <div id="panelsStayOpen-collapseOne"
                      class="accordion-collapse collapse show">
@@ -57,7 +57,7 @@
                             data-bs-toggle="collapse"
                             data-bs-target="#panelsStayOpen-collapseTwo"
                             aria-expanded="false"
-                            aria-controls="panelsStayOpen-collapseTwo">バックアップ</button>
+                            aria-controls="panelsStayOpen-collapseTwo"><i class="fa fa-database"></i>バックアップ</button>
                 </h2>
                 <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse">
                     <div class="accordion-body">
@@ -78,7 +78,7 @@
                             data-bs-toggle="collapse"
                             data-bs-target="#panelsStayOpen-collapseThree"
                             aria-expanded="false"
-                            aria-controls="panelsStayOpen-collapseThree">外部資料</button>
+                            aria-controls="panelsStayOpen-collapseThree"><i class="fa fa-book"></i>外部資料</button>
                 </h2>
                 <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse">
                     <div class="accordion-body">
@@ -86,17 +86,17 @@
                             <li class="nav-item">
                                 <a class="nav-link"
                                    href="https://flask.palletsprojects.com/en/stable/"
-                                   target="_blank"><i class="fa fa-github"></i>Flask3.x</a>
+                                   target="_blank"><i class="fa fa-file-code-o"></i>Flask3.x</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link"
                                    href="https://getbootstrap.jp/docs/5.3/getting-started/introduction/"
-                                   target="_blank"><i class="fa fa-github"></i>Bootstrap5.3</a>
+                                   target="_blank"><i class="fa fa-css3"></i>Bootstrap5.3</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link"
                                    href="https://fontawesome.com/v4/icons/"
-                                   target="_blank"><i class="fa fa-github"></i>FontAwesome4.7</a>
+                                   target="_blank"><i class="fa fa-font-awesome"></i>FontAwesome4.7</a>
                             </li>
                         </ul>
                     </div>

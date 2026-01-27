@@ -6,34 +6,18 @@
                    href="{{ url_for('public.public_index') }}">Flask Tech Blog</a>
             </div>
             <div class="col-4 d-flex justify-content-end align-items-center">
-                <a class="link-secondary" href="#" aria-label="Search">
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                         width="20"
-                         height="20"
-                         fill="none"
-                         stroke="currentColor"
-                         stroke-linecap="round"
-                         stroke-linejoin="round"
-                         stroke-width="2"
-                         class="mx-3"
-                         role="img"
-                         viewBox="0 0 24 24">
-                        <title>検索</title><circle cx="10.5" cy="10.5" r="7.5" />
-                            <path d="M21 21l-5.2-5.2" />
-                        </svg>
-                    </a>
-                    {% if not current_user.is_authenticated %}
-                        <div class="btn-group" role="group" aria-label="Basic outlined example">
-                            <a class="btn btn-outline-secondary" href="{{ url_for('auth.login') }}">ログイン</a>
-                            <a class="btn btn-outline-secondary"
-                               href="{{ url_for('auth.register') }}">新規登録</a>
-                        </div>
-                    {% elif current_user.is_authenticated %}
-                        <a class="me-3" href="{{ url_for('memo.index') }}"><i class="fa fa-user-circle"></i> {{ current_user.username }}さん</a>
-                        <a class="btn btn-outline-secondary" href="{{ url_for('auth.logout') }}">ログアウト</a>
-                    {% endif %}
-                </div>
+                {% if not current_user.is_authenticated %}
+                    <div class="btn-group" role="group" aria-label="Basic outlined example">
+                        <a class="btn btn-outline-secondary" href="{{ url_for('auth.login') }}"><i class="fa fa-sign-in"></i> ログイン</a>
+                        <a class="btn btn-outline-secondary"
+                           href="{{ url_for('auth.register') }}"><i class="fa fa-user-plus"></i> 新規登録</a>
+                    </div>
+                {% elif current_user.is_authenticated %}
+                    <a class="me-3" href="{{ url_for('memo.index') }}"><i class="fa fa-user-circle"></i> {{ current_user.username }}さん</a>
+                    <a class="btn btn-outline-secondary" href="{{ url_for('auth.logout') }}"><i class="fa fa-sign-out"></i> ログアウト</a>
+                {% endif %}
             </div>
+        </div>
     </header>
     <div class="nav-scroller py-1 mb-3 border-bottom">
         <nav class="nav nav-underline justify-content-between">

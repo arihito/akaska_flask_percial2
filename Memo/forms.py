@@ -1,8 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SubmitField, PasswordField, HiddenField
+from wtforms import StringField, TextAreaField, SubmitField, PasswordField, HiddenField, FileField
 from flask_wtf.file import FileField, FileAllowed
 from flask_login import current_user
-from wtforms.validators import DataRequired, Length, ValidationError
+from wtforms.validators import DataRequired, Length, ValidationError, EqualTo, Optional
 from models import Memo, User, Favorite
 
 class MemoForm(FlaskForm):
@@ -38,7 +38,7 @@ class MemoForm(FlaskForm):
             
 class LoginForm(FlaskForm):
 	username = StringField('ユーザ名：', validators=[DataRequired('ユーザ名は必須入力です。')])
-	password = PasswordField('パスワード：', validators=[Length(4, 10, 'パスワードの長さは4文字以上10文字以内です')])
+	password = PasswordField('パスワード：', validators=[Length(8, 12, 'パスワードの長さは8文字以上12文字以内です')])
 	submit = SubmitField('ログイン')
 	# カスタムバリデータとして英数記号が含まれていなければraiseで例外を明示的に発生させる
 	def validate_password(self, password):
@@ -54,3 +54,23 @@ class SignUpForm(LoginForm): # ログイン処理と同じなため機能を継�
 		user = User.query.filter_by(username=username.data).first()
 		if user:
 			raise ValidationError('そのユーザ名はすでに使用されれています')
+
+class EditUserForm(FlaskForm):
+    username = StringField(
+        'ユーザー名',
+        validators=[DataRequired(), Length(max=50)]
+    )
+    password = PasswordField(
+        '新しいパスワード',
+        validators=[Optional(), Length(min=8)]
+    )
+    
+    confirm_password = PasswordField(
+        '新しいパスワード（確認）',
+        validators=[
+            Optional(),
+            EqualTo('password', message='パスワードが一致しません')
+        ]
+    )
+    thumbnail = FileField('サムネイル画像（任意）')
+    submit = SubmitField('更新')

@@ -3,7 +3,8 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from models import db, Memo, User, Favorite
 from flask_login import login_required, current_user
 from forms import MemoForm
-from sqlalchemy import func
+from sqlalchemy import func, asc, desc, or_
+from markupsafe import Markup, escape
 from werkzeug.utils import secure_filename
 import uuid
 
@@ -20,22 +21,68 @@ def allowed_file(filename):
 @login_required
 def index():
     WEEKDAYS_JA = ['月', '火', '水', '木', '金', '土', '日']
+    q = request.args.get('q', '').strip()
+    base_query = (
+        db.session.query(Memo, func.count(Favorite.id).label("like_count"))
+            .outerjoin(Favorite, Memo.id == Favorite.memo_id)
+            .filter(Memo.user_id == current_user.id)
+    )
+    # ---- 検索条件 ----
+    if q:
+        like_expr = f"%{q}%"
+        base_query = base_query.filter(
+            or_(
+                Memo.title.ilike(like_expr),
+                Memo.content.ilike(like_expr)
+            )
+        )
+    order = request.args.get('order', 'desc')   # 日付用
+    likes = request.args.get('likes', None)     # いいね用（優先）
+    # ---- 並び順の決定 ----
+    if likes == 'asc':
+        order_by_clause = asc(func.count(Favorite.id))
+    elif likes == 'desc':
+        order_by_clause = desc(func.count(Favorite.id))
+    else:
+        # likes指定がない場合は日付順
+        order_by_clause = asc(Memo.created_at) if order == 'asc' else desc(Memo.created_at)
     raw_memos = (
         db.session.query(Memo, func.count(Favorite.id).label("like_count"))
             .outerjoin(Favorite, Memo.id == Favorite.memo_id)
             .filter(Memo.user_id == current_user.id)
             .group_by(Memo.id)
+            .order_by(order_by_clause) 
             .all()
     )
     memos = []
     for memo, like_count in raw_memos:
         memo.weekday_ja = WEEKDAYS_JA[memo.created_at.weekday()]
+        # ---- マーキング処理（HTML安全）----
+        if q:
+            safe_title = escape(memo.title)   # ← ① まず完全に無害化（Markup型）
+            safe_q = escape(q)                # ← 検索語も無害化
+            marked = safe_title.replace(
+                safe_q,
+                Markup(f"<mark>{safe_q}</mark>")  # ← ② ここで初めてHTMLを注入
+            )
+            memo.marked_title = Markup(marked)    # ← ③ 最終的に Markup 型にする
+            safe_content = escape(memo.content)   # ← ① まず完全に無害化（Markup型）
+            safe_q = escape(q)                # ← 検索語も無害化
+            marked = safe_content.replace(
+                safe_q,
+                Markup(f"<mark>{safe_q}</mark>")  # ← ② ここで初めてHTMLを注入
+            )
+            memo.marked_content = Markup(marked)    # ← ③ 最終的に Markup 型にする
+        else:
+            memo.marked_title = memo.title
+            memo.marked_content = memo.content
+
         memos.append({
             "memo": memo,
             "like_count": like_count
         })
     top5 = (Favorite.query.filter_by(user_id=current_user.id).filter(Favorite.rank != None).order_by(Favorite.rank.asc()).limit(5).all())
-    return render_template('memo/index.j2', memos=memos, top5=top5, user=current_user)
+    return render_template('memo/index.j2', memos=memos, top5=top5, user=current_user, q=q)
 
 @memo_bp.route('/create', methods=['GET', 'POST'])
 @login_required

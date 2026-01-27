@@ -57,7 +57,7 @@
 }
 
 .btn-bd-primary {
-    --bd-violet-bg: #712cf9;
+    --bd-violet-bg: #334;
     --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
 
     --bs-btn-font-weight: 600;
@@ -65,12 +65,12 @@
     --bs-btn-bg: var(--bd-violet-bg);
     --bs-btn-border-color: var(--bd-violet-bg);
     --bs-btn-hover-color: var(--bs-white);
-    --bs-btn-hover-bg: #6528e0;
-    --bs-btn-hover-border-color: #6528e0;
+    --bs-btn-hover-bg: #667;
+    --bs-btn-hover-border-color: #667;
     --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
     --bs-btn-active-color: var(--bs-btn-hover-color);
-    --bs-btn-active-bg: #5a23c8;
-    --bs-btn-active-border-color: #5a23c8;
+    --bs-btn-active-bg: #556;
+    --bs-btn-active-border-color: #556;
 }
 .bd-mode-toggle {
     z-index: 1500;
@@ -111,13 +111,13 @@ h6 {
     }
 }
 
-/* Pagination */
+/* ぺジネーション */
 .blog-pagination {
     margin-bottom: 4rem;
 }
 
 /*
- * Blog posts
+ * ブログ投稿
  */
 .blog-post {
     margin-bottom: 4rem;
@@ -131,6 +131,7 @@ h6 {
     margin-right: 3px;
 }
 
+/* いいねボタン */
 .btn-like {
     background: none;
     border: none;
@@ -216,7 +217,9 @@ h6 {
 }
 
 .sidebar img,
-.memo-img-wrap img {
+.memo-img-wrap img,
+.table-responsive img,
+.recommend img {
     filter: grayscale(100%)
 }
 
@@ -231,4 +234,15 @@ h6 {
 .admin-table td {
     text-align: center;
     vertical-align: middle;
+}
+
+/* 検索マーキング */
+
+mark {
+    background: #112;
+    color: #eee;
+    border: 1px solid #334;
+    padding: 3px 6px;
+    margin: 0 4px;
+    border-radius: 3px;
 }

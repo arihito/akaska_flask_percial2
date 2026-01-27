@@ -43,7 +43,25 @@ MEMO_TITLE_FACTORY = [
     "Flaskで全文検索を実装する",
     "Flaskのデプロイ構成と注意点",
     "Flaskと環境変数による秘密情報管理",
-    "Flaskで管理画面を構築する"
+    "Flaskで管理画面を構築する",
+    "SQLAlchemyによるDBマイグレーション管理",
+    "Flask-WTFでバリデーション付きフォーム作成",
+    "環境変数(python-dotenv)の安全な運用",
+    "Flask-RESTfulによるAPIサーバー構築",
+    "Pytestを用いたFlaskアプリのテスト手法",
+    "Application Factoryパターンの導入メリット",
+    "Redisを活用したセッション管理の最適化",
+    "Flask-Cachingでレスポンスを高速化する",
+    "Jinja2テンプレートの継承とコンポーネント化",
+    "GunicornとNginxでの本番デプロイ構成",
+    "Celeryを使った非同期タスク処理の実装",
+    "Flask-Marshmallowでのシリアライズ処理",
+    "カスタムエラーハンドリング(404/500)の設計",
+    "トークンベース認証(PyJWT)の導入手順",
+    "FlaskアプリのDocker化とマルチステージビルド",
+    "Loggingモジュールによる実行ログの出力設定",
+    "CORS(Flask-CORS)設定の注意点と対策",
+    "Swagger(Flasgger)によるAPIドキュメント自動生成"
 ]
 
 MEMO_CONTENT_FACTORY = [
@@ -66,7 +84,25 @@ MEMO_CONTENT_FACTORY = [
     "Flaskで部分一致検索や全文検索を実装する方法を紹介します。LIKE検索とインデックス設計の注意点も解説します。",
     "Gunicorn + Nginx構成によるFlaskアプリのデプロイ手順を解説します。systemd設定やログ管理も含めます。",
     "SECRET_KEYやAPIキーを安全に管理するための環境変数運用方法を、python-dotenvを使って説明します。",
-    "Flaskで簡易的な管理画面を構築する方法を解説します。CRUD機能とアクセス制限を組み合わせた実装例を紹介します。"
+    "Flaskで簡易的な管理画面を構築する方法を解説します。CRUD機能とアクセス制限を組み合わせた実装例を紹介します。",
+    "Flask-Migrate(Alembic)を利用して、DBスキーマの変更履歴を管理する方法を紹介。モデル変更からアップグレードまでのコマンド操作を網羅しています。",
+    "Flask-WTFなら、CSRF対策を施したセキュアなフォームを簡単に作成可能。バリデーションエラー時のメッセージ表示方法も解説します。",
+    "APIキーやパスワードをコードに直接書かず、.envファイルで管理するベストプラクティス。flask-dotenvの自動読み込み機能についても触れます。",
+    "Flask-RESTfulを使用して、リソース指向のAPIを構築します。Reqparseによる引数チェックや、マーシャリングによる出力制御を詳しく見ていきます。",
+    "ユニットテストから結合テストまで、pytest-flaskを使った効率的なテストコードの書き方を解説。フィクスチャによるDB初期化がポイントです。",
+    "app.pyに全てを書くのではなく、create_app関数を使ってFlaskインスタンスを生成する手法。テスト時や複数環境での切り替えに非常に役立ちます。",
+    "標準のクッキーベースのセッションではなく、サーバー側のRedisでセッションを保持する方法。Flask-Sessionの導入手順を解説します。",
+    "頻繁にアクセスされるDBクエリやページ全体をキャッシュし、パフォーマンスを劇的に向上させるFlask-Cachingの使い方を学びます。",
+    "共通のヘッダーやフッターをbase.htmlにまとめ、各ページでextends/includeを活用してDRY（二度手間を防ぐ）な開発を行う手法です。",
+    "Flask開発サーバーを卒業し、本番環境で安定して動作させるためのWSGIサーバー(Gunicorn)とリバースプロキシ(Nginx)の設定例です。",
+    "メール送信や画像処理など、時間の掛かる処理をバックグラウンドで行うためのCelery + Redis（またはRabbitMQ）の連携方法を解説します。",
+    "複雑なモデルオブジェクトをJSONに変換（シリアライズ）し、逆にリクエストデータをバリデーション（デシリアライズ）する効率的な手順です。",
+    "ユーザーに不親切なエラー画面を見せないために、errorhandlerデコレータを使用して独自のHTMLやJSONを返す仕組みを構築します。",
+    "Flask-Loginを使わない、ステートレスなAPI向けのJWT認証。PyJWTを使ったエンコード・デコードと、デコレータによるアクセス制限を実装します。",
+    "Flaskアプリをコンテナ化し、軽量な本番用イメージを作成する方法。docker-composeを使ったDB（PostgreSQL）との連携もカバーします。",
+    "標準のloggingライブラリをFlaskに統合し、INFO/ERRORログをファイルやコンソールに適切に出力するための設定方法を整理しました。",
+    "フロントエンド（React/Vueなど）と別ドメインで通信する際に発生するCORSエラー。Flask-CORSで安全に許可ドメインを設定する方法です。",
+    "APIを作成しながらドキュメントも同時に更新。Flasggerを使って、Swagger UIからブラウザ上でAPIをテスト実行できる環境を整えます。"
 ]
 
 IMAGE_POOL = [f"{i:02}.png" for i in range(1, 16)]
@@ -103,7 +139,7 @@ def seed_data():
 
         print("メモ作成...")
         memos = []
-        for i in range(20):
+        for i in range(50):
             user = random.choice(users)
             memo = Memo(
                 title=random.choice(MEMO_TITLE_FACTORY),
@@ -118,7 +154,7 @@ def seed_data():
 
         print("お気に入り作成...")
         for user in users:
-            liked_count = random.randint(3, 10)
+            liked_count = random.randint(10, 30)
             liked_memos = random.sample(memos, liked_count)
             for rank, memo in enumerate(liked_memos[:5], start=1):
                 fav = Favorite(
