@@ -225,3 +225,10 @@ h6 {
     background: url("../images/wallpaper.jpg") 0 0 / cover no-repeat;
     mix-blend-mode: screen;
 }
+
+/* 管理画面一覧テーブル */
+.admin-table th,
+.admin-table td {
+    text-align: center;
+    vertical-align: middle;
+}

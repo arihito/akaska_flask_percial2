@@ -3,6 +3,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from models import db, Memo, User, Favorite
 from flask_login import login_required, current_user
 from forms import MemoForm
+from sqlalchemy import func
 from werkzeug.utils import secure_filename
 import uuid
 
@@ -18,7 +19,21 @@ def allowed_file(filename):
 @memo_bp.route('/')
 @login_required
 def index():
-    memos = Memo.query.filter_by(user_id=current_user.id).all()
+    WEEKDAYS_JA = ['月', '火', '水', '木', '金', '土', '日']
+    raw_memos = (
+        db.session.query(Memo, func.count(Favorite.id).label("like_count"))
+            .outerjoin(Favorite, Memo.id == Favorite.memo_id)
+            .filter(Memo.user_id == current_user.id)
+            .group_by(Memo.id)
+            .all()
+    )
+    memos = []
+    for memo, like_count in raw_memos:
+        memo.weekday_ja = WEEKDAYS_JA[memo.created_at.weekday()]
+        memos.append({
+            "memo": memo,
+            "like_count": like_count
+        })
     top5 = (Favorite.query.filter_by(user_id=current_user.id).filter(Favorite.rank != None).order_by(Favorite.rank.asc()).limit(5).all())
     return render_template('memo/index.j2', memos=memos, top5=top5, user=current_user)
 

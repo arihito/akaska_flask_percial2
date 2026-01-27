@@ -1,7 +1,9 @@
 {% extends "memo/base.j2" %}
 {% block title %}
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mt-4 mb-3 border-bottom">
-        <h1>{{ user.username }}さんの記事一覧</h1>
+        <h1>
+            <i class="fa fa-list-alt"></i> {{ user.username }}さんの記事一覧
+        </h1>
         <div class="btn-toolbar mb-2 mb-md-0">
             <div class="btn-group mr-2 gap-2">
                 <button type="button" class="btn btn-sm btn-outline-secondary">新しい順</button>
@@ -15,7 +17,7 @@
         <p>メモは登録されていません</p>
     {% else %}
         <div class="table-responsive">
-            <table class="table  table-dark table-striped table-hover table-sm">
+            <table class="table  table-dark table-striped table-hover table-sm admin-table">
                 <thead>
                     <tr>
                         <th>番号</th>
@@ -29,29 +31,39 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for memo in memos %}
+                    {% for row in memos %}
+                        {% set memo = row.memo %}
+                        {% set like_count = row.like_count %}
                         <tr>
                             <td>{{ memo.id }}</td>
-                            <td><h6 class="font-bold">{{ memo.title }}</h6></td>
-                            <td>{{ memo.content }}</td>
-                            <td>0</td>
+                            <td style="text-align:left">
+                                <h6 class="font-bold" style="font-size:1.4rem">{{ memo.title }}</h6>
+                            </td>
+                            <td class="w-25" style="text-align:left">{{ memo.content }}</td>
+                            <td><small>❤️ {{ like_count }} いいね</small></td>
                             <td>
                                 {% if memo.image_filename %}
                                     <img src="{{ url_for('static', filename='images/memo/' ~ memo.image_filename) }}"
-                                    class="img-fluid rounded mb-3"
-                                    width="100"
-                                    height=""
-                                    alt="記事画像">
+                                         class="img-fluid rounded mb-3"
+                                         width="100"
+                                         height=""
+                                         alt="記事画像">
                                 {% endif %}
                             </td>
-                            <td>2026年1月22日(金)</td>
-                            <td>
-                                <a class="btn btn-outline-secondary"
-                                   href="{{ url_for('memo.update', memo_id=memo.id) }}">編集</a>
+                            <td class="align-middle">
+                                <i class="fa fa-calendar-o"></i>
+                                {{ memo.created_at.strftime("%Y年%m月%d日") }}
+                                <br>
+                                {{ memo.created_at.strftime("%H時%M分%S秒") }}
+                                ({{ memo.weekday_ja }})
                             </td>
                             <td>
                                 <a class="btn btn-outline-secondary"
-                                   href="{{ url_for('memo.delete', memo_id=memo.id) }}">削除</a>
+                                   href="{{ url_for('memo.update', memo_id=memo.id) }}"><i class="fa fa-pencil"></i>編集</a>
+                            </td>
+                            <td>
+                                <a class="btn btn-outline-secondary"
+                                   href="{{ url_for('memo.delete', memo_id=memo.id) }}"><i class="fa fa-trash-o"></i>削除</a>
                             </td>
                         </tr>
                     {% endfor %}
@@ -59,5 +71,4 @@
             </table>
         </div>
     {% endif %}
-    
 {% endblock content %}
