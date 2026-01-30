@@ -1,9 +1,0 @@
-{% extends "base.j2" %}
-{% block content %}
-    <h2>{{ memo.title }}</h2>
-    <p>{{ memo.content }}</p>
-    <p>投稿者: {{ memo.user.username }}</p>
-    <p>投稿日時: {{ memo.created_at.strftime("%Y-%m-%d %H:%M") }}</p>
-    <p>❤️ {{ like_count }} いいね</p>
-    <a href="{{ url_for('public.index') }}">一覧へ戻る</a>
-{% endblock %}

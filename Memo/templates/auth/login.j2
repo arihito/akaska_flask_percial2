@@ -9,12 +9,9 @@
                 {{ render_floating_field(form.username, "Email address") }}
                 {{ render_floating_field(form.password, "Password") }}
                 {{ form.submit(class="btn btn-outline-secondary w-100") }}
-                <div class="form-check text-start my-3">
-                    <input class="form-check-input"
-                           type="checkbox"
-                           value="remember-me"
-                           id="checkDefault">
-                    <label class="form-check-label" for="checkDefault">入力を保持する</label>
+                <div class="form-check my-3 text-start">
+                    {{ form.remember(class="form-check-input") }}
+                    {{ form.remember.label(class="form-check-label") }}
                 </div>
                 <p class="my-4">
                     アカウントをお持ちでない場合は

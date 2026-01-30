@@ -21,7 +21,7 @@
                                 </h3>
                                 <h2 class="card-title display-6 link-body-emphasis mb-1">{{ top1.memo.title }}</h2>
                                 <p class="blog-post-meta">
-                                    {{ top1.memo.created_at.strftime("%Y-%m-%d") }} by <a href="#">{{ top1.memo.user.username }}</a>❤️ {{ top1.like_count }} いいね
+                                    {{ top1.memo.created_at.strftime("%Y-%m-%d") }} by {{ top1.memo.user.username }}❤️ {{ top1.like_count }} いいね
                                 </p>
                                 <p class="card-text">{{ top1.memo.content }}</p>
                             </div>
@@ -44,14 +44,22 @@
                     {% set memo = row.memo %}
                     {% set like_count = row.like_count %}
                     <div class="col-md-6">
-                        <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-300 position-relative">
+                        <div class="text-white-50 row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-300 position-relative">
                             <div class="memo-img-wrap">
-                                <img src="{{ url_for('static', filename='images/memo/' ~ memo.image_filename) }}" alt="記事画像" width="" height="">
+                                <a href="{{ url_for('public.detail', memo_id=row.memo.id) }}"
+                                    class="text-decoration-none">
+                                    <img src="{{ url_for('static', filename='images/memo/' ~ memo.image_filename) }}"
+                                        alt="記事画像"
+                                        width=""
+                                        height="">
+                                </a>
                             </div>
                             <div class="col p-4 d-flex flex-column position-static">
-                                <strong class="d-inline-block mb-2 text-primary-emphasis">{{ memo.user.username }}</strong>
-                                <h3 class="mb-0">{{ memo.title }}</h3>
-                                <div class="mb-1 text-body-secondary">{{ memo.created_at.strftime("%Y-%m-%d") }}</div>
+                                <strong class="d-inline-block mb-2">{{ memo.user.username }}</strong>
+                                <h3 class="mb-0 text-white">{{ memo.title }}</h3>
+                                <div class="mb-1 text-body-secondary">
+                                    <i class="fa fa-calendar-o"></i> {{ memo.created_at.strftime("%Y年%m月%d日") }}
+                                </div>
                                 <p class="card-text mb-auto">{{ memo.content }}</p>
                                 {% if current_user.is_authenticated and memo.user_id != current_user.id %}
                                     <div class="like-area" data-memo-id="{{ memo.id }}">
@@ -75,38 +83,26 @@
                     </div>
                 {% endfor %}
             </div>
-            <nav class="blog-pagination" aria-label="Pagination">
-                <a class="btn btn-outline-primary rounded-pill" href="#">過去の記事</a>
-                <a class="btn btn-outline-secondary rounded-pill disabled">最新</a>
-            </nav>
-        </div>
-        <aside class="sidebar col-md-3">
-            <div class="position-sticky" style="top: 2rem;">
-                <div class="mb-3">
-                    <h4 class="fst-italic">❤️いいねランキングTOP10</h4>
-                    <p class="mb-0">皆さんが「いいね」を押した数の多い順上位10個の記事を紹介しています。</p>
-                </div>
-                <ul class="list-unstyled">
-                    {% for row in top10 %}
-                        <li>
-                            <a class="d-flex flex-column flex-lg-row gap-3 align-items-start align-items-lg-center py-3 link-body-emphasis text-decoration-none border-top"
-                               href="{{ url_for('public.detail', memo_id=row.memo.id) }}">
-                                <img class="rounded-end"
-                                     src="{{ url_for('static', filename='images/memo/' ~ row.memo.image_filename) }}"
-                                     width="96"
-                                     height="96"
-                                     alt="記事画像"
-                                     style="object-fit: cover">
-                                <div class="col-lg-8">
-                                    <h6 class="mb-0">{{ row.memo.title }}</h6>
-                                    <small class="text-body-secondary">{{ row.memo.created_at.strftime("%Y-%m-%d") }}</small>
-                                    <span>❤️ {{ row.like_count }}</span>
-                                </div>
-                            </a>
+            <nav aria-label="Page navigation" class="my-5">
+                <ul class="pagination justify-content-center pagination-secondary">
+                    <li class="page-item {% if page == 1 %}disabled{% endif %}">
+                        <a class="page-link d-flex align-items-center justify-content-center h-100"
+                            href="?page={{ page - 1 }}"
+                            aria-label="Previous"><i class="fa fa-arrow-left"></i></a>
+                    </li>
+                    {% for p in range(1, total_pages + 1) %}
+                        <li class="page-item {% if p == page %}active{% endif %}">
+                            <a class="page-link" href="?page={{ p }}">{{ p }}</a>
                         </li>
                     {% endfor %}
+                    <li class="page-item {% if page == total_pages %}disabled{% endif %}">
+                        <a class="page-link d-flex align-items-center justify-content-center h-100"
+                            href="?page={{ page + 1 }}"
+                            aria-label="Next"><i class="fa fa-arrow-right"></i></a>
+                    </li>
                 </ul>
-            </div>
-        </aside>
+            </nav>
+        </div>
+        {% include "public/aside.j2" %}
     </div>
 {% endblock content %}

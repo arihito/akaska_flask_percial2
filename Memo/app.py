@@ -6,10 +6,13 @@ from public.views import public_bp
 from auth.views import auth_bp
 from memo.views import memo_bp
 from favorite.views import favorite_bp
+from flask_debugtoolbar import DebugToolbarExtension
 
 app = Flask(__name__)
 app.config.from_object('config.Config')
 db.init_app(app)
+app.debug = True
+toolbar = DebugToolbarExtension(app)
 migrate = Migrate(app, db)
 login_manager = LoginManager()
 login_manager.init_app(app) # Flaskアプリに紐付け

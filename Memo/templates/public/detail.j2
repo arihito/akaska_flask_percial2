@@ -1,0 +1,23 @@
+{% extends "base.j2" %}
+{% block content %}
+<style>
+    .article-img {
+        height: 300px;
+        background-image: url("{{ url_for('static', filename='images/memo/' ~ memo.image_filename) }}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        filter: grayscale(100%);
+    }
+</style>
+    <div class="mb-4 rounded text-body-emphasis bg-body-secondary article-img"></div>
+    <div class="row">
+        <div class="col-md-9">
+            <h1 class="display-4 my-3 pb-4 border-bottom">{{ memo.title }}</h1>
+            <p><i class="fa fa-user"></i>投稿者: {{ memo.user.username }}<span class="px-2">|</span> <i class="fa fa-calendar"></i>投稿日時: {{ memo.created_at.strftime("%Y-%m-%d %H:%M") }}<span class="px-2">|</span> ❤️ {{ like_count }} いいね</p>
+            <p class="markdown-body">{{ memo.content | markdown | safe }}</p>
+            <a class="btn btn-secondary btn-lg" href="{{ url_for('public.public_index') }}">一覧へ戻る</a>
+        </div>
+        {% include "public/aside.j2" %}
+    </div>
+{% endblock %}

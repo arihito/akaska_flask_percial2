@@ -116,6 +116,28 @@ h6 {
     margin-bottom: 4rem;
 }
 
+.pagination-secondary .page-link {
+    color: var(--bs-secondary);
+}
+
+.pagination-secondary .page-link:hover {
+    color: var(--bs-secondary);
+    background-color: var(--bs-secondary-bg-subtle);
+    border-color: var(--bs-secondary-border-subtle);
+}
+
+.pagination-secondary .page-item.active .page-link {
+    color: #fff;
+    background-color: var(--bs-secondary);
+    border-color: var(--bs-secondary);
+}
+
+.pagination-secondary .page-item.disabled .page-link {
+    color: var(--bs-secondary-color);
+    background-color: var(--bs-secondary-bg);
+    border-color: var(--bs-secondary-border-subtle);
+}
+
 /*
  * ブログ投稿
  */
@@ -220,7 +242,7 @@ h6 {
 .memo-img-wrap img,
 .table-responsive img,
 .recommend img {
-    filter: grayscale(100%)
+    filter: grayscale(100%);
 }
 
 /* キービジュアル */

@@ -12,7 +12,7 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link {% if request.endpoint == 'memo.create' %}active{% endif %}"
-                   href="{{ url_for('memo.create') }}"><i class="fa fa-plus"></i>記事追加</a>
+                   href="{{ url_for('memo.create') }}"><i class="fa fa-plus-square"></i>記事追加</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link {% if request.endpoint == 'auth.edit' %}active{% endif %}" href="{{ url_for('auth.edit') }}"><i class="fa fa-user"></i>ユーザ管理</a>
@@ -52,14 +52,14 @@
             </div>
             <div class="accordion-item">
                 <h2 class="accordion-header">
-                    <button class="accordion-button collapsed"
+                    <button class="accordion-button"
                             type="button"
                             data-bs-toggle="collapse"
                             data-bs-target="#panelsStayOpen-collapseTwo"
-                            aria-expanded="false"
+                            aria-expanded="true"
                             aria-controls="panelsStayOpen-collapseTwo"><i class="fa fa-database"></i>バックアップ</button>
                 </h2>
-                <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse">
+                <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse show">
                     <div class="accordion-body">
                         <ul class="nav flex-column">
                             <li class="nav-item">
@@ -73,14 +73,14 @@
             </div>
             <div class="accordion-item">
                 <h2 class="accordion-header">
-                    <button class="accordion-button collapsed"
+                    <button class="accordion-button"
                             type="button"
                             data-bs-toggle="collapse"
                             data-bs-target="#panelsStayOpen-collapseThree"
-                            aria-expanded="false"
+                            aria-expanded="true"
                             aria-controls="panelsStayOpen-collapseThree"><i class="fa fa-book"></i>外部資料</button>
                 </h2>
-                <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse">
+                <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse show">
                     <div class="accordion-body">
                         <ul class="nav flex-column">
                             <li class="nav-item">

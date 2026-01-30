@@ -10,6 +10,8 @@ auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 @auth_bp.route('/', methods=['GET', 'POST'])
 def login():
+	if current_user.is_authenticated:
+		return redirect(url_for('memo.index'))
 	form = LoginForm() # ログインフォームクラスの読み込み
 	if form.validate_on_submit():
 		username = form.username.data
@@ -18,8 +20,8 @@ def login():
 		# ユーザが存在し正しいパスワードであれば
 		if user is not None and user.check_password(password):
 			# ログイン状態に変換
-			login_user(user)
-			return redirect(url_for('memo.index'))
+			login_user(user, remember=form.remember.data)
+		return redirect(url_for('memo.index'))
 		flash('認証不備です')
 	return render_template('auth/login.j2', form=form)
 

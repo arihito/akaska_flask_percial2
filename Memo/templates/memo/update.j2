@@ -1,24 +1,33 @@
 {% extends "memo/base.j2" %}
 {% block content %}
-    <h1>メモを編集</h1>
     {% from 'memo/_formhelpers.j2' import render_field %}
     <div class="d-flex align-items-center py-4 m-5">
         <div class="form-signin p-5 w-50 m-auto">
+            <h1><i class="fa fa-pencil"></i> メモを編集</h1>
             <form action="{{ url_for('memo.update', memo_id=memo.id) }}"
                 method="post"
                 enctype="multipart/form-data"
                 novalidate>
                 {{ form.hidden_tag() }}
                 {{ render_field(form.title) }}
-                {{ render_field(form.content,
-                                attrs={"rows": 5, "class": "form-control form-control-lg"}) }}
+                <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
+                <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
+                {{ render_field(form.content) }}
+                <script>
+                const easyMDE = new EasyMDE({
+                    element: document.getElementById("content"),
+                    spellChecker: false,
+                    autofocus: true,
+                    placeholder: "Markdownで本文を入力してください"
+                });
+                </script>
                 <div class="d-flex justify-content-between">
                     {{ render_field(form.image) }}
                     {% if memo.image_filename %}
                         <img src="{{ url_for('static', filename='images/memo/' ~ memo.image_filename) }}"
                         class="image-fluid rounded"
-                        width="100"
-                        height=""
+                        width=""
+                        height="58"
                         alt="記事画像">
                     {% endif %}
                 </div>

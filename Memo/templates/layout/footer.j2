@@ -1,6 +1,10 @@
 <footer class="py-5 text-center text-body-secondary bg-body-tertiary">
-    <p>このFlask tech blogはFlaskを学習用として構築しています。</p>
-    <p class="mb-0">
-        <a href="#">ページ上部へ戻る</a>
-    </p>
+    <p>このFlask tech blogはFlask学習用として構築しています。</p>
+    <nav class="blog-pagination" aria-label="Pagination">
+        <a class="btn btn-outline-primary rounded-pill" href="{{ url_for('public.public_index') }}">ページ上部へ戻る</a>
+        <span> | </span>
+        <a class="btn btn-outline-secondary rounded-pill" href="{{ url_for('public.public_index') }}">個人情報保護法</a>
+        <span> | </span>
+        <a class="btn btn-outline-secondary rounded-pill" href="{{ url_for('public.public_index') }}">著作権保護法</a>
+    </nav>
 </footer>

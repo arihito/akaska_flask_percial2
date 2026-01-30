@@ -13,7 +13,7 @@
                            href="{{ url_for('auth.register') }}"><i class="fa fa-user-plus"></i> 新規登録</a>
                     </div>
                 {% elif current_user.is_authenticated %}
-                    <a class="me-3" href="{{ url_for('memo.index') }}"><i class="fa fa-user-circle"></i> {{ current_user.username }}さん</a>
+                    <a class="me-3 text-white-50" href="{{ url_for('memo.index') }}"><i class="fa fa-user-circle"></i> {{ current_user.username }}さん</a>
                     <a class="btn btn-outline-secondary" href="{{ url_for('auth.logout') }}"><i class="fa fa-sign-out"></i> ログアウト</a>
                 {% endif %}
             </div>
@@ -21,18 +21,18 @@
     </header>
     <div class="nav-scroller py-1 mb-3 border-bottom">
         <nav class="nav nav-underline justify-content-between">
-            <a class="nav-item nav-link link-body-emphasis active" href="#">全体</a>
-            <a class="nav-item nav-link link-body-emphasis" href="#">Python</a>
-            <a class="nav-item nav-link link-body-emphasis" href="#">Flask</a>
-            <a class="nav-item nav-link link-body-emphasis" href="#">フロントエンド</a>
-            <a class="nav-item nav-link link-body-emphasis" href="#">UI/UX</a>
-            <a class="nav-item nav-link link-body-emphasis" href="#">データベース</a>
-            <a class="nav-item nav-link link-body-emphasis" href="#">認証</a>
-            <a class="nav-item nav-link link-body-emphasis" href="#">設計</a>
-            <a class="nav-item nav-link link-body-emphasis" href="#">API</a>
-            <a class="nav-item nav-link link-body-emphasis" href="#">パフォーマンス</a>
-            <a class="nav-item nav-link link-body-emphasis" href="#">運用</a>
-            <a class="nav-item nav-link link-body-emphasis" href="#">デプロイ</a>
+            <a class="nav-item nav-link link-body-emphasis active" href="{{ url_for('public.public_index') }}"><i class="fa fa-"></i>トップ</a>
+            <a class="nav-item nav-link link-body-emphasis active" href="#"><i class="fa fa-"></i>CRUD</a>
+            <a class="nav-item nav-link link-body-emphasis active" href="#"><i class="fa fa-"></i>コード整形</a>
+            <a class="nav-item nav-link link-body-emphasis" href="#"><i class="fa fa-"></i>ページング</a>
+            <a class="nav-item nav-link link-body-emphasis" href="#"><i class="fa fa-"></i>並び替え</a>
+            <a class="nav-item nav-link link-body-emphasis" href="#"><i class="fa fa-"></i>検索</a>
+            <a class="nav-item nav-link link-body-emphasis" href="#"><i class="fa fa-"></i>ファイルアップロード</a>
+            <a class="nav-item nav-link link-body-emphasis" href="#"><i class="fa fa-"></i>ドラッグ&ドロップ</a>
+            <a class="nav-item nav-link link-body-emphasis" href="#"><i class="fa fa-"></i>Googleログイン</a>
+            <a class="nav-item nav-link link-body-emphasis" href="#"><i class="fa fa-"></i>カード決済</a>
+            <a class="nav-item nav-link link-body-emphasis" href="#"><i class="fa fa-"></i>多言語設定</a>
+            <a class="nav-item nav-link link-body-emphasis" href="#"><i class="fa fa-"></i>デプロイ</a>
         </nav>
     </div>
 </div>
