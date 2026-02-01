@@ -1,7 +1,187 @@
 {% extends "fixed/base.j2" %}
-
 {% block article_body %}
-<p>
-このアプリは Flask で作られたシンプルなメモアプリです。
-</p>
+<p>画像や文書ファイルを安全に保存するFlaskの標準機能。</p>
+<pre class="file-tag" data-tag="console"><code>mkdir -p file_upload/uploads file_upload/templates && \
+t file_upload/app.py file_upload/templates/upload.j2 && \
+c file_upload/app.py file_upload/templates/upload.j2 && \
+cd file_upload && flr
+
+[ file_upload ]
+   ├─ 📁templates
+   │     └─ 📄upload.j2
+   ├─ 📁uploads
+   └─ 📄app.py
+</code></pre>
+<pre class="file-tag" data-tag="views.py"><code>from flask import Flask, request, redirect
+from werkzeug.utils import secure_filename
+import os
+
+app = Flask(__name__)
+UPLOAD_DIR = 'images'
+
+@app.route('/', methods=['POST'])
+def upload():
+    file = request.files.get('img')
+    if not file or file.filename == ':
+        return 'No file', 400
+		# 同時アップロードの上書き防止のため仮名付与
+    filename = secure_filename(file.filename)
+    file.save(os.path.join(UPLOAD_DIR, filename))
+    return 'OK'
+</code></pre>
+<pre class="file-tag" data-tag="templates/upload.j2"><code>&lt;form method="post" action="&#123;&#123; url_for("upload") &#125;&#125;" enctype="multipart/form-data"&gt;
+    &lt;input type="file" name="img"&gt;
+    &lt;button type="submit"&gt;Upload&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+<h3 class="display-6 mt-5 mb-2"><i class="fa fa-cogs"></i> オプション機能</h3>
+<ul class="list-group my-3">
+<li class="list-group-item"><i class="fa fa-circle"></i> 拡張子増減管理</li>
+<li class="list-group-item"><i class="fa fa-circle"></i> static以下にアップロード</li>
+<li class="list-group-item"><i class="fa fa-circle"></i> <code>pathlib</code>によるアップロード画像一覧表示</li>
+<li class="list-group-item"><i class="fa fa-circle"></i> 画像削除ボタン</li>
+<li class="list-group-item"><i class="fa fa-circle"></i> 画像破損チェック、拡張子偽装検出セキュリティ対策</li>
+<li class="list-group-item"><i class="fa fa-circle"></i> サムネイル作成　サムネイルから標準画像切替え表示</li>
+</ul>
+<pre class="file-tag" data-tag="console"><code>mkdir -p static/images/thumbs && r uploads && pi pillow
+[ file_upload ]
+   ├─ 📁static
+   │     └─ 📁images # 通常画像
+   │           └─ 📁thumbs # サムネイル画像
+   ├─ 📁templates
+   │     └─ 📄upload.j2
+   └─ 📄app.py
+</code></pre>
+  <pre class="file-tag" data-tag="app.py"><code>from flask import Flask, render_template, request, redirect, url_for
+from werkzeug.utils import secure_filename
+from pathlib import Path
+
+# pip install pillow
+from PIL import Image
+
+app = Flask(__name__)
+
+# アップロード先のパス
+UPLOAD_DIR = Path('static/images')
+# サムネイル用のパス
+THUMB_DIR = Path('static/images/thumbs')
+THUMB_DIR.mkdir(exist_ok=True)
+
+# 検証用拡張子
+ALLOWED_FORMATS = {'JPEG', 'PNG', 'WEBP'}
+
+# ファイルフォーマットの検証(拡張子偽装防止)
+def is_valid_image(file_storage) -> bool:
+    try:
+        img = Image.open(file_storage)
+        img.verify()  # 画像破損・偽装検出
+        return img.format in ALLOWED_FORMATS
+    except Exception:
+        return False
+
+# サムネイル生成関数
+def create_thumbnail(src: Path, size=(100, 100)):
+    thumb_path = THUMB_DIR / src.name
+    with Image.open(src) as img:
+        img.thumbnail(size)
+        img.save(thumb_path)
+
+# リダイレクト用トップ
+@app.route('/')
+def index():
+    return redirect(url_for('upload'))
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload():
+    images = sorted((
+        p for p in UPLOAD_DIR.iterdir()
+        # ファイルが存在し、接尾辞に以下の拡張子が含まれていれば
+        if p.is_file() and p.suffix.lower() in {'.jpg', '.png', '.webp'}
+      ),
+      key=lambda p: p.stat().st_mtime,  # 更新日時順
+      reverse=True,  # 同日の場合は新しい順
+    )
+    # static からの相対パスをPOSIX形式へ変換
+    image_urls = [p.relative_to('static').as_posix() for p in images]
+    thumb_urls = [
+        (THUMB_DIR / p.name).relative_to('static').as_posix()
+        for p in images
+    ]
+    image_both = [
+        {
+            'image': (UPLOAD_DIR / p.name).relative_to('static').as_posix(),
+            'thumb': (THUMB_DIR / p.name).relative_to('static').as_posix(),
+            'name': p.name,
+        }
+        for p in images
+    ]
+    if request.method == 'POST':
+        file = request.files.get('img')
+        if not file or file.filename == '':
+            return '空送信かファイル名がありません', 400
+        if not is_valid_image(file):
+            return '画像ファイルとして拒否されました', 400
+
+        # verifyはファイル整合性チェック専用のため
+        # その後はファイルポインタを先頭に必ず巻き戻す
+        file.seek(0)
+
+        filename = secure_filename(file.filename)
+        save_path = UPLOAD_DIR / filename
+        file.save(save_path)
+        # サムネイル生成
+        create_thumbnail(save_path)
+
+        return redirect(url_for('upload'))
+    return render_template('upload.j2', images=image_urls, thumbs=thumb_urls, imageboth=image_both)
+
+# 削除
+@app.route('/delete/<name>', methods=['POST'])
+def delete(name):
+    filename = secure_filename(name)
+
+    image_path = UPLOAD_DIR / filename
+    thumb_path = THUMB_DIR / filename
+
+    if image_path.exists():
+        image_path.unlink()
+    if thumb_path.exists():
+        thumb_path.unlink()
+
+    return redirect(url_for('upload'))
+</code></pre>
+<pre class="file-tag" data-tag="templates/upload.j2"><code>&lt;form method=&quot;post&quot; action=&quot;&#123;&#123; url_for(&#x27;upload&#x27;) &#125;&#125;&quot; enctype=&quot;multipart/form-data&quot;&gt;
+  &lt;input type=&quot;file&quot; name=&quot;img&quot;&gt;
+  &lt;button type=&quot;submit&quot;&gt;アップロード&lt;/button&gt;
+&lt;/form&gt;
+&lt;p&gt;通常画像: &#123;&#123; images or &#x27;まだアップされていません&#x27; &#125;&#125;&lt;/p&gt;
+&#123;&#37;  for img in images &#37;&#125;
+  &lt;div&gt;
+    &lt;img src=&quot;&#123;&#123; url_for(&#x27;static&#x27;, filename=img) &#125;&#125;&quot; width=&quot;200&quot; height=&quot;&quot; alt=&quot;&quot;&gt;
+    &lt;form method=&quot;post&quot; action=&quot;&#123;&#123; url_for(&#x27;delete&#x27;, name=img.split(&#x27;/&#x27;)[-1] ) &#125;&#125;&quot;&gt;
+      &lt;button type=&quot;submit&quot;&gt;削除&lt;/button&gt;
+    &lt;/form&gt;
+  &lt;/div&gt;
+&#123;&#37;  endfor &#37;&#125;
+&lt;p&gt;サムネイル: &#123;&#123; thumbs or &#x27;まだアップされていません&#x27; &#125;&#125;&lt;/p&gt;
+&#123;&#37;  for thu in thumbs &#37;&#125;
+  &lt;div&gt;
+    &lt;img src=&quot;&#123;&#123; url_for(&#x27;static&#x27;, filename=thu) &#125;&#125;&quot; width=&quot;&quot; height=&quot;&quot; alt=&quot;&quot;&gt;
+    &lt;form method=&quot;post&quot; action=&quot;&#123;&#123; url_for(&#x27;delete&#x27;, name=thu.split(&#x27;/&#x27;)[-1] ) &#125;&#125;&quot;&gt;
+      &lt;button type=&quot;submit&quot;&gt;削除&lt;/button&gt;
+    &lt;/form&gt;
+  &lt;/div&gt;
+&#123;&#37;  endfor &#37;&#125;
+&#123;&#37;  for item in imageboth &#37;&#125;
+  &lt;a href=&quot;&#123;&#123; url_for(&#x27;static&#x27;, filename=item.image) &#125;&#125;&quot;&gt;
+    &lt;img src=&quot;&#123;&#123; url_for(&#x27;static&#x27;, filename=item.thumb) &#125;&#125;&quot; width=&quot;&quot; height=&quot;&quot; alt=&quot;&quot;&gt;
+  &lt;/a&gt;
+  &lt;form method=&quot;post&quot; action=&quot;&#123;&#123; url_for(&#x27;delete&#x27;, name=item.name) &#125;&#125;&quot;&gt;
+    &lt;button type=&quot;submit&quot;&gt;削除&lt;/button&gt;
+  &lt;/form&gt;
+&#123;&#37;  endfor &#37;&#125;</code></pre>
+<p>一意な日付プレフィックスを付与(jpgのみ対応)</p>
+<pre class="file-tag" data-tag="app.py"><code>from datetime import datetime
+filename = photos.save(request.files[&#x27;photo&#x27;], name=datetime.now().strftime(&quot;%Y%m%d_%H%M%S_&quot;) + &#x27;.jpg&#x27;)</code></pre>
+<p>ランダムな一意ファイル名付与</p>
+<pre class="file-tag" data-tag="app.py"><code>filename = photos.save(request.files[&#x27;photo&#x27;], name=&quot;unique_&quot;, chunk_size=4096)</code></pre>
 {% endblock %}

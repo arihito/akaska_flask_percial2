@@ -1,7 +1,250 @@
 {% extends "fixed/base.j2" %}
-
 {% block article_body %}
-<p>
-このアプリは Flask で作られたシンプルなメモアプリです。
-</p>
+  <p>モダンなドラッグ＆ドロップ形式のファイルアップロードフォーム、flaskの標準関数として同梱。</p>
+  <ul class="list-group my-3">
+    <li class="list-group-item"><i class="fa fa-circle"></i> Dropzone.js を用いたフロント側 UI</li>
+    <li class="list-group-item"><i class="fa fa-circle"></i> Flask 側でファイル受信</li>
+    <li class="list-group-item"><i class="fa fa-circle"></i> 任意ディレクトリへ保存</li>
+    <li class="list-group-item"><i class="fa fa-circle"></i> 成功レスポンスを Dropzone に返す</li>
+  </ul>
+  <pre class="file-tag" data-tag="console"><code>mkdir -p file_drugdrop/static/images file_drugdrop/templates &amp;&amp; \
+t file_drugdrop/app.py file_drugdrop/tempmlates/upload.j2 &amp;&amp; \
+cd file_drugdrop
+
+[ file_drugdrop ]
+   ├─ 📁static
+   │     └─ 📁image
+   ├─ 📁templates
+   │     └─ 📄upload.j2
+   └─ 📄app.py</code></pre>
+  <p>Dropzoneからのアップロードを受け取った後、サーバーに保存する。</p>
+  <pre class="file-tag" data-tag="app.py"><code>import os
+from flask import Flask, request, render_template, jsonify
+
+app = Flask(__name__)
+app.config[&#x27;UPLOAD_FOLDER&#x27;] = &#x27;static/uploads&#x27;
+
+@app.route(&quot;/&quot;)
+def index():
+    return render_template(&quot;upload.j2&quot;)
+
+@app.route(&quot;/upload&quot;, methods=[&quot;POST&quot;])
+def upload():
+    if &quot;file&quot; not in request.files:
+        return jsonify({&quot;error&quot;: &quot;No file part&quot;}), 400
+
+    file = request.files[&quot;file&quot;]
+
+    if file.filename == &quot;&quot;:
+        return jsonify({&quot;error&quot;: &quot;ファイルを選択できませんでした&quot;}), 400
+
+    # 保存先パス作成
+    save_path = os.path.join(app.config[&#x27;UPLOAD_FOLDER&#x27;], file.filename)
+    file.save(save_path)
+
+    return jsonify({&quot;success&quot;: True, &quot;filename&quot;: file.filename})
+
+if __name__ == &quot;__main__&quot;:
+    app.run(debug=True)</code></pre>
+  <pre class="file-tag" data-tag="templates/upload.j2"><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;ja&quot;&gt;
+  &lt;head&gt;
+    &lt;meta charset=&quot;utf-8&quot;&gt;
+    &lt;title&gt;Dropzone Upload&lt;/title&gt;
+    &lt;!-- Dropzone CDN --&gt;
+    &lt;link rel=&quot;stylesheet&quot;
+          href=&quot;https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/basic.min.css&quot; /&gt;
+    &lt;link rel=&quot;stylesheet&quot;
+          href=&quot;https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.css&quot; /&gt;
+    &lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.js&quot;&gt;&lt;/script&gt;
+    &lt;style&gt;
+        .dz-message {
+            font-size: 20px;
+            color: #666;
+        }
+        .dropzone {
+            border: 2px dashed #777;
+            border-radius: 10px;
+            background: #f9f9f9;
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+
+&lt;h2&gt;Drag &amp; Drop File Upload&lt;/h2&gt;
+
+&lt;!-- Dropzone Form --&gt;
+&lt;form action=&quot;/upload&quot; class=&quot;dropzone&quot; id=&quot;myDropzone&quot;&gt;&lt;/form&gt;
+
+&lt;script&gt;
+    Dropzone.options.myDropzone = {
+        paramName: &quot;file&quot;,
+        maxFilesize: 5, // MB
+        acceptedFiles: &quot;.png,.jpg,.jpeg,.gif&quot;,
+
+        init: function() {
+            this.on(&quot;success&quot;, function(file, response) {
+                console.log(&quot;Uploaded:&quot;, response);
+            });
+
+            this.on(&quot;error&quot;, function(file, message) {
+                console.error(&quot;Error:&quot;, message);
+            });
+        }
+    };
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+  <h3 class="display-6 mt-5 mb-2"><i class="fa fa-sort-amount-asc"></i> リアルタイムフェード表示</h3>
+  <pre class="file-tag" data-tag="app.py"><code>import os
+from flask import Flask, request, render_template, jsonify
+from pathlib import Path
+
+app = Flask(__name__)
+app.config[&#x27;UPLOAD_FOLDER&#x27;] = &#x27;static/images&#x27;
+
+IMAGE_DIR = Path(&quot;static/images&quot;)
+ALLOWED_SUFFIXES = {&quot;.jpg&quot;, &quot;.png&quot;}
+
+def get_images():
+    return sorted(
+      (
+          p.relative_to(&quot;static&quot;).as_posix()
+          for p in IMAGE_DIR.iterdir()
+          if p.is_file() and p.suffix.lower() in ALLOWED_SUFFIXES
+      ),
+      reverse=True
+    )
+
+@app.route(&quot;/&quot;)
+def index():
+    return render_template(&quot;upload.j2&quot;, images=get_images())
+
+@app.route(&quot;/upload&quot;, methods=[&quot;GET&quot;, &quot;POST&quot;])
+def upload():
+
+    if request.method == &quot;POST&quot;:
+      if &quot;file&quot; not in request.files:
+          return jsonify({&quot;error&quot;: &quot;No file part&quot;}), 400
+
+      file = request.files[&quot;file&quot;]
+
+      if file.filename == &quot;&quot;:
+          return jsonify({&quot;error&quot;: &quot;ファイルを選択できませんでした&quot;}), 400
+
+      # 保存先パス作成
+      save_path = os.path.join(app.config[&#x27;UPLOAD_FOLDER&#x27;], file.filename)
+      file.save(save_path)
+
+      return jsonify({&quot;success&quot;: True, &quot;filename&quot;: file.filename})
+    return render_template(&quot;upload.j2&quot;, images=get_images())
+
+if __name__ == &quot;__main__&quot;:
+    app.run(debug=True)
+</code></pre>
+  <pre class="file-tag" data-tag="templates/upload.j2"><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;ja&quot;&gt;
+  &lt;head&gt;
+    &lt;meta charset=&quot;utf-8&quot;&gt;
+    &lt;title&gt;Dropzone Upload&lt;/title&gt;
+    &lt;meta name=&quot;description&quot; content=&quot;&quot;&gt;
+    &lt;meta name=&quot;keywords&quot; content=&quot;&quot;&gt;
+    &lt;!-- Dropzone CDN --&gt;
+    &lt;link rel=&quot;stylesheet&quot;
+          href=&quot;https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/basic.min.css&quot; /&gt;
+    &lt;link rel=&quot;stylesheet&quot;
+          href=&quot;https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.css&quot; /&gt;
+    &lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.js&quot;&gt;&lt;/script&gt;
+    &lt;style&gt;
+        .dz-message {
+            font-size: 20px;
+            color: #666;
+        }
+        .dropzone {
+            border: 2px dashed #777;
+            border-radius: 10px;
+            background: #f9f9f9;
+        }
+        .fade-img {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-img.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    &lt;/style&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h2&gt;Drag &amp; Drop File Upload&lt;/h2&gt;
+    &lt;!-- Dropzone Form --&gt;
+    &lt;form action=&quot;/upload&quot; class=&quot;dropzone&quot; id=&quot;myDropzone&quot;&gt;
+    &lt;/form&gt;
+    &lt;div class=&quot;image-list&quot;&gt;
+      &#37;&#123; for img in images &#37;&#125;
+        &lt;img src=&quot;&#123;&#123; url_for(&#x27;static&#x27;, filename=img) &#125;&#125;&quot;
+             class=&quot;fade-img&quot;
+             width=&quot;120&quot;
+             height=&quot;&quot;
+             alt=&quot;&quot;&gt;
+      &#37;&#123; endfor &#37;&#125;
+    &lt;/div&gt;
+    &lt;script&gt;
+Dropzone.options.myDropzone = {
+    paramName: &quot;file&quot;,
+    maxFilesize: 5,
+    acceptedFiles: &quot;.png,.jpg,.jpeg,.gif&quot;,
+
+    init: function () {
+        this.on(&quot;success&quot;, function (file, response) {
+
+            // アップロードされた画像パスを作成
+            const imgPath = &quot;/static/images/&quot; + file.name;
+
+            // img 要素作成
+            const img = document.createElement(&quot;img&quot;);
+            img.src = imgPath;
+            img.className = &quot;fade-img&quot;;
+            img.width = 120;
+
+            // 画像リストに追加
+            const container = document.querySelector(&quot;.image-list&quot;);
+            container.prepend(img);
+
+            // 次フレームでフェードイン
+            requestAnimationFrame(() =&gt; {
+                img.classList.add(&quot;is-visible&quot;);
+            });
+        });
+
+        this.on(&quot;error&quot;, function (file, message) {
+            console.error(&quot;Error:&quot;, message);
+        });
+    }
+};
+
+// 初期表示分のフェードイン
+document.addEventListener(&quot;DOMContentLoaded&quot;, () =&gt; {
+    document.querySelectorAll(&quot;.fade-img&quot;).forEach((img, index) =&gt; {
+        setTimeout(() =&gt; {
+            img.classList.add(&quot;is-visible&quot;);
+        }, index * 100);
+    });
+});
+    &lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<h3 class="display-6 mt-5 mb-2"><i class="fa fa-cogs"></i> 拡張案</h3>
+<p>必要であれば以下も作成できます。</p>
+<ul class="list-group my-3">
+<li class="list-group-item"><i class="fa fa-circle"></i> アップロード後にサムネイル生成（Pillow）</li>
+<li class="list-group-item"><i class="fa fa-circle"></i> S3 への自動転送（署名 URL でブラウザから直接アップロード）</li>
+<li class="list-group-item"><i class="fa fa-circle"></i> 多ファイルアップロードの進捗管理</li>
+<li class="list-group-item"><i class="fa fa-circle"></i> Flask-WTF + Dropzone の統合フォーム</li>
+<li class="list-group-item"><i class="fa fa-circle"></i> 非同期処理（Celery）と組み合わせた大容量アップロード</li>
+</ul>
 {% endblock %}
