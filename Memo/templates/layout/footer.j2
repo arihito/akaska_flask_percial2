@@ -1,11 +1,33 @@
-<footer class="py-5 text-center text-body-secondary bg-body-tertiary">
-    <p>このFlask tech blogはFlask学習用として構築しています。</p>
-    <nav class="blog-pagination" aria-label="Pagination">
-        {% for key, val in STATIC_PAGES.items(): %}
-            {% if loop.index > 11 %}
-                <a class="text-white-50 mx-3" href="{{ url_for('fixed.static_page', page_name=key) }}">{{ val }}</a><span> | </span>
-            {% endif %}
-        {% endfor %}
-    </nav>
-    <p class="text-muted">&copy;2026 Flask tech blog</p>    
+<footer class="pt-5 text-body-secondary bg-body-tertiary">
+  <div class="container">
+    <div class="row">
+      <div class="col-3 social-links d-flex gap-2">
+          <a href="https://github.com/arihito" target="_blank" class="text-white-50"><span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i><i class="fa fa-github fa-stack-1x"></i></span></a>
+          <a href="https://twitter.com/arihitter" target="_blank" class="text-white-50"><span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i><i class="fa fa-twitter fa-stack-1x"></i></span></a>
+          <a href="https://www.facebook.com/arihito" target="_blank" class="text-white-50"><span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i><i class="fa fa-facebook fa-stack-1x"></i></span></a>
+          <a href="https://www.instagram.com/arihito.m" target="_blank" class="text-white-50"><span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i><i class="fa fa-instagram fa-stack-1x"></i></span></a>
+          <a href="https://www.linkedin.com/in/arihito-matsuda-8049596a/" target="_blank" class="text-white-50"><span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i><i class="fa fa-linkedin fa-stack-1x"></i></span></a>
+      </div>
+      <div class="col-9">
+        <p class="col-10">このFlask tech blogは、職業訓練校の課題として、Flaskアプリケーションの開発学習を目的に作成しています。<br>
+        投稿記事のダミーテキストの一部は、AIによって生成しています。また、記事内容の正誤については、あくまで自身の理解をまとめたものですので、
+        参考程度にご覧いただけますと幸いです。
+        </p>
+        <nav class="blog-pagination">
+        <span>| </span>
+            {% for key, val in STATIC_PAGES.items(): %}
+                {% if loop.index > 11 %}
+                    <a class="text-white-50 mx-3" href="{{ url_for('fixed.static_page', page_name=key) }}">{{ val }}</a><span> | </span>
+                {% endif %}
+            {% endfor %}
+        </nav>
+      </div>
+    </div>
+  </div>
+  <hr>
+  <div class="container copyright text-center mt-3 pb-5">
+      <p>&copy;2026 <span>Copyright</span> <strong class="px-1 sitename">Flask tech blog</strong> <span>All Rights Reserved</span></p>
+      <div class="credits">
+      </div>
+  </div>
 </footer>

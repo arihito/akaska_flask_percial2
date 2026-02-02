@@ -1,6 +1,225 @@
 {% extends "fixed/base.j2" %}
 
 {% block article_body %}
-<pre><code>
+<p>多言語・多地域対応できる設計の<code><strong>i18n</strong></code><strong> (インターナショナライゼーション)</strong>と、特定の言語・地域向けに内容を具体化する<code><strong>l10n</strong></code><strong> (ローカライゼーション)</strong>がある。今回は、多言語対応のパッケージとして<code><strong>Flask-Babel</strong></code>を使用する。開発の過程で設計思想が分離することになった<strong>Flask-BabelEx</strong>もあるが、現在はメンテ停止中で非推奨となっている。</p>
+<p>インストールすることで<code>flask_babel</code>パッケージが使用できるほかに、内包する<code>babel</code>パッケージの機能としてコンソール上で<code>pybabel</code> コマンドが使用できるようになる。</p>
+<pre class="file-tag" data-tag="console"><code>📁Flask-Babel
+   └─ 📁Babel
+         └─ 📄pybabel(CLIツール)
+
+pybabel --help    # 使用コマンド一覧
+pybabel --version # バージョン</code></pre>
+<p>Flask-Babelのバージョンが2系3系4系に応じて、使用する<code>locale_selector</code> の書き方が異なるので注意する。最新の4系であればFlaskのバージョンは3が必要になる。</p>
+<pre class="file-tag" data-tag="console"><code>mkcd i18n i18n/templates &amp;&amp; t app.py babel.cfg templates/index.j2 &amp;&amp; \
+pi flask &amp;&amp; pi Flask-Babel
+[ i18n ]
+   ├─ 📁templates
+   │     └─ 📄index.j2
+   ├─ 📄app.py
+   └─ 📄babek.cfg
+   
+pip show flask-babel
+Name: flask-babel
+Version: 4.0.0</code></pre>
+<p>アプリにBabelを登録したら、デコレータを設定する。URLパラメータ、セッション、DevToolsのNetworkタブ内で参照可能なAccept-Languageの順で値を取得し、存在すれば、現在、使用する言語として値を返す。</p>
+<p>また<code>gettext</code> はその返された言語をもとに<code>.mo</code>ファイルを参照し翻訳された文字列に置換する。つまり、翻訳対象の文字列は全てgettextで大量に囲っていく必要があるため、一般的には短縮形の<code>_</code>を使用して効率よく付与させていく。ただし、冗長に付与するのを防ぐ慣習であり強制ではない。</p>
+<pre class="file-tag" data-tag="app.py"><code>from flask import Flask, request, session
+from flask_babel import Babel, gettext as _ # 一般的に短縮形の_を使用
+
+app = Flask(__name__)
+app.config[&quot;SECRET_KEY&quot;] = &quot;secret-key&quot;
+app.config[&quot;BABEL_DEFAULT_LOCALE&quot;] = &quot;ja&quot;
+# 追加言語を指定
+app.config[&quot;BABEL_SUPPORTED_LOCALES&quot;] = [
+    &quot;ja&quot;,
+    &quot;ja_JP&quot;,
+    &quot;en&quot;,
+    &quot;en_US&quot;,
+    &quot;kr&quot;,
+    &quot;cz&quot;,
+    &quot;es&quot;,
+]
+
+def get_locale():
+    # URLパラメータがあれば返す
+    if &quot;lang&quot; in request.args:
+        return request.args.get(&quot;lang&quot;)
+    # セッション変数があれば返す
+    if &quot;lang&quot; in session:
+        return session[&quot;lang&quot;]
+    # ブラウザからのAccept-Languageヘッダを基にアプリ対応の最も適切なlocale言語を1つ返す
+    return request.accept_languages.best_match(
+        app.config[&quot;BABEL_SUPPORTED_LOCALES&quot;]
+    )
+
+# Flask-Babel4.x系での使用するlocal言語を上記分岐からいずれか1つから返す
+babel = Babel(app, locale_selector=get_locale)
+
+@app.route(&quot;/&quot;)
+def index():
+    # _で現在のlocaleの.moファイルを参照し置換
+    greeting = _(&quot;Hello, world!&quot;)
+    # URLパラメータlangのキーで送信
+    return (
+        f&quot;&lt;p&gt;{greeting}&lt;/p&gt;&quot;
+        f&quot;&lt;p&gt;&lt;a href=&#x27;/?lang=ja&#x27;&gt;日本語&lt;/a&gt; | &quot;
+        f&quot;&lt;a href=&#x27;/?lang=en&#x27;&gt;English&lt;/a&gt;&lt;/p&gt;&quot;
+    )
 </code></pre>
+<p>指定言語の抽出⇒翻訳⇒実行の順に、必要なファイルを用意していく。</p>
+<ul class="list-group my-3">
+<li class="list-group-item"><i class="fa fa-arrow-circle-o-down"></i><code><strong>.cfg</strong></code>：<strong>抽出ルールの設計図</strong>で、翻訳対象の文字列をどの階層の拡張子から取得するかを定義</li>
+<li class="list-group-item"><i class="fa fa-arrow-circle-o-down"></i><code><strong>.pot</strong></code>：<strong>翻訳対象の原本・雛形</strong>として、各言語に依存しない文字列一覧のテンプレートを準備</li>
+<li class="list-group-item"><i class="fa fa-arrow-circle-o-down"></i><code><strong>.po</strong></code>：具体的な<strong>翻訳済みファイル</strong>で、テンプレートを基にした各言語ごとの変換結果を展開</li>
+<li class="list-group-item"><i class="fa fa-circle"></i><code><strong>.mo</strong></code>：アプリが実際に読み込む高速<strong>バイナリデータ</strong>で、実行時はこの変換済みファイルだけ使用</li>
+</ul>
+<p>つまり、開発段階では手前3つのファイルを編集や調整を行い<code>.mo</code>ファイルは触らないが、Flask-Babel は最後に生成された<code>.mo</code>だけを読み込み、本番もこのファイルだけが必要になる。</p>
+<table class="table table-striped">
+  <thead class="table-dark">
+    <tr>
+      <th scope="col">pybabelコマンド</th>
+      <th scope="col">主な用途</th>
+      <th scope="col" class="text-center">使用頻度</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>extract</code></td>
+      <td>翻訳対象文字列を抽出</td>
+      <td class="text-center">高</td>
+    </tr>
+    <tr>
+      <td><code>init</code></td>
+      <td>新しい言語の <code>.po</code> を作成</td>
+      <td class="text-center">中</td>
+    </tr>
+    <tr>
+      <td><code>update</code></td>
+      <td>既存 <code>.po</code> を最新 <code>.pot</code> に同期</td>
+      <td class="text-center">高</td>
+    </tr>
+    <tr>
+      <td><code>compile</code></td>
+      <td><code>.po</code> → <code>.mo</code> に変換</td>
+      <td class="text-center">高</td>
+    </tr>
+    <tr>
+      <td><code>help</code></td>
+      <td>ヘルプ表示</td>
+      <td class="text-center">低</td>
+    </tr>
+  </tbody>
+</table>
+<p>翻訳漏れを防ぐために最も多い作業フローとしては<strong>コード修正</strong>後 → <code>extract</code> → <code>update</code> → <code>fuzzy</code>確認 → <code>.po</code>を翻訳 → <code>compile</code> → <code>Flask-Babel</code>で反映</p>
+<pre class="file-tag" data-tag="babel.cfg"><code>[python: **.py]
+[jinja2: **/templates/**.j2]
+extensions=jinja2.ext.autoescape,jinja2.ext.with_</code></pre>
+<p>カレントディレクトリ<code>.</code> 配下のファイルを対象に<code>babel.cfg</code> のルールに従って<code>_()</code>で囲まれた文字列を抽出し、翻訳テンプレートファイル<code>messages.pot</code> を生成するコマンドを実行すると、同階層に<code>messages.pot</code>が自動生成される。</p>
+<pre class="file-tag" data-tag="console"><code>pybabel extract -F babel.cfg -o messages.pot .</code></pre>
+<pre class="file-tag" data-tag="messages.pot"><code># Translations template for PROJECT.
+# Copyright (C) 2026 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR &lt;EMAIL@ADDRESS&gt;, 2026.
+#
+#, fuzzy
+msgid &quot;&quot;
+msgstr &quot;&quot;
+&quot;Project-Id-Version: PROJECT VERSION\n&quot;
+&quot;Report-Msgid-Bugs-To: EMAIL@ADDRESS\n&quot;
+&quot;POT-Creation-Date: 2026-01-09 15:42+0900\n&quot;
+&quot;PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n&quot;
+&quot;Last-Translator: FULL NAME &lt;EMAIL@ADDRESS&gt;\n&quot;
+&quot;Language-Team: LANGUAGE &lt;LL@li.org&gt;\n&quot;
+&quot;MIME-Version: 1.0\n&quot;
+&quot;Content-Type: text/plain; charset=utf-8\n&quot;
+&quot;Content-Transfer-Encoding: 8bit\n&quot;
+&quot;Generated-By: Babel 2.17.0\n&quot;
+
+#: app.py:34
+msgid &quot;Hello, world!&quot;
+msgstr &quot;&quot;</code></pre>
+<p>標準的なディレクトリ構成をと基に各言語の翻訳ファイル生成</p>
+<pre class="file-tag" data-tag="console"><code>pybabel init -i messages.pot -d translations -l ja
+pybabel init -i messages.pot -d translations -l en
+
+[ i18n ]
+   ├─ 📁templates
+   │     └─ 📄index.j2
+   ├─ 📁translations
+   │     ├─ 📁ja
+   │     │     └─ 📁LC_MESSAGES
+   │     │           ├─ 📄messages.mo  ← コンパイル時に生成
+   │     │           └─ 📄messages.po
+   │     └─ 📁ja
+   │           └─ 📁LC_MESSAGES
+   │                 ├─ 📄messages.mo  ← コンパイル時に生成
+   │                 └─ 📄messages.po
+   ├─ 📄app.py
+   ├─ 📄messages.pot
+   └─ 📄babek.cfg</code></pre>
+<p><code>.pot</code>に変更があれば、その内容を<code>.po</code>に反映させる</p>
+<pre class="file-tag" data-tag="console"><code># -iが更新元ファイル -dが.poのあるディレクトリ
+pybabel update -i messages.pot -d translations</code></pre>
+<p>個々のファイルに翻訳キーワードを追加していく。</p>
+<pre class="file-tag" data-tag="translations/ja/LC_MESSAGES/messages.po"><code>msgid &quot;Hello, world!&quot;
+msgstr &quot;こんにちは、世界！&quot;</code></pre>
+<pre class="file-tag" data-tag="各messages.po"><code># 新しい翻訳キーが追加され翻訳者が言語に応じてstrに追記する
+msgid &quot;New message&quot;
+msgstr &quot;&quot;
+
+# 削除されたキーをobsoleteにして除外する
+#~ msgid &quot;Old message&quot;
+#~ msgstr &quot;古い翻訳&quot;
+
+# 変更されたキーをfuzzy(曖昧)にして本番では使用されないが要確認状態になる
+#, fuzzy
+msgid &quot;Hello!&quot;
+msgstr &quot;こんにちは&quot;
+
+# fuzzyはファイル内検索がgrepで一覧を確認する
+grep -R &quot;#, fuzzy&quot; translations/
+</code></pre>
+<p>記述したら<code>.mo</code> ファイルとしてコンパイルし、Flask上に翻訳結果が反映されるようになる。</p>
+<pre class="file-tag" data-tag="console"><code>pybabel compile -d translations</code></pre>
+<p>Jinja2 内でも <code>_()</code> をそのまま利用可能。日付・数字フォーマットもBabelでローカライズ可能だが、変数を含む動的な翻訳にはformatを併用する。</p>
+<pre class="file-tag" data-tag="templates/index.j2"><code>&lt;h1&gt;&#123;&#123; _(&quot;Hello, world!&quot;) &#125;&#125;&lt;/h1&gt;
+&lt;p&gt;&#123;&#123; _(&quot;no translate word&quot;) &#125;&#125;&lt;/p&gt;
+
+&lt;!-- 動的な翻訳 --&gt;
+&lt;p&gt;&#123;&#123; _(&quot;Hello, %(username)s&quot;, username=user.name) &#125;&#125;&lt;/p&gt;</code></pre>
+                    <h3>テンプレート側での言語切り替え方法</h3>
+<p>ユーザーの言語切り替え方法は、主に3タイプ<code>URL</code> / <code>Cookie</code> / <code>Accept-Language</code>がある。テンプレートとバックエンドで翻訳の状態を反映させていく。</p>
+<pre class="file-tag" data-tag="templates/index.j2"><code>&lt;a href=&quot;&#123;&#123; url_for(&#x27;index&#x27;, lang=&#x27;ja&#x27;) &#125;&#125;&quot;&gt;日本語&lt;/a&gt;
+&lt;!-- /?lang=ja --&gt;
+
+&lt;!-- 他のパラメータがある場合 --&gt;
+&lt;a href=&quot;&#123;&#123; url_for(&#x27;post_detail&#x27;, post_id=10, lang=&#x27;ja&#x27;) &#125;&#125;&quot;&gt;日本語&lt;/a&gt;
+&lt;!-- /posts/10?lang=ja --&gt;
+
+&lt;!-- 今見ているページのまま言語だけ変える(推奨) --&gt;
+&lt;a href=&quot;&#123;&#123; url_for(request.endpoint, **request.view_args), **request.args, lang=&#x27;ja&#x27; &#125;&#125;&quot;&gt;日本語&lt;/a&gt;
+&lt;!-- request.endpoint：現在のビュー関数名を取得 --&gt;
+&lt;!-- request.view_args：post_idなどのパス引数を取得 --&gt;
+
+&lt;!-- マクロも定義可能 --&gt;
+&#37;&#123; macro switch_lang(code, label) &#37;&#125;
+&lt;a href=&quot;&#123;&#123; url_for(request.endpoint, **request.view_args, **request.args, lang=code) &#125;&#125;&quot;&gt;&#123;&#123; label &#125;&#125;&lt;/a&gt;
+&#37;&#123; endmacro &#37;&#125;
+
+&#37;&#123; from &quot;_language_switch.j2&quot; import switch_lang &#37;&#125;
+&#123;&#123; switch_lang(&#x27;ja&#x27;, &#x27;日本語&#x27;) &#125;&#125;
+&#123;&#123; switch_lang(&#x27;en&#x27;, &#x27;English&#x27;) &#125;&#125;
+    </code></pre>
+<p>ユーザー選択値をセッションに保持</p>
+<pre class="file-tag" data-tag="app.py"><code>@app.route(&quot;/setlang/&lt;lang&gt;&quot;)
+def set_lang(lang):
+    session[&quot;lang&quot;] = lang
+    return redirect(request.referrer or &quot;/&quot;)</code></pre>
+<p>国際化ルーティング構成でURLのprefixを使う。SEO重視の場合はこの方式が最良。</p>
+<pre class="file-tag" data-tag="endpoint"><code>/en/
+/ja/</code></pre>
+<p>JSON API を多言語対応させるようなレスポンス内の文言も <code>_()</code> で包むだけでよい。</p>
+<pre class="file-tag" data-tag="app.py"><code>@app.route(&quot;/api/message&quot;)
+def api_message():
+    return {&quot;message&quot;: _(&quot;Data loaded successfully&quot;)}</code></pre>
 {% endblock %}

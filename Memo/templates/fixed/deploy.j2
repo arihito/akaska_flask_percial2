@@ -1,6 +1,35 @@
 {% extends "fixed/base.j2" %}
 
 {% block article_body %}
-<pre><code>
-</code></pre>
+<h2><i class="fa fa-cubes"></i>環境変数</h2>
+<code>SECRET_KEY</code>が含まれたファイルはGithubに上げようとした時点で<code>Secret Scanning</code>がセキュリティの観点上エラーとするため、自動でアップロードしないように.gitignoreで除外しておく必要がある。
+<pre class="file-tag" data-tag="console"><code>mkdir -p dot_env &amp;&amp; 
+t dot_env/.env dot_env/.gitignore dot_env/app.py dot_env/extensions.py &amp;&amp; \
+cd dot_env &amp;&amp; pi python-dotenv
+
+[ dot_env ]
+   ├─ 📄.env          # 環境変数
+   ├─ 📄.gitignore    # gitの除外ファイル
+   ├─ 📄app.py
+   └─ 📄extensions.py # 環境変数を読み込む</code></pre>
+<code>**/**/</code>は子孫階層にあるファイルも全て適用する。
+<pre class="file-tag" data-tag=".gitignore"><code>**/**/__pycache__
+**/**/instance
+**/**/.env</code></pre>
+<pre class="file-tag" data-tag=".env"><code>FLASK_ENV=development # 開発環境
+FLASK_DEBUG=1 # デバッグ
+SECRET_KEY=dev-secret-key # セッションなどのシークレットキー
+STRIPE_SECRET_KEY=sk_test_... # ストライプのシークレットキー
+STRIPE_WEBHOOK_SECRET=whsec_.. # Webhookのシークレットキー</code></pre>
+<pre class="file-tag" data-tag="app.py"><code>from flask import Flask
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+def create_app():
+    app = Flask(__name__)
+    app.config[&quot;SECRET_KEY&quot;] = os.environ[&quot;SECRET_KEY&quot;]
+    app.config[&quot;STRIPE_SECRET_KEY&quot;] = os.environ[&quot;STRIPE_SECRET_KEY&quot;]
+    return app</code></pre>
 {% endblock %}

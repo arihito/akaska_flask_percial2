@@ -1,6 +1,7 @@
 @charset "UTF-8";
 
 @import url("https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap');
 
 .bd-placeholder-img {
     font-size: 1.125rem;
@@ -76,11 +77,21 @@
     z-index: 1500;
 }
 
+/* Flaskロゴ */
+.public_header {
+  position: relative;
+}
+.public_header::before {
+  content: url("../images/other/icon.png");
+  position: absolute;
+  top: -17px;
+  filter: invert(1);
+}
 .blog-header-logo {
-    font-family:
-        "Google Sans", "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
-        "Hiragino Sans", Meiryo, sans-serif;
-    font-size: 2.25rem;
+    padding-left: 126px;
+    font-family: "Noto Serif", Meiryo, sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: 0.04em;
 }
 
 .blog-header-logo:hover {
@@ -246,9 +257,11 @@ h6 {
 }
 
 /* キービジュアル */
-.wallpaper {
-    background: url("../images/wallpaper.jpg") 0 0 / cover no-repeat;
+.key_visual {
+    background: url("../images/fixed/keyvisual.jpg") 0 0 / cover no-repeat;
     mix-blend-mode: screen;
+    height: 300px;
+    filter: grayscale(80%);
 }
 
 /* 管理画面一覧テーブル */

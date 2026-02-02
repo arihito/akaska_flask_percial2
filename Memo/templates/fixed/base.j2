@@ -8,6 +8,10 @@
         background: url("{{ key_visual | default('/static/images/default.jpg') }}") center / cover no-repeat;
         filter: grayscale(100%);
     }
+    .markdown-body {
+      font-size: 1.4rem;
+      line-height: 2;
+    }
     .hljs-ln-line.hljs-ln-code {
         white-space: pre !important;
         width: 100%;
@@ -22,6 +26,7 @@
         background: rgba(255, 255, 255, 0.05);
     }
     pre.file-tag {
+        margin-top: 10px;
         position: relative;
     }
     pre.file-tag[data-tag]::before {
@@ -48,17 +53,25 @@
         {% block article_body %}
         {% endblock article_body %}
       </div>
-      <a class="btn btn-secondary btn-lg"
-         href="{{ url_for('public.public_index') }}">一覧へ戻る</a>
+      <div class="my-5 d-flex gap-3">
+        <a class="col-8 btn btn-outline-secondary btn-lg flex-grow-1" id="scrollTopBtn"><i class="fa fa-arrow-up" aria-hidden="true"></i> ページの最上部に戻る</a>
+        <a class="col-4 btn btn-outline-secondary btn-lg" style="width:30%;" href="{{ url_for('public.public_index') }}"><i class="fa fa-reply"></i> トップの一覧に戻る</a>
+      </div>
     </div>
     {% include "public/aside.j2" %}
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
   <script>
-document.addEventListener("DOMContentLoaded", () => {
-  hljs.highlightAll();
-  hljs.initLineNumbersOnLoad();
-});
+  document.addEventListener("DOMContentLoaded", () => {
+    hljs.highlightAll();
+    hljs.initLineNumbersOnLoad();
+  });
+  document.getElementById('scrollTopBtn').addEventListener('click', () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });
   </script>
 {% endblock %}

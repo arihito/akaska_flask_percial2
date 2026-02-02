@@ -1,6 +1,278 @@
 {% extends "fixed/base.j2" %}
-
 {% block article_body %}
-<pre><code>
+<h2>Stripeカード決済</h2>
+<p>Flaskとの相性が最も良く、Stripeは世界的に利用者が多い決済APIで公式 SDK「<a href="https://qiita.com/sugo/items/3659e8baee2d053041f5">stripe-python</a>」が充実しており、blueprintに組み込みやすい。</p>
+<h3 class="display-6 mt-5 mb-2"><i class="fa fa-cogs"></i>事前準備</h3>
+<p>Stripeアカウント作成し、ダッシュボードにログイン<strong>テストモード(Test mode)</strong>を有効化</p>
+<img src="/static/images/fixed/stripe_mypage.png" alt="" width="100%" height="">
+<p>左上のユーザメニューから、サンドボックスの切り替えから以下のメニューが表示されるが、それぞれ役割とレイヤーが異なる。今回はサンドボックスまで使用する必要は無く<mark class="highlight-default"><mark class="highlight-yellow_background">テスト環境で充分</mark></mark>。</p>
+<ul class="list-group my-3">
+<li class="list-group-item"><i class="fa fa-circle"></i><strong>サンドボックス</strong>の作成：アカウントごとに独立した本番に近い検証環境</li>
+<li class="list-group-item"><i class="fa fa-circle"></i><strong>テスト</strong>環境：同一アカウントでAPI レベルの学習デモ向け決済テストモード</li>
+</ul>
+<p>テストモードの右上に開発者向けの<code>pk</code>で始まる<strong>公開可能キー</strong>と<code>sk</code>で始まる<strong>シークレットキー</strong>の一部が表示されているので、シークレットキーをクリックして、以下のapp.pyの<code>STRIPE_SECRET_KEY</code>に文字列として張り付けて差し替える。</p>
+<pre class="file-tag" data-tag=".env"><code># STRIPE_SECRET_KEY
+sk_test_51MGulBGk0Ak3RlmkMa8x1S1gVKLS1KFYKZQRV2...</code></pre>
+<ul class="list-group my-3">
+<li class="list-group-item">① ブラウザで購入ボタン押下</li>
+<li class="list-group-item">② Flask上で商品の購入情報となるCheckout Sessionを作成</li>
+<li class="list-group-item">③ Stripeで決済画面に自動でリダイレクト表示</li>
+<li class="list-group-item">④ ユーザーがカード情報(ダミーテスト用)を入力</li>
+<li class="list-group-item">⑤ Stripe上でsuccess / cancelへのURLへリダイレクト</li>
+</ul>
+<p>stripeモジュールはflask3でも問題無く稼働する。以下は決済の稼働確認のための最小構成。</p>
+<pre class="file-tag" data-tag="console"><code>mkdir -p stripe_checkout/templates &amp;&amp; \
+t stripe_checkout/templates/index.j2 stripe_checkout/app.py &amp;&amp; \
+cd stripe_checkout &amp;&amp; pi flask stripe
+
+[ stripe_checkout ]
+   ├─ 📁templates
+   │     └─ 📄index.j2
+   └─ 📄app.py</code></pre>
+<pre class="file-tag" data-tag="templates/index.j2"><code>&lt;form action=&quot;&#123;&#123; url_for(&#x27;create_checkout_session&#x27;) &#125;&#125;&quot; method=&quot;POST&quot;&gt;
+    &lt;button type=&quot;submit&quot;&gt;600円を支払う&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+<p>APIキーをapp.pyに直書きしてアドコミットするとGithubにプッシュ制限がかかるので注意する。</p>
+<pre class="file-tag" data-tag="app.py"><code>from flask import Flask, render_template, redirect, url_for
+import stripe
+app = Flask(__name__)
+
+stripe.api_key = &quot;STRIPE_SECRET_KEY&quot; # ここにコピーしたシークレットキーを貼り付ける
+
+@app.route(&#x27;/&#x27;)
+def index():
+    return render_template(&#x27;index.j2&#x27;)
+
+@app.route(&#x27;/create-checkout-session/&lt;int:total&gt;&#x27;, methods=[&#x27;POST&#x27;])
+def create_checkout_session(total):
+		# checkout sessionの作成
+    session = stripe.checkout.Session.create(
+        payment_method_types=[&#x27;card&#x27;],
+        line_items=[
+            {
+                &#x27;price_data&#x27;: {
+                    &#x27;currency&#x27;: &#x27;jpy&#x27;,
+                    &#x27;product_data&#x27;: {
+                        &#x27;name&#x27;: &#x27;みたらし団子&#x27;,
+                    },
+                    &#x27;unit_amount&#x27;: 600,  # 円単位
+                },
+                &#x27;quantity&#x27;: 1, # 購入数
+            }
+        ],
+        mode=&#x27;payment&#x27;,
+        # 成功画面とキャンセル画面に遷移。_externalはStripeから戻るためのお作法
+        success_url=url_for(&#x27;success&#x27;, _external=True),
+        cancel_url=url_for(&#x27;cancel&#x27;, _external=True),
+    )
+
+    return redirect(session.url, code=303)
+
+@app.route(&#x27;/success&#x27;)
+def success()
+		return &#x27;決済が成功しました&#x27;
+
+@app.route(&#x27;/cancel&#x27;)
+def cancel():
+    return &#x27;決済がキャンセルされました&#x27;</code></pre>
+<p>Sripeが用意しているダミーカードで決済遷移のテストモードを試してみる。カード番号はテスト用の<code>4242 4242 4242 4242</code> で、その他の有効期限/cvc3桁/英字名の入力欄は全て任意でOK。</p>
+<h3 class="display-6 mt-5 mb-2"><i class="fa fa-cogs"></i>Blueprint/Webhook</h3>
+<pre class="file-tag" data-tag="console"><code>mkdir -p stripe_webhook/checkout stripe_webhook/templates &amp;&amp; \
+t stripe_webhook/app.py stripe_webhook/extensions.py stripe_webhook/checkout/routes.py stripe_webhook/checkout/webhook.py stripe_webhook/templates/index.j2 &amp;&amp; \
+cd stripe_webhook &amp;&amp; pi flask stripe
+
+[ stripe_webhook ]
+   ├─ 📁checkout
+   │   ├─ 📄routes.py
+   │   └─ 📄webhook.py
+   ├─ 📁templates
+   │     └─ 📄index.j2
+   ├─ 📄app.py
+   └─ 📄extensions.py # セキュア情報の隔離</code></pre>
+<pre class="file-tag" data-tag="templates/index.j2"><code>&lt;h2&gt;みたらし団子（1本）600円&lt;/h2&gt;
+
+&lt;ul id=&quot;toppings&quot;&gt;
+  &lt;li data-id=&quot;kinako&quot; data-price=&quot;0&quot;&gt;きなこ（無料）&lt;/li&gt;
+  &lt;li data-id=&quot;matcha&quot; data-price=&quot;50&quot;&gt;抹茶（+50円）&lt;/li&gt;
+  &lt;li data-id=&quot;black&quot; data-price=&quot;100&quot;&gt;黒ごま（+100円）&lt;/li&gt;
+  &lt;li data-id=&quot;special&quot; data-price=&quot;150&quot;&gt;特製（+150円）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;選択トッピング数：&lt;span id=&quot;count&quot;&gt;0&lt;/span&gt; / 6&lt;/p&gt;
+&lt;p&gt;合計金額：&lt;span id=&quot;total&quot;&gt;600&lt;/span&gt; 円&lt;/p&gt;
+
+&lt;button id=&quot;pay&quot;&gt;決済する&lt;/button&gt;
+
+&lt;script&gt;
+const BASE_PRICE = 600;
+const MAX_TOPPINGS = 6;
+
+let selected = {};
+let toppingCount = 0;
+
+const totalEl = document.getElementById(&quot;total&quot;);
+const countEl = document.getElementById(&quot;count&quot;);
+
+document.querySelectorAll(&quot;#toppings li&quot;).forEach(li =&gt; {
+  li.addEventListener(&quot;click&quot;, () =&gt; {
+	  /* liをクリックするとidと価格を個々に取得 */
+    const id = li.dataset.id;
+    const price = Number(li.dataset.price);
+
+		/* 選択済みに追加 */
+    if (!selected[id]) selected[id] = { qty: 0, price };
+
+		/* 個々の選択が2以上、もしくは全体で6個以上であれば追加終了 */
+    if (selected[id].qty &gt;= 2 || toppingCount &gt;= MAX_TOPPINGS) {
+      return;
+    }
+
+    selected[id].qty += 1;
+    toppingCount += 1;
+		/* 合計金額の更新 */
+    updateTotal();
+  });
+});
+
+function updateTotal() {
+	/* お団子の基本料金 */
+  let total = BASE_PRICE;
+  /* 選択済みのトッピング料金を加算 */
+  Object.values(selected).forEach(item =&gt; {
+    total += item.qty * item.price;
+  });
+
+  totalEl.textContent = total;
+  countEl.textContent = toppingCount;
+}
+
+/* 購入ボタンを押したらJSONでPOST送信 */
+document.getElementById(&quot;pay&quot;).addEventListener(&quot;click&quot;, () =&gt; {
+  fetch(&quot;/checkout/create&quot;, {
+    method: &quot;POST&quot;,
+    headers: { &quot;Content-Type&quot;: &quot;application/json&quot; },
+    body: JSON.stringify(selected)
+  })
+  .then(res =&gt; res.json())
+  .then(data =&gt; window.location = data.url);
+});
+&lt;/script&gt;</code></pre>
+    <pre class="file-tag" data-tag="templates/.j2 app.py"><code>import stripe
+import os
+stripe.api_key = os.environ.get(&quot;STRIPE_SECRET_KEY&quot;, &quot;sk_test_xxxxx&quot;)</code></pre>
+    <pre class="file-tag" data-tag="templates/.j2 app.py"><code>from flask import Blueprint, request, jsonify, url_for
+import stripe
+
+BASE_PRODUCT = {
+    &#x27;name&#x27;: &#x27;みたらし団子&#x27;,
+    &#x27;price&#x27;: 600
+}
+
+TOPPINGS = {
+    &#x27;kinako&#x27;: {&#x27;name&#x27;: &#x27;きなこ&#x27;, &#x27;price&#x27;: 0},
+    &#x27;matcha&#x27;: {&#x27;name&#x27;: &#x27;抹茶&#x27;, &#x27;price&#x27;: 50},
+    &#x27;black&#x27;: {&#x27;name&#x27;: &#x27;黒ごま&#x27;, &#x27;price&#x27;: 100},
+    &#x27;special&#x27;: {&#x27;name&#x27;: &#x27;特製&#x27;, &#x27;price&#x27;: 150},
+}
+
+checkout_bp = Blueprint(&#x27;checkout&#x27;, __name__, url_prefix=&#x27;/checkout&#x27;)
+
+@checkout_bp.route(&#x27;/create&#x27;, methods=[&#x27;POST&#x27;])
+def create():
+    data = request.get_json()
+
+    line_items = [
+        {
+            &#x27;price_data&#x27;: {
+                &#x27;currency&#x27;: &#x27;jpy&#x27;,
+                &#x27;product_data&#x27;: {&#x27;name&#x27;: &#x27;みたらし団子&#x27;},
+                &#x27;unit_amount&#x27;: 600,
+            },
+            &#x27;quantity&#x27;: 1,
+        }
+    ]
+
+    for tid, item in data.items():
+        topping = TOPPINGS.get(tid)
+        if not topping:
+            continue
+
+        qty = min(item[&#x27;qty&#x27;], 2)
+
+        line_items.append({
+            &#x27;price_data&#x27;: {
+                &#x27;currency&#x27;: &#x27;jpy&#x27;,
+                &#x27;product_data&#x27;: {&#x27;name&#x27;: topping[&#x27;name&#x27;]},
+                &#x27;unit_amount&#x27;: topping[&#x27;price&#x27;],
+            },
+            &#x27;quantity&#x27;: qty,
+        })
+
+    session = stripe.checkout.Session.create(
+        mode=&#x27;payment&#x27;,
+        line_items=line_items,
+        success_url=url_for(&#x27;checkout.success&#x27;, _external=True),
+        cancel_url=url_for(&#x27;checkout.cancel&#x27;, _external=True),
+    )
+
+    return jsonify({&#x27;url&#x27;: session.url})
+
+@checkout_bp.route(&#x27;/success&#x27;)
+def success():
+    return &#x27;決済が完了しました（テスト）&#x27;
+
+@checkout_bp.route(&#x27;/cancel&#x27;)
+def cancel():
+    return &#x27;決済がキャンセルされました&#x27;</code></pre>
+<pre class="file-tag" data-tag="app.py"><code>from flask import Blueprint, request, abort
+import stripe
+
+webhook_bp = Blueprint(&#x27;webhook&#x27;, __name__, url_prefix=&#x27;/webhook&#x27;)
+
+ENDPOINT_SECRET = &#x27;whsec_xxxxx&#x27;
+
+@webhook_bp.route(&#x27;/stripe&#x27;, methods=[&#x27;POST&#x27;])
+def stripe_webhook():
+    payload = request.data
+    sig_header = request.headers.get(&#x27;Stripe-Signature&#x27;)
+
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, ENDPOINT_SECRET
+        )
+    except Exception:
+        abort(400)
+
+    if event[&#x27;type&#x27;] == &#x27;checkout.session.completed&#x27;:
+        session = event[&#x27;data&#x27;][&#x27;object&#x27;]
+
+        # ★ ここで注文確定
+        # order_id = save_order(session)
+
+        print(&#x27;注文確定:&#x27;, session[&#x27;id&#x27;])
+
+    return &#x27;&#x27;, 200
+
 </code></pre>
+<h3 class="display-6 mt-5 mb-2"><i class="fa fa-cogs"></i>Application Factory</h3>
+<p>Webhookを使用する場合、外部からのアクセスが突然起きるため、<code>create_app</code>関数でラップする<code>Application Factory</code>というデザインパターンを採用し、副作用を防止する。中〜大規模開発・決済／Webhook を扱う実務アプリでは拡張性や安全面で必須実装に近く、Flask アプリを1回限りのグローバルオブジェクトにしないことで、<code>dev</code>(開発) / <code>staging</code>(検証) / <code>prod</code>(本番)の切り替えや、テストも単体で行いやすくなる。</p>
+<pre class="file-tag" data-tag="app.py"><code>from flask import Flask, render_template
+from checkout.routes import checkout_bp
+from checkout.webhook import webhook_bp
+
+def create_app():
+    app = Flask(__name__)
+    app.config[&#x27;SECRET_KEY&#x27;] = &#x27;dev-secret-key&#x27;  # 本番では環境変数
+
+    app.register_blueprint(checkout_bp)
+    app.register_blueprint(webhook_bp)
+
+    @app.route(&#x27;/&#x27;)
+    def index():
+        return render_template(&#x27;index.j2&#x27;)
+    return app
+
+if __name__ == &#x27;__main__&#x27;:
+    app = create_app()
+    app.run(debug=True)</code></pre>
 {% endblock %}
