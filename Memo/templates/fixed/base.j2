@@ -7,42 +7,8 @@
         height: 300px;
         background: url("{{ key_visual | default('/static/images/default.jpg') }}") center / cover no-repeat;
         filter: grayscale(100%);
-    }
-    .markdown-body {
-      font-size: 1.4rem;
-      line-height: 2;
-    }
-    .hljs-ln-line.hljs-ln-code {
-        white-space: pre !important;
-        width: 100%;
-    }
-    .hljs-ln-n {
-        margin-right: 12px;
-    }
-    .hljs-ln tbody>tr {
-        line-height: 2;
-    }
-    .hljs-ln tbody>tr:nth-child(even) {
-        background: rgba(255, 255, 255, 0.05);
-    }
-    pre.file-tag {
-        margin-top: 10px;
-        position: relative;
-    }
-    pre.file-tag[data-tag]::before {
-        content: attr(data-tag);
-        position: absolute;
-        top: 0;
-        right: 1em;
-        font-size: 0.7rem;
-        line-height: 1;
-        padding: 0.8em 1.2em;
-        color: #ccc;
-        background-color: #335;
-        border-radius: 0 0 2px 2px;
-        box-shadow: 0 1px 1px rgba(0, 0, 0, .5);
-        pointer-events: none; /* Copy等を阻害しない */
-        user-select: none;
+        background-color: #212529;
+        mix-blend-mode:color-dodge;
     }
   </style>
   <div class="mb-4 rounded text-body-emphasis bg-body-secondary article-img"></div>

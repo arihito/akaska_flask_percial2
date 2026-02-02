@@ -1,6 +1,317 @@
 {% extends "fixed/base.j2" %}
 
 {% block article_body %}
-<pre><code>
+<h3 class="display-6 mt-5 mb-2"><i class="fa fa-cogs"></i>必要なモジュールまとめ</h3>
+<p>基本的にはminicondaで作成した各仮想環境ごとに追加が必要</p>
+<table class="table table-dark table-striped align-middle">
+    <thead>
+        <tr>
+            <th>モジュール</th>
+			<th>追加インストールの必要</th>
+			<th style="width: 383px">概要</th>
+		</tr>
+	</thead>
+<tbody>
+<tr>
+	<td>Werkzeug</td>
+	<td>❌ Flaskに含まれる</td>
+	<td style="width: 383px">Flaskの土台でリクエスト／レスポンス処理、ルーティング、デバッグ</td>
+</tr>
+<tr>
+	<td>email-validator</td>
+	<td>❌ Flask-WTFに含まれる</td>
+	<td style="width: 383px">RFC に準拠したメール形式チェックやドメイン存在確認</td>
+</tr>
+<tr>
+	<td>wtforms</td>
+	<td>△ 通常は不要</td>
+	<td style="width: 383px">フォーム構造を定義、必須/長さ/形式など入力値の検証</td>
+</tr>
+<tr>
+    <td>sqlalchemy</td>
+    <td>△ 通常は不要</td>
+    <td style="width: 383px">SQLを直接書かずクラスとDBをマッピングしデータ操作</td>
+</tr>
+<tr>
+    <td><strong>flask-wtf</strong></td>
+    <td>⭕ 必要</td>
+    <td style="width: 383px">リクエストとフォームの連携管理、CSRF対策自動化</td>
+</tr>
+<tr>
+    <td><strong>flask-sqlalchemy</strong></td>
+    <td>⭕ 必要</td>
+    <td style="width: 383px">Flaskの設定とSQLAlchemyを統合、セッション管理自動化</td>
+</tr>
+<tr>
+    <td><strong>flask-migrate</strong></td>
+    <td>⭕ 必要</td>
+    <td style="width: 383px">AlembicをFlask向けに統合、モデル変更をDBに安全に反映</td>
+</tr>
+<tr>
+    <td><strong>djlint</strong></td>
+    <td>⭕ 開発用途で使用</td>
+    <td style="width: 383px">Flask テンプレートのインデント構文チェック品質向上</td>
+</tr>
+</tbody>
+</table>
+<pre class="file-tag" data-tag="console"><code>[ ブラウザ ]
+↓
+[ Flask ]
+├─ Werkzeug        ← HTTP/WSGI基盤
+├─ flask-wtf
+│     └─ wtforms
+│           └─ email-validator
+├─ flask-sqlalchemy
+│     └─ sqlalchemy
+└─ flask-migrate   ← DB履歴管理
+
+[ テンプレート ]
+└─ djlint</code></pre>
+<h3 class="display-6 mt-5 mb-2"><i class="fa fa-cogs"></i>最短環境構築</h3>
+<p>2026年1月時点では2025-08-19リリースの<strong>Flask</strong>の最新安定版は「<mark class="highlight-red"><strong>3.1.2</strong></mark>」。FlaskとPythonのバージョンが近いので混乱しやすいが、<strong>Python</strong>の対応バージョンは2系は3.7まで、3系は「<mark class="highlight-red"><strong>3.9</strong></mark>」以降がサポート対象。<strong>Python</strong>の安定バージョンは「<mark
+class="highlight-red"><strong>3.11</strong></mark>」で「3.13」以上だとflask-login、flask-adminやWerkzeugが未対応の場合もあり、必要に応じてダウングレードが求められる。</p>
+<pre class="file-tag" data-tag="console"><code># 最新バージョンのワインラインインストール
+pip install flask flask-wtf flask-sqlalchemy flask-migrate djlint</code></pre>
+<h2>■基本Todo</h2>
+<pre class="file-tag" data-tag="console"><code>conl            # conda env list
+conc Todo       # conda create python=3.11 -n
+cona Todo       # conda activate
+pipa            # pip install flask flask-wtf flask-sqlalchemy flask-migrate djlint
+flv             # flask --version
+# Python 3.11.9
+# Flask 3.1.2
+# Werkzeug 3.1.4
+
+# 基本ファイルディレ構築
+mkdir -p templates static/css &amp;&amp; \
+t app.py templates/base.j2 templates/index.j2 templates/new_task.j2 static/css/style.css &amp;&amp; \
+c app.py templates/base.j2 templates/index.j2 templates/new_task.j2 static/css/style.css
+
+[ Todo ]
+├─ 📁static
+│     └─ 📁css
+│           └─ 📄style.css
+├─ 📁templates
+│     ├─ 📄index.j2
+│     └─ 📄new_task.j2
+└─ 📄app.py</code></pre>
+<pre class="file-tag" data-tag="app.py"><code>import os
+from flask import Flask, render_template, request, redirect, url_for
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+app = Flask(__name__)
+app.config[&#x27;SECRET_KEY&#x27;] = os.urandom(24)
+base_dir = os.path.dirname(__file__)
+database = &#x27;sqlite:///&#x27; + os.path.join(base_dir, &#x27;data.sqlite&#x27;)
+app.config[&#x27;SQLALCHEMY_DATABASE_URI&#x27;] = database
+app.config[&#x27;SQLALCHEMY_TRACK_MODIFICATIONS&#x27;] = False
+db = SQLAlchemy(app)
+Migrate(app, db)
+
+class Task(db.Model):
+    __tablename__ = &#x27;tasks&#x27;
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    content = db.Column(db.String(200), nullable=False)
+    is_completed = db.Column(db.Boolean, default=False)
+    def __str__(self):
+    return f&#x27;課題ID：{self.id} 内容：{self.content}&#x27;
+
+@app.route(&#x27;/&#x27;)
+def index():
+    uncompleted_tasks = Task.query.filter_by(is_completed=False).all()
+    completed_tasks = Task.query.filter_by(is_completed=True).all()
+    return render_template(&#x27;index.j2&#x27;, uncompleted_tasks=uncompleted_tasks, completed_tasks=completed_tasks)
+
+@app.route(&#x27;/new&#x27;, methods=[&#x27;GET&#x27;, &#x27;POST&#x27;])
+def new_task():
+    if request.method == &#x27;POST&#x27;:
+        # POSTアクセスでフォームからcontentを受け、Taskモデルに追加後一覧ページへ
+        content = request.form[&#x27;content&#x27;]
+        task = Task(content=content)
+        db.session.add(task)
+        db.session.commit()
+        return redirect(url_for(&#x27;index&#x27;))
+    # GETアクセス時は新規課題作成ページへ
+    return render_template(&#x27;new_task.j2&#x27;)
+
+@app.route(&#x27;/tasks/&lt;int:task_id&gt;/complete&#x27;, methods=[&#x27;POST&#x27;])
+def complete_task(task_id):
+    task = Task.query.get(task_id)
+    # task_idを受け完了済みに切り替えて更新
+    task.is_completed = True
+    db.session.commit()
+    return redirect(url_for(&#x27;index&#x27;))
+
+@app.route(&#x27;/tasks/&lt;int:task_id&gt;/uncomplete&#x27;, methods=[&#x27;POST&#x27;])
+def uncomplete_task(task_id):
+    task = Task.query.get(task_id)
+    # task_idを受け未完了に切り替えて更新
+    task.is_completed = False
+    db.session.commit()
+    return redirect(url_for(&#x27;index&#x27;))
+
+if __name__ == &#x27;__main__&#x27;:
+app.run()</code></pre>
+<p><code>ctrl + k M</code>でフォーマットをHTMLに変更し、一度HTMLタグだけ先に記述を終える。再度、フォーマットを<code>jinja html</code>に変更しJinjaのテンプレートタグを追記していく。インデントの整形は<code>Alt + Shift + F</code>だがフォーマッターの構成を聞かれた場合は<code>djlint</code>を選択する。</p>
+<pre class="file-tag" data-tag="templates/.j2"><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;ja&quot;&gt;
+    &lt;head&gt;
+        &lt;meta charset=&quot;UTF-8&quot;&gt;
+        &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+        &lt;title&gt;&#123;&#37; block title &#37;&#125;タイトル&#123;&#37; endblock title &#37;&#125;&lt;/title&gt;
+        &lt;meta name=&quot;description&quot; content=&quot;&quot;&gt;
+        &lt;meta name=&quot;keywords&quot; content=&quot;&quot;&gt;
+        &lt;link rel=&quot;stylesheet&quot; href=&quot;&#123;&#123; url_for(&#x27;static&#x27;, filename=&#x27;css/style.css&#x27;) &#125;&#125;&quot;&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;div class=&quot;container&quot;&gt;
+        &#123;&#37; block content &#37;&#125;
+            &lt;h1&gt;内容&lt;/h1&gt;
+        &#123;&#37; endblock content &#37;&#125;
+        &lt;/div&gt;
+    &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<ul class="list-group my-3">
+    <li class="list-group-item">① indexから渡された<code>uncompleted_tasks</code>と<code>completed_tasks</code>を存在するだけ繰り返し出力</li>
+    <li class="list-group-item">② 新規作成ボタンを押したらnew_taskへGET移動</li>
+    <li class="list-group-item">④ 追加された課題の完了ボタンを押すと<code>complete_task</code>に<code>task_id</code> を付与してPOST送信</li>
+</ul>
+<pre class="file-tag" data-tag="templates/index.j2"><code>&#123;&#37; extends &quot;base.j2&quot; &#37;&#125;
+&#123;&#37; block title &#37;&#125;課題一覧&#123;&#37; endblock title &#37;&#125;
+&#123;&#37; block content &#37;&#125;
+    &lt;a href=&quot;&#123;&#123; url_for(&#x27;new_task&#x27;) &#125;&#125;&quot; class=&quot;button&quot;&gt;新規作成&lt;/a&gt;
+    &lt;hr&gt;
+    &lt;h2 class=&quot;no-complete&quot;&gt;未完了：課題一覧&lt;/h2&gt;
+    &lt;ul&gt;
+        &#123;&#37; for task in uncompleted_tasks &#37;&#125;
+            &lt;li&gt;
+                &lt;p&gt;&#123;&#123; task.content &#125;&#125;&lt;/p&gt;
+                &lt;form action=&quot;&#123;&#123; url_for(&#x27;complete_task&#x27;, task_id=task.id) &#125;&#125;&quot; method=&quot;post&quot; novalidate&gt;
+                    &lt;button type=&quot;submit&quot; class=&quot;complete-button&quot;&gt;完了&lt;/button&gt;
+                &lt;/form&gt;
+            &lt;/li&gt;
+        &#123;&#37; endfor &#37;&#125;
+    &lt;/ul&gt;
+    &lt;hr&gt;
+    &lt;h2 class=&quot;complete&quot;&gt;完了済み：課題一覧&lt;/h2&gt;
+    &lt;ul&gt;
+        &#123;&#37; for task in completed_tasks &#37;&#125;
+            &lt;li&gt;
+                &lt;p&gt;&#123;&#123; task.content &#125;&#125;&lt;/p&gt;
+                &lt;form action=&quot;&#123;&#123; url_for(&#x27;uncomplete_task&#x27;, task_id=task.id) &#125;&#125;&quot; method=&quot;post&quot; novalidate&gt;
+                    &lt;button type=&quot;submit&quot; class=&quot;uncomplete-button&quot;&gt;完了&lt;/button&gt;
+                &lt;/form&gt;
+            &lt;/li&gt;
+        &#123;&#37; endfor &#37;&#125;
+    &lt;/ul&gt;
+&#123;&#37; endblock content &#37;&#125;</code></pre>
+<p>③POST送信でcontentのみ送信</p>
+<pre class="file-tag" data-tag="templates/new_task.j2"><code>&#123;&#37; extends &#x27;base.j2&#x27; &#37;&#125;
+&#123;&#37; block title &#37;&#125;新規課題&#123;&#37; endblock title &#37;&#125;
+&#123;&#37; block content &#37;&#125;
+    &lt;h1&gt;新規課題&lt;/h1&gt;
+    &lt;form action=&quot;&#123;&#123; url_for(&#x27;new_task&#x27;) &#125;&#125;&quot; method=&quot;post&quot; novalidate&gt;
+        &lt;label&gt;課題内容
+            &lt;input type=&quot;text&quot; id=&quot;content&quot; name=&quot;content&quot; class=&quot;text-input&quot;&gt;
+        &lt;/label&gt;&lt;br&gt;
+        &lt;input type=&quot;submit&quot; class=&quot;button&quot; value=&quot;追加&quot;&gt;
+    &lt;/form&gt;
+&#123;&#37; endblock content &#37;&#125;
 </code></pre>
-{% endblock %}
+<pre class="file-tag" data-tag="static/css/style.css"><code>@charset &#x27;UTF-8&#x27;;
+
+.container &#123;
+  background-color: #f8f8f8;
+  min-width: 800px;
+  padding: 20px;
+  font-family: Arial, Helvetica, sans-serif;
+&#125;
+
+h1 &#123;
+  color: #333;
+  text-align: center;
+  margin-top: 50px;
+&#125;
+
+li &#123;
+  padding-left: 0;
+  display: block;
+&#125;
+
+label &#123;
+  font-size: 20px;
+&#125;
+
+.no-complete &#123;
+  color: green;
+&#125;
+
+.complete &#123;
+  color: red;
+&#125;
+
+.button &#123;
+  background-color: blue;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin-bottom: 20px;
+&#125;
+
+a.button &#123;
+  display: block;
+  width: 200px;
+&#125;
+
+.complete-button, .uncomplete-button &#123;
+  background-color: green;
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+&#125;
+
+.uncomplete-button &#123;
+  background-color: red;
+&#125;
+
+ul &#123;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+&#125;
+
+div &#123;
+  background-color: white;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+  padding: 10px;
+&#125;
+
+p &#123;
+  font-size: 20px;
+&#125;
+
+.text-input &#123;
+  padding: 10px;
+  width: 80px;
+  background-repeat: 5px;
+  border: 1px solid #ccc;
+  margin: 10px;
+&#125;
+</code></pre>
+<pre class="file-tag" data-tag="console"><code># SQLiteにtasksテーブルを作成
+flask db init
+flask db migrate -m &quot;create tasks table&quot;
+flask db upgrade
+
+flr             # flask run --debug
+</code></pre>
+{% endblock article_body %}

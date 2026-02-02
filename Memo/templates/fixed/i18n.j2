@@ -202,11 +202,11 @@ grep -R &quot;#, fuzzy&quot; translations/
 &lt;!-- request.view_args：post_idなどのパス引数を取得 --&gt;
 
 &lt;!-- マクロも定義可能 --&gt;
-&#37;&#123; macro switch_lang(code, label) &#37;&#125;
+&#123;&#37; macro switch_lang(code, label) &#37;&#125;
 &lt;a href=&quot;&#123;&#123; url_for(request.endpoint, **request.view_args, **request.args, lang=code) &#125;&#125;&quot;&gt;&#123;&#123; label &#125;&#125;&lt;/a&gt;
-&#37;&#123; endmacro &#37;&#125;
+&#123;&#37; endmacro &#37;&#125;
 
-&#37;&#123; from &quot;_language_switch.j2&quot; import switch_lang &#37;&#125;
+&#123;&#37; from &quot;_language_switch.j2&quot; import switch_lang &#37;&#125;
 &#123;&#123; switch_lang(&#x27;ja&#x27;, &#x27;日本語&#x27;) &#125;&#125;
 &#123;&#123; switch_lang(&#x27;en&#x27;, &#x27;English&#x27;) &#125;&#125;
     </code></pre>

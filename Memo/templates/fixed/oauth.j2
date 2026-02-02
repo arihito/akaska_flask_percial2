@@ -1,6 +1,146 @@
 {% extends "fixed/base.j2" %}
 
 {% block article_body %}
-<pre><code>
+<h3 class="display-6 mt-5 mb-2"><i class="fa fa-cogs"></i>APIトークンの取得</h3>
+<ul class="list-group my-3">
+<li class="list-group-item">① <strong><a href="https://console.cloud.google.com/">Google Cloud Console</a></strong>の上部検索窓に「OAuth」と入力し「OAuth同意画面」にアクセスする。</li>
+<li class="list-group-item">② 中央の開始ボタンを押して<strong>クライアントID</strong>を作成</li>
+<li class="list-group-item">③ アプリ名は任意「flask_test」、対象「外部」など、最後に「OAuthクライアントを作成」を押す。</li>
+<li class="list-group-item">④ アプリケーションの種類は「ウェブアプリケーション」名前を「flask_test」</li>
+</ul>
+<p>⑤ 作成済みのリダイレクトURIを任意だが、今回は以下のように設定する。<code>localhost</code>と<code>127.0.0.1</code>は異なるドメインとなるため、両方登録をしておく。<mark class="highlight-yellow_background">本番URLでは<code>HTTPS</code>にしないと審査で弾かれる。</mark></p>
+<pre class="file-tag" data-tag="templates/.j2 app.py"><code>http://localhost:5000/auth/google/callback
+http://127.0.0.1:5000/auth/google/callback</code></pre>
+<p>最後に作成ボタンを押すと<code>CLIENT_ID</code>と<code>CLIENT_SECRET</code> が表示されるので、新規ファイルにコピーする。</p>
+<pre class="file-tag" data-tag="templates/.j2 app.py"><code># CLIENT_ID
+156918646905-hpe...edhk8nk9.apps.googleusercontent.com
+# CLIENT_SECRET
+GOCSPX-kIIkglNa4Nyz8t67y...</code></pre>
+<p>最も実装が簡単なのは<code>Authlib</code>で、OAuth2.0公式に近い標準ライブラリでGoogleと相性も良い。セキュアなコードを環境変数に配置した最小構成。<code>Authlib</code>内の<code>flask-jwt-extended</code>が(2026/01現在)flask3に対応していないため2系に固定しておく。</p>
+<pre class="file-tag" data-tag="templates/.j2 app.py"><code>mkdir google_oauth/templates &amp;&amp; t google_oauth/.env t google_oauth/.gitignore google_oauth/app.py google_oauth/templates/profile.py &amp;&amp; cd google_oauth &amp;&amp; \ 
+pi flask==2.3.3 Authlib python-dotenv
+
+[ google_oauth ]
+   ├─ 📁templates
+   │     └─ 📄profile.j2
+   ├─ 📄.env
+   └─ 📄app.py</code></pre>
+<pre class="file-tag" data-tag="templates/.j2 app.py"><code>FLASK_SECRET_KEY=dev-secret-key
+GOOGLE_CLIENT_ID=xxxxxxxx.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=xxxxxxxx
 </code></pre>
+<p>シークレットキーをアドコミットするとGithubにプッシュ制限がかかるため、初めから除外する。</p>
+<pre class="file-tag" data-tag="templates/.j2 app.py"><code>.env
+__pycache__</code></pre>
+<pre class="file-tag" data-tag="templates/.j2 app.py"><code>from flask import Flask, render_template, redirect, url_for, session
+from authlib.integrations.flask_client import OAuth
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+app = Flask(__name__)
+app.secret_key = os.environ[&#x27;FLASK_SECRET_KEY&#x27;]
+
+oauth = OAuth(app)
+
+oauth.register(
+    name=&#x27;google&#x27;,
+    client_id=os.environ[&#x27;GOOGLE_CLIENT_ID&#x27;],
+    client_secret=os.environ[&#x27;GOOGLE_CLIENT_SECRET&#x27;],
+    access_token_url=&#x27;https://oauth2.googleapis.com/token&#x27;,
+    authorize_url=&#x27;https://accounts.google.com/o/oauth2/v2/auth&#x27;,
+    api_base_url=&#x27;https://www.googleapis.com/oauth2/v2/&#x27;,
+    server_metadata_url=&#x27;https://accounts.google.com/.well-known/openid-configuration&#x27;,
+    client_kwargs={
+        &#x27;scope&#x27;: &#x27;openid email profile&#x27;
+    }
+)
+
+# トップでログイン済みかを確認し、未ログインならリンクから/loginにアクセス
+@app.route(&#x27;/&#x27;)
+def index():
+    user = session.get(&#x27;user&#x27;)
+    if user:
+        return f&#x27;{user[&quot;email&quot;]}としてログイン済みです。&#x27;
+    return &#x27;まだログインしていません。&lt;a href=&quot;/login&quot;&gt;Googleにログイン&lt;/a&gt;&#x27;
+
+# Googleへのリダイレクト(URIはGoogleの設定とFlask側が一致していないとエラー)
+@app.route(&#x27;/login&#x27;)
+def login():
+    redirect_uri = url_for(&#x27;auth_google&#x27;, _external=True)
+    return oauth.google.authorize_redirect(redirect_uri)
+
+@app.route(&#x27;/auth/callback&#x27;)
+def auth_callback():
+		token = oauth.google.authorize_access_token()
+    user_info = oauth.google.get(&#x27;userinfo&#x27;).json()
+    session[&#x27;user&#x27;] = user_info
+    return redirect(url_for(&#x27;index&#x27;))
+
+# Googleが返すオブジェクトを基にアクセストークンとユーザー情報を取得
+@app.route(&#x27;/auth/google/callback&#x27;)
+def auth_google():
+    token = oauth.google.authorize_access_token()
+    user_info = oauth.google.get(&#x27;userinfo&#x27;).json()
+
+    # セッションにユーザ情報を保持しログイン完了
+    session[&#x27;user&#x27;] = {
+        &#x27;id&#x27;: user_info[&#x27;id&#x27;],
+        &#x27;email&#x27;: user_info[&#x27;email&#x27;],
+        &#x27;name&#x27;: user_info[&#x27;name&#x27;],
+        &#x27;picture&#x27;: user_info[&#x27;picture&#x27;],
+    }
+    return redirect(url_for(&#x27;profile&#x27;))
+
+# マイページではユーザ情報があれば表示
+@app.route(&#x27;/profile&#x27;)
+def profile():
+    user = session.get(&#x27;user&#x27;)
+    if not user:
+        return redirect(url_for(&#x27;login&#x27;))
+    return render_template(&#x27;profile.j2&#x27;, user=user)
+
+# ログアウト
+@app.route(&#x27;/logout&#x27;)
+def logout():
+    session.clear()
+    return redirect(&#x27;/&#x27;)
+
+if __name__ == &#x27;__main__&#x27;:
+    app.run(debug=True)</code></pre>
+<pre class="file-tag" data-tag="templates/.j2 app.py"><code>&lt;h1&gt;ログインしました&lt;/h1&gt;
+&lt;p&gt;&#123;&#123; user.name &#125;&#125; (&#123;&#123; user.email &#125;&#125;)&lt;/p&gt;
+&lt;img src=&quot;&#123;&#123; user.picture &#125;&#125;&quot;&gt;
+&lt;p&gt;&lt;a href=&quot;&#123;&#123; url_for(&#x27;logout&#x27;) &#125;&#125;&quot;&gt;ログアウト&lt;/a&gt;&lt;/p&gt;</code></pre>
+<p>上記の<code>auth_callback</code>や<code>auth_google</code>メソッド内にある変数<code>token</code>に代入しても未使用の状態だが、取得しておくことで、OAuthの結果やトークンを確認しやすくなり、JWT発行などの処理に拡張しやすくなる。ただ誤解を与えたくないのであれば、明示的に未使用である<code>_</code> に代入しておく。</p>
+<pre class="file-tag" data-tag="templates/.j2 app.py"><code># 明示的に使わないことを示す
+_ = oauth.google.authorize_access_token()
+
+# 内容
+{
+  &#x27;access_token&#x27;: &#x27;ya29.a0...&#x27;, # 重要
+  &#x27;expires_in&#x27;: 3599,
+  &#x27;scope&#x27;: &#x27;openid email profile&#x27;,
+  &#x27;token_type&#x27;: &#x27;Bearer&#x27;,
+  &#x27;id_token&#x27;: &#x27;eyJhbGciOiJSUzI1NiIs...&#x27; # 重要
+}</code></pre>
+                        <h3 class="display-6 mt-5 mb-2"><i class="fa fa-cogs"></i>アクセス制限</h3>
+<p>上記のままでもプロフィールページにURLでの直接アクセスをすると、<code>user</code>を取得していないため、GoogleIDの選択画面に自動で切り替わるため、結果的にアクセス制限はできているが、<code>user</code>を必要としない会員専用ページがあった場合、アクセスできてしまうため、安全のために以下のデコレーターを全てに実装しておく必要がある。</p>
+<pre class="file-tag" data-tag="templates/.j2 app.py"><code>from functools import wraps
+from flask import redirect, session, url_for
+
+# ログイン必須ページの保護
+def login_required(fn):
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        if &quot;user&quot; not in session:
+            return redirect(url_for(&#x27;login&#x27;))
+        return fn(*args, **kwargs)
+    return wrapper</code></pre>
+<pre class="file-tag" data-tag="templates/.j2 app.py"><code># ダッシュボードでの使用例
+@app.route(&#x27;/dashboard&#x27;)
+@login_required
+def dashboard():
+    return &#x27;Secret page&#x27;</code></pre>
 {% endblock %}

@@ -1,6 +1,170 @@
 {% extends "fixed/base.j2" %}
 
 {% block article_body %}
-<pre><code>
-</code></pre>
+<p>ページングナビゲーションを表示するためには、3つのデータを取得する必要がある。</p>
+<ul class="list-group my-3">
+<li class="list-group-item"><i class="fa fa-circle"></i> 全件数：ページ番号を割り出すための母数</li>
+<li class="list-group-item"><i class="fa fa-circle"></i> 1ページの表示件数：1ページ内に程よく収まる任意の件数</li>
+<li class="list-group-item"><i class="fa fa-circle"></i> 現在のページ番号：ユーザの状況に応じて変動する状態値</li>
+</ul>
+<pre class="file-tag" data-tag="app.py"><code>from flask import Flask, render_template, request
+app = Flask(__name__)
+
+# 仮のデータ（DBの代わり）
+ITEMS = [f&#x27;Item {i}&#x27; for i in range(1, 101)]  # 100件
+
+PER_PAGE = 3 # 1ページの表示件数
+
+@app.route(&#x27;/&#x27;)
+def index():
+    # GETパラメータをINT型で取得し、無ければ1
+    page = request.args.get(&#x27;page&#x27;, 1, type=int)
+
+    # paginationオブジェクトを取得し効率化
+    pagination = Item.query.paginate(page=page, per_page=PER_PAGE)
+
+    items = pagination.items
+    # start = (page - 1) * per_page
+    # end = start + per_page
+    # items = ITEMS[start:end]
+
+    total_pages = pagination.pages
+    # total_pages = (len(ITEMS) + per_page - 1) // per_page
+
+    return render_template(
+        &#x27;index.j2&#x27;,
+        items=items,
+        page=page,
+        total_pages=total_pages
+    )
+
+if __name__ == &#x27;__main__&#x27;:
+    app.run(debug=True)</code></pre>
+<p>Flask-Alhemyが提供している<code>pagination</code>オブジェクトが内包しているプロパティ群</p>
+<table class="table table-dark table-striped align-middle">
+  <thead>
+    <tr>
+      <th scope="col"><strong>プロパティ</strong></th>
+      <th scope="col"><strong>概要</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>page</td>
+      <td>
+        現在のページ番号<br>
+        <small class="text-secondary">
+          (Navから送られた GET パラメータから取得)
+        </small>
+      </td>
+    </tr>
+    <tr>
+      <td>total</td>
+      <td>
+        総件数<br>
+        <code>SELECT COUNT(*) FROM item</code>
+      </td>
+    </tr>
+    <tr>
+      <td>pages</td>
+      <td>
+        表示に必要なページ数<br>
+        <code>pages = ceil(total / per_page)</code>
+      </td>
+    </tr>
+    <tr>
+      <td>per_page</td>
+      <td>
+        1ページの表示件数（任意設定）
+      </td>
+    </tr>
+    <tr>
+      <td>items</td>
+      <td>
+        現在ページに表示すべき絞り込んだ件数一覧<br>
+        <code>.limit(per_page).offset(offset).all()</code>
+      </td>
+    </tr>
+    <tr>
+      <td>has_prev / has_next</td>
+      <td>
+        前のページ・次のページが存在するかを示す真偽値
+      </td>
+    </tr>
+    <tr>
+      <td>prev_num / next_num</td>
+      <td>
+        現在ページから −1 / ＋1<br>
+        <small class="text-secondary">
+          （ページネーションの矢印ボタンで使用）
+        </small>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<pre class="file-tag" data-tag="templates/index.j2"><code>&lt;ul&gt;
+    &#123;&#37; for item in items &#37;&#125;
+        &lt;li&gt;&#123;&#123; item &#125;&#125;&lt;/li&gt;
+    &#123;&#37; endfor &#37;&#125;
+&lt;/ul&gt;
+&lt;div&gt;
+    &#123;&#37; if page &gt; 1 &#37;&#125;
+        &lt;a href=&quot;?page=&#123;&#123; page - 1 &#125;&#125;&quot;&gt;前へ&lt;/a&gt;
+    &#123;&#37; endif &#37;&#125;
+    &lt;span&gt;Page &#123;&#123; page &#125;&#125; / &#123;&#123; total_pages &#125;&#125;&lt;/span&gt;
+    &#123;&#37; if page &lt; total_pages &#37;&#125;
+        &lt;a href=&quot;?page=&#123;&#123; page + 1 &#125;&#125;&quot;&gt;次へ&lt;/a&gt;
+    &#123;&#37; endif &#37;&#125;
+&lt;/div&gt;</code></pre>
+<p>Bootstrap5バージョン</p>
+<pre class="file-tag" data-tag="templates/index.j2"><code>&lt;ul class=&quot;list-group mb-4&quot;&gt;
+    &#123;&#37; for item in items &#37;&#125;
+        &lt;li class=&quot;list-group-item&quot;&gt;&#123;&#123; item &#125;&#125;&lt;/li&gt;
+    &#123;&#37; endfor &#37;&#125;
+&lt;/ul&gt;
+
+&lt;nav aria-label=&quot;Page navigation&quot;&gt;
+    &lt;ul class=&quot;pagination justify-content-center&quot;&gt;
+        &lt;li class=&quot;page-item &#123;&#37; if page == 1 &#37;&#125;disabled&#123;&#37; endif &#37;&#125;&quot;&gt;
+            &lt;a class=&quot;page-link&quot; href=&quot;?page=&#123;&#123; page - 1 &#125;&#125;&quot; aria-label=&quot;Previous&quot;&gt;
+                &amp;laquo;
+            &lt;/a&gt;
+        &lt;/li&gt;
+        &#123;&#37; for p in range(1, total_pages + 1) &#37;&#125;
+            &lt;li class=&quot;page-item &#123;&#37; if p == page &#37;&#125;active&#123;&#37; endif &#37;&#125;&quot;&gt;
+                &lt;a class=&quot;page-link&quot; href=&quot;?page=&#123;&#123; p &#125;&#125;&quot;&gt;&#123;&#123; p &#125;&#125;&lt;/a&gt;
+            &lt;/li&gt;
+        &#123;&#37; endfor &#37;&#125;
+        &lt;li class=&quot;page-item &#123;&#37; if page == total_pages &#37;&#125;disabled&#123;&#37; endif &#37;&#125;&quot;&gt;
+            &lt;a class=&quot;page-link&quot; href=&quot;?page=&#123;&#123; page + 1 &#125;&#125;&quot; aria-label=&quot;Next&quot;&gt;
+                &amp;raquo;
+            &lt;/a&gt;
+        &lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/nav&gt;</code></pre>
+<p>アクティブカラーをsecondary(グレー)に変更するためCDNに上書き</p>
+<pre class="file-tag" data-tag="static/css/style.css"><code>/* ulにクラスを追加 */
+&lt;ul class=&quot;pagination pagination-secondary justify-content-center&quot;&gt;
+
+.pagination-secondary .page-link {
+  color: var(--bs-secondary);
+}
+
+.pagination-secondary .page-link:hover {
+  color: var(--bs-secondary);
+  background-color: var(--bs-secondary-bg-subtle);
+  border-color: var(--bs-secondary-border-subtle);
+}
+
+.pagination-secondary .page-item.active .page-link {
+  color: #fff;
+  background-color: var(--bs-secondary);
+  border-color: var(--bs-secondary);
+}
+
+.pagination-secondary .page-item.disabled .page-link {
+  color: var(--bs-secondary-color);
+  background-color: var(--bs-secondary-bg);
+  border-color: var(--bs-secondary-border-subtle);
+}</code></pre>
 {% endblock %}

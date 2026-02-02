@@ -98,6 +98,13 @@
     text-decoration: none;
 }
 
+/* グローバルナビ */
+.nav-item.active {
+    background-color: #234;
+    border-radius: 3px 3px 0 0;
+    text-shadow: 0 1px 1px black;
+}
+
 h1,
 h2,
 h3,
@@ -254,6 +261,8 @@ h6 {
 .table-responsive img,
 .recommend img {
     filter: grayscale(100%);
+    background-color: #212529;
+    mix-blend-mode:color-dodge;
 }
 
 /* キービジュアル */
@@ -280,4 +289,50 @@ mark {
     padding: 3px 6px;
     margin: 0 4px;
     border-radius: 3px;
+}
+
+/* 固定ページ */
+
+.markdown-body {
+    font-size: 1.4rem;
+    line-height: 2;
+}
+
+/* コード表示 */
+.hljs-ln-line.hljs-ln-code {
+    white-space: pre !important;
+    width: 100%;
+}
+.hljs-ln-n {
+    margin-right: 12px;
+}
+.hljs-ln tbody>tr {
+    line-height: 2;
+}
+.hljs-ln tbody>tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.05);
+}
+pre.file-tag {
+    margin-top: 10px;
+    position: relative;
+}
+pre.file-tag[data-tag]::before {
+    content: attr(data-tag);
+    position: absolute;
+    top: 0;
+    right: 1em;
+    font-size: 0.7rem;
+    line-height: 1;
+    padding: 0.8em 1.2em;
+    color: #ccc;
+    background-color: #234;
+    border-radius: 0 0 3px 3px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .5);
+    pointer-events: none; /* Copy等を阻害しない */
+    user-select: none;
+}
+
+.highlight-yellow_background {
+    background-color: rgba(44, 64, 72, 0.5);
+    border-radius: 4px;
 }

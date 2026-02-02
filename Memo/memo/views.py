@@ -1,4 +1,5 @@
 import os
+import math
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from models import db, Memo, User, Favorite
 from flask_login import login_required, current_user
@@ -21,12 +22,18 @@ def allowed_file(filename):
 @login_required
 def index():
     WEEKDAYS_JA = ['月', '火', '水', '木', '金', '土', '日']
+    per_page = 10
+    page = request.args.get('page', 1, type=int)
     q = request.args.get('q', '').strip()
     base_query = (
         db.session.query(Memo, func.count(Favorite.id).label("like_count"))
             .outerjoin(Favorite, Memo.id == Favorite.memo_id)
             .filter(Memo.user_id == current_user.id)
     )
+    # ---- 総件数（ページ数算出用）----
+    total = base_query.group_by(Memo.id).count()
+    pages = math.ceil(total / per_page)
+    offset = (page - 1) * per_page
     # ---- 検索条件 ----
     if q:
         like_expr = f"%{q}%"
@@ -51,7 +58,9 @@ def index():
             .outerjoin(Favorite, Memo.id == Favorite.memo_id)
             .filter(Memo.user_id == current_user.id)
             .group_by(Memo.id)
-            .order_by(order_by_clause) 
+            .order_by(order_by_clause)
+            .limit(per_page)
+            .offset(offset)
             .all()
     )
     memos = []
@@ -82,7 +91,16 @@ def index():
             "like_count": like_count
         })
     top5 = (Favorite.query.filter_by(user_id=current_user.id).filter(Favorite.rank != None).order_by(Favorite.rank.asc()).limit(5).all())
-    return render_template('memo/index.j2', memos=memos, top5=top5, user=current_user, q=q)
+    return render_template(
+        'memo/index.j2',
+        memos=memos,
+        top5=top5,
+        user=current_user, 
+        q=q,
+        page=page,
+        pages=pages,
+        total=total
+        )
 
 @memo_bp.route('/create', methods=['GET', 'POST'])
 @login_required
