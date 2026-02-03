@@ -273,6 +273,12 @@ h6 {
     filter: grayscale(80%);
 }
 
+/* 全テーブル */
+table.table-striped {
+    font-size: 1.2rem;
+    line-height: 2;
+}
+
 /* 管理画面一覧テーブル */
 .admin-table th,
 .admin-table td {
@@ -280,8 +286,12 @@ h6 {
     vertical-align: middle;
 }
 
-/* 検索マーキング */
+/* 用語ハイライト */
+code {
+    color: palevioletred;
+}
 
+/* 検索マーキング */
 mark {
     background: #112;
     color: #eee;
@@ -292,7 +302,6 @@ mark {
 }
 
 /* 固定ページ */
-
 .markdown-body {
     font-size: 1.4rem;
     line-height: 2;

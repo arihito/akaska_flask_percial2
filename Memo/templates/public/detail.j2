@@ -3,7 +3,7 @@
 <style>
     .article-img {
         height: 300px;
-        background-image: url("{{ url_for('static', filename='images/memo/' ~ memo.image_filename) }}");
+        background-image: url("{{ url_for('static', filename='images/memo/' ~  (memo.image_filename if memo.image_filename else 'nofile.jpg')) }}");
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;

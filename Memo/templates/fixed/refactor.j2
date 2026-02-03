@@ -1,6 +1,584 @@
 {% extends "fixed/base.j2" %}
 
 {% block article_body %}
-<pre><code>
-</code></pre>
+<h2>Flaskとは</h2>
+<p><strong>Flask</strong>は、ツールキットの<strong>Werkzeug</strong>とテンプレートエンジンの<strong>Jinja</strong>を組み合わせ、フラスコの小さな容器のように、中身が自由に入れ替えられ小さく扱いやすいというコンセプトを基に、<mark class="highlight-yellow_background"><strong>軽量なWebフレームワーク</strong></mark>として<strong>Armin Ronacher</strong> (アルミンロナチャー)が設計開発した。</p>
+<p>特徴としてMVCではなく<strong>MVTモデル</strong>を採用している。なぜFlaskはMVCのコントローラに当たる部分をViewと呼ぶのかというと、より原義に近い意味でユーザーに返す表現を生成する責務を持っているからとのこと。</p>
+<ul class="list-group my-3">
+    <li class="list-group-item"><i class="fa fa-circle"></i><code>Model</code>：データベースにアクセスする処理で通常のDBスキーマとしての雛形を意味する。</li>
+    <li class="list-group-item"><i class="fa fa-circle"></i><code>View</code>：リクエストを受け取り処理を振り分ける、本来の<mark class="highlight-yellow_background"><strong>ルーティング＋コントローラ</strong></mark>の役割。</li>
+    <li class="list-group-item"><i class="fa fa-circle"></i><code>Template</code>：テンプレートエンジン<strong>jinja</strong>を採用した本来の表示となるView。</li>
+</ul>
+<p>実務では次のように理解するのが最も安全で、言葉を揃えようとしない方が事故が起きない。</p>
+<ul class="list-group my-3">
+    <li class="list-group-item">Flask の View =<strong>「エンドポイント関数」</strong></li>
+    <li class="list-group-item"><i class="fa fa-circle"></i>MVC の Controller =<strong>「ユースケース処理」</strong></li>
+    <li class="list-group-item"><i class="fa fa-circle"></i>MVC の View =<strong>「テンプレート or JSON 表現」</strong></li>
+</ul>
+<div class="d-flex justify-content-between gap-3">
+    <div class="col-8">
+        <a href="https://www.anaconda.com/docs/getting-started/miniconda/main" class="text-white-50" target="_blank"><h3 class="display-6 mt-5 mb-2"><i class="fa fa-cogs"></i>Miniconda</h3></a>
+<p>本来のAnacondaは機械学習などのデータサイエンスに最適な環境構築ソフトで様々なライブラリが同梱されているため容量が大きい。そこから<mark class="highlight-yellow_background">Packageコマンドだけを抜き出した</mark>小さな開発環境として無料で提供されている。</p><p>上記タイトルリンクから右上の「<strong>Download</strong>」ボタンをクリック</p>
+    </div>
+    <img src="{{ url_for('static', filename='images/fixed/refactor/miniconda_thumb.jpg') }}" class="col-4" alt="" width="200" height="" />
+</div>
+<img src="{{ url_for('static', filename='images/fixed/refactor/dl.png') }}" class="my-3" alt="" width="100%" height="" />
+<h3 class="display-6 mt-5 mb-2"><i class="fa fa-cogs"></i>開発環境構築</h3>
+<p>インストーラーを起動する。<strong>タイトルはAnaconda</strong>だが気にせず進めていく。</p>
+<ul class="list-group my-3">
+    <li class="list-group-item"><i class="fa fa-circle"></i><strong>Just Me</strong> (recommended)を選択。</li>
+    <li class="list-group-item"><i class="fa fa-circle"></i><strong>Advanced Install Options</strong> (拡張オプション)</li>
+    <li class="list-group-item"><i class="fa fa-circle"></i><strong>Create start menu…</strong>：スタートメニューに追加（任意）</li>
+    <li class="list-group-item"><i class="fa fa-circle"></i><strong>Add Miniconda…</strong>：環境変数のパスに追加し、コンソールで「conda」コマンドを使用</li>
+    <li class="list-group-item"><i class="fa fa-circle"></i><strong>Register Mniconda3 as…</strong>：Pythonのバージョンを3.10としてユーザー環境内で登録</li>
+    <li class="list-group-item"><i class="fa fa-circle"></i><strong>clear the package cache…</strong>：完了後にパッケージキャッシュクリアにする。</li>
+</ul>
+<p>インストール<mark class="highlight-yellow_background">ゲージが最後の完了直前で止まったまま</mark>になっていたらNextを押してしまう。</p>
+<ul class="list-group my-3">
+    <li class="list-group-item"><i class="fa fa-circle"></i>最後はGetting started..とWelcome toには<strong>チェックを入れず</strong>Finish</li>
+    <li class="list-group-item"><i class="fa fa-circle"></i>プロンプトで以下を操作</li>
+</ul>
+<pre class="file-tag" data-tag="console"><code># バージョンの確認
+conda -V
+
+# 仮想環境一覧表示　*-&gt;active 稼働中 +-&gt;frozen 停止中
+conda env list
+
+# 仮想環境の作成 以下の設問はacceptのaで受け入れる
+conda create -n [name] python=[version]
+# pkgs/main：デフォルトの重要パッケージ(チャネル)で科学計算・データ分析・機械学習 Numpy pandas
+# pkgs/r：統計機能解析Rと関連チャネルを共存利用 tidyrerse ggplot2
+# pkgs/msys：Unix/Linux風ツールやコンパイラでgitやbashなどが使えるためWinエラーを防ぐ
+# Proceed：進む (y)
+
+# 環境の初期化(コンソールが複数ある場合)し再起動
+conda init bash
+
+# 仮想環境の有効化(自身の環境名がパスの手前に表示されればOK)
+conda activate [name]
+
+# 仮想環境の無効化(今いる環境が停止しbaseに戻る)
+conda deactivate
+
+# 仮想環境の削除
+conda remove -n [name] --all
+# --&gt; Proceed(y)</code></pre>
+<p>開発環境を初回作成しておけば、次回から有効化するだけで使用可能。無効化や削除は必要無し。</p>
+<pre class="file-tag" data-tag="console"><code># 有効状態か確認(任意)
+conda env list
+# 有効化
+conda activate [name]
+
+# 終了時--&gt;そのままPC閉じ</code></pre>
+<h3 class="display-6 mt-5 mb-2"><i class="fa fa-cogs"></i>Flaskインストール</h3>
+<p>パッケージコマンドは2種類ある。</p>
+<ul class="list-group my-3">
+    <li class="list-group-item"><i class="fa fa-circle"></i><code>conda</code>：Anaconda社が管理するシステム関連のダウンロードインストールコマンド</li>
+    <li class="list-group-item"><i class="fa fa-circle"></i><code>pip</code>：Pythonのサードパーティ製ソフトのPyPl(Python Package Index)の開発時の主要コマンド</li>
+</ul>
+<pre class="file-tag" data-tag="console"><code># Flaskのインストール(イコール2つ)
+pip install [name]==バージョン
+pip install flask==2.3.2 # バージョンは最新の3系推奨
+
+# condaを使用している場合はこちらでも良い
+conda install [name]
+
+# 使用している今の環境に果実にインストール
+python -m pip install [name]
+
+# python環境がPC内に複数ある場合
+where python
+&lt;使用したいpythonパス&gt; -m pip install [name]</code></pre>
+<h3 class="display-6 mt-5 mb-2"><i class="fa fa-cogs"></i>flaskバージョン表示エラー</h3>
+<p>以下のコードで本来バージョンが表示されるはずが、Werkzeug(ヴェルクツォイク)3.0以降はファイルが削除されたため以下のエラーが表示される。</p>
+<pre class="file-tag" data-tag="console"><code>flask --version
+# AttributeError: module &#x27;werkzeug&#x27; has no attribute &#x27;__version__&#x27;</code></pre>
+<p>Werkzeugとはアプリと様々なサーバ誤差間を取り持つインターフェースで、HTTPやルーティング、リクエスト処理を主に担うが、通常は使用しない。本来はFlaskインストール時に適切なバージョンが同梱される。または必要なときにFlaskが要求するときに入れれば良い。逆にバージョンを固定して入れることで誤作動が起きやすくなるため、基本は無視し、以下を使用する。</p>
+<pre class="file-tag" data-tag="console"><code>pip show flask
+# Name: Flask
+# Version: 2.3.2
+# Summary: A simple framework for building complex web applications.</code></pre>
+<h3 class="display-6 mt-5 mb-2"><i class="fa fa-cogs"></i>VSCode拡張機能</h3>
+<p>VSCodeに追加しておくFlask開発に必要な拡張機能(インストール時は信頼を許可する)</p>
+<ul class="list-group my-3">
+    <li class="list-group-item"><i class="fa fa-circle"></i><code>Python</code>：言語補完、シンタックスハイライトなど</li>
+    <li class="list-group-item"><i class="fa fa-circle"></i><code>Python Indent</code>：自動インデント調整</li>
+    <li class="list-group-item"><i class="fa fa-circle"></i><code>Black Formatter</code>：Python用コードフォーマッター
+    <details>
+        <summary>flaskのインポートが解決されませんでしたというエラー表示の対策</summary>
+<p>自身のPC内でフォーマッターが別のflaskを見ている可能性があるため、<code>Ctrl + Shift + P</code>から、自身の作成したプロジェクトを選択する。</p>
+    </details>
+    </li>
+    <li class="list-group-item"><i class="fa fa-circle"></i><code>Better jinja</code>：テンプレート補完、シンタックスハイライトなど</li>
+    <li class="list-group-item"><i class="fa fa-circle"></i><code>djlint</code>：Jinjaのコードフォーマッター</li>
+    <li class="list-group-item"><i class="fa fa-circle"></i><code>SQLite Viewer</code>：SQLiteのデータを可視化</li>
+    <li class="list-group-item"><i class="fa fa-circle"></i><code>Flask-DebugToolbar</code>：開発者向けデバッグツール</li>
+</ul>
+<hr />
+<ul class="list-group my-3">
+    <li class="list-group-item"><i class="fa fa-circle"></i><code>Indent-rainbow</code>：インデントのカラー表示</li>
+    <li class="list-group-item"><i class="fa fa-circle"></i><code>Error Lens</code>：VSCode上でシンタックスエラーを表示</li>
+</ul>
+<h3 class="display-6 mt-5 mb-2"><i class="fa fa-cogs"></i>Bashエイリアス</h3>
+<p>コンソールでは同じコマンドを何度も使用するため、毎回手入力で長文を入力するのではなく、自身の任意の用語で省略した文字列でコマンドを実行させる設定。</p>
+<pre class="file-tag" data-tag="console"><code># バッシュエイリアスコマンドファイルの作成
+touch ~/.bashrc
+
+# VSCodeで開く
+code ~/.bashrc
+
+# 編集後に環境に保存
+source ~/.bashrc</code></pre>
+<p>良く利用するコマンドを省略した開発効率を高めるBashエイリアス。<code>alias</code>が宣言で、<code>=</code>の左辺が呼び出すトリガーで、右辺が呼び出すコード。</p>
+<pre class="file-tag" data-tag="console"><code>##### VSCode設定 #####
+alias c=&#x27;code&#x27;
+
+# 設定ファイル
+alias bashrc=&quot;code ~/.bashrc&quot;
+alias rebashrc=&quot;source ~/.bashrc&quot;
+
+# ターミナルの再起動
+alias restart=&quot;exec $SHELL -l&quot;
+
+# ディレクトリ確認
+alias ll=&quot;ls -alF --color=auto&quot;
+
+# 階層移動
+alias ..=&quot;cd ../&quot;
+alias ....=&quot;cd ../..&quot;
+
+# ディレクトリの作成と移動を同時実行
+function mkcd () { mkdir -p &quot;$@&quot; &amp;&amp; eval cd &quot;\&quot;\$$#\&quot;&quot;; }
+# ファイルを作成と同時にVSCodeで開く
+function tc(){ touch &quot;$1&quot; &amp;&amp; c &quot;$1&quot;; }
+
+# 容量確認
+alias w=&quot;du -h -s&quot;
+
+# 履歴
+alias h=&quot;history&quot;
+
+# ファイル作成
+alias t=&quot;touch&quot;
+
+# ファイルディレクトリ削除
+alias r=&quot;rm -rf&quot;
+
+# ファイル検索
+alias f=&quot;find . -name&quot;
+
+# miniconda
+alias conv=&#x27;conda -V&#x27;
+alias conl=&#x27;conda env list&#x27;
+alias cona=&#x27;conda activate&#x27;
+alias conc=&#x27;conda create python=3.11 -n&#x27;
+alias conr=&#x27;conda remove --all -n&#x27;
+
+# Python
+alias py=&#x27;python&#x27;
+alias pi=&#x27;pip install -U&#x27;
+alias pia=&#x27;pip install flask flask-wtf flask-sqlalchemy flask-migrate djlint&#x27;
+
+# Flask
+alias flv=&#x27;flask --version&#x27;
+alias flr=&#x27;flask run --debug&#x27;
+alias fldi=&#x27;flask db init&#x27;
+alias fldm=&#x27;flask db migrate&#x27;
+alias fldu=&#x27;flask db upgrade&#x27;</code></pre>
+<hr>
+<h2 class="display-5 mt-5 alert alert-dark"><i class="fa fa-cog"></i>基本表示</h2>
+<h3 class="display-6 mt-5 mb-2"><i class="fa fa-cogs"></i>階層構造</h3>
+<p>プロジェクトフォルダ内に入り、「<strong>app.py</strong>」を作成する。このファイルは実行時に省略し、自動認識される特殊な名前となっている、また、いずれ<mark class="highlight-yellow_background">アプリケーションの起動やMVTとの紐付けなど、全体機能の基点</mark>となっていく。</p>
+<pre class="file-tag" data-tag="console"><code>cd [project name]
+# touch + code ファイルを作成しVSCodeで開くbashエイリアス利用時
+tc app.py</code></pre>
+<h3 class="display-6 mt-5 mb-2"><i class="fa fa-cogs"></i>インスタンス生成</h3>
+<p>インスタンス生成時の引数に<code>__name__</code>と指定しているが、これは自身のファイルを起動する際は、自身のアプリケーションを表す<code>__main__</code>という値が呼び出されている。</p>
+<pre class="file-tag" data-tag="app.py"><code>from flask import Flask
+
+# インスタンス生成
+app = Flask(__name__)
+
+# ルーティング
+@app.route(&#x27;/&#x27;)
+def hello_world():
+    return &#x27;&lt;h1&gt;ハローワールド&lt;/h1&gt;&#x27;</code></pre>
+<h3 class="display-6 mt-5 mb-2"><i class="fa fa-cogs"></i>アプリ実行</h3>
+<pre class="file-tag" data-tag="console"><code># Flaskでファイルを実行
+flask --app app run
+
+# ファイルがapp.pyであれば省略可能
+# --debugは修正箇所をリアルタイム更新
+flask run --debug
+# Running on http://127.0.0.1:5000　のURLにAltクリックするとブラウザが起動表示
+# 停止はCtrl + C</code></pre>
+<p>ファイルを実行する際に表示される警告メッセージ「<code>WARNING: This is a development server...</code>」は、2023～24のアプデで環境を間違えて作業する事故が多発し、Flask2.3以降の開発サーバでは必ず警告として表示される仕様になっているため、<mark class="highlight-yellow_background">通常の設定では非表示にできない</mark>。</p>
+<hr>
+<h2 class="display-5 mt-5 alert alert-dark"><i class="fa fa-cog"></i>ルーティング</h2>
+<p><code>app.route</code>でアクセスしたURLから実行関数への紐付けができる。<code>render_template</code>は、<code>templates</code>フォルダを作成した場合のみ、その中のhtmlファイルにアクセスする。</p>
+<p>URLの動的パラメータを受ける場合には<code>&lt;名前&gt;</code>で受け取り、型安全とする場合は<strong>コンバータ</strong>を手前に宣言<code>&lt;型 : 名前&gt;</code>する。違う型の場合は404エラーとなる。</p>
+<p>開発環境としてデバッグ出力を行う場合は<code>run</code>メソッドに<code>debug=True</code>とする。</p>
+<pre class="file-tag" data-tag="console"><code>md templates &amp; t templates/index.html &amp; t templates/list.html &amp; t templates/detail.html</code></pre>
+<pre class="file-tag" data-tag="app.py"><code>from flask import Flask, render_template
+
+# インスタンス生成
+app = Flask(__name__)
+
+# ルーティング設定
+@app.route(&#x27;/&#x27;)
+def index():
+    return render_template(&#x27;index.html&#x27;) # templatesフォルダ内のHTMLを表示
+
+@app.route(&#x27;/list&#x27;)
+def item_list():
+    return render_template(&#x27;list.html&#x27;)
+
+@app.route(&#x27;/detail&#x27;)
+def item_detail():
+    return render_template(&#x27;detail.html&#x27;)
+
+@app.route(&#x27;/dynamic/&lt;value&gt;&#x27;) # 動的パラメータを指定
+def dynamic_default(value):
+  print(f&#x27;型:{type(value)}, 値:{value}&#x27;) # コンソール表示
+  return f&#x27;&lt;h1&gt;渡された値は「{value}」です&lt;/h1&gt;&#x27; # ブラウザ表示
+
+@app.route(&#x27;/dynamic2/&lt;int:number&gt;&#x27;) # コンバーター(型)あり
+def dynamic_int(number):
+  print(f&#x27;型:{type(number)}, 値:{number}&#x27;)
+  return f&#x27;&lt;h1&gt;渡された値は「{number}」です&lt;/h1&gt;&#x27;
+
+@app.route(&#x27;/dynamic3/&lt;value&gt;/&lt;int:number&gt;&#x27;) # 複数パラメータ
+def dynamic_converter_multiple(value, number):
+  print(f&#x27;型:{type(value)}, 値:{value}&#x27;)
+  print(f&#x27;型:{type(number)}, 値:{number}&#x27;)
+  return f&#x27;&lt;h1&gt;渡された値は「{value}と{number}」です&lt;/h1&gt;&#x27;
+
+if __name__ == &#x27;__main__&#x27;:
+    app.run(debug=True) # デバッグモードで実行</code></pre>
+<p>ステータスコードの問題点</p>
+<ul class="list-group my-3">
+    <li class="list-group-item"><i class="fa fa-circle"></i><code>404</code>エラー→ <strong>ファイル</strong>が見つからない<strong>パス</strong>の問題</li>
+    <li class="list-group-item"><i class="fa fa-circle"></i><code>405</code>エラー→ <strong>GET / POST</strong>の問題</li>
+    <li class="list-group-item"><i class="fa fa-circle"></i><code>500</code>エラー→ <strong>プログラム</strong>の問題</li>
+</ul>
+<h3 class="display-6 mt-5 mb-2"><i class="fa fa-cogs"></i>テンプレートエンジンJinja2</h3>
+<p>viewから渡された<mark class="highlight-yellow_background">データと虫食いのテンプレートをバインドする</mark>のが<strong>テンプレートエンジン</strong>で静的なHTMLを吐き出す。<code>&#123;&#37; … &#37;&#125;</code>Jinjaステートメントタグを使用して動的に値を展開できる。</p>
+<pre class="file-tag" data-tag="console"><code>tc templates/base.html</code></pre>
+<pre class="file-tag" data-tag="templates/index.j2"><code>&lt;title&gt;&#123;&#37; block title &#37;&#125;タイトル&lt;% endblock &#37;&#125;&lt;/title&gt;</code></pre>
+<pre class="file-tag" data-tag="templates/index.j2"><code>&lt;!-- 親ファイルの読み込み --&gt;
+&#123;&#37; extend base.html &#37;&#125;
+&lt;title&gt;&#123;&#37; block title &#37;&#125;上書きタイトル&lt;% endblock &#37;&#125;&lt;/title&gt;
+
+&lt;!-- タグを含めたjinja用コメント --&gt;
+&#123;#
+&#123;&#37; extend base.html &#37;&#125;
+&lt;title&gt;&#123;&#37; block title &#37;&#125;上書きタイトル&lt;% endblock &#37;&#125;&lt;/title&gt;
+#&#125;</code></pre><hr>
+<h2 class="display-5 mt-5 alert alert-dark"><i class="fa fa-cog"></i>ファイルフォーマット</h2>
+<h3 class="display-6 mt-5 mb-2"><i class="fa fa-cogs"></i>テンプレートファイルの拡張子変更</h3>
+<p>jinjaのテンプレートファイルは<mark class="highlight-default_background">一般的に利用されている拡張子は.html</mark>だが、テンプレートタグが認識しないため、整形をかけると1行に並んでします。jinjaの拡張子に変更して整形すればよいが、ファイルを閉じるたびに、毎回ファイルフォーマットを変更する必要が出てくるため、拡張子を「<code>.jinja</code>」「<code>.jinja2</code>」「<code>.j2</code>(<mark class="highlight-yellow_background">短いので推奨</mark>)」いずれかで統一するように決めておく。</p>
+<p>途中から<code>.html</code>の拡張子を変更する場合は、取りこぼしが無いように以下の項目を改修していく。</p>
+<ul class="list-group my-3">
+    <li class="list-group-item"><i class="fa fa-circle"></i>VSCodeのエクスプローラーで「<code>上下キー</code>」で実ファイルを選択し「<code>F2</code>」キーで効率よく名前を変更していく。</li>
+    <li class="list-group-item"><i class="fa fa-circle"></i><code>app.py</code>のrendar_templateのアクセスパスを変更する。<code>Ctrl + Shift + L</code>で一括選択</li>
+    <li class="list-group-item"><i class="fa fa-circle"></i>base.py以外のテンプレート<code>top.py</code> などの<code>extends</code>パスを<code>Ctrl + Shift + H</code>で一括置換</li>
+</ul>
+<h3 class="display-6 mt-5 mb-2"><i class="fa fa-cogs"></i>スニペット</h3>
+<p>VSCodeスニペットは「<code>jinja.json</code>と<code>html.json</code>」のどちらのファイルフォーマットでも呼び出せるよう両方に設定しておく。<code>prefix</code>がTabキーの呼び出しトリガーで<code>body</code>が展開コード。またキャレットの移動順序を<code>&#36;&#123;1&#58;&#125;</code></p>
+<pre class="file-tag" data-tag="snippet/jinja.json"><code>&quot;jinja-block&quot;: {
+    &quot;prefix&quot;: &quot;{b&quot;,
+    &quot;body&quot;:
+      &quot;&#123;&#37; block &#36;&#123;1&#58;&#125; &#37;&#125;&#36;&#123;2&#58;&#125;&#123;&#37; endblock &#36;&#123;1&#58;&#125; %&quot;
+  },
+  &quot;extend&quot;: {
+    &quot;prefix&quot;: &quot;{e&quot;,
+    &quot;body&quot;:
+      &quot;&#123;&#37; extends \&quot;&#36;&#123;1&#58;&#125;\&quot; %&quot;
+  },
+  &quot;for&quot;: {
+    &quot;prefix&quot;: &quot;{f&quot;,
+    &quot;body&quot;:
+      &quot;&#123;&#37; for &#36;&#123;2:val} in &#36;&#123;1:list} &#37;&#125;&#36;&#123;3&#58;&#125;&#123;&#37; endfor %&quot;
+  },
+  &quot;macro&quot;: {
+    &quot;prefix&quot;: &quot;{m&quot;,
+    &quot;body&quot;: [
+      &quot;&#123;&#37; macro render_field(&#36;&#123;1:field}) &#37;&#125;&quot;,
+      &quot;\t&#36;&#123;2&#58;&#125;&quot;,
+      &quot;&#123;&#37; endmacro %&quot;,
+    ]
+  },
+  &quot;url_for&quot;: {
+    &quot;prefix&quot;: &quot;{u&quot;,
+    &quot;body&quot;:
+      &quot;&#123;&#123; url_for(&#x27;&#36;&#123;1&#58;&#125;&#x27;) }&quot;
+  },
+  &quot;super&quot;: {
+    &quot;prefix&quot;: &quot;{s&quot;,
+    &quot;body&quot;:
+      &quot;&#123;&#123; super }&quot;
+  },</code></pre>
+<p><code>{</code>を入力すると自動で閉じ括弧も付く拡張機能<code>bracket-lens</code>
+                が入っていることを前提に、最後の閉じ括弧を除外しておく。<code>&#36;&#123;1}</code>は最初にキャレットが当たる位置で<code>Tab</code>キーで次の番号に移動する。移動せずに変換させる場合は、通常移動で番号の移動を解除する。複数選択の解除は<code>esc</code>
+                。</p>
+<table class="table table-dark table-striped align-middle">
+    <thead>
+        <tr>
+            <th style="width: 87px">概要</th>
+            <th style="width: 77px">トリガー</th>
+            <th style="width: 505px">展開コード</th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>ブロック</td>
+        <td><code>&#123;b</code></td>
+        <td>
+        <code>&#123;% block [1] %&#125;[2]&#123;% endblock [1] %&#125;</code>
+        </td>
+    </tr>
+    <tr>
+        <td>継承</td>
+        <td><code>&#123;e</code></td>
+        <td>
+        <code>&#123;% extends "[1]" %&#125;</code>
+        </td>
+    </tr>
+    <tr>
+        <td>繰り返し</td>
+        <td><code>&#123;f</code></td>
+        <td>
+        <code>&#123;% for [2] in [1] %&#125;[3]&#123;% endfor %&#125;</code>
+        </td>
+    </tr>
+    <tr>
+        <td>リンク</td>
+        <td><code>&#123;u</code></td>
+        <td>
+        <code>&#123;&#123; url_for('[1]') &#125;&#125;</code>
+        </td>
+    </tr>
+    <tr>
+        <td>親展開</td>
+        <td><code>&#123;s</code></td>
+        <td>
+        <code>&#123;&#123; super &#125;&#125;</code>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<p>ただし、スニペットを作成してもインスペクタに表示されない場合は、拡張機能<code>better jinja</code>が入っていれば<code>block</code>と<code>extends</code>を展開することはできる。</p>
+<p>また<code>python.json</code>にも、<code>app.py</code>に以下の基本モジュールが取捨選択できるスニペットを設定しておく。</p>
+<pre class="file-tag" data-tag="snippet/.json"><code>&quot;basic_import&quot;: {
+    &quot;prefix&quot;: &quot;!&quot;,
+    &quot;body&quot;: [
+        &quot;&#36;&#123;1:import os&#125;&quot;,
+        &quot;from flask import Flask&#36;&#123;2:, render_template&#125;&#36;&#123;3:, request&#125;&#36;&#123;4:, redirect&#125;&#36;&#123;5:, url_for&#125;&#36;&#123;6:, g&#125;&#36;&#123;7:, Blueprint&#125;&quot;,
+        &quot;&#36;&#123;8:from flask_sqlalchemy import SQLAlchemy&#125;&quot;,
+        &quot;&#36;&#123;9:from flask_migrate import Migrate&#125;&quot;,
+        &quot;app = Flask(__name__)&quot;,
+        &quot;@app.route(&#36;&#123;10:&#x27;/&#x27;&#125;)&quot;,
+        &quot;def &#36;&#123;11:index&#125;():&quot;,
+        &quot;\t&#36;&#123;12&#58;&#125;&quot;,
+        &quot;if __name__ == &#x27;__main__:&#x27;&quot;,
+        &quot;\tapp.run(debug=True)&quot;
+    ],
+    &quot;description&quot;: &quot;app基本モジュールの読み込み&quot;
+}</code></pre>
+<h3 class="display-6 mt-5 mb-2"><i class="fa fa-cogs"></i>djLint</h3>
+<p>flaskのjinja2のマスタッシュ構文ごとの改行を反映させるためのフォーマッタ用ライブラリ。拡張機能「djLint」もインストールしたら、「Alt+ Shift + F」で整形可能。<code>-U</code>はアップグレードという意味で、既存のパッケージがあればアップグレード、なければ新規追加となる。</p>
+<pre class="file-tag" data-tag="console"><code>pip install -U djlint</code></pre>
+<p>ただし、その他のコードチェックも自動で行われる。endblockにも名前を付けないと警告メッセージが表示される。</p>
+<ul class="list-group my-3">
+    <li class="list-group-item"><i class="fa fa-circle"></i><mark class="highlight-yellow_background">endblockにも名前を付ける。通常は任意</mark></li>
+    <li class="list-group-item"><i class="fa fa-circle"></i>ダブルクォートを使用する。</li>
+    <li class="list-group-item"><i class="fa fa-circle"></i>リンクのパスはurl_forを使用する。</li>
+    <li class="list-group-item"><i class="fa fa-circle"></i>metaのdescriptionとkeywordsを追加する。</li>
+</ul>
+<h3 class="display-6 mt-5 mb-2"><i class="fa fa-cogs"></i>multiCommand</h3>
+<p>j2ファイルで作成した際にHTMLフォーマット上でHTMLのタグを作成し、jinjaフォーマット上でテンプレートタグの整形を行う場合、以下のショートカットを「<code>Ctrl + K + S</code>」からjsonファイルを開き追加する。ただし、コマンドを繰り返し実行するには、拡張機能「<code>multiCommand</code>」を追加しておく必要がある。</p>
+<table class="table table-dark table-striped align-middle">
+    <thead>
+        <tr>
+            <th><strong>ショートカット</strong></th>
+            <th><strong>実行内容</strong></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>alt + shift +<code><strong>f</strong></code></td>
+            <td><code>.j2</code>ファイル上で<code>jinja</code>フォーマットで整形し<code>HTML</code>フォーマットに変換</td>
+        </tr>
+        <tr>
+            <td>alt + shift +<code><strong>h</strong></code></td>
+            <td><code>html</code>にファイルフォーマットを変更</td>
+        </tr>
+        <tr>
+            <td>alt + shift +<code><strong>j</strong></code></td>
+            <td><code>jinja</code>にファイルフォーマットを変更</td>
+        </tr>
+    </tbody>
+</table>
+<pre class="file-tag" data-tag="keybindings.json"><code>{
+    &quot;key&quot;: &quot;alt+shift+f&quot;,
+    &quot;command&quot;: &quot;extension.multiCommand.execute&quot;,
+    &quot;args&quot;: {
+        &quot;sequence&quot;: [
+            {
+                &quot;command&quot;: &quot;workbench.action.editor.changeLanguageMode&quot;,
+                &quot;args&quot;: &quot;jinja&quot;
+            },
+            {
+                &quot;command&quot;: &quot;editor.action.formatDocument&quot;
+            },
+            {
+                &quot;command&quot;: &quot;workbench.action.editor.changeLanguageMode&quot;,
+                &quot;args&quot;: &quot;html&quot;
+            },
+        ]
+    },
+    &quot;when&quot;: &quot;resourceExtname == .j2&quot;
+    },
+    {
+        &quot;key&quot;: &quot;alt+shift+h&quot;,
+        &quot;command&quot;: &quot;extension.multiCommand.execute&quot;,
+        &quot;args&quot;: {
+            &quot;sequence&quot;: [
+                {
+                    &quot;command&quot;: &quot;workbench.action.editor.changeLanguageMode&quot;,
+                    &quot;args&quot;: &quot;html&quot;
+                },
+            ]
+        },
+        &quot;when&quot;: &quot;resourceExtname == .j2 || resourceExtname == .html&quot;
+    },
+    {
+    &quot;key&quot;: &quot;alt+shift+j&quot;,
+    &quot;command&quot;: &quot;extension.multiCommand.execute&quot;,
+    &quot;args&quot;: {
+        &quot;sequence&quot;: [
+            {
+                &quot;command&quot;: &quot;workbench.action.editor.changeLanguageMode&quot;,
+                &quot;args&quot;: &quot;jinja&quot;
+            },
+        ]
+    },
+    &quot;when&quot;: &quot;resourceExtname == .j2 || resourceExtname == .html&quot;
+},</code></pre>
+<p>djlintを追加するとtemplateファイルで余計な警告メッセージが表示されるようになるため、それを<mark class="highlight-yellow_background">非表示にする設定ファイル</mark>を<strong>プロジェクトルート</strong>に配置することで下層全てに反映される。一度VSCodeを再起動することでdjlintが認識するようになる。</p>
+<table class="table table-dark table-striped align-middle">
+    <thead>
+        <tr>
+            <th><strong>エラーコード</strong></th>
+            <th><strong>概要</strong></th>
+            <th><strong>コード例</strong></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>T001</code></td>
+            <td><code>&#123;&#123;&#125;&#125;</code>の内側に空白空き</td>
+            <td>&#123;&#123;item.name&#125;&#125;</td>
+        </tr>
+        <tr>
+            <td><code>T002</code></td>
+            <td>endblock に名前がない</td>
+            <td>&#123;&#37; endblock &#37;&#125;</td>
+        </tr>
+        <tr>
+            <td><code>T003</code></td>
+            <td>endblock の名前強制</td>
+            <td>&#123;&#37; endblock &#37;&#125;</td>
+        </tr>
+        <tr>
+            <td><code>T006</code></td>
+            <td>img要素に幅高さを指定</td>
+            <td>&lt;img src=””&gt;</td>
+        </tr>
+        <tr>
+            <td><code>T013</code></td>
+            <td>img要素にaltを指定</td>
+            <td>&lt;img src=””&gt;</td>
+        </tr>
+        <tr>
+            <td><code>H020</code></td>
+            <td>&lt;div&gt;&lt;/div&gt;</td>
+        </tr>
+        <tr>
+            <td><code>H021</code></td>
+            <td>inline style禁止</td>
+            <td>&lt;div style=”color: red;”&gt;&lt;/div&gt;</td>
+        </tr>
+        <tr>
+            <td><code>H030</code></td>
+            <td>meta description 未指定</td>
+            <td>&lt;meta name=”description” content=””&gt;</td>
+        </tr>
+        <tr>
+            <td><code>H031</code></td>
+            <td>meta keywords 未指定</td>
+            <td>&lt;meta name=”keywords” content=””&gt;</td>
+        </tr>
+    </tbody>
+</table>
+<p>profileは対象のファイル拡張子。jsonにはコメントを追記できないので注意する。</p>
+<pre class="file-tag" data-tag=".djlintrc.json"><code>{
+    &quot;profile&quot;: [
+        &quot;html&quot;,
+        &quot;jinja&quot;,
+        &quot;j2&quot;,
+        &quot;py&quot;
+    ],
+    &quot;use_gitignore&quot;: true,
+    &quot;ignore&quot;: [
+        &quot;T001&quot;,
+        &quot;T002&quot;,
+        &quot;T003&quot;,
+        &quot;T006&quot;,
+        &quot;T013&quot;,
+        &quot;H020&quot;,
+        &quot;H021&quot;,
+        &quot;H030&quot;,
+        &quot;H031&quot;
+    ]
+}</code></pre>
+<p>ただし、jijnaに関連する構文は構文健全性ルールという規格外の扱いで消えないことがあるため、VSCodeの設定ファイルのJSONに除外指定にも行っておく。また、.j2ファイルを開いたときに別のファイルフォーマットで開かない設定も追記しておく。</p>
+<pre class="file-tag" data-tag="settings.json"><code>&quot;djlint.ignore&quot;: [
+    &quot;T001&quot;,
+    &quot;T002&quot;,
+    &quot;T003&quot;,
+    &quot;T006&quot;,
+    &quot;T013&quot;,
+    &quot;H020&quot;,
+    &quot;H021&quot;,
+    &quot;H030&quot;,
+    &quot;H031&quot;
+],
+&quot;files.associations&quot;: {
+    &quot;*.j2&quot;: &quot;jinja-html&quot;
+}</code></pre>
+<h3 class="display-6 mt-5 mb-2"><i class="fa fa-cogs"></i>Prettier + prettier-plugin-jinja-template</h3>
+<p>Prettier 自身は標準では Jinja2を理解しないため、jinja対応のプラグインをプロジェクト直下に追加しておく。これによりJinja2のテンプレート構文(改行やインデントなど)を整形できる。npmコマンドがnotfoundエラーとなるようであれば、<a href="https://nodejs.org/ja">Node.js</a>をインストールしVSCodeを再起動する。</p>
+<pre class="file-tag" data-tag="console"><code># プロジェクト直下
+npm install --save-dev prettier prettier-plugin-jinja-template
+
+# 設定ファイルを作成して開く
+tc .prettierrc</code></pre>
+<p><code>.prettierrc</code>にprettierにjinjaフォーマッターを設定し、認識する拡張子を追加。</p>
+<pre class="file-tag" data-tag=".prettierrc "><code>{
+    &quot;plugins&quot;:[&quot;prettier-plugin-jinja-template&quot;],
+    &quot;overrides&quot;:[
+        {
+            &quot;files&quot;:[&quot;*.html&quot;,&quot;*.jinja2&quot;,&quot;*.j2&quot;],
+            &quot;options&quot;:{
+                &quot;parser&quot;:&quot;jinja-template&quot;
+            }
+        }
+    ]
+}</code></pre>
+<p>また、HTMLのインデントが2スペースなので、<code>indent-rainbow</code>では警告カラーとなる。4スペースに変更したい場合は、以下の設定ファイルをプロジェクト上位に配置しておく。</p>
+<pre class="file-tag" data-tag=".prettierrc "><code>{
+    &quot;tabWidth&quot;: 4,
+    &quot;useTabs&quot;: false
+}</code></pre>
 {% endblock %}
