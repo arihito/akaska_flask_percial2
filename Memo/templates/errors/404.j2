@@ -1,9 +1,70 @@
 {% extends "base.j2" %}
 {% block content %}
-    <h1>NotFoundエラー</h1>
-    <h2>ステータスコード：404</h2>
-    <p>{{ msg }}</p>
-    <p>
-        <a href="{{ url_for('memo.index') }}">一覧ページへ戻る</a>
-    </p>
-{% endblock content %}
+    <style>
+    .article-img {
+        height: 300px;
+        background: url("{{ key_visual | default('/static/images/other/404.png') }}") center / cover no-repeat;
+        filter: grayscale(100%);
+        background-color: #212529;
+        mix-blend-mode:color-dodge;
+    }
+    </style>
+    <div class="mb-4 rounded text-body-emphasis bg-body-secondary article-img"></div>
+    <div class="row">
+        <div class="col-md-9">
+            <h1 class="display-4 my-3 pb-4 border-bottom">
+                <i class="fa fa-exclamation-triangle"></i> NotFoundエラー
+            </h1>
+            <div class="markdown-body">
+                <h2>ステータスコード：404</h2>
+                <h3 id="translate-target" class="alert alert-danger my-5" style="line-height:3rem">{{ msg }}</h3>
+            </div>
+            <div class="d-grid">
+                <button id="translate-btn" class="btn btn-outline-secondary btn-lg w-100">日本語に翻訳する</button>
+            </div>
+            <div class="my-5 d-flex gap-3">
+                <a class="col-8 btn btn-outline-secondary btn-lg flex-grow-1" id="scrollTopBtn"><i class="fa fa-arrow-up" aria-hidden="true"></i> ページの最上部に戻る</a>
+                <a class="col-4 btn btn-outline-secondary btn-lg" style="width:30%" href="{{ url_for('public.public_index') }}"><i class="fa fa-reply"></i> トップの一覧に戻る</a>
+            </div>
+        </div>
+        {% include "public/aside.j2" %}
+    </div>
+    <script>
+    document.getElementById('translate-btn').addEventListener('click', async function() {
+        const targetElement = document.getElementById('translate-target');
+        const originalText = targetElement.innerText;
+        const btn = this;
+
+        // ボタンを無効化して処理中であることを示す
+        btn.disabled = true;
+        btn.innerText = '翻訳中...';
+
+        try {
+            const authKey = 'YOUR_DEEPL_API_KEY'; // ここにご自身のAPIキーを入力
+            const params = new URLSearchParams({
+                auth_key: authKey,
+                text: originalText,
+                target_lang: 'JA'
+            });
+
+            const response = await fetch('https://api-free.deepl.com/v2/translate', {
+                method: 'POST',
+                body: params,
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            });
+
+            const data = await response.json();
+            
+            if (data.translations && data.translations.length > 0) {
+                // 翻訳テキストに書き換え
+                targetElement.innerText = data.translations[0].text;
+                btn.style.display = 'none'; // 翻訳後はボタンを隠す
+            }
+        } catch (error) {
+            console.error('翻訳エラー:', error);
+            btn.innerText = '翻訳に失敗しました';
+            btn.disabled = false;
+        }
+    });
+    </script>
+{% endblock %}

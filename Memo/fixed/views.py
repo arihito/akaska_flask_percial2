@@ -1,6 +1,4 @@
-from flask import Blueprint, render_template, abort
-
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, abort, url_for
 from models import db, Memo, Favorite
 from flask_login import current_user
 from sqlalchemy import func
