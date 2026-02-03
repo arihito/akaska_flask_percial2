@@ -1,0 +1,1266 @@
+<!doctype html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <body>
+        <h2>Flaskとは</h2>
+		<p><strong>Flask</strong>は、ツールキットの<strong>Werkzeug</strong>とテンプレートエンジンの<strong>Jinja</strong>を組み合わせ、フラスコの小さな容器のように、中身が自由に入れ替えられ小さく扱いやすいというコンセプトを基に、<mark class="highlight-yellow_background"><strong>軽量なWebフレームワーク</strong></mark>として<strong>Armin Ronacher</strong> (アルミンロナチャー)が設計開発した。</p>
+		<p>特徴としてMVCではなく<strong>MVTモデル</strong>を採用している。なぜFlaskはMVCのコントローラに当たる部分をViewと呼ぶのかというと、より原義に近い意味でユーザーに返す表現を生成する責務を持っているからとのこと。</p>
+		<ul class="list-group my-3">
+			<li class="list-group-item"><i class="fa fa-circle"></i>Model：データベースにアクセスする処理で通常のDBスキーマとしての雛形を意味する。</li>
+        	<li class="list-group-item"><i class="fa fa-circle"></i><strong>View</strong>：リクエストを受け取り処理を振り分ける、本来の<mark class="highlight-yellow_background"><strong>ルーティング＋コントローラ</strong></mark>の役割。</li>
+        	<li class="list-group-item"><i class="fa fa-circle"></i>Template：テンプレートエンジン<strong>jinja</strong>を採用した本来の表示となるView。</li>
+        </ul>
+		<p>実務では次のように理解するのが最も安全で、言葉を揃えようとしない方が事故が起きない。</p>
+        <ul class="list-group my-3">
+			<li class="list-group-item">Flask の View =<strong>「エンドポイント関数」</strong></li>
+			<li class="list-group-item"><i class="fa fa-circle"></i>MVC の Controller =<strong>「ユースケース処理」</strong></li>
+			<li class="list-group-item"><i class="fa fa-circle"></i>MVC の View =<strong>「テンプレート or JSON 表現」</strong></li>
+        </ul>
+        <div class="column-list">
+            <div style="width: 75%" class="column">
+                <h2>■<a href="https://docs.conda.io/en/latest/miniconda.html">Miniconda</a></h2>
+                <p>本来のAnacondaは機械学習などのデータサイエンスに最適な環境構築ソフトで様々なライブラリが同梱されているため容量が大きい。そこから<mark class="highlight-yellow_background">Packageコマンドだけを抜き出した</mark>小さな開発環境として無料で提供されている。</p><p>上記タイトルリンクから右上の「<strong>Download</strong>」ボタンをクリック</p>
+            </div>
+            <div style="display: contents" dir="auto">
+                <div
+                    style="width: 24.999999999999993%" class="column">
+                    <div style="display: contents" dir="ltr">
+                        <figure
+                         class="image"
+                            style="text-align: right">
+                            <a href="miniconda_thumb.jpg"><img
+                                    style="width: 192px"
+                                    src="miniconda_thumb.jpg"
+                            /></a>
+                        </figure>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="display: contents" dir="ltr">
+            <figure class="image">
+                <a href="dl.png"><img style="width: 497.96875px" src="dl.png"
+                /></a>
+            </figure>
+        </div>
+        <div style="display: contents" dir="auto">
+            <h3>▢開発環境構築</h3>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p>インストーラーを起動する。<strong>タイトルはAnaconda</strong>だが気にせず進めていく。</p>
+        </div>
+        <div style="display: contents" dir="auto">
+            <ul class="list-group my-3">
+<li class="list-group-item"><i class="fa fa-circle"></i>
+                    Just Me (recommended)を選択。
+                </li>
+            </ul>
+        </div>
+        <div style="display: contents" dir="auto">
+            <ul class="list-group my-3">
+<li class="list-group-item"><i class="fa fa-circle"></i>
+                    Advanced Install Options (拡張オプション)
+                    <strong>下3つのチェック</strong>は必須
+                    <div style="display: contents" dir="auto">
+                        <ul
+                         class="bulleted-list">
+                            <li style="list-style-type: circle">
+                                Create start
+                                menyu…：スタートメニューに追加（任意）
+                            </li>
+                        </ul>
+                    </div>
+                    <div style="display: contents" dir="auto">
+                        <ul
+                         class="bulleted-list">
+                            <li style="list-style-type: circle">
+                                Add
+                                Miniconda…：環境変数のパスに追加し、コンソールで「conda」コマンドを使用
+                            </li>
+                        </ul>
+                    </div>
+                    <div style="display: contents" dir="auto">
+                        <ul
+                         class="bulleted-list">
+                            <li style="list-style-type: circle">
+                                Register Mniconda3
+                                as…：Pythonのバージョンを3.10としてユーザー環境内で登録
+                            </li>
+                        </ul>
+                    </div>
+                    <div style="display: contents" dir="auto">
+                        <ul
+                         class="bulleted-list">
+                            <li style="list-style-type: circle">
+                                clear the package
+                                cache…：完了後にパッケージキャッシュクリアにする。
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p>インストール<mark class="highlight-yellow_background">ゲージが最後の</mark><mark class="highlight-yellow_background"><strong>完了直前で止まった</strong></mark><mark class="highlight-yellow_background">まま</mark>になっていたらNextを押してしまう。</p>
+        </div>
+<ul class="list-group my-3">
+<li class="list-group-item"><i class="fa fa-circle"></i>
+                    最後はGetting started..とWelcome to
+                    には<strong>チェックを入れず</strong>Finish
+                </li>
+            </ul>
+        </div>
+        <div style="display: contents" dir="auto">
+            <ul class="bulleted-list">
+                <li style="list-style-type: disc">プロンプトで以下を操作</li>
+            </ul>
+        </div>
+        <div style="display: contents" dir="auto">
+            <pre
+             class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all"># バージョンの確認
+conda -V
+
+# 仮想環境一覧表示　*-&gt;active 稼働中 +-&gt;frozen 停止中
+conda env list
+
+# 仮想環境の作成 以下の設問はacceptのaで受け入れる
+conda create -n [name] python=[version]
+# pkgs/main：デフォルトの重要パッケージ(チャネル)で科学計算・データ分析・機械学習 Numpy pandas
+# pkgs/r：統計機能解析Rと関連チャネルを共存利用 tidyrerse ggplot2
+# pkgs/msys：Unix/Linux風ツールやコンパイラでgitやbashなどが使えるためWinエラーを防ぐ
+# Proceed：進む (y)
+
+# 環境の初期化(コンソールが複数ある場合)し再起動
+conda init bash
+
+# 仮想環境の有効化(自身の環境名がパスの手前に表示されればOK)
+conda activate [name]
+
+# 仮想環境の無効化(今いる環境が停止しbaseに戻る)
+conda deactivate
+
+# 仮想環境の削除
+conda remove -n [name] --all
+# --&gt; Proceed(y)</code></pre>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p>開発環境を初回作成しておけば、次回から有効化するだけで使用可能。無効化や削除は必要無し。</p>
+        </div>
+        <div style="display: contents" dir="auto">
+            <pre
+             class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all"># 有効状態か確認(任意)
+conda env list
+# 有効化
+conda activate [name]
+
+# 終了時--&gt;そのままPC閉じ</code></pre>
+        </div>
+        <div style="display: contents" dir="auto">
+            <h2>■ Flaskインストール</h2>
+        </div>
+        <div style="display: contents" dir="auto">
+            <p>パッケージコマンドは2種類ある。</p>
+        </div>
+        <div style="display: contents" dir="auto">
+		<ul class="list-group my-3">
+<li class="list-group-item"><i class="fa fa-circle"></i>
+                    conda：Anaconda社が管理するシステム関連のダウンロードインストールコマンド
+                </li>
+            </ul>
+        </div>
+        <div style="display: contents" dir="auto">
+            <ul class="bulleted-list">
+                <li style="list-style-type: disc">
+                    pip：Pythonのサードパーティ製ソフトのPyPl(Python Package
+                    Index)の開発時の主要コマンド
+                </li>
+            </ul>
+        </div>
+        <div style="display: contents" dir="auto">
+            <pre
+             class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all"># Flaskのインストール(イコール2つ)
+pip install [name]==バージョン
+pip install flask==2.3.2 # バージョンは最新の3系推奨
+
+# condaを使用している場合はこちらでも良い
+conda install [name]
+
+# 使用している今の環境に果実にインストール
+python -m pip install [name]
+
+# python環境がPC内に複数ある場合
+where python
+&lt;使用したいpythonパス&gt; -m pip install [name]</code></pre>
+        </div>
+        <div style="display: contents" dir="auto">
+            <h3>▢flaskバージョン表示エラー</h3>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p>以下のコードで本来バージョンが表示されるはずが、Werkzeug(ヴェルクツォイク)3.0以降はファイルが削除されたため以下のエラーが表示される。</p>
+        </div>
+        <div style="display: contents" dir="auto">
+            <pre
+             class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">flask --version
+# AttributeError: module &#x27;werkzeug&#x27; has no attribute &#x27;__version__&#x27;</code></pre>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p>Werkzeugとはアプリと様々なサーバ誤差間を取り持つインターフェースで、HTTPやルーティング、リクエスト処理を主に担うが、通常は使用しない。本来はFlaskインストール時に適切なバージョンが同梱される。または必要なときにFlaskが要求するときに入れれば良い。逆にバージョンを固定して入れることで誤作動が起きやすくなるため、基本は無視し、以下を使用する。</p>
+        </div>
+        <div style="display: contents" dir="auto">
+            <pre
+             class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">pip show flask
+# Name: Flask
+# Version: 2.3.2
+# Summary: A simple framework for building complex web applications.</code></pre>
+        </div>
+        <div style="display: contents" dir="auto">
+            <h3>▢VSCode拡張機能</h3>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p>VSCodeに追加しておくFlask開発に必要な拡張機能(インストール時は信頼を許可する)</p>
+        </div>
+        <div style="display: contents" dir="auto">
+            <ul class="list-group my-3">
+<li class="list-group-item"><i class="fa fa-circle"></i>
+                    Python：言語補完、シンタックスハイライトなど
+                </li>
+            </ul>
+        </div>
+        <div style="display: contents" dir="auto">
+            <ul class="bulleted-list">
+                <li style="list-style-type: disc">
+                    Python Indent：自動インデント調整
+                </li>
+            </ul>
+        </div>
+        <div style="display: contents" dir="auto">
+            <ul class="bulleted-list">
+                <li style="list-style-type: disc">
+                    Black Formatter：Python用コードフォーマッター
+                    <div style="display: contents" dir="auto">
+                        <ul
+                         class="toggle">
+                            <li>
+                                <details open="">
+                                    <summary>
+                                        flaskのインポートが解決されませんでしたというエラー表示の対策
+                                    </summary>
+                                    <div style="display: contents" dir="auto">
+                                        <p
+                                        >
+                                            自身のPC内でフォーマッターが別のflaskを見ている可能性があるため、<code>Ctrl + Shift + P</code>
+                                            から、自身の作成したプロジェクトを選択する。</p>
+                                    </div>
+                                </details>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div style="display: contents" dir="auto">
+            <ul class="list-group my-3">
+<li class="list-group-item"><i class="fa fa-circle"></i>
+                    Better jinja：テンプレート補完、シンタックスハイライトなど
+                </li>
+            </ul>
+        </div>
+        <div style="display: contents" dir="auto">
+            <ul class="bulleted-list">
+                <li style="list-style-type: disc">
+                    djlint：Jinjaのコードフォーマッター
+                </li>
+            </ul>
+        </div>
+        <div style="display: contents" dir="auto">
+            <ul class="bulleted-list">
+                <li style="list-style-type: disc">
+                    SQLite Viewer：SQLiteのデータを可視化
+                </li>
+            </ul>
+        </div>
+        <div style="display: contents" dir="auto">
+            <ul class="bulleted-list">
+                <li style="list-style-type: disc">
+                    Flask-DebugToolbar：開発者向けデバッグツール
+                </li>
+            </ul>
+        </div>
+        <div style="display: contents" dir="auto">
+            <hr />
+        </div>
+        <div style="display: contents" dir="auto">
+            <ul class="list-group my-3">
+<li class="list-group-item"><i class="fa fa-circle"></i>
+                    Indent-rainbow：インデントのカラー表示
+                </li>
+            </ul>
+        </div>
+        <div style="display: contents" dir="auto">
+            <ul class="bulleted-list">
+                <li style="list-style-type: disc">
+                    Error Lens：VSCode上でシンタックスエラーを表示
+                </li>
+            </ul>
+        </div>
+        <div style="display: contents" dir="auto">
+            <p></p>
+        </div>
+        <div style="display: contents" dir="auto">
+            <h3>▢Bashエイリアス</h3>
+        </div>
+        <div style="display: contents" dir="auto">
+            <pre
+             class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all"># バッシュエイリアスコマンドファイルの作成
+touch ~/.bashrc
+
+# VSCodeで開く
+code ~/.bashrc
+
+# 編集後に環境に保存
+source ~/.bashrc</code></pre>
+        </div>
+        <div style="display: contents" dir="auto">
+            <p>良く利用するコマンドを省略した開発効率を高めるBashエイリアス</p>
+        </div>
+        <div style="display: contents" dir="auto">
+            <pre
+             class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">##### VSCode設定 #####
+alias c=&#x27;code&#x27;
+
+# 設定ファイル
+alias bashrc=&quot;code ~/.bashrc&quot;
+alias rebashrc=&quot;source ~/.bashrc&quot;
+
+# ターミナルの再起動
+alias restart=&quot;exec $SHELL -l&quot;
+
+# ディレクトリ確認
+alias ll=&quot;ls -alF --color=auto&quot;
+
+# 階層移動
+alias ..=&quot;cd ../&quot;
+alias ....=&quot;cd ../..&quot;
+
+# ディレクトリの作成と移動を同時実行
+function mkcd () { mkdir -p &quot;$@&quot; &amp;&amp; eval cd &quot;\&quot;\$$#\&quot;&quot;; }
+# ファイルを作成と同時にVSCodeで開く
+function tc(){ touch &quot;$1&quot; &amp;&amp; c &quot;$1&quot;; }
+
+# 容量確認
+alias w=&quot;du -h -s&quot;
+
+# 履歴
+alias h=&quot;history&quot;
+
+# ファイル作成
+alias t=&quot;touch&quot;
+
+# ファイルディレクトリ削除
+alias r=&quot;rm -rf&quot;
+
+# ファイル検索
+alias f=&quot;find . -name&quot;
+
+# miniconda
+alias conv=&#x27;conda -V&#x27;
+alias conl=&#x27;conda env list&#x27;
+alias cona=&#x27;conda activate&#x27;
+alias conc=&#x27;conda create python=3.11 -n&#x27;
+alias conr=&#x27;conda remove --all -n&#x27;
+
+# Python
+alias py=&#x27;python&#x27;
+alias pi=&#x27;pip install -U&#x27;
+alias pia=&#x27;pip install flask flask-wtf flask-sqlalchemy flask-migrate djlint&#x27;
+
+# Flask
+alias flv=&#x27;flask --version&#x27;
+alias flr=&#x27;flask run --debug&#x27;
+alias fldi=&#x27;flask db init&#x27;
+alias fldm=&#x27;flask db migrate&#x27;
+alias fldu=&#x27;flask db upgrade&#x27;</code></pre>
+        </div>
+        <div style="display: contents" dir="auto">
+            <h2>■ 基本表示</h2>
+        </div>
+        <div style="display: contents" dir="auto">
+            <h2>▢階層構造</h2>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p>プロジェクトフォルダ内に入り、「<strong>app.py</strong>」を作成する。このファイルは実行時に省略し、自動認識される特殊な名前となっている、また、いずれ<mark class="highlight-yellow_background">アプリケーションの起動やMVTとの紐付けなど、全体機能の基点</mark>となっていく。</p>
+        </div>
+        <div style="display: contents" dir="auto">
+            <pre
+             class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">cd [project name]
+# touch + code ファイルを作成しVSCodeで開くbashエイリアス利用時
+tc app.py</code></pre>
+        </div>
+        <div style="display: contents" dir="auto">
+            <h3>▢インスタンス生成</h3>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p>インスタンス生成時の引数に<code>__name__</code>と指定しているが、これは自身のファイルを起動する際は、自身のアプリケーションを表す<code>__main__</code>という値が呼び出されている。</p>
+        </div>
+        <div style="display: contents" dir="auto">
+            <pre
+             class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all">from flask import Flask
+
+# インスタンス生成
+app = Flask(__name__)
+
+# ルーティング
+@app.route(&#x27;/&#x27;)
+def hello_world():
+	return &#x27;&lt;h1&gt;ハローワールド&lt;/h1&gt;&#x27;</code></pre>
+        </div>
+        <div style="display: contents" dir="auto">
+            <h3>▢アプリ実行</h3>
+        </div>
+        <div style="display: contents" dir="auto">
+            <pre
+             class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all"># Flaskでファイルを実行
+flask --app app run
+# ファイルがapp.pyであれば省略可能
+# --debugは修正箇所をリアルタイム更新
+flask run --debug
+# Running on http://127.0.0.1:5000　のURLにAltクリックするとブラウザが起動表示
+# 停止はCtrl + C</code></pre>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p>ファイルを実行する際に表示される警告メッセージ「WARNING: This is
+                a development server...
+                」は、2023～24のアプデで環境を間違えて作業する事故が多発したため、Flask2.3以降の開発サーバでは必ず警告として表示される仕様になっているため、<mark class="highlight-yellow_background">通常の設定では非表示にできない</mark>。</p>
+        </div>
+        <div style="display: contents" dir="auto">
+            <ul class="toggle">
+                <li>
+                    <details open="">
+                        <summary>
+                            <strong>bashエイリアスの設定</strong>
+                        </summary>
+                        <div style="display: contents" dir="auto">
+                            <p>
+                                ターミナル上でbashを使用している場合は、ホームディレクトリ上に<code>.bashrc</code>
+                                ファイルを作成し、以下のコードを貼り付け<code>source .bashrc</code>
+                                とすれば、短縮コマンドが使用または追加可能。</p>
+                        </div>
+                        <div style="display: contents" dir="auto">
+                            <script
+                                src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"
+                                integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg=="
+                                crossorigin="anonymous"
+                                referrerpolicy="no-referrer"></script>
+                            <link
+                                rel="stylesheet"
+                                href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css"
+                                integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ=="
+                                crossorigin="anonymous"
+                                referrerpolicy="no-referrer"
+                            />
+                            <pre
+                             class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all"># miniconda
+alias conl=&#x27;conda env list&#x27;
+alias cona=&#x27;conda activate&#x27;
+
+# Flask
+alias flr=&#x27;flask run --debug&#x27;
+</code></pre>
+                        </div>
+                    </details>
+                </li>
+            </ul>
+        </div>
+        <div style="display: contents" dir="auto">
+            <h2>■ デコレータ</h2>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p>デコレータは装飾するという意味で、<mark class="highlight-yellow_background">既存の関数の中身を変更することなく処理の追加や変更</mark>が行える機能。</p>
+        </div>
+        <div style="display: contents" dir="auto">
+            <pre
+             class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all"># 関数outer
+def outer(func):
+	# 関数内関数inner
+	def inner():
+		print(&#x27;===開始装飾===&#x27;)
+		func() # ②関数値(a/b)のまま装飾
+		print(&#x27;===終了装飾===&#x27;)
+	return inner # ③呼び出し先で実行できるよう戻り値としてinner関数を返す
+
+# 関数a
+@outer # ①関数を値として渡す
+def a():
+	print(&#x27;Aです&#x27;)
+	
+# 関数b # 装飾内の値のみを変更して渡す
+@ounter
+def b():
+	print(&#x27;Bです&#x27;)
+	
+# 関数の実行
+a() 
+# ===開始装飾===
+# Aです
+# ===終了装飾===
+b() 
+# ===開始装飾===
+# Bです
+# ===終了装飾===</code></pre>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p>以下の上のデコレータとなる<code>@outer</code>は下のコードと同意となる。自身の関数値となる変数に、<mark class="highlight-yellow_background">装飾された戻り値となる</mark><mark class="highlight-yellow_background"><strong>装飾された関数</strong></mark><mark class="highlight-yellow_background">(</mark><mark class="highlight-yellow_background"><code>inner</code></mark><mark class="highlight-yellow_background">)が、</mark><mark class="highlight-yellow_background"><strong>暗黙的に再代入</strong></mark>されている。デコレータが使用されている場合は、そこまでイメージできないとコードの流れを読み取れない。</p>
+        </div>
+        <div style="display: contents" dir="auto">
+            <pre
+             class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all">@outer
+def a():
+
+def a():
+a = outer(a) # 内部の装飾されたinnerが戻り値としてaに再代入されている</code></pre>
+        </div>
+        <div style="display: contents" dir="auto">
+            <h3>▢引数</h3>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p><code>inner</code> が受取った引数は
+                <code>func(*args, **kwargs)</code>として、そのまま元の関数に転送しており、<code>args</code>
+                は<strong>受け皿</strong>、<code>inner</code> は<strong>中継役、</strong><code>func(*args, **kwargs)</code> が内部での
+                <strong>引数の受け取り役</strong>という構造になっている。</p>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p>引数に<code>*</code>を引数名に付与すると<mark class="highlight-yellow_background">タプル型の値を位置引数</mark>として受け取れるようになり、<code>**</code>を付与すると<mark class="highlight-yellow_background">辞書型でキーワード引数(引数名を指定)</mark>として受け取れるようになっているため、辞書型のみ渡した場合でも、第一引数の未定義エラーにはならない。</p>
+        </div>
+        <div style="display: contents" dir="auto">
+            <pre
+             class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all"># 関数outer
+def outer(func):
+  # 関数内関数
+  def inner(*args, **kwargs):
+    print(&quot;---開始---&quot;)
+    func(*args, **kwargs)
+    print(&quot;---終了---&quot;)
+  return inner
+
+# タプル
+nums = (10, 20, 30, 40)
+# 関数show_sum
+@outer
+def show_sum(nums):
+  sum = 0
+  for num in nums:
+    sum += num
+  print(f&#x27;合計: {sum}&#x27;)
+
+# 辞書
+users = {&#x27;山田&#x27;: 30, &#x27;佐藤&#x27;: 25, &#x27;田中&#x27;: 40}
+@outer
+def show_users(users):
+  for name, age in users.items():
+    print(f&#x27;名前：{name} 年齢：{age}&#x27;)
+
+# 関数の実行
+show_sum(nums)
+show_users(users)</code></pre>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p>仮にouterやinner、argsなどの名称が変わっても、構造と呼び出し方さえ変更がなければ、引数の受け渡す流れに影響しない。</p>
+        </div>
+        <div style="display: contents" dir="auto">
+            <pre
+             class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all">def wrapper(target):
+    def executor(*x, **y):
+        print(&quot;---開始---&quot;)
+        target(*x, **y)
+        print(&quot;---終了---&quot;)
+    return executor</code></pre>
+        </div>
+        <div style="display: contents" dir="auto">
+            <h2>■ ルーティング</h2>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p><code>app.route</code>
+                でアクセスしたURLから実行関数への紐付けができる。<code>render_template</code>
+                は、<code>templates</code>フォルダを作成した場合のみ、その中のhtmlファイルにアクセスする。</p>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p>URLの動的パラメータを受ける場合には<code>&lt;名前&gt;</code>
+                で受け取り、型安全とする場合は<strong>コンバータ</strong>を手前に宣言<code>&lt;型 : 名前&gt;</code>する。違う型の場合は404エラーとなる。</p>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p>開発環境としてデバッグ出力を行う場合は<code>run</code>メソッドに<code>debug=True</code>とする。</p>
+        </div>
+        <div style="display: contents" dir="auto">
+            <pre
+             class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">md templates &amp; t templates/index.html &amp; t templates/list.html &amp; t templates/detail.html</code></pre>
+        </div>
+        <div style="display: contents" dir="auto">
+            <pre
+             class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all">from flask import Flask, render_template
+
+# インスタンス生成
+app = Flask(__name__)
+
+# ルーティング設定
+@app.route(&#x27;/&#x27;)
+def index():
+    return render_template(&#x27;index.html&#x27;) # templatesフォルダ内のHTMLを表示
+
+@app.route(&#x27;/list&#x27;)
+def item_list():
+    return render_template(&#x27;list.html&#x27;)
+
+@app.route(&#x27;/detail&#x27;)
+def item_detail():
+    return render_template(&#x27;detail.html&#x27;)
+
+@app.route(&#x27;/dynamic/&lt;value&gt;&#x27;) # 動的パラメータを指定
+def dynamic_default(value):
+  print(f&#x27;型:{type(value)}, 値:{value}&#x27;) # コンソール表示
+  return f&#x27;&lt;h1&gt;渡された値は「{value}」です&lt;/h1&gt;&#x27; # ブラウザ表示
+
+@app.route(&#x27;/dynamic2/&lt;int:number&gt;&#x27;) # コンバーター(型)あり
+def dynamic_int(number):
+  print(f&#x27;型:{type(number)}, 値:{number}&#x27;)
+  return f&#x27;&lt;h1&gt;渡された値は「{number}」です&lt;/h1&gt;&#x27;
+
+@app.route(&#x27;/dynamic3/&lt;value&gt;/&lt;int:number&gt;&#x27;) # 複数パラメータ
+def dynamic_converter_multiple(value, number):
+  print(f&#x27;型:{type(value)}, 値:{value}&#x27;)
+  print(f&#x27;型:{type(number)}, 値:{number}&#x27;)
+  return f&#x27;&lt;h1&gt;渡された値は「{value}と{number}」です&lt;/h1&gt;&#x27;
+
+if __name__ == &#x27;__main__&#x27;:
+    app.run(debug=True) # デバッグモードで実行</code></pre>
+        </div>
+        <div style="display: contents" dir="auto">
+            <p>ステータスコードの問題点</p>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p><code>404</code>エラー→
+                <strong>ファイル</strong>が見つからない<strong>パス</strong>の問題</p>
+        </div>
+        <div style="display: contents" dir="auto">
+            <p><code>405</code>エラー→ <strong>GET / POST</strong>の問題</p>
+        </div>
+        <div style="display: contents" dir="auto">
+            <p><code>500</code>エラー→ <strong>プログラム</strong>の問題</p>
+        </div>
+        <div style="display: contents" dir="auto">
+            <h2>■テンプレートエンジンJinja2</h2>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p>viewから渡された<mark class="highlight-yellow_background">データと虫食いのテンプレートをバインドする</mark>のが<strong>テンプレートエンジン</strong>で静的なHTMLを吐き出す。</p>
+        </div>
+        <div style="display: contents" dir="auto">
+            <h3>▢継承</h3>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p><code>{% … %}</code>
+                Jinjaステートメントタグを使用して動的に値を展開できる。</p>
+        </div>
+        <div style="display: contents" dir="auto">
+            <pre
+             class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">tc templates/base.html</code></pre>
+        </div>
+        <div style="display: contents" dir="auto">
+            <pre
+             class="code code-wrap"><code class="language-HTML" style="white-space:pre-wrap;word-break:break-all">&lt;title&gt;{% block title %}タイトル&lt;% endblock %}&lt;/title&gt;</code></pre>
+        </div>
+        <div style="display: contents" dir="auto">
+            <pre
+             class="code code-wrap"><code class="language-HTML" style="white-space:pre-wrap;word-break:break-all">&lt;!-- 親ファイルの読み込み --&gt;
+{% extend base.html %}
+&lt;title&gt;{% block title %}上書きタイトル&lt;% endblock %}&lt;/title&gt;
+
+&lt;!-- タグを含めたjinja用コメント --&gt;
+{#
+{% extend base.html %}
+&lt;title&gt;{% block title %}上書きタイトル&lt;% endblock %}&lt;/title&gt;
+#}</code></pre>
+        </div>
+        <div style="display: contents" dir="auto">
+            <h2>■ファイルフォーマット</h2>
+        </div>
+        <div style="display: contents" dir="auto">
+            <h3>▢テンプレートファイルの拡張子変更</h3>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p>jinjaのテンプレートファイルは<mark class="highlight-default"><mark class="highlight-default_background">一般的に利用されている拡張子は</mark></mark><mark class="highlight-red"><mark class="highlight-teal_background">.html</mark></mark>だが、テンプレートタグが認識しないため、整形をかけると1行に並んでします。jinjaの拡張子に変更して整形すればよいが、ファイルを閉じるたびに、毎回ファイルフォーマットを変更する必要が出てくるため、拡張子を「<code>.jinja</code>」「<code>.jinja2</code>」「<code>.j2</code>(<mark class="highlight-yellow_background">短いので推奨</mark>)」いずれかで統一するように決めておく。</p>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p>途中から<code>.html</code>の拡張子を変更する場合は、取りこぼしが無いように以下の項目を改修していく。</p>
+        </div>
+        <div style="display: contents" dir="auto">
+            <ul class="list-group my-3">
+<li class="list-group-item"><i class="fa fa-circle"></i>
+                    VSCodeのエクスプローラーで「<code>上下キー</code>」で実ファイルを選択し「<code>F2</code>」キーで効率よく名前を変更していく。
+                </li>
+            </ul>
+        </div>
+        <div style="display: contents" dir="auto">
+            <ul class="bulleted-list">
+                <li style="list-style-type: disc">
+                    <code>app.py</code>
+                    のrendar_templateのアクセスパスを変更する。<code>Ctrl + Shift + L</code>で一括選択
+                </li>
+            </ul>
+        </div>
+        <div style="display: contents" dir="auto">
+            <ul class="bulleted-list">
+                <li style="list-style-type: disc">
+                    base.py以外のテンプレート<code>top.py</code> などの<code>extends</code>
+                    パスを<code>Ctrl + Shift + H</code>で一括置換
+                </li>
+            </ul>
+        </div>
+        <div style="display: contents" dir="auto">
+            <p></p>
+        </div>
+        <div style="display: contents" dir="auto">
+            <h3>▢スニペット</h3>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p>VSCodeスニペットは「<code>jinja.json</code>と<code>html.json</code>」のどちらのファイルフォーマットでも呼び出せるよう両方に設定しておく。</p>
+        </div>
+        <div style="display: contents" dir="auto">
+            <pre
+             class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">  &quot;jinja-block&quot;: {
+    &quot;prefix&quot;: &quot;{b&quot;,
+    &quot;body&quot;:
+      &quot;{% block ${1:} %}${2:}{% endblock ${1:} %&quot;
+  },
+  &quot;extend&quot;: {
+    &quot;prefix&quot;: &quot;{e&quot;,
+    &quot;body&quot;:
+      &quot;{% extends \&quot;${1:}\&quot; %&quot;
+  },
+  &quot;for&quot;: {
+    &quot;prefix&quot;: &quot;{f&quot;,
+    &quot;body&quot;:
+      &quot;{% for ${2:val} in ${1:list} %}${3:}{% endfor %&quot;
+  },
+  &quot;macro&quot;: {
+    &quot;prefix&quot;: &quot;{m&quot;,
+    &quot;body&quot;: [
+      &quot;{% macro render_field(${1:field}) %}&quot;,
+      &quot;\t${2:}&quot;,
+      &quot;{% endmacro %&quot;,
+    ]
+  },
+  &quot;url_for&quot;: {
+    &quot;prefix&quot;: &quot;{u&quot;,
+    &quot;body&quot;:
+      &quot;{{ url_for(&#x27;${1:}&#x27;) }&quot;
+  },
+  &quot;super&quot;: {
+    &quot;prefix&quot;: &quot;{s&quot;,
+    &quot;body&quot;:
+      &quot;{{ super }&quot;
+  },</code></pre>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p><code>{</code>を入力すると自動で閉じ括弧も付く拡張機能<code>bracket-lens</code>
+                が入っていることを前提に、最後の閉じ括弧を除外しておく。<code>${1}</code>は最初にキャレットが当たる位置で<code>Tab</code>キーで次の番号に移動する。移動せずに変換させる場合は、通常移動で番号の移動を解除する。複数選択の解除は<code>esc</code>
+                。</p>
+        </div>
+        <div style="display: contents" dir="ltr">
+            <table
+             class="simple-table">
+                <tbody>
+                    <div style="display: contents" dir="ltr">
+                        <tr>
+                            <td style="width: 87px">概要</td>
+                            <td id="}B[t" style="width: 77px">トリガー</td>
+                            <td id="~t;R" style="width: 505px">展開コード</td>
+                        </tr>
+                    </div>
+                    <div style="display: contents" dir="ltr">
+                        <tr>
+                            <td style="width: 87px">ブロック</td>
+                            <td id="}B[t" style="width: 77px">
+                                <code>{b</code>
+                            </td>
+                            <td id="~t;R" style="width: 505px">
+                                <code>{% block [1] %}[2]{% endblock [1] %</code>
+                            </td>
+                        </tr>
+                    </div>
+                    <div style="display: contents" dir="ltr">
+                        <tr>
+                            <td style="width: 87px">継承</td>
+                            <td id="}B[t" style="width: 77px">
+                                <code>{e</code>
+                            </td>
+                            <td id="~t;R" style="width: 505px">
+                                <code>{% extends &quot;[1]&quot; %</code>
+                            </td>
+                        </tr>
+                    </div>
+                    <div style="display: contents" dir="ltr">
+                        <tr>
+                            <td style="width: 87px">繰り返し</td>
+                            <td id="}B[t" style="width: 77px">
+                                <code>{f</code>
+                            </td>
+                            <td id="~t;R" style="width: 505px">
+                                <code>{% for [2] in [1] %}[3]{% endfor %</code>
+                            </td>
+                        </tr>
+                    </div>
+                    <div style="display: contents" dir="ltr">
+                        <tr>
+                            <td style="width: 87px">リンク</td>
+                            <td id="}B[t" style="width: 77px">
+                                <code>{u</code>
+                            </td>
+                            <td id="~t;R" style="width: 505px">
+                                <code>{{ url_for(&#x27;[1]&#x27;) }</code>
+                            </td>
+                        </tr>
+                    </div>
+                    <div style="display: contents" dir="ltr">
+                        <tr>
+                            <td style="width: 87px">親展開</td>
+                            <td id="}B[t" style="width: 77px">
+                                <code>{s</code>
+                            </td>
+                            <td id="~t;R" style="width: 505px">
+                                <code>{{ super }</code>
+                            </td>
+                        </tr>
+                    </div>
+                </tbody>
+            </table>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p>ただし、スニペットを作成してもインスペクタに表示されない場合は、拡張機能<code>better jinja</code>
+                が入っていれば<code>block</code>と<code>extends</code>を展開することはできる。</p>
+        </div>
+        <div style="display: contents" dir="auto">
+            <p></p>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p>また<code>python.json</code>
+                にも、<code>app.py</code>に以下の基本モジュールが取捨選択できるスニペットを設定しておく。</p>
+        </div>
+        <div style="display: contents" dir="auto">
+            <pre
+             class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">  &quot;basic_import&quot;: {
+		&quot;prefix&quot;: &quot;!&quot;,
+		&quot;body&quot;: [
+      &quot;${1:import os}&quot;,
+			&quot;from flask import Flask${2:, render_template}${3:, request}${4:, redirect}${5:, url_for}${6:, g}${7:, Blueprint}&quot;,
+			&quot;${8:from flask_sqlalchemy import SQLAlchemy}&quot;,
+			&quot;${9:from flask_migrate import Migrate}&quot;,
+      &quot;app = Flask(__name__)&quot;,
+      &quot;@app.route(${10:&#x27;/&#x27;})&quot;,
+      &quot;def ${11:index}():&quot;,
+      &quot;\t${12:}&quot;,
+      &quot;if __name__ == &#x27;__main__:&#x27;&quot;,
+      &quot;\tapp.run(debug=True)&quot;
+		],
+		&quot;description&quot;: &quot;app基本モジュールの読み込み&quot;
+	}</code></pre>
+        </div>
+        <div style="display: contents" dir="auto">
+            <p></p>
+        </div>
+        <div style="display: contents" dir="auto">
+            <h3>▢djLint</h3>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p>flaskのjinja2のマスタッシュ構文ごとの改行を反映させるためのフォーマッタ用ライブラリ。拡張機能「djLint」もインストールしたら、「Alt
+                + Shift + F」で整形可能。<code>-U</code>
+                はアップグレードという意味で、既存のパッケージがあればアップグレード、なければ新規追加となる。</p>
+        </div>
+        <div style="display: contents" dir="auto">
+            <pre
+             class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">pip install -U djlint</code></pre>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p>ただし、その他のコードチェックも自動で行われる。endblockにも名前を付けないと警告メッセージが表示される。</p>
+        </div>
+        <div style="display: contents" dir="auto">
+            <ul class="list-group my-3">
+<li class="list-group-item"><i class="fa fa-circle"></i>
+                    <mark class="highlight-yellow_background">endblockにも名前を付ける。通常は任意</mark>
+                </li>
+            </ul>
+        </div>
+        <div style="display: contents" dir="auto">
+            <ul class="bulleted-list">
+                <li style="list-style-type: disc">
+                    ダブルクォートを使用する。
+                </li>
+            </ul>
+        </div>
+        <div style="display: contents" dir="auto">
+            <p>リンクのパスはurl_forを使用する。</p>
+        </div>
+        <div style="display: contents" dir="auto">
+            <ul class="bulleted-list">
+                <li style="list-style-type: disc">
+                    metaのdescriptionとkeywordsを追加する。
+                </li>
+            </ul>
+        </div>
+        <div style="display: contents" dir="auto">
+            <p></p>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p><strong>multiCommand</strong></p>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p>j2ファイルで作成した際にHTMLフォーマット上でHTMLのタグを作成し、jinjaフォーマット上でテンプレートタグの整形を行う場合、以下のショートカットを「<code>Ctrl + K + S</code>」からjsonファイルを開き追加する。ただし、コマンドを繰り返し実行するには、拡張機能「<code>multiCommand</code>」を追加しておく必要がある。</p>
+        </div>
+        <div style="display: contents" dir="ltr">
+            <table
+             class="simple-table">
+                <thead class="simple-table-header">
+                    <div style="display: contents" dir="ltr">
+                        <tr>
+                            <th
+                                id="Q{J|" class="simple-table-header-color simple-table-header"
+                                style="width: 168px">
+                                <strong>ショートカット</strong>
+                            </th>
+                            <th
+                             class="simple-table-header-color simple-table-header"
+                                style="width: 504px">
+                                <strong>実行内容</strong>
+                            </th>
+                        </tr>
+                    </div>
+                </thead>
+                <tbody>
+                    <div style="display: contents" dir="ltr">
+                        <tr>
+                            <td id="Q{J|" style="width: 168px">
+                                alt + shift +
+                                <code><strong>f</strong></code>
+                            </td>
+                            <td style="width: 504px">
+                                <code>.j2</code>ファイル上で<code>jinja</code>フォーマットで整形し<code>HTML</code>フォーマットに変換
+                            </td>
+                        </tr>
+                    </div>
+                    <div style="display: contents" dir="ltr">
+                        <tr>
+                            <td id="Q{J|" style="width: 168px">
+                                alt + shift +
+                                <code><strong>h</strong></code>
+                            </td>
+                            <td style="width: 504px">
+                                <code>html</code>にファイルフォーマットを変更
+                            </td>
+                        </tr>
+                    </div>
+                    <div style="display: contents" dir="ltr">
+                        <tr>
+                            <td id="Q{J|" style="width: 168px">
+                                alt + shift +
+                                <code><strong>j</strong></code>
+                            </td>
+                            <td style="width: 504px">
+                                <code>jinja</code>
+                                にファイルフォーマットを変更
+                            </td>
+                        </tr>
+                    </div>
+                </tbody>
+            </table>
+        </div>
+        <div style="display: contents" dir="auto">
+            <pre
+             class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+    &quot;key&quot;: &quot;alt+shift+f&quot;,
+    &quot;command&quot;: &quot;extension.multiCommand.execute&quot;,
+    &quot;args&quot;: {
+        &quot;sequence&quot;: [
+            {
+                &quot;command&quot;: &quot;workbench.action.editor.changeLanguageMode&quot;,
+                &quot;args&quot;: &quot;jinja&quot;
+            },
+            {
+                &quot;command&quot;: &quot;editor.action.formatDocument&quot;
+            },
+                        {
+                &quot;command&quot;: &quot;workbench.action.editor.changeLanguageMode&quot;,
+                &quot;args&quot;: &quot;html&quot;
+            },
+        ]
+    },
+    &quot;when&quot;: &quot;resourceExtname == .j2&quot;
+},
+{
+    &quot;key&quot;: &quot;alt+shift+h&quot;,
+    &quot;command&quot;: &quot;extension.multiCommand.execute&quot;,
+    &quot;args&quot;: {
+        &quot;sequence&quot;: [
+            {
+                &quot;command&quot;: &quot;workbench.action.editor.changeLanguageMode&quot;,
+                &quot;args&quot;: &quot;html&quot;
+            },
+        ]
+    },
+    &quot;when&quot;: &quot;resourceExtname == .j2 || resourceExtname == .html&quot;
+},
+{
+    &quot;key&quot;: &quot;alt+shift+j&quot;,
+    &quot;command&quot;: &quot;extension.multiCommand.execute&quot;,
+    &quot;args&quot;: {
+        &quot;sequence&quot;: [
+            {
+                &quot;command&quot;: &quot;workbench.action.editor.changeLanguageMode&quot;,
+                &quot;args&quot;: &quot;jinja&quot;
+            },
+        ]
+    },
+    &quot;when&quot;: &quot;resourceExtname == .j2 || resourceExtname == .html&quot;
+},</code></pre>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p>djlintを追加するとtemplateファイルで余計な警告メッセージが表示されるようになるため、それを<mark class="highlight-yellow_background">非表示にする設定ファイル</mark>を<strong>プロジェクトルート</strong>に配置することで下層全てに反映される。一度VSCodeを再起動することでdjlintが認識するようになる。</p>
+        </div>
+        <div style="display: contents" dir="ltr">
+            <table
+             class="simple-table">
+                <thead class="simple-table-header">
+                    <div style="display: contents" dir="ltr">
+                        <tr>
+                            <th
+                                id="jA_^" class="simple-table-header-color simple-table-header"
+                                style="width: 112px">
+                                <strong>エラーコード</strong>
+                            </th>
+                            <th
+                                id="MzS~" class="simple-table-header-color simple-table-header"
+                                style="width: 178px">
+                                <strong>概要</strong>
+                            </th>
+                            <th
+                                id="s?Wd" class="simple-table-header-color simple-table-header"
+                                style="width: 384px">
+                                <strong>コード例</strong>
+                            </th>
+                        </tr>
+                    </div>
+                </thead>
+                <tbody>
+                    <div style="display: contents" dir="ltr">
+                        <tr>
+                            <td id="jA_^" style="width: 112px">
+                                <code>T001</code>
+                            </td>
+                            <td id="MzS~" style="width: 178px">
+                                <code>{{}}</code>の内側に空白空き
+                            </td>
+                            <td id="s?Wd" style="width: 384px">
+                                {{item.name}}
+                            </td>
+                        </tr>
+                    </div>
+                    <div style="display: contents" dir="ltr">
+                        <tr>
+                            <td id="jA_^" style="width: 112px">
+                                <code>T002</code>
+                            </td>
+                            <td id="MzS~" style="width: 178px">
+                                endblock に名前がない
+                            </td>
+                            <td id="s?Wd" style="width: 384px">
+                                {% endblock %}
+                            </td>
+                        </tr>
+                    </div>
+                    <div style="display: contents" dir="ltr">
+                        <tr>
+                            <td id="jA_^" style="width: 112px">
+                                <code>T003</code>
+                            </td>
+                            <td id="MzS~" style="width: 178px">
+                                endblock の名前強制
+                            </td>
+                            <td id="s?Wd" style="width: 384px">
+                                {% endblock %}
+                            </td>
+                        </tr>
+                    </div>
+                    <div style="display: contents" dir="ltr">
+                        <tr>
+                            <td id="jA_^" style="width: 112px">
+                                <code>T006</code>
+                            </td>
+                            <td id="MzS~" style="width: 178px">
+                                img要素に幅高さを指定
+                            </td>
+                            <td id="s?Wd" style="width: 384px">
+                                &lt;img src=””&gt;
+                            </td>
+                        </tr>
+                    </div>
+                    <div style="display: contents" dir="ltr">
+                        <tr>
+                            <td id="jA_^" style="width: 112px">
+                                <code>T013</code>
+                            </td>
+                            <td id="MzS~" style="width: 178px">
+                                img要素にaltを指定
+                            </td>
+                            <td id="s?Wd" style="width: 384px">
+                                &lt;img src=””&gt;
+                            </td>
+                        </tr>
+                    </div>
+                    <div style="display: contents" dir="ltr">
+                        <tr>
+                            <td id="jA_^" style="width: 112px">
+                                <code>H020</code>
+                            </td>
+                            <td id="MzS~" style="width: 178px">空要素禁止</td>
+                            <td id="s?Wd" style="width: 384px">
+                                &lt;div&gt;&lt;/div&gt;
+                            </td>
+                        </tr>
+                    </div>
+                    <div style="display: contents" dir="ltr">
+                        <tr>
+                            <td id="jA_^" style="width: 112px">
+                                <code>H021</code>
+                            </td>
+                            <td id="MzS~" style="width: 178px">
+                                inline style禁止
+                            </td>
+                            <td id="s?Wd" style="width: 384px">
+                                &lt;div style=”color: red;”&gt;&lt;/div&gt;
+                            </td>
+                        </tr>
+                    </div>
+                    <div style="display: contents" dir="ltr">
+                        <tr>
+                            <td id="jA_^" style="width: 112px">
+                                <code>H030</code>
+                            </td>
+                            <td id="MzS~" style="width: 178px">
+                                meta description 未指定
+                            </td>
+                            <td id="s?Wd" style="width: 384px">
+                                &lt;meta name=”description” content=””&gt;
+                            </td>
+                        </tr>
+                    </div>
+                    <div style="display: contents" dir="ltr">
+                        <tr>
+                            <td id="jA_^" style="width: 112px">
+                                <code>H031</code>
+                            </td>
+                            <td id="MzS~" style="width: 178px">
+                                meta keywords 未指定
+                            </td>
+                            <td id="s?Wd" style="width: 384px">
+                                &lt;meta name=”keywords” content=””&gt;
+                            </td>
+                        </tr>
+                    </div>
+                </tbody>
+            </table>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p>profileは対象のファイル拡張子。jsonにはコメントを追記できないので注意する。</p>
+        </div>
+        <div style="display: contents" dir="auto">
+            <pre
+             class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+    &quot;profile&quot;: [
+        &quot;html&quot;,
+        &quot;jinja&quot;,
+        &quot;j2&quot;,
+        &quot;py&quot;
+    ],
+    &quot;use_gitignore&quot;: true,
+    &quot;ignore&quot;: [
+        &quot;T001&quot;,
+        &quot;T002&quot;,
+        &quot;T003&quot;,
+        &quot;T006&quot;,
+        &quot;T013&quot;,
+        &quot;H020&quot;,
+        &quot;H021&quot;,
+        &quot;H030&quot;,
+        &quot;H031&quot;
+    ]
+}</code></pre>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p>ただし、jijnaに関連する構文は構文健全性ルールという規格外の扱いで消えないことがあるため、VSCodeの設定ファイルのJSONに除外指定にも行っておく。また、.j2ファイルを開いたときに別のファイルフォーマットで開かない設定も追記しておく。</p>
+        </div>
+        <div style="display: contents" dir="auto">
+            <pre
+             class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">&quot;djlint.ignore&quot;: [
+        &quot;T001&quot;,
+        &quot;T002&quot;,
+        &quot;T003&quot;,
+        &quot;T006&quot;,
+        &quot;T013&quot;,
+        &quot;H020&quot;,
+        &quot;H021&quot;,
+        &quot;H030&quot;,
+        &quot;H031&quot;
+],
+&quot;files.associations&quot;: {
+    &quot;*.j2&quot;: &quot;jinja-html&quot;
+}</code></pre>
+        </div>
+        <div style="display: contents" dir="auto">
+            <h3>▢Prettier + prettier-plugin-jinja-template</h3>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p>Prettier 自身は標準では Jinja2
+                を理解しないため、jinja対応のプラグインをプロジェクト直下に追加しておく。これにより
+                Jinja2
+                のテンプレート構文(改行やインデントなど)を整形できる。npmコマンドがnot
+                foundエラーとなるようであれば、<a href="https://nodejs.org/ja">Node.js</a>をインストールしVSCodeを再起動する。</p>
+        </div>
+        <div style="display: contents" dir="auto">
+            <pre
+             class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all"># プロジェクト直下
+npm install --save-dev prettier prettier-plugin-jinja-template
+
+# 設定ファイルを作成して開く
+tc .prettierrc</code></pre>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p><code>.prettierrc</code>
+                にprettierにjinjaフォーマッターを設定し、認識する拡張子を追加。</p>
+        </div>
+        <div style="display: contents" dir="auto">
+            <pre
+             class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+	&quot;plugins&quot;:[&quot;prettier-plugin-jinja-template&quot;],
+	&quot;overrides&quot;:[
+		{
+			&quot;files&quot;:[&quot;*.html&quot;,&quot;*.jinja2&quot;,&quot;*.j2&quot;],
+			&quot;options&quot;:{
+				&quot;parser&quot;:&quot;jinja-template&quot;
+			}
+		}
+	]
+}</code></pre>
+        </div>
+        <div style="display: contents" dir="auto">
+		<p>また、HTMLのインデントが2スペースなので、<code>indent-rainbow</code>では警告カラーとなる。4スペースに変更したい場合は、以下の設定ファイルをプロジェクト上位に配置しておく。</p>
+        </div>
+        <div style="display: contents" dir="auto">
+            <pre
+             class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+    &quot;tabWidth&quot;: 4,
+    &quot;useTabs&quot;: false
+}</code></pre>
+        </div>
+    </body>
+</html>

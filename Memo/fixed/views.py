@@ -9,8 +9,8 @@ import markdown
 fixed_bp = Blueprint('fixed', __name__, url_prefix='/fixed')
 
 STATIC_PAGES = {
+    'refactor' : '環境構築',
     'crud' : 'CRUD',
-    'refactor' : 'コード整形',
     'paging' : 'ページング',
     'sort' : '並び替え',
     'search' : '検索',

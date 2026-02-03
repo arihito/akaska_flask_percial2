@@ -135,18 +135,23 @@ def seed_data():
 
         print("メモ作成...")
         memos = []
-        MEMOS_PER_USER = 12
-        for user in users:
-          for _ in range(MEMOS_PER_USER):
-            memo = Memo(
-              title=random.choice(MEMO_TITLE_FACTORY),
-              content=random.choice(MEMO_CONTENT_FACTORY),
-              user_id=user.id,
-              image_filename=random.choice(IMAGE_POOL),
-              created_at=random_date(start_date, end_date)
-            )
-            db.session.add(memo)
-            memos.append(memo)
+        for idx, user in enumerate(users):
+            # 最初のユーザーだけ24件、それ以外は1〜3件
+            if idx == 0:
+                memos_per_user = 24
+            else:
+                memos_per_user = random.randint(1, 3)
+
+            for _ in range(memos_per_user):
+                memo = Memo(
+                    title=random.choice(MEMO_TITLE_FACTORY),
+                    content=random.choice(MEMO_CONTENT_FACTORY),
+                    user_id=user.id,
+                    image_filename=random.choice(IMAGE_POOL),
+                    created_at=random_date(start_date, end_date)
+                )
+                db.session.add(memo)
+                memos.append(memo)
         db.session.commit()
 
         print("お気に入り作成...")
