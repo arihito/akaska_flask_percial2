@@ -208,28 +208,58 @@ xxhash                       3.6.0
 
 <details>
 <summary>実装済み機能一覧</summary>
-- 環境構築
-    - Flaskデバッガー
-    - VSCode：コード整形・スニペット
-    - bashエイリアス
-- 管理者ログイン認証
-    - 未ログインのアクセス制限
-- 認可(自身の投稿のみCRUD制限)
-- 多対多のいいね機能
-    - ハートアイコンクリックアニメーション
-    - 未ログインはログイン
-    - いいねランキング
-    - トップ、管理画面、詳細にランキング表示
-- 曜日付投稿日表示(トップ、管理画面)
-- ページング
-    - 色のカスタマイズ
-- ファイルアップロード
-    - トップ、管理画面、詳細、更新、ランキングにキービジュアルやサムネを表示
-- ダークモード切替え
-- 投稿日・いいねの多い順少ない順の並び替え
-- タイトルと本文内の部分一致検索
-- 1週間自動ログイン用のリメンバーチェック
-- キービジュアルとロゴの調整
+<ul>
+  <li>
+    環境構築
+    <ul>
+      <li>Flaskデバッガー</li>
+      <li>VSCode：コード整形・スニペット</li>
+      <li>bashエイリアス</li>
+    </ul>
+  </li>
+
+  <li>
+    管理者ログイン認証
+    <ul>
+      <li>未ログインのアクセス制限</li>
+    </ul>
+  </li>
+
+  <li>認可（自身の投稿のみCRUD制限）</li>
+
+  <li>
+    多対多のいいね機能
+    <ul>
+      <li>ハートアイコンクリックアニメーション</li>
+      <li>未ログインはログイン</li>
+      <li>いいねランキング</li>
+      <li>トップ、管理画面、詳細にランキング表示</li>
+    </ul>
+  </li>
+
+  <li>曜日付投稿日表示（トップ、管理画面）</li>
+
+  <li>
+    ページング
+    <ul>
+      <li>色のカスタマイズ</li>
+    </ul>
+  </li>
+
+  <li>
+    ファイルアップロード
+    <ul>
+      <li>トップ、管理画面、詳細、更新、ランキングにキービジュアルやサムネを表示</li>
+    </ul>
+  </li>
+
+  <li>ダークモード切替え</li>
+  <li>投稿日・いいねの多い順／少ない順の並び替え</li>
+  <li>タイトルと本文内の部分一致検索</li>
+  <li>1週間自動ログイン用のリメンバーチェック</li>
+  <li>キービジュアルとロゴの調整</li>
+</ul>
+
 </details>
 
 <hr width="800">
@@ -239,24 +269,31 @@ xxhash                       3.6.0
 
 <details>
 <summary>実装中機能一覧</summary>
-- グローバルナビやフッターの固定ページ17個作成
-    - 全テンプレートに1つのキーのみで、タイトル・エンドポイント・画像ファイル名・テンプレート名など一律に動的管理
-    - グロバルナビのカレント表示
-    - PRE要素をPrism.jsでハイライト、行番号表示
-    - メインのキービジュアルとデフォルト画像作成
-    - キービジュアル拡大表示時のぼかし防止フィルター
-- Flashの表示
-- トップに戻るボタン
-- 404ページ作成
-- 記事リストフェードイン
-- ユーザの画像追加（ドラッグドロップ）
-- カテゴリー
-- 論理削除
-- 管理画面グラフ生成
-- 要約文生成AI
-- Google OAuth（環境変数）
-- 多言語
-- 商品追加UI
+<ul>
+  <li>
+    グローバルナビやフッターの固定ページ17個作成
+    <ul>
+      <li>全テンプレートに1つのキーのみで、タイトル・エンドポイント・画像ファイル名・テンプレート名など一律に動的管理</li>
+      <li>グロバルナビのカレント表示</li>
+      <li>PRE要素をPrism.jsでハイライト、行番号表示</li>
+      <li>メインのキービジュアルとデフォルト画像作成</li>
+      <li>キービジュアル拡大表示時のぼかし防止フィルター</li>
+    </ul>
+  </li>
+
+  <li>Flashの表示</li>
+  <li>トップに戻るボタン</li>
+  <li>404ページ作成</li>
+  <li>記事リストフェードイン</li>
+  <li>ユーザの画像追加（ドラッグドロップ）</li>
+  <li>カテゴリー</li>
+  <li>論理削除</li>
+  <li>管理画面グラフ生成</li>
+  <li>要約文生成AI</li>
+  <li>Google OAuth（環境変数）</li>
+  <li>多言語</li>
+  <li>商品追加UI</li>
+</ul>
 </details>
 
 <hr width="800">
@@ -266,26 +303,51 @@ xxhash                       3.6.0
 
 <details>
 <summary>未機能一覧</summary>
-- カード決済
-- 問い合わせメール送信
-- 成果物生成
-    - ERAlchemy2でER図自動生成
-    - pylint/pyreverseによるクラス図作成
-    - Flask-Diagramsで画面遷移の可視化
-    - Template Visualizerでテンプレート樹形図化
-    - FlasggerでAPI一覧を生成
-    - Storybook for Jinjaによるコンポーネント可視化
-    - 上記を管理画面上でページの自動更新化
-        - Watchdog (Pythonライブラリ) を使い、`.py` ファイルや `.html` ファイルの変更を監視。
-        - 変更を検知したら、WebSocket（Flask-SocketIO）を通じてブラウザに「再読み込み信号」を送り図を更新。
-    - ツール互換性判定と代替案
-        - ERAlchemy2　○ 可能：SQLAlchemyのmetadataを介するため、Flaskのバージョンに依存せず動作します。
-        - Pyreverse　○ 可能：ソースコード（.py）を静的解析するため、実行環境のライブラリ依存関係は関係ありません。
-        - Flask-Diagrams　× 厳しい：最終更新が古く、Flask 2.3以降のRouting構造に対応していない可能性が高いです。⇒`app.url_map` をループで回して Mermaid形式の文字列 を生成
-        - Template Visualizer　△ 微妙：VS Code拡張などの静的解析ツールなら使えますが、Flask 2.3の内部構造と連携するものは注意が必要です。
-        - Flasgger　△ 注意：Werkzeug 2.3以上でエラーが出るケースが報告されています。（内部で使われていた`parse_rule`等の変更の影響）⇒[flask-smorest](https://flask-smorest.readthedocs.io/)
-        - Storybook for Jinja　△ 難易度高：Python環境で完結せず、Node.js環境とのハイブリッド構成になるため、管理画面への組み込みは複雑です。
+<ul>
+<li>カード決済</li>
+  <li>問い合わせメール送信</li>
+  <li>
+    成果物生成
+    <ul>
+      <li>ERAlchemy2でER図自動生成</li>
+      <li>pylint / pyreverseによるクラス図作成</li>
+      <li>Flask-Diagramsで画面遷移の可視化</li>
+      <li>Template Visualizerでテンプレート樹形図化</li>
+      <li>FlasggerでAPI一覧を生成</li>
+      <li>Storybook for Jinjaによるコンポーネント可視化</li>
+      <li>
+        上記を管理画面上でページの自動更新化
+        <ul>
+          <li><strong>Watchdog</strong>（Pythonライブラリ）を使い、<code>.py</code> ファイルや <code>.html</code> ファイルの変更を監視。</li>
+          <li>変更を検知したら、WebSocket（Flask-SocketIO）を通じてブラウザに「再読み込み信号」を送り図を更新。</li>
+        </ul>
+      </li>
+      <li>
+        ツール互換性判定と代替案
+        <ul>
+          <li><strong>ERAlchemy2　○ 可能：</strong>SQLAlchemyのmetadataを介するため、Flaskのバージョンに依存せず動作します。</li>
+          <li><strong>Pyreverse　○ 可能：</strong>ソースコード（.py）を静的解析するため、実行環境のライブラリ依存関係は関係ありません。</li>
+          <li>
+            <strong>Flask-Diagrams　× 厳しい：</strong>
+            最終更新が古く、Flask 2.3以降のRouting構造に対応していない可能性が高いです。
+            ⇒ <code>app.url_map</code> をループで回して <strong>Mermaid形式の文字列</strong> を生成
+          </li>
+          <li><strong>Template Visualizer　△ 微妙：</strong>VS Code拡張などの静的解析ツールなら使えますが、Flask 2.3の内部構造と連携するものは注意が必要です。</li>
+          <li>
+            <strong>Flasgger　△ 注意：</strong>Werkzeug 2.3以上でエラーが出るケースが報告されています。
+            ⇒ <a href="https://flask-smorest.readthedocs.io/">flask-smorest</a>
+          </li>
+          <li><strong>Storybook for Jinja　△ 難易度高：</strong>Node.js環境とのハイブリッド構成になるため、管理画面への組み込みは複雑です。</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
 
-- [単体](https://flask-web-academy.com/article/flask-unittest/)テストｘ[結合](https://developer.jamstack-media.com/docs/flask/9.-%E3%83%86%E3%82%B9%E3%83%88/9.1-%E3%83%A6%E3%83%8B%E3%83%83%E3%83%88%E3%83%86%E3%82%B9%E3%83%88%E3%81%A8%E7%B5%B1%E5%90%88%E3%83%86%E3%82%B9%E3%83%88%E3%81%AE%E4%BD%9C%E6%88%90/)テスト
-- Rendarデプロイ
+  <li>
+    <a href="https://flask-web-academy.com/article/flask-unittest/">単体</a>テスト ×
+    <a href="https://developer.jamstack-media.com/docs/flask/9.-%E3%83%86%E3%82%B9%E3%83%88/9.1-%E3%83%A6%E3%83%8B%E3%83%83%E3%83%88%E3%83%86%E3%82%B9%E3%83%88%E3%81%A8%E7%B5%B1%E5%90%88%E3%83%86%E3%82%B9%E3%83%88%E3%81%AE%E4%BD%9C%E6%88%90/">結合</a>テスト
+  </li>
+
+  <li>Rendarデプロイ</li>
+</ul>
 </details>
