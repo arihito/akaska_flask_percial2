@@ -1,19 +1,19 @@
 
 <img src="https://raw.githubusercontent.com/arihito/akaska_flask_percial2/refs/heads/main/Memo/static/images/fixed/keyvisual.jpg" alt="" width="" height="">
 
-![](https://img.shields.io/badge/VSCode-003864?style=for-the-badge&logo=visual%20studio%20code&logoColor=white)![](https://img.shields.io/badge/conda-225500.svg?&style=for-the-badge&logo=anaconda&logoColor=white)![](https://img.shields.io/badge/Python-333355?style=for-the-badge&logo=python&logoColor=blue)![](https://img.shields.io/badge/Flask-111122?style=for-the-badge&logo=flask&logoColor=white)![](https://img.shields.io/badge/Sqlite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)![](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)![](https://img.shields.io/badge/GIT-942C10?style=for-the-badge&logo=git&logoColor=white)![](https://img.shields.io/badge/HTML5-431F26?style=for-the-badge&logo=html5&logoColor=white)![](https://img.shields.io/badge/Bootstrap-361D5C?style=for-the-badge&logo=bootstrap&logoColor=white)
+![](https://img.shields.io/badge/VSCode-003864?style=for-the-badge&logo=visual%20studio%20code&logoColor=white)![](https://img.shields.io/badge/conda-225500.svg?&style=for-the-badge&logo=anaconda&logoColor=white)![](https://img.shields.io/badge/Python-333355?style=for-the-badge&logo=python&logoColor=blue)![](https://img.shields.io/badge/Flask-111122?style=for-the-badge&logo=flask&logoColor=white)![](https://img.shields.io/badge/Sqlite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)![](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)![](https://img.shields.io/badge/GIT-942C10?style=for-the-badge&logo=git&logoColor=white)![](https://img.shields.io/badge/HTML5-431F26?style=for-the-badge&logo=html5&logoColor=white)![](https://img.shields.io/badge/Bootstrap-361D5C?style=for-the-badge&logo=bootstrap&logoColor=white)<br>
 ![](https://img.shields.io/badge/JavaScript-323330?style=for-the-badge&logo=javascript&logoColor=F7DF1E)![](https://img.shields.io/badge/%3C/%3E%20htmx-1D4257?style=for-the-badge&logo=mysl&logoColor=white)![](https://img.shields.io/badge/Font_Awesome-225600?style=for-the-badge&logo=fontawesome&logoColor=white)![](https://img.shields.io/badge/ChatGPT-24333c?style=for-the-badge&logo=openai&logoColor=white)![](https://img.shields.io/badge/Google%20Gemini-3E2542?style=for-the-badge&logo=googlegemini&logoColor=white) ![](https://img.shields.io/badge/Flask_tech_blog-v1.0.1-222243.svg)
 
 <img src="https://raw.githubusercontent.com/arihito/akaska_flask_percial2/refs/heads/main/Memo/static/images/other/capture.png" alt="" width="800" height="">
 <img src="https://raw.githubusercontent.com/arihito/akaska_flask_percial2/refs/heads/main/Memo/static/images/other/admin.png" alt="" width="800" height="">
 
+<hr width="800">
 
-- - -
-
-> [!TIP]
+> [!IMPORTANT]
 > **樹形図**：アプリケーション内の主要なディレクトリやファイル(__pycache__、__init__.py、静的画像等は除く)
 
 <details>
+<summary>樹形図詳細</summary>
 <pre><code>
 📁 Memo
 ├─ 📄 README.md
@@ -81,10 +81,13 @@
 </code></pre>
 </details>
 
-> [!IMPORTANT]
+<hr width="800">
+
+> [!TIP]
 > **使用ライブラリ**：アプリケーション内で追加したパッケージ群。
 
 <details>
+<summary>ライブラリ一覧</summary>
 <pre><code>
 Package                      Version
 ---------------------------- -----------
@@ -198,9 +201,13 @@ xxhash                       3.6.0
 </code></pre>
 </details>
 
+<hr width="800">
+
 > [!NOTE]
 > **要件定義**：追加済み機能要件。
 
+<details>
+<summary>実装済み機能一覧</summary>
 - 環境構築
     - Flaskデバッガー
     - VSCode：コード整形・スニペット
@@ -223,10 +230,15 @@ xxhash                       3.6.0
 - タイトルと本文内の部分一致検索
 - 1週間自動ログイン用のリメンバーチェック
 - キービジュアルとロゴの調整
+</details>
+
+<hr width="800">
 
 > [!WARNING]
 > **実装中機能**：今回の課題の中で追加予定の機能。
 
+<details>
+<summary>実装中機能一覧</summary>
 - グローバルナビやフッターの固定ページ17個作成
     - 全テンプレートに1つのキーのみで、タイトル・エンドポイント・画像ファイル名・テンプレート名など一律に動的管理
     - グロバルナビのカレント表示
@@ -245,10 +257,15 @@ xxhash                       3.6.0
 - Google OAuth（環境変数）
 - 多言語
 - 商品追加UI
+</details>
+
+<hr width="800">
 
 > [!CAUTION]
 > **未追加機能**：時間内の対応が難しかった今後の追加予定機能
 
+<details>
+<summary>未機能一覧</summary>
 - カード決済
 - 問い合わせメール送信
 - 成果物生成
@@ -271,3 +288,4 @@ xxhash                       3.6.0
 
 - [単体](https://flask-web-academy.com/article/flask-unittest/)テストｘ[結合](https://developer.jamstack-media.com/docs/flask/9.-%E3%83%86%E3%82%B9%E3%83%88/9.1-%E3%83%A6%E3%83%8B%E3%83%83%E3%83%88%E3%83%86%E3%82%B9%E3%83%88%E3%81%A8%E7%B5%B1%E5%90%88%E3%83%86%E3%82%B9%E3%83%88%E3%81%AE%E4%BD%9C%E6%88%90/)テスト
 - Rendarデプロイ
+</details>
