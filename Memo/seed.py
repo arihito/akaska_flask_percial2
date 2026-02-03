@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from app import app, db
 from models import User, Memo, Favorite
 from datetime import datetime, timedelta
-# from factory import UserFactory, MemoFactory, FavoriteFactory 
+from factories.user_factory import UserFactory
 import pytz
 
 app.app_context().push()
@@ -105,7 +105,7 @@ MEMO_CONTENT_FACTORY = [
     "APIを作成しながらドキュメントも同時に更新。Flasggerを使って、Swagger UIからブラウザ上でAPIをテスト実行できる環境を整えます。"
 ]
 
-IMAGE_POOL = [f"{i:02}.png" for i in range(1, 16)]
+IMAGE_POOL = [f"{i:02}.jpg" for i in range(1, 13)]
 
 # --- ランダム日付生成関数 ---
 def random_date(start, end):
@@ -129,34 +129,32 @@ def seed_data():
         db.session.commit()
 
         print("ユーザー作成...")
-        users = []
-        for name in USER_NAMES:
-            user = User(username=name)
-            user.set_password("pass1234!")
-            db.session.add(user)
-            users.append(user)
+        users = UserFactory.create_batch(15)
         db.session.commit()
+
 
         print("メモ作成...")
         memos = []
-        for i in range(50):
-            user = random.choice(users)
+        MEMOS_PER_USER = 12
+        for user in users:
+          for _ in range(MEMOS_PER_USER):
             memo = Memo(
-                title=random.choice(MEMO_TITLE_FACTORY),
-                content=random.choice(MEMO_CONTENT_FACTORY),
-                user_id=user.id,
-                image_filename=random.choice(IMAGE_POOL),
-                created_at = random_date(start_date, end_date)
+              title=random.choice(MEMO_TITLE_FACTORY),
+              content=random.choice(MEMO_CONTENT_FACTORY),
+              user_id=user.id,
+              image_filename=random.choice(IMAGE_POOL),
+              created_at=random_date(start_date, end_date)
             )
             db.session.add(memo)
             memos.append(memo)
         db.session.commit()
 
         print("お気に入り作成...")
-        for user in users:
-            liked_count = random.randint(10, 30)
-            liked_memos = random.sample(memos, liked_count)
-            for rank, memo in enumerate(liked_memos[:5], start=1):
+        for memo in memos:
+            like_count = random.randint(5, 15)
+            liked_users = random.sample(users, min(like_count, len(users)))
+
+            for user in liked_users:
                 fav = Favorite(
                     user_id=user.id,
                     memo_id=memo.id,
@@ -164,10 +162,11 @@ def seed_data():
                     created_at=datetime.now(TZ) - timedelta(days=random.randint(0, 30))
                 )
                 db.session.add(fav)
+
         db.session.commit()
 
         print("ダミーデータ投入完了！")
-        
+
         # Factoryを使用したダミーデータ生成
         # users = UserFactory.create_batch(5)
         # db.session.add_all(users)

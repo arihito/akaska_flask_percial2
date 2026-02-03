@@ -6,7 +6,10 @@ class Config(object):
     DEBUG=True
     SECRET_KEY = 'secret-key'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///instance/memodb.sqlite'
+    SQLALCHEMY_ECHO = True
+    SQLALCHEMY_DATABASE_URI = (
+        f"sqlite:///{os.path.join(BASE_DIR, 'instance', 'memodb.sqlite')}"
+    )
     UPLOAD_FOLDER = os.path.join(BASE_DIR, "static", "images/memo")
     MAX_CONTENT_LENGTH = 5 * 1024 * 1024  # 5MB 制限（任意）
     ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
