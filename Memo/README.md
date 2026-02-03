@@ -5,7 +5,7 @@
 
 ![](https://img.shields.io/badge/Flask_tech_blog-v1.0.1-222243.svg)
 
-<img src="https://raw.githubusercontent.com/arihito/akaska_flask_percial2/refs/heads/main/Memo/static/images/other/capture.png" alt="" width="" height="">
+<img src="https://raw.githubusercontent.com/arihito/akaska_flask_percial2/refs/heads/main/Memo/static/images/other/capture.png" alt="" width="800" height="">
 
 
 - - -
@@ -259,21 +259,15 @@ xxhash                       3.6.0
     - FlasggerでAPI一覧を生成
     - Storybook for Jinjaによるコンポーネント可視化
     - 上記を管理画面上でページの自動更新化
-        - **Watchdog** (Pythonライブラリ) を使い、`.py` ファイルや `.html` ファイルの変更を監視。
+        - Watchdog (Pythonライブラリ) を使い、`.py` ファイルや `.html` ファイルの変更を監視。
         - 変更を検知したら、WebSocket（Flask-SocketIO）を通じてブラウザに「再読み込み信号」を送り図を更新。
     - ツール互換性判定と代替案
-        
-        **ERAlchemy2　○ 可能：**SQLAlchemyのmetadataを介するため、Flaskのバージョンに依存せず動作します。
-        
-        **Pyreverse　○ 可能：**ソースコード（.py）を静的解析するため、実行環境のライブラリ依存関係は関係ありません。
-        
-        **Flask-Diagrams　× 厳しい：**最終更新が古く、Flask 2.3以降のRouting構造に対応していない可能性が高いです。⇒`app.url_map` をループで回して **Mermaid形式の文字列** を生成
-        
-        **Template Visualizer　△ 微妙：**VS Code拡張などの静的解析ツールなら使えますが、Flask 2.3の内部構造と連携するものは注意が必要です。
-        
-        **Flasgger　△ 注意：Werkzeug 2.3以上でエラーが出るケースが報告されています。**（内部で使われていた`parse_rule`等の変更の影響）⇒[flask-smorest](https://flask-smorest.readthedocs.io/)
-        
-        **Storybook for Jinja　△ 難易度高：**Python環境で完結せず、Node.js環境とのハイブリッド構成になるため、管理画面への組み込みは複雑です。
-        
+        - ERAlchemy2　○ 可能：SQLAlchemyのmetadataを介するため、Flaskのバージョンに依存せず動作します。
+        - Pyreverse　○ 可能：ソースコード（.py）を静的解析するため、実行環境のライブラリ依存関係は関係ありません。
+        - Flask-Diagrams　× 厳しい：最終更新が古く、Flask 2.3以降のRouting構造に対応していない可能性が高いです。⇒`app.url_map` をループで回して Mermaid形式の文字列 を生成
+        - Template Visualizer　△ 微妙：VS Code拡張などの静的解析ツールなら使えますが、Flask 2.3の内部構造と連携するものは注意が必要です。
+        - Flasgger　△ 注意：Werkzeug 2.3以上でエラーが出るケースが報告されています。（内部で使われていた`parse_rule`等の変更の影響）⇒[flask-smorest](https://flask-smorest.readthedocs.io/)
+        - Storybook for Jinja　△ 難易度高：Python環境で完結せず、Node.js環境とのハイブリッド構成になるため、管理画面への組み込みは複雑です。
+
 - [単体](https://flask-web-academy.com/article/flask-unittest/)テストｘ[結合](https://developer.jamstack-media.com/docs/flask/9.-%E3%83%86%E3%82%B9%E3%83%88/9.1-%E3%83%A6%E3%83%8B%E3%83%83%E3%83%88%E3%83%86%E3%82%B9%E3%83%88%E3%81%A8%E7%B5%B1%E5%90%88%E3%83%86%E3%82%B9%E3%83%88%E3%81%AE%E4%BD%9C%E6%88%90/)テスト
 - Rendarデプロイ
