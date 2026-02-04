@@ -217,7 +217,12 @@ xxhash                       3.6.0
       <li>bashエイリアス</li>
     </ul>
   </li>
-
+  <li>投稿のCRUD実装
+      <ul>
+        <li>Bootstrapでトップはヘッダーナビ、管理画面は再度ナビにテンプレートを分割</li>
+        <li>テーブル行クリックで詳細画面に移動し、内包ボタンとの衝突回避</li>
+      </ul>
+  </li>
   <li>
     管理者ログイン認証
     <ul>
@@ -257,7 +262,7 @@ xxhash                       3.6.0
     </ul>
   </li>
 
-  <li>ダークモード切替え</li>
+  <li>ダークモードボタン設置と画像や文字色の切り替え設定</li>
   <li>1週間自動ログイン用のリメンバーチェック</li>
   <li>投稿・編集時のMarkdownエディタ追加</li>
   <li>キービジュアルとロゴの調整</li>
@@ -270,15 +275,12 @@ xxhash                       3.6.0
       <li>各キービジュアル画像とコンテンツ作成</li>
     </ul>
   </li>
+  <li>環境変数とgit除外ファイルの追加</li>
   <li>Flashの表示</li>
-  <li>トップに戻るボタン</li>
-  <li>404ページ作成
-    <ul>
-      <li>エラーメッセージの翻訳機能追加</li>
-    </ul>
-  </li>
+  <li>404ページ作成し、エラーメッセージの翻訳機能追加</li>
+  <li>直前のページ・トップに戻るアニメーションスクロールボタン追加</li>
+  <li>記事リストフェードイン</li>
 </ul>
-
 </details>
 
 <hr width="800">
@@ -289,15 +291,15 @@ xxhash                       3.6.0
 <details>
 <summary>実装中機能一覧</summary>
 <ul>
-  <li>記事リストフェードイン</li>
   <li>ユーザの画像追加（ドラッグドロップ）</li>
+  <li>Google OAuth</li>
   <li>カテゴリー</li>
   <li>論理削除</li>
   <li>管理画面グラフ生成</li>
   <li>要約文生成AI</li>
-  <li>Google OAuth（環境変数）</li>
-  <li>多言語</li>
+  <li>多言語設定</li>
   <li>商品追加UI</li>
+  <li>カード決済</li>
 </ul>
 </details>
 
@@ -309,8 +311,18 @@ xxhash                       3.6.0
 <details>
 <summary>未機能一覧</summary>
 <ul>
-<li>カード決済</li>
-  <li>問い合わせメール送信</li>
+  <li>例外処理
+    <ul>
+      <li>エラーレベルに応じたログ生成</li>
+      <li>エラーレベルは管理者にメール送信</li>
+    </ul>
+  </li>
+  <li>テスト
+    <ul>
+      <li><a href="https://flask-web-academy.com/article/flask-unittest/">単体</a>テスト</li>
+      <li><a href="https://developer.jamstack-media.com/docs/flask/9.-%E3%83%86%E3%82%B9%E3%83%88/9.1-%E3%83%A6%E3%83%8B%E3%83%83%E3%83%88%E3%83%86%E3%82%B9%E3%83%88%E3%81%A8%E7%B5%B1%E5%90%88%E3%83%86%E3%82%B9%E3%83%88%E3%81%AE%E4%BD%9C%E6%88%90/">結合</a>テスト</li>
+    </ul>
+  </li>
   <li>
     成果物生成
     <ul>
@@ -347,12 +359,11 @@ xxhash                       3.6.0
       </li>
     </ul>
   </li>
-
-  <li>
-    <a href="https://flask-web-academy.com/article/flask-unittest/">単体</a>テスト ×
-    <a href="https://developer.jamstack-media.com/docs/flask/9.-%E3%83%86%E3%82%B9%E3%83%88/9.1-%E3%83%A6%E3%83%8B%E3%83%83%E3%83%88%E3%83%86%E3%82%B9%E3%83%88%E3%81%A8%E7%B5%B1%E5%90%88%E3%83%86%E3%82%B9%E3%83%88%E3%81%AE%E4%BD%9C%E6%88%90/">結合</a>テスト
+  <li>デプロイ
+      <ul>
+          <li>Rendarの利用確認</li>
+          <li>GitHub Actionの追加</li>
+      </ul>
   </li>
-
-  <li>Rendarデプロイ</li>
 </ul>
 </details>

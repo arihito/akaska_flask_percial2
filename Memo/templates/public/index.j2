@@ -1,10 +1,10 @@
 {% extends "base.j2" %}
 {% block content %}
-    <div class="mb-4 rounded key_visual"></div>
+    <div class="mb-4 rounded key_visual fade-in fade-delay-2"></div>
     <div class="row">
         <div class="col-md-9">
             {% if top1 %}
-                <div class="card rounded shadow recommend">
+                <div class="card rounded shadow recommend fade-in fade-delay-1">
                     <div class="row g-0 h-100">
                         <div class="col-md-8">
                             <div class="card-body p-4">
@@ -35,8 +35,8 @@
                 {% for row in memos %}
                     {% set memo = row.memo %}
                     {% set like_count = row.like_count %}
-                    <div class="col-md-6">
-                        <div class="text-white-50 row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-300 position-relative">
+                    <div class="col-md-6 fade-in fade-delay-{{ loop.index }}">
+                        <div class="text-body-secondary row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-300 position-relative">
                             <div class="memo-img-wrap">
                                 <a href="{{ url_for('public.detail', memo_id=row.memo.id) }}"
                                     class="text-decoration-none">
@@ -48,7 +48,7 @@
                             </div>
                             <div class="col p-4 d-flex flex-column position-static">
                                 <strong class="d-inline-block mb-2">{{ memo.user.username }}</strong>
-                                <h3 class="mb-0 text-white">{{ memo.title }}</h3>
+                                <h3 class="mb-0 text-body-secondary">{{ memo.title }}</h3>
                                 <div class="mb-1 text-body-secondary">
                                     <i class="fa fa-calendar-o"></i> {{ memo.created_at.strftime("%Y年%m月%d日") }}
                                 </div>
@@ -75,7 +75,7 @@
                     </div>
                 {% endfor %}
             </div>
-            <nav aria-label="Page navigation" class="my-5">
+            <nav aria-label="Page navigation" class="my-5 fade-in fade-delay-3">
                 <ul class="pagination justify-content-center pagination-secondary">
                     <li class="page-item {% if page == 1 %}disabled{% endif %}">
                         <a class="page-link d-flex align-items-center justify-content-center h-100"

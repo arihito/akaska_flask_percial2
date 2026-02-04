@@ -1,12 +1,12 @@
 {% extends "layout/mode.j2" %}
 
 {% block container %}
-    <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-2 shadow">
-        <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="#">記事管理</a>
+    <nav class="navbar bg-body-secondary sticky-top flex-md-nowrap p-2 shadow">
+        <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3 fade-in fade-in-delay-4" href="#">記事管理</a>
         <ul class="navbar-nav px-3">
             <li class="nav-item text-nowrap">
-                <span class="me-3"><i class="fa fa-user-circle"></i> {{ current_user.username }}さん</span>
-                <a class="btn btn-outline-secondary" href="{{ url_for('auth.logout') }}"><i class="fa fa-sign-out"></i> ログアウト</a>
+                <span class="me-3 text-body-secondary fade-in fade-in-delay-12"><i class="fa fa-user-circle"></i> {{ current_user.username }}さん</span>
+                <a class="btn btn-outline-secondary fade-in fade-in-delay-16" href="{{ url_for('auth.logout') }}"><i class="fa fa-sign-out"></i> ログアウト</a>
             </li>
         </ul>
     </nav>

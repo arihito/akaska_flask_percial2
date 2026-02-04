@@ -2,22 +2,22 @@
   <div class="container">
     <div class="row">
       <div class="col-3 social-links d-flex gap-2">
-          <a href="https://github.com/arihito" target="_blank" class="text-white-50"><span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i><i class="fa fa-github fa-stack-1x"></i></span></a>
-          <a href="https://twitter.com/arihitter" target="_blank" class="text-white-50"><span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i><i class="fa fa-twitter fa-stack-1x"></i></span></a>
-          <a href="https://www.facebook.com/arihito" target="_blank" class="text-white-50"><span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i><i class="fa fa-facebook fa-stack-1x"></i></span></a>
-          <a href="https://www.instagram.com/arihito.m" target="_blank" class="text-white-50"><span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i><i class="fa fa-instagram fa-stack-1x"></i></span></a>
-          <a href="https://www.linkedin.com/in/arihito-matsuda-8049596a/" target="_blank" class="text-white-50"><span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i><i class="fa fa-linkedin fa-stack-1x"></i></span></a>
+          <a href="https://github.com/arihito" target="_blank" class="text-body-secondary fade-in fade-delay-1"><span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i><i class="fa fa-github fa-stack-1x"></i></span></a>
+          <a href="https://twitter.com/arihitter" target="_blank" class="text-body-secondary fade-in fade-delay-2"><span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i><i class="fa fa-twitter fa-stack-1x"></i></span></a>
+          <a href="https://www.facebook.com/arihito" target="_blank" class="text-body-secondary fade-in fade-delay-3"><span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i><i class="fa fa-facebook fa-stack-1x"></i></span></a>
+          <a href="https://www.instagram.com/arihito.m" target="_blank" class="text-body-secondary fade-in fade-delay-4"><span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i><i class="fa fa-instagram fa-stack-1x"></i></span></a>
+          <a href="https://www.linkedin.com/in/arihito-matsuda-8049596a/" target="_blank" class="text-body-secondary fade-in fade-delay-5"><span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i><i class="fa fa-linkedin fa-stack-1x"></i></span></a>
       </div>
       <div class="col-9">
-        <p class="col-10">このFlask tech blogは、職業訓練校の課題として、Flaskアプリケーションの開発学習を目的に作成しています。<br>
+        <p class="col-10 fade-in fade-delay-5">このFlask tech blogは、職業訓練校の課題として、Flaskアプリケーションの開発学習を目的に作成しています。<br>
         投稿記事のダミーテキストの一部は、AIによって生成しています。また、記事内容の正誤については、あくまで自身の理解をまとめたものですので、
         参考程度にご覧いただけますと幸いです。
         </p>
         <nav class="blog-pagination">
-        <span>| </span>
+        <span class="fade-in fade-delay-11">| </span>
             {% for key, val in STATIC_PAGES.items(): %}
                 {% if loop.index > 11 %}
-                    <a class="text-white-50 mx-3" href="{{ url_for('fixed.static_page', page_name=key) }}">{{ val }}</a><span> | </span>
+                    <a class="text-body-secondary mx-3 fade-in fade-delay-{{ loop.index - 6 }}" href="{{ url_for('fixed.static_page', page_name=key) }}">{{ val }}</a><span class="fade-in fade-delay-{{ loop.index }}"> | </span>
                 {% endif %}
             {% endfor %}
         </nav>
@@ -25,7 +25,7 @@
     </div>
   </div>
   <hr>
-  <div class="container copyright text-center mt-3 pb-5">
+  <div class="container copyright text-center mt-3 pb-5 fade-in fade-delay-12">
       <p>&copy;2026 <span>Copyright</span> <strong class="px-1 sitename">Flask tech blog</strong> <span>All Rights Reserved</span></p>
       <div class="credits">
       </div>

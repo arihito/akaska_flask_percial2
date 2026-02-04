@@ -3,13 +3,15 @@ from flask_migrate import Migrate
 from models import db, User
 from flask_login import LoginManager
 from flask_debugtoolbar import DebugToolbarExtension
+from werkzeug.exceptions import NotFound
+from errors.views import show_404_page
+
 # Blueprints
 from public.views import public_bp
 from auth.views import auth_bp
 from memo.views import memo_bp
 from favorite.views import favorite_bp
 from fixed.views import fixed_bp, STATIC_PAGES
-from errors.views import error_bp
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -24,12 +26,12 @@ login_manager.init_app(app) # Flaskアプリに紐付け
 # アクセス制限ページからリダイレクト後のflashメッセージ
 login_manager.login_message = '認証していません：ログインしてください'
 login_manager.login_view = 'auth.login' # 不正アクセスはログインページへ
+app.register_error_handler(NotFound, show_404_page)
 app.register_blueprint(public_bp)
 app.register_blueprint(auth_bp)
 app.register_blueprint(memo_bp)
 app.register_blueprint(favorite_bp)
 app.register_blueprint(fixed_bp)
-app.register_blueprint(error_bp)
 
 # 全テンプレートに値を共有
 @app.context_processor

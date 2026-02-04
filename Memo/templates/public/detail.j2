@@ -16,7 +16,13 @@
             <h1 class="display-4 my-3 pb-4 border-bottom">{{ memo.title }}</h1>
             <p><i class="fa fa-user"></i>投稿者: {{ memo.user.username }}<span class="px-2">|</span> <i class="fa fa-calendar"></i>投稿日時: {{ memo.created_at.strftime("%Y-%m-%d %H:%M") }}<span class="px-2">|</span> ❤️ {{ like_count }} いいね</p>
             <p class="markdown-body">{{ memo.content | markdown | safe }}</p>
-            <a class="btn btn-secondary btn-lg" href="{{ url_for('public.public_index') }}">一覧へ戻る</a>
+            <nav class="navbar bg-body-secondary my-5 rounded-3">
+                <div class="container-fluid justify-content-start my-2 mx-2">
+                    <a class="btn btn-secondary btn-lg me-2 text-dark flex-fill fade-in fade-delay-4" id="scrollTopBtn"><i class="fa fa-arrow-up"></i> ページの最上部に戻る</a>
+                    <a class="btn btn-outline-secondary btn-lg me-2 fade-in fade-delay-8" href="#" id="backBtn"><i class="fa fa-arrow-left"></i> 直前のページに戻る</a>
+                    <a class="btn btn-outline-secondary btn-lg fade-in fade-delay-12" href="{{ url_for('public.public_index') }}"><i class="fa fa-reply"></i> トップの一覧に戻る</a>
+                </div>
+            </nav>
         </div>
         {% include "public/aside.j2" %}
     </div>

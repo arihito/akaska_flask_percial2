@@ -1,6 +1,7 @@
 (() => {
-    'use strict'
+    'use strict';
 
+    // カラーモード
     const getStoredTheme = () => localStorage.getItem('theme')
     const setStoredTheme = theme => localStorage.setItem('theme', theme)
 
@@ -58,7 +59,10 @@
         }
     })
 
+    // ページが読み込まれた実行
     window.addEventListener('DOMContentLoaded', () => {
+
+        // カラーモード
         showActiveTheme(getPreferredTheme())
 
         document.querySelectorAll('[data-bs-theme-value]')
@@ -70,10 +74,65 @@
             showActiveTheme(theme, true)
             })
         })
-    })
-    })()
 
-    document.addEventListener("click", async function (e) {
+        // スクロールフェードイン
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // 管理画面のテーブル行クリック
+        const tbody = document.querySelector('tbody');
+        if (!tbody) return;
+
+        tbody.addEventListener('click', (e) => {
+
+            // 内包ボタンはクリック範囲を除外
+            if (e.target.closest('.action-btn')) return;
+
+            const row = e.target.closest('.clickable-row');
+            if (!row || !row.dataset.href) return;
+
+            console.log('row click:', row.dataset.href);
+            window.location.href = row.dataset.href;
+        });
+
+        // エンターキーでも実行可能
+        tbody.addEventListener('keydown', (e) => {
+            if (e.key !== 'Enter') return;
+            const row = e.target.closest('.clickable-row');
+            if (row?.dataset.href) {
+                window.location.href = row.dataset.href;
+            }
+        });
+
+        // ボタンクリックはテーブル行に伝播させない
+        document.querySelectorAll('.action-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+        });
+    })
+})()
+
+// 前のページに戻るボタンクリック
+document.getElementById('backBtn').addEventListener('click', e => {
+    e.preventDefault();
+    history.back();
+});
+
+// いいねアイコンクリック
+document.addEventListener("click", async function (e) {
     const btn = e.target.closest(".btn-like");
     if (!btn) return;
 
@@ -102,9 +161,10 @@
     btn.innerHTML = (data.liked ? "❤️" : "🤍")
         + ` <span class="like-count">${data.like_count}</span>`;
 
-    // ハートアニメーション
     animateHeart(btn);
 });
+
+// ハートアニメーション
 function animateHeart(btn) {
     const rect = btn.getBoundingClientRect();
     const heart = document.createElement("div");

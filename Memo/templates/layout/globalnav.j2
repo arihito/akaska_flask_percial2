@@ -1,20 +1,19 @@
 <div class="container public_header">
     <header class="border-bottom lh-1 py-3">
         <div class="row flex-nowrap justify-content-between align-items-center">
-            <div class="col-8">
+            <div class="col-8 fade-in fade-in-delay-8">
                 <a class="blog-header-logo text-body-emphasis text-decoration-none"
                     href="{{ url_for('public.public_index') }}">tech blog</a>
             </div>
             <div class="col-4 d-flex justify-content-end align-items-center">
                 {% if not current_user.is_authenticated %}
-                    <div class="btn-group" role="group" aria-label="Basic outlined example">
-                        <a class="btn btn-outline-secondary" href="{{ url_for('auth.login') }}"><i class="fa fa-sign-in"></i> ログイン</a>
-                        <a class="btn btn-outline-secondary"
-                            href="{{ url_for('auth.register') }}"><i class="fa fa-user-plus"></i> 新規登録</a>
+                    <div class="btn-group" role="group">
+                        <a class="btn btn-outline-secondary fade-in fade-in-delay-16" href="{{ url_for('auth.login') }}"><i class="fa fa-sign-in"></i> ログイン</a>
+                        <a class="btn btn-outline-secondary fade-in fade-in-delay-20" href="{{ url_for('auth.register') }}"><i class="fa fa-user-plus"></i> 新規登録</a>
                     </div>
                 {% elif current_user.is_authenticated %}
-                    <a class="me-3 text-white-50" href="{{ url_for('memo.index') }}"><i class="fa fa-user-circle"></i> {{ current_user.username }}さん</a>
-                    <a class="btn btn-outline-secondary" href="{{ url_for('auth.logout') }}"><i class="fa fa-sign-out"></i> ログアウト</a>
+                    <a class="me-3 text-body-secondary fade-in fade-in-delay-16" href="{{ url_for('memo.index') }}"><i class="fa fa-user-circle"></i> {{ current_user.username }}さん</a>
+                    <a class="btn btn-outline-secondary fade-in fade-in-delay-20" href="{{ url_for('auth.logout') }}"><i class="fa fa-sign-out"></i> ログアウト</a>
                 {% endif %}
             </div>
         </div>
@@ -25,7 +24,7 @@
                 href="{{ url_for('public.public_index') }}"><i class="fa fa-home"></i>トップ</a>
             {% for key, val in STATIC_PAGES.items(): %}
                 {% if loop.index <= 11 %}
-                    <a class="nav-item nav-link link-body-emphasis px-2 {% if request.endpoint == 'fixed.static_page' and request.view_args.page_name == key %}active{% endif %}"
+                    <a class="nav-item nav-link link-body-emphasis px-2 fade-in fade-delay-{{ loop.index }} {% if request.endpoint == 'fixed.static_page' and request.view_args.page_name == key %}active{% endif %}"
                         href="{{ url_for('fixed.static_page', page_name=key) }}">{{ val }}</a>
                 {% endif %}
             {% endfor %}
