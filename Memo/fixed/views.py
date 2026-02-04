@@ -1,8 +1,6 @@
-from flask import Blueprint, render_template, request, redirect, abort, url_for
+from flask import Blueprint, render_template, abort
 from models import db, Memo, Favorite
-from flask_login import current_user
 from sqlalchemy import func
-import markdown
 
 fixed_bp = Blueprint('fixed', __name__, url_prefix='/fixed')
 
