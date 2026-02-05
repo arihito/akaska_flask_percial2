@@ -43,3 +43,7 @@ class Config(object):
     REMEMBER_COOKIE_DURATION = timedelta(
         days=int(os.getenv('REMEMBER_DAYS', 7))
     )
+    
+    # Googleログイン
+    GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID', 'xxxxxx')
+    GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET', 'xxxxxx')

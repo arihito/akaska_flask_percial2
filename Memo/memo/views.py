@@ -34,6 +34,7 @@ def index():
     total = base_query.group_by(Memo.id).count()
     pages = math.ceil(total / per_page)
     offset = (page - 1) * per_page
+    is_paginate = total > per_page
     # ---- 検索条件 ----
     if q:
         like_expr = f"%{q}%"
@@ -97,10 +98,11 @@ def index():
         top5=top5,
         user=current_user, 
         q=q,
+        is_paginate=is_paginate,
         page=page,
         pages=pages,
         total=total
-        )
+    )
 
 @memo_bp.route('/create', methods=['GET', 'POST'])
 @login_required
