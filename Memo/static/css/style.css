@@ -328,6 +328,28 @@ h6 {
     mix-blend-mode:difference;
     filter: hue-rotate(160deg) saturate(5%);
 }
+.article-img {
+}
+
+[data-bs-theme="dark"] 
+.article-img {
+  filter: grayscale(100%);
+  background-color: #212529;
+  mix-blend-mode:soft-light;
+  /* filter: hue-rotate(160deg) saturate(5%); */
+}
+[data-bs-theme="light"] 
+.article-img {
+  filter: grayscale(100%);
+  background-color: #212529;
+  mix-blend-mode:multiply;
+}
+
+.user-icon {
+  width: 36px;
+  height: 36px;
+  filter: grayscale(80%);
+}
 
 /* 全テーブル */
 table.table-striped {
@@ -349,9 +371,6 @@ code {
 
 /* 検索マーキング */
 mark {
-    background: #112;
-    color: #eee;
-    border: 1px solid #334;
     padding: 3px 6px;
     margin: 0 4px;
     border-radius: 3px;
@@ -364,6 +383,12 @@ mark {
 }
 
 /* コード表示 */
+code.hljs {
+  border-radius: 8px;
+}
+.hljs-ln-line {
+  color: #ccc;
+}
 .hljs-ln-line.hljs-ln-code {
     white-space: pre !important;
     width: 100%;
@@ -444,4 +469,29 @@ pre.file-tag[data-tag]::before {
 
 .clickable-row:hover {
     background-color: rgba(0, 0, 0, 0.04);
+}
+
+/* ユーザーサムネイル */
+.thumb-label {
+    cursor: pointer;
+}
+
+.thumb-img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* hover */
+.thumb-label:hover .thumb-img {
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+}
+
+/* 選択時 */
+input[type="radio"]:checked + .thumb-label .thumb-img {
+    border-color: #ccc;   /* Bootstrap primary */
+    box-shadow: 0 0 0 6px rgba(13, 110, 253, 0.5);
 }

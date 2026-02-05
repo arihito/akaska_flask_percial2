@@ -34,7 +34,7 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(50), unique=True, nullable=True)
     password = db.Column(db.String(120), nullable=False)
-    # thumbnail = db.Column(db.String(50), nullable=False, default='default.png')
+    thumbnail = db.Column(db.String(50), nullable=False, default='default.png')
     memos = relationship('Memo', back_populates='user')
     favorites = relationship('Favorite', back_populates='user', cascade="all, delete-orphan")
     def set_password(self, password):

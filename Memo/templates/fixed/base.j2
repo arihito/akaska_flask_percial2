@@ -6,12 +6,9 @@
     .article-img {
         height: 300px;
         background: url("{{ key_visual | default('/static/images/memo/nofile.jpg') }}") center / cover no-repeat;
-        filter: grayscale(100%);
-        background-color: #212529;
-        mix-blend-mode:color-dodge;
     }
   </style>
-  <div class="mb-4 rounded text-body-emphasis bg-body-secondary article-img"></div>
+  <div class="mb-4 rounded article-img"></div>
   <div class="row">
     <div class="col-md-9">
       <h1 class="display-4 my-3 pb-4 border-bottom">{{ page_title }}</h1>

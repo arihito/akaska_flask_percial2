@@ -4,9 +4,9 @@
     <nav class="navbar bg-body-secondary sticky-top flex-md-nowrap p-2 shadow">
         <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3 fade-in fade-in-delay-4" href="#">記事管理</a>
         <ul class="navbar-nav px-3">
-            <li class="nav-item text-nowrap">
-                <span class="me-3 text-body-secondary fade-in fade-in-delay-12"><i class="fa fa-user-circle"></i> {{ current_user.username }}さん</span>
-                <a class="btn btn-outline-secondary fade-in fade-in-delay-16" href="{{ url_for('auth.logout') }}"><i class="fa fa-sign-out"></i> ログアウト</a>
+            <li class="nav-item text-nowrap d-flex justify-content-end align-items-center">
+                <div class="d-flex justify-content-between align-items-center" href="{{ url_for('memo.index') }}"><img src="{{ url_for('static', filename='images/user/' ~ current_user.thumbnail) }}" alt="{{ current_user.username }}" class="user-icon me-2 fade-in fade-in-delay-8" width="" height=""><div class="user-name fade-in fade-in-delay-16"><strong>{{ current_user.username }}</strong> さん</div></div>
+                <a class="btn btn-outline-secondary fade-in fade-in-delay-20 ms-3" href="{{ url_for('auth.logout') }}"><i class="fa fa-sign-out"></i> ログアウト</a>
             </li>
         </ul>
     </nav>

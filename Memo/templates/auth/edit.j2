@@ -2,15 +2,42 @@
 {% block content %}
     <div class="d-flex align-items-center py-4 m-5">
         <div class="form-signin p-5 w-50 m-auto">
-            <form action="{{ url_for('auth.login') }}" method="post" enctype="multipart/form-data" novalidate>
+            <form action="{{ url_for('auth.edit') }}" method="post" enctype="multipart/form-data" novalidate>
                 {% from "auth/_formhelpers.j2" import render_floating_field %}
                 {{ form.hidden_tag() }}
-                <h1 class="h3 mb-3 fw-normal">ユーザー管理</h1>
-                {{ render_floating_field(form.username, "ユーザー名") }}
-                {{ render_floating_field(form.password, "パスワード") }}
-                {{ render_floating_field(form.confirm_password, "確認用") }}
-                {{ render_floating_field(form.thumbnail) }}
-                {{ form.submit(class="btn btn-outline-secondary w-100") }}
+                <h1 class="h3 mb-3 fw-normal fade-in fade-delay-1"><i class="fa fa-user-circle-o me-2"></i>ユーザー管理</h1>
+                <p class="text-body-secondary fade-in fade-delay-6"><i class="fa fa-user me-2"></i>ユーザー名の変更が必要であれば以下を編集してください(任意)。</p>
+                {{ render_floating_field(form.username, "ユーザー名", wrapper_class="fade-in fade-delay-3") }}
+                <p class="text-body-secondary fade-in fade-delay-12"><i class="fa fa-key me-2"></i>パスワードの変更が必要であれば以下を入力してください(任意)。</p>
+                {{ render_floating_field(form.password, "パスワード", wrapper_class="fade-in fade-delay-6") }}
+                {{ render_floating_field(form.confirm_password, "確認用", wrapper_class="fade-in fade-delay-9") }}
+                <p class="text-body-secondary fade-in fade-delay-18"><i class="fa fa-image me-2"></i>変更が必要であればファイルをアップロードするか、以下のアイコンから選択してください(任意)。</p>
+                {{ render_floating_field(form.thumbnail, "ファイル", wrapper_class="fade-in fade-delay-12") }}
+                <div class="thumbnail-select d-flex flex-wrap gap-3">
+                    {% for img in thumbnails %}
+                        <div class="fade-in fade-delay-{{ loop.index }}">
+                            <input
+                                type="radio"
+                                name="preset_thumbnail"
+                                id="thumb-{{ loop.index }}"
+                                value="{{ img }}"
+                                class="d-none"
+                                {% if current_user.thumbnail == img %}checked{% endif %}
+                            >
+                            <label for="thumb-{{ loop.index }}" class="thumb-label">
+                                <img
+                                    src="{{ url_for('static', filename='images/user/' ~ img) }}"
+                                    alt="thumbnail"
+                                    class="thumb-img"
+                                    width=""
+                                    height=""
+                                    style="filter:grayscale(80%)"
+                                >
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+                {{ form.submit(class="btn btn-outline-secondary w-100 mt-4 fade-in fade-delay-12") }}
             </form>
         </div>
     </div>

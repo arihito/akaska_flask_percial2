@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 # seed用にFlaskアプリを1つ生成しconfigを読み込みdb/login_manager/Blueprintを初期化する
 from app import app, db
 from models import User, Memo, Favorite
-from datetime import datetime, timedelta
 from factories.user_factory import UserFactory
 import pytz
 

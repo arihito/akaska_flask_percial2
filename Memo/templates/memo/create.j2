@@ -2,14 +2,14 @@
 {% block content %}
     <div class="d-flex align-items-center py-4 m-5">
         <div class="form-signin p-5 w-50 m-auto">
-            <h1><i class="fa fa-plus-square"></i> 記事を投稿</h1>
+            <h1 class="fade-in fade-delay-1"><i class="fa fa-plus-square"></i> 記事を投稿</h1>
             {% from 'memo/_formhelpers.j2' import render_field %}
             <form action="{{ url_for('memo.create') }}" method="post" enctype="multipart/form-data" novalidate>
                 {{ form.hidden_tag() }}
-                {{ render_field(form.title) }}
+                {{ render_field(form.title, wrapper_class="fade-in fade-delay-3") }}
                 <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
                 <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
-                {{ render_field(form.content) }}
+                {{ render_field(form.content, wrapper_class="fade-in fade-delay-6") }}
                 <script>
                 const easyMDE = new EasyMDE({
                     element: document.getElementById("content"),
@@ -18,8 +18,11 @@
                     placeholder: "Markdownで本文を入力してください"
                 });
                 </script>
-                {{ render_field(form.image) }}
-                {{ form.submit(class="btn btn-outline-secondary w-100") }}
+                {{ render_field(form.image, wrapper_class="fade-in fade-delay-9") }}
+                <div class="d-flex g-3 mt-4">
+                    {{ form.submit(class="btn btn-secondary fade-in fade-delay-12 w-100") }}
+                    <a class="btn btn-outline-secondary fade-in fade-delay-15 ms-3" style="width:40%" href="{{ url_for('memo.index') }}"><i class="fa fa-reply"></i>一覧ページへ戻る</a>
+                </div>
             </form>
         </div>
     </div>

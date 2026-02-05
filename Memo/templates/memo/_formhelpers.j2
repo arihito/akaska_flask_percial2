@@ -1,17 +1,20 @@
-{% macro render_field(field, placeholder=None, attrs=None) %}
+{% macro render_field(field, placeholder=None, wrapper_class="", input_class="", attrs=None) %}
     {% if attrs is none %}
         {% set attrs = {} %}
     {% endif %}
-    {# 常にform-controlを付けつつ、追加で渡されたclassがあればそれも連結(jinja記法) #}
-    {% set css_class = "form-control " ~ (attrs.get("class", "")) %}
-    <div class="form-floating mb-3">
+
+    {# form-controlを必ず含め、追加クラスを安全に連結 #}
+    {% set merged_class = "form-control " ~ input_class ~ " " ~ attrs.get("class", "") %}
+
+    <div class="form-floating mb-3 {{ wrapper_class }}">
         {{ field(
-            class=attrs.pop("class", "form-control"),
+            class=merged_class|trim,
             placeholder=placeholder if placeholder else field.label.text,
             id=field.id,
             **attrs
         ) }}
         <label for="{{ field.id }}">{{ field.label.text }}</label>
+
         {% if field.errors %}
             <div class="alert alert-danger small mt-1">
                 <i class="fa fa-exclamation-triangle"></i>
@@ -20,4 +23,3 @@
         {% endif %}
     </div>
 {% endmacro %}
-    

@@ -1,9 +1,9 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SubmitField, PasswordField, HiddenField, FileField, BooleanField
-from flask_wtf.file import FileField, FileAllowed
+from wtforms import StringField, TextAreaField, SubmitField, PasswordField, HiddenField, FileField, BooleanField, RadioField
+from flask_wtf.file import FileAllowed
 from flask_login import current_user
 from wtforms.validators import DataRequired, Length, ValidationError, EqualTo, Optional
-from models import Memo, User, Favorite
+from models import Memo, User
 
 class MemoForm(FlaskForm):
     id = HiddenField()
@@ -26,7 +26,7 @@ class MemoForm(FlaskForm):
         ]
     )
     submit = SubmitField("投稿")
-            
+
     def validate_title(self, title):
         query = Memo.query.filter_by(title=title.data, user_id=current_user.id)
         # 編集時のみ：自分自身を除外
@@ -35,7 +35,7 @@ class MemoForm(FlaskForm):
         memo = query.first()
         if memo:
             raise ValidationError(f"タイトル「{title.data}」は既に存在します。別のタイトルを入力してください。")
-            
+
 class LoginForm(FlaskForm):
     username = StringField('ユーザ名：', validators=[DataRequired('ユーザ名は必須入力です。')])
     password = PasswordField('パスワード：', validators=[Length(8, 12, 'パスワードの長さは8文字以上12文字以内です')])
@@ -57,21 +57,21 @@ class SignUpForm(LoginForm): # ログイン処理と同じなため機能を継�
 			raise ValidationError('そのユーザ名はすでに使用されれています')
 
 class EditUserForm(FlaskForm):
-    username = StringField(
-        'ユーザー名',
-        validators=[DataRequired(), Length(max=50)]
-    )
-    password = PasswordField(
-        '新しいパスワード',
-        validators=[Optional(), Length(min=8)]
-    )
-    
-    confirm_password = PasswordField(
-        '新しいパスワード（確認）',
+    # ユーザ名更新
+    username = StringField('ユーザー名', validators=[DataRequired()])
+    # パスワード更新
+    change_password = BooleanField('パスワードを変更する')
+    password = PasswordField('新しいパスワード')
+    confirm_password = PasswordField('パスワード確認再入力',
         validators=[
             Optional(),
             EqualTo('password', message='パスワードが一致しません')
-        ]
-    )
+    ])
+    # 画像更新
     thumbnail = FileField('サムネイル画像（任意）')
+    submit = SubmitField('更新')
+    preset_thumbnail = RadioField(
+        '既存画像',
+        choices=[(f'{i:02}.png', f'{i:02}.png') for i in range(1, 11)]
+    )
     submit = SubmitField('更新')

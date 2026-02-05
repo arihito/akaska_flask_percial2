@@ -47,31 +47,46 @@ def register():
 		return redirect(url_for('auth.login'))
 	return render_template('auth/register.j2', form=form)
 
+# サムネイル一覧の用意
+USER_THUMBNAILS = [f"{i:02}.png" for i in range(1, 11)]
+
 @auth_bp.route('/edit', methods=['GET', 'POST'])
 @login_required
 def edit():
     form = EditUserForm(obj=current_user)  # ← 既存値を初期表示
     if request.method == 'POST':
-        print("password.data =", repr(form.password.data))
-        print("confirm_password.data =", repr(form.confirm_password.data))
-        print("errors =", form.errors)
-    if form.validate_on_submit():
-        # ユーザー名更新
-        current_user.username = form.username.data
-        # 入力があった場合のみパスワード更新
-        if form.password.data:
-            current_user.set_password(form.password.data)
-        # アップロードされた場合のみサムネイル画像保存
-        if form.thumbnail.data:
-            file = form.thumbnail.data
-            filename = secure_filename(file.filename)
-            upload_dir = os.path.join(current_app.root_path, 'static', 'uploads')
-            os.makedirs(upload_dir, exist_ok=True)
-            save_path = os.path.join(upload_dir, filename)
-            file.save(save_path)
-            current_user.thumbnail = filename  # Userモデルに列がある前提
-        db.session.commit()
-        flash('ユーザー情報を更新しました', 'success')
-        return redirect(url_for('auth.edit'))
-    return render_template('auth/edit.j2', form=form)
-
+      if form.username.data != current_user.username:
+        exists = User.query.filter_by(username=form.username.data).first()
+        if exists:
+            form.username.errors.append('このユーザー名は既に使用されています')
+      # デバッグプリント：フォーム送信確認
+      print("######################## POST request detected")
+      print("######################## form.validate_on_submit() =", form.validate_on_submit())
+      print("######################## form.thumbnail.data =", form.thumbnail.data)
+      print("######################## form.preset_thumbnail.data =", form.preset_thumbnail.data)
+      if form.validate_on_submit():
+          # ユーザー名更新
+          current_user.username = form.username.data
+          # 入力があった場合のみパスワード更新
+          if form.change_password.data:
+              current_user.set_password(form.password.data)
+          # アップロードされた場合のみサムネイル画像保存
+          # サムネイル更新
+          if form.thumbnail.data:  # ファイルアップロード優先
+              file = form.thumbnail.data
+              filename = secure_filename(file.filename)
+              print("更新前の current_user.thumbnail =", current_user.thumbnail)
+              print("アップロードされるファイル名 =", filename)
+              upload_dir = os.path.join(current_app.root_path, 'static', 'uploads')
+              os.makedirs(upload_dir, exist_ok=True)
+              save_path = os.path.join(upload_dir, filename)
+              file.save(save_path)
+              current_user.thumbnail = filename
+          elif form.preset_thumbnail.data:  # ファイルがなければラジオ選択
+              print("更新前の current_user.thumbnail =", current_user.thumbnail)
+              print("選択された preset_thumbnail =", form.preset_thumbnail.data)
+              current_user.thumbnail = form.preset_thumbnail.data
+          db.session.commit()
+          flash('ユーザー情報を更新しました', 'success')
+          return redirect(url_for('auth.edit'))
+    return render_template('auth/edit.j2', form=form, thumbnails=USER_THUMBNAILS)

@@ -35,3 +35,8 @@ class UserFactory(SQLAlchemyModelFactory):
     password = factory.LazyFunction(
         lambda: generate_password_hash("pass1234!")
     )
+
+    thumbnail = factory.Faker(
+        "random_element",
+        elements=[f"{i:02}.png" for i in range(1, 11)]
+    )

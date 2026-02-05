@@ -3,16 +3,16 @@
     {% from 'memo/_formhelpers.j2' import render_field %}
     <div class="d-flex align-items-center py-4 m-5">
         <div class="form-signin p-5 w-50 m-auto">
-            <h1><i class="fa fa-pencil"></i> メモを編集</h1>
+            <h1 class="fade-in fade-delay-1"><i class="fa fa-pencil"></i> メモを編集</h1>
             <form action="{{ url_for('memo.update', memo_id=memo.id) }}"
                 method="post"
                 enctype="multipart/form-data"
                 novalidate>
                 {{ form.hidden_tag() }}
-                {{ render_field(form.title) }}
+                {{ render_field(form.title, wrapper_class="fade-in fade-delay-3") }}
                 <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
                 <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
-                {{ render_field(form.content) }}
+                {{ render_field(form.content, wrapper_class="fade-in fade-delay-6") }}
                 <script>
                 const easyMDE = new EasyMDE({
                     element: document.getElementById("content"),
@@ -22,7 +22,7 @@
                 });
                 </script>
                 <div class="d-flex justify-content-between">
-                    {{ render_field(form.image) }}
+                    {{ render_field(form.image, wrapper_class="fade-in fade-delay-9") }}
                     {% if memo.image_filename %}
                         <img src="{{ url_for('static', filename='images/memo/' ~ memo.image_filename) }}"
                         class="image-fluid rounded"
@@ -31,9 +31,9 @@
                         alt="記事画像">
                     {% endif %}
                 </div>
-                <div class="row p-3">
-                    {{ form.submit(class="col-9 btn btn-secondary") }}
-                    <a class="col-3 btn btn-outline-secondary" href="{{ url_for('memo.index') }}">一覧ページへ戻る</a>
+                <div class="d-flex g-3 mt-4">
+                    {{ form.submit(class="btn btn-secondary fade-in fade-delay-12 w-100") }}
+                    <a class="btn btn-outline-secondary fade-in fade-delay-15 ms-3" style="width:40%" href="{{ url_for('memo.index') }}"><i class="fa fa-reply"></i>一覧ページへ戻る</a>
                 </div>
             </form>
         </div>
