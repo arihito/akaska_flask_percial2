@@ -252,6 +252,7 @@ xxhash                       3.6.0
     ページング
     <ul>
       <li>色のカスタマイズ</li>
+      <li>投稿10件以下ならページング自体を非表示</li>
     </ul>
   </li>
 
@@ -263,7 +264,7 @@ xxhash                       3.6.0
   </li>
 
   <li>ダークモードボタン設置と画像や文字色の切り替え設定</li>
-  <li>1週間自動ログイン用のリメンバーチェック</li>
+  <li>1週間自動ログイン用のリメンバーチェック、スイッチボタン化</li>
   <li>投稿・編集時のMarkdownエディタ追加</li>
   <li>キービジュアルとロゴの調整</li>
   <li>
@@ -287,6 +288,14 @@ xxhash                       3.6.0
       <li>画像のラジオボタン化、カレント表示</li>
     </ul>
   </li>
+  <li>Google OAuth
+    <ul>
+      <li>OAuthのセッションユーザとFlask_login上のユーザの一元管理/li>
+      <li>一意保持のためemailカラムの追加必須</li>
+      <li>ユーザ情報管理ページの操作制限</li>
+      <li>Googleのユーザ情報表示</li>
+    </ul>
+  </li>
 </ul>
 </details>
 
@@ -298,9 +307,14 @@ xxhash                       3.6.0
 <details>
 <summary>実装中機能一覧</summary>
 <ul>
-  <li>Google OAuth</li>
-  <li>カテゴリー</li>
+  <li>カテゴリー
+    <ul>
+      <li>複数カテゴリー追加(多対多):basic/CRUD/UI/auth/package/APIなど</li>
+      <li>カテゴリー検索</li>
+    </ul>
+  </li>
   <li>論理削除</li>
+  <li>Refactor：MemoをAdminに変更した場合の影響範囲確認</li>
   <li>管理画面グラフ生成</li>
   <li>要約文生成AI</li>
   <li>多言語設定</li>

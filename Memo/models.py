@@ -33,11 +33,21 @@ class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(50), unique=True, nullable=True)
-    password = db.Column(db.String(120), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=True)
+    password = db.Column(db.String(120), nullable=True)
     thumbnail = db.Column(db.String(50), nullable=False, default='default.png')
+    oauth_provider = db.Column(db.String(50)) # 'google'
+    oauth_sub = db.Column(db.String(255)) # Googleのsub/id
     memos = relationship('Memo', back_populates='user')
     favorites = relationship('Favorite', back_populates='user', cascade="all, delete-orphan")
+    def is_oauth_user(self):
+        return self.oauth_provider is not None
     def set_password(self, password):
         self.password = generate_password_hash(password)
     def check_password(self, password):
+        if not self.password:
+            return False
         return check_password_hash(self.password, password)
+    @property
+    def is_oauth_user(self):
+        return self.oauth_provider is not None
