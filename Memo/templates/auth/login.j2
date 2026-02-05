@@ -5,16 +5,20 @@
             <form action="{{ url_for('auth.login') }}" method="post" novalidate>
                 {% from "auth/_formhelpers.j2" import render_floating_field %}
                 {{ form.hidden_tag() }}
-                <h1 class="h3 mb-3 fw-normal">ログイン</h1>
-                {{ render_floating_field(form.username, "Email address") }}
-                {{ render_floating_field(form.password, "Password") }}
-                {{ form.submit(class="btn btn-outline-secondary w-100") }}
-                <div class="form-check my-3 text-start">
-                    {{ form.remember(class="form-check-input") }}
-                    {{ form.remember.label(class="form-check-label") }}
+                <h1 class="h3 mb-3 fw-normal fade-in fade-delay-1"><i class="fa fa-sign-in me-2"></i>ログイン</h1>
+                {{ render_floating_field(form.username, "Email address", wrapper_class="fade-in fade-delay-4", autofocus=True) }}
+                {{ render_floating_field(form.password, "Password", wrapper_class="fade-in fade-delay-8") }}
+                {{ form.submit(class="btn btn-outline-secondary w-100 fade-in fade-delay-12") }}
+                <div class="form-check my-3 text-start fade-in fade-delay-16 ps-0">
+                <div class="pretty p-switch p-fill">
+                <input type="checkbox" class="form-check-input" />
+                <div class="state">
+                {{ form.remember.label(class="form-check-label") }}
                 </div>
-                <p class="my-4">
-                    アカウントをお持ちでない場合は
+                </div>
+                </div>
+                <p class="my-4 fade-in fade-delay-20">
+                    <i class="fa fa-user-plus me-2"></i>アカウントをお持ちでない場合は
                     <a class="mt-5 mb-3 text-body-secondary" href="{{ url_for('auth.register') }}">こちら</a>から登録してください。
                 </p>
             </form>

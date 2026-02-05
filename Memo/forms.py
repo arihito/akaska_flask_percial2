@@ -49,7 +49,7 @@ class LoginForm(FlaskForm):
             raise ValidationError('パスワードには【英数字と記号：!@#$%^&*()】を含める必要があります。')
 
 class SignUpForm(LoginForm): # ログイン処理と同じなため機能を継承
-	submit = SubmitField('サインアップ') # ボタンラベルをオーバーライド
+	submit = SubmitField('登録') # ボタンラベルをオーバーライド
 	# ユーザ名の重複判定のみ追加
 	def validate_username(self, username):
 		user = User.query.filter_by(username=username.data).first()

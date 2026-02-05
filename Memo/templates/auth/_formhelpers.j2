@@ -1,9 +1,10 @@
-{% macro render_floating_field(field, placeholder="", wrapper_class="", input_class="") %}
+{% macro render_floating_field(field, placeholder="", wrapper_class="", input_class="", autofocus=False) %}
     <div class="form-floating mb-3 {{ wrapper_class }}">
         {{ field(
             class="form-control " ~ input_class,
             placeholder=placeholder if placeholder else field.label.text,
-            id=field.id
+            id=field.id,
+            autofocus=autofocus if autofocus else None
         ) }}
         <label for="{{ field.id }}">{{ field.label.text }}</label>
 
