@@ -68,7 +68,13 @@ class EditUserForm(FlaskForm):
             EqualTo('password', message='パスワードが一致しません')
     ])
     # 画像更新
-    thumbnail = FileField('サムネイル画像（任意）')
+    thumbnail = FileField(
+        "サムネイル画像(任意)",
+        validators=[
+            Optional(),
+            FileAllowed(["jpg", "jpeg", "png"], "画像ファイルのみ")
+        ]
+    )
     submit = SubmitField('更新')
     preset_thumbnail = RadioField(
         '既存画像',

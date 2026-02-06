@@ -7,9 +7,14 @@
             <form action="{{ url_for('auth.register') }}" method="post" novalidate>
                 {{ form.hidden_tag() }}
                 {{ render_floating_field(form.username, "Email address", wrapper_class="fade-in fade-delay-4", autofocus=True) }}
-                {{ render_floating_field(form.password, "Password", wrapper_class="fade-in fade-delay-8") }}
-                {{ form.submit(class="btn btn-outline-secondary w-100 fade-in fade-delay-12") }}
-                <p class="my-4 fade-in fade-delay-20"><i class="fa fa-sign-in me-2"></i>すでにアカウントをお持ちの場合は<a class="mt-5 mb-3 text-body-secondary" href="{{ url_for('auth.login') }}">こちら</a>からログインしてください。</p>
+                {{ render_floating_field(form.password, "Password", wrapper_class="fade-in fade-delay-6") }}
+                <nav class="navbar bg-body-secondary my-3 rounded-3 fade-in fade-delay-8">
+                    <div class="container-fluid justify-content-start my-2 mx-2">
+                        <button type="submit" class="btn btn-secondary btn-lg me-2 text-dark flex-fill fade-in fade-delay-10"><i class="fa fa-user-plus me-2"></i>{{ form.submit.label.text }}</button>
+                        <a class="btn btn-outline-secondary btn-lg me-2 fade-in fade-delay-12" href="#" id="backBtn"><i class="fa fa-arrow-left"></i> 直前のページに戻る</a>
+                    </div>
+                </nav>
+                <p class="my-4 fade-in fade-delay-14"><i class="fa fa-sign-in me-2"></i>すでにアカウントをお持ちの場合は「<a class="mt-5 mb-3 text-body-secondary" href="{{ url_for('auth.login') }}"><strong>こちら</strong></a>」からログインしてください。</p>
             </form>
         </div>
     </div>

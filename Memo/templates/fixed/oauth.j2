@@ -9,15 +9,15 @@
 <li class="list-group-item">④ アプリケーションの種類は「ウェブアプリケーション」名前を「flask_test」</li>
 </ul>
 <p>⑤ 作成済みのリダイレクトURIを任意だが、今回は以下のように設定する。<code>localhost</code>と<code>127.0.0.1</code>は異なるドメインとなるため、両方登録をしておく。<mark class="highlight-yellow_background">本番URLでは<code>HTTPS</code>にしないと審査で弾かれる。</mark></p>
-<pre class="file-tag" data-tag="templates/.j2 app.py"><code>http://localhost:5000/auth/google/callback
+<pre class="file-tag" data-tag="Google Cloud Console"><code>http://localhost:5000/auth/google/callback
 http://127.0.0.1:5000/auth/google/callback</code></pre>
 <p>最後に作成ボタンを押すと<code>CLIENT_ID</code>と<code>CLIENT_SECRET</code> が表示されるので、新規ファイルにコピーする。</p>
-<pre class="file-tag" data-tag="templates/.j2 app.py"><code># CLIENT_ID
+<pre class="file-tag" data-tag="test.txt"><code># CLIENT_ID
 156918646905-hpe...edhk8nk9.apps.googleusercontent.com
 # CLIENT_SECRET
 GOCSPX-kIIkglNa4Nyz8t67y...</code></pre>
 <p>最も実装が簡単なのは<code>Authlib</code>で、OAuth2.0公式に近い標準ライブラリでGoogleと相性も良い。セキュアなコードを環境変数に配置した最小構成。<code>Authlib</code>内の<code>flask-jwt-extended</code>が(2026/01現在)flask3に対応していないため2系に固定しておく。</p>
-<pre class="file-tag" data-tag="templates/.j2 app.py"><code>mkdir google_oauth/templates &amp;&amp; t google_oauth/.env t google_oauth/.gitignore google_oauth/app.py google_oauth/templates/profile.py &amp;&amp; cd google_oauth &amp;&amp; \ 
+<pre class="file-tag" data-tag="console"><code>mkdir google_oauth/templates &amp;&amp; t google_oauth/.env t google_oauth/.gitignore google_oauth/app.py google_oauth/templates/profile.py &amp;&amp; cd google_oauth &amp;&amp; \ 
 pi flask==2.3.3 Authlib python-dotenv
 
 [ google_oauth ]
@@ -25,14 +25,14 @@ pi flask==2.3.3 Authlib python-dotenv
    │     └─ 📄profile.j2
    ├─ 📄.env
    └─ 📄app.py</code></pre>
-<pre class="file-tag" data-tag="templates/.j2 app.py"><code>FLASK_SECRET_KEY=dev-secret-key
+<pre class="file-tag" data-tag=".env"><code>FLASK_SECRET_KEY=dev-secret-key
 GOOGLE_CLIENT_ID=xxxxxxxx.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=xxxxxxxx
 </code></pre>
 <p>シークレットキーをアドコミットするとGithubにプッシュ制限がかかるため、初めから除外する。</p>
-<pre class="file-tag" data-tag="templates/.j2 app.py"><code>.env
+<pre class="file-tag" data-tag=".gitignore"><code>.env
 __pycache__</code></pre>
-<pre class="file-tag" data-tag="templates/.j2 app.py"><code>from flask import Flask, render_template, redirect, url_for, session
+<pre class="file-tag" data-tag="app.py"><code>from flask import Flask, render_template, redirect, url_for, session
 from authlib.integrations.flask_client import OAuth
 import os
 from dotenv import load_dotenv
@@ -109,12 +109,42 @@ def logout():
 
 if __name__ == &#x27;__main__&#x27;:
     app.run(debug=True)</code></pre>
-<pre class="file-tag" data-tag="templates/.j2 app.py"><code>&lt;h1&gt;ログインしました&lt;/h1&gt;
+<pre class="file-tag" data-tag="templates/profile.j2"><code>&lt;h1&gt;ログインしました&lt;/h1&gt;
 &lt;p&gt;&#123;&#123; user.name &#125;&#125; (&#123;&#123; user.email &#125;&#125;)&lt;/p&gt;
 &lt;img src=&quot;&#123;&#123; user.picture &#125;&#125;&quot;&gt;
 &lt;p&gt;&lt;a href=&quot;&#123;&#123; url_for(&#x27;logout&#x27;) &#125;&#125;&quot;&gt;ログアウト&lt;/a&gt;&lt;/p&gt;</code></pre>
 <p>上記の<code>auth_callback</code>や<code>auth_google</code>メソッド内にある変数<code>token</code>に代入しても未使用の状態だが、取得しておくことで、OAuthの結果やトークンを確認しやすくなり、JWT発行などの処理に拡張しやすくなる。ただ誤解を与えたくないのであれば、明示的に未使用である<code>_</code> に代入しておく。</p>
-<pre class="file-tag" data-tag="templates/.j2 app.py"><code># 明示的に使わないことを示す
+<h3 class="display-6 mt-5 mb-2"><i class="fa fa-cogs"></i>ユーザの一元管理</h3>
+<p>flask_loginで通常のログイン機能を実装している場合は、アクセス制限やviews/templateなどで<code>ユーザ情報がsessionとcurrent_userで二元化し煩雑になる</code>ため、sessionを使用せず一元管理が必須となってくる。</p>
+<pre class="file-tag" data-tag="templates/profile.j2"><code>@auth_bp.route('/auth/google/callback')
+def auth_google():
+    token = oauth.google.authorize_access_token()
+    user_info = oauth.google.get('userinfo').json()
+
+    oauth_sub = user_info['id']
+    email = user_info['email']
+    name = user_info['name']
+
+    user = User.query.filter_by(
+        oauth_provider='google',
+        oauth_sub=oauth_sub
+    ).first()
+
+    if not user:
+        user = User(
+            username=name,
+            email=email,
+            oauth_provider='google',
+            oauth_sub=oauth_sub
+        )
+        db.session.add(user)
+        db.session.commit()
+
+    login_user(user)
+    flash('Googleでログインしました', 'success')
+    return redirect(url_for('memo.index'))</code></pre>
+<p><code>auth_callback</code>や<code>auth_google</code>メソッド内にある変数tokenに代入しても未使用の状態だが、取得しておくことで、OAuthの結果やトークンを確認しやすくなり、JWT発行などの処理に拡張しやすくなる。ただ誤解を与えたくないのであれば、明示的に未使用である<code>_</code>に代入しておく。</p>
+<pre class="file-tag" data-tag="templates/profile.j2"><code># 明示的に使わないことを示す
 _ = oauth.google.authorize_access_token()
 
 # 内容
@@ -125,7 +155,7 @@ _ = oauth.google.authorize_access_token()
   &#x27;token_type&#x27;: &#x27;Bearer&#x27;,
   &#x27;id_token&#x27;: &#x27;eyJhbGciOiJSUzI1NiIs...&#x27; # 重要
 }</code></pre>
-                        <h3 class="display-6 mt-5 mb-2"><i class="fa fa-cogs"></i>アクセス制限</h3>
+<h3 class="display-6 mt-5 mb-2"><i class="fa fa-cogs"></i>アクセス制限</h3>
 <p>上記のままでもプロフィールページにURLでの直接アクセスをすると、<code>user</code>を取得していないため、GoogleIDの選択画面に自動で切り替わるため、結果的にアクセス制限はできているが、<code>user</code>を必要としない会員専用ページがあった場合、アクセスできてしまうため、安全のために以下のデコレーターを全てに実装しておく必要がある。</p>
 <pre class="file-tag" data-tag="templates/.j2 app.py"><code>from functools import wraps
 from flask import redirect, session, url_for

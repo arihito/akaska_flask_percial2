@@ -15,8 +15,13 @@
                 {% endwith %}
                 {{ render_floating_field(form.username, "Email address", wrapper_class="fade-in fade-delay-2", autofocus=True) }}
                 {{ render_floating_field(form.password, "Password", wrapper_class="fade-in fade-delay-4") }}
-                {{ form.submit(class="btn btn-outline-secondary w-100 fade-in fade-delay-6") }}
-                <div class="form-check my-3 text-start fade-in fade-delay-16 ps-0">
+                <nav class="navbar bg-body-secondary my-3 rounded-3 fade-in fade-delay-6">
+                    <div class="container-fluid justify-content-start my-2 mx-2">
+                        <button type="submit" class="btn btn-secondary btn-lg me-2 text-dark flex-fill fade-in fade-delay-8"><i class="fa fa-sign-in me-2"></i>{{ form.submit.label.text }}</button>
+                        <a class="btn btn-outline-secondary btn-lg me-2 fade-in fade-delay-10" href="#" id="backBtn"><i class="fa fa-arrow-left"></i> 直前のページに戻る</a>
+                    </div>
+                </nav>
+                <div class="form-check my-3 text-start fade-in fade-delay-14 ps-0">
                 <div class="pretty p-switch p-fill">
                 <input type="checkbox" class="form-check-input" />
                 <div class="state">
@@ -24,13 +29,13 @@
                 </div>
                 </div>
                 </div>
-                <p class="my-4 fade-in fade-delay-8">
+                <p class="my-4 fade-in fade-delay-16">
                     <i class="fa fa-user-plus me-2"></i>アカウントをお持ちでない場合は
-                    <a class="mt-5 mb-3 text-body-secondary" href="{{ url_for('auth.register') }}">こちら</a>から登録してください。
+                    「<a class="mt-5 mb-3 text-body-secondary" href="{{ url_for('auth.register') }}"><strong>こちら</strong></a>」から新規登録するか、<br>以下のボタンからGoogleIDでログインしてください。
                 </p>
             </form>
             <hr class="my-5 fade-in fade-delay-10">
-            <a class="btn btn-outline-secondary btn-lg w-100 fade-in fade-delay-12" href="{{ url_for('auth.oauth_login') }}"><i class="fa fa-google"></i>Googlでログイン</a>
+            <a class="btn btn-outline-secondary btn-lg w-100 fade-in fade-delay-18" href="{{ url_for('auth.oauth_login') }}"><i class="fa fa-google"></i>Googlでログイン</a>
         </div>'
     </div>
 {% endblock content %}

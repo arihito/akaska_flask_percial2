@@ -23,10 +23,10 @@ class Config(object):
     )
 
     # 投稿用アップロードフォルダパス
-    UPLOAD_FOLDER = os.path.join(
-        BASE_DIR,
-        os.getenv('UPLOAD_FOLDER', 'static/images/memo')
-    )
+    UPLOAD_FOLDERS = {
+        'memo': 'static/images/memo',
+        'user': 'static/images/user',
+    }
 
     # ファイルアップロード最大サイズ
     MAX_CONTENT_LENGTH = int(

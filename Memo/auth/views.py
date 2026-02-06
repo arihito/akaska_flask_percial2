@@ -75,11 +75,6 @@ def edit():
             exists = User.query.filter_by(username=form.username.data).first()
             if exists:
                 form.username.errors.append('このユーザー名は既に使用されています')
-        # デバッグプリント：フォーム送信確認
-        print("######################## POST request detected")
-        print("######################## form.validate_on_submit() =", form.validate_on_submit())
-        print("######################## form.thumbnail.data =", form.thumbnail.data)
-        print("######################## form.preset_thumbnail.data =", form.preset_thumbnail.data)
         if form.validate_on_submit():
             # ユーザー名更新
             current_user.username = form.username.data
@@ -105,7 +100,7 @@ def edit():
             db.session.commit()
             flash('ユーザー情報を更新しました', 'success')
             return redirect(url_for('auth.edit'))
-    return render_template('auth/edit.j2', form=form, thumbnails=USER_THUMBNAILS)
+    return render_template('auth/edit.j2', form=form, email=current_user.email, thumbnails=USER_THUMBNAILS)
 
 # Google OAuth
 oauth = OAuth(current_app)
