@@ -122,6 +122,20 @@
                 e.stopPropagation();
             });
         });
+
+        // チェックボックスをオンにした時だけパスワード変更フォームを表示
+        const checkbox = document.getElementById('changePasswordCheck');
+        const passwordArea = document.getElementById('password-area');
+        const toggle = () => {
+            if (checkbox.checked) {
+                passwordArea.classList.add('is-visible');
+            } else {
+                passwordArea.classList.remove('is-visible');
+            }
+        };
+        // 初期表示（バリデーションエラー対応）
+        toggle();
+        checkbox.addEventListener('change', toggle);
     })
 })()
 

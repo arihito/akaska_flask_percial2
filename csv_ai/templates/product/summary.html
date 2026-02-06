@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% if summary_table %}
+        <form action="{{ url_for('product.reset') }}" method="post">
+            <p>レビュー情報をリセット<button type="submit">リセット</button></p>
+        </form>
+        <br/>
+    {% else %}
+        <p>レビューCSVをアップロード</p>
+        <form action="{{ url_for('product.upload') }}" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" accept=".csv" required>
+            <button type="submit">アップロード</button>
+        </form>
+        <br/>
+    {% endif %}
+
+    <h1>商品別 平均スコア</h1>
+    {% if summary_table %}
+        <img src="data:image/png;base64,{{ img_base64 }}" alt="平均スコアグラフ">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul>
+                    {% for msg in messages %}
+                        <li>{{ msg }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <h2>製品番号別 総評</h2>
+        <table style="border-collapse: collapse; width: 100%;">
+            <thead>
+                <tr>
+                    {% for header in summary_table[0].keys() %}
+                    <th style="border: 1px solid #000; padding: 8px; text-align: center; font-weight: bold;">
+                    {{ header }}
+                    </th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in summary_table %}
+                <tr>
+                {% for value in row.values() %}
+                <td style="border: 1px solid #000; padding: 8px;">
+                    {{ value }}
+                </td>
+                {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>レビューデータがありません。</p>
+    {% endif %}
+        <a href="{{ url_for('product.top') }}">戻る</a>
+{% endblock %}

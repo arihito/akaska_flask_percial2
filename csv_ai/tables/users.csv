@@ -1,0 +1,3 @@
+﻿user_id,user_name,email,password,is_admin,is_active,registration_date
+1,sato,gyutaroo@hoge.jp,12345,TRUE,TRUE,2025/9/29
+2,tanaka,gyujiroo@hoge.jp,12345,FALSE,TRUE,2025/9/29

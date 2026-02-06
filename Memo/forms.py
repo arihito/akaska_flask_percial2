@@ -58,26 +58,36 @@ class SignUpForm(LoginForm): # ログイン処理と同じなため機能を継�
 
 class EditUserForm(FlaskForm):
     # ユーザ名更新
-    username = StringField('ユーザー名', validators=[DataRequired()])
+    username = StringField('ユーザー名', validators=[Optional()])
     # パスワード更新
-    change_password = BooleanField('パスワードを変更する')
-    password = PasswordField('新しいパスワード')
-    confirm_password = PasswordField('パスワード確認再入力',
-        validators=[
-            Optional(),
-            EqualTo('password', message='パスワードが一致しません')
-    ])
+    change_password = BooleanField('パスワードを変更する (任意)')
+    password = PasswordField('新しいパスワード', validators=[Optional()])
+    confirm_password = PasswordField(
+        'パスワード確認再入力',
+        validators=[Optional(), EqualTo('password', message='パスワードが一致しません')]
+    )
     # 画像更新
     thumbnail = FileField(
-        "サムネイル画像(任意)",
+        "サムネイル画像",
         validators=[
             Optional(),
             FileAllowed(["jpg", "jpeg", "png"], "画像ファイルのみ")
         ]
     )
-    submit = SubmitField('更新')
     preset_thumbnail = RadioField(
         '既存画像',
-        choices=[(f'{i:02}.png', f'{i:02}.png') for i in range(1, 11)]
+        choices=[(f'{i:02}.png', f'{i:02}.png') for i in range(1, 11)],
+        validators=[Optional()]
     )
     submit = SubmitField('更新')
+
+    # パスワード入力の空判定
+    def validate_password(self, field):
+        if self.change_password.data:
+            if not field.data:
+                raise ValidationError('パスワードを入力してください') 
+    # 確認用パスワード入力の空判定
+    def validate_confirm_password(self, field):
+        if self.change_password.data:
+            if not field.data:
+                raise ValidationError('確認用パスワードを入力してください')

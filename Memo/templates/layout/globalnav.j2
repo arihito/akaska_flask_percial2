@@ -12,8 +12,8 @@
                         <a class="btn btn-outline-secondary fade-in fade-in-delay-20 {% if request.endpoint == 'auth.register' %}active{% endif %}" href="{{ url_for('auth.register') }}"><i class="fa fa-user-plus"></i> 新規登録</a>
                     </div>
                 {% elif current_user.is_authenticated %}
-                  <a class="text-body-secondary link-opacity-50-hover d-flex justify-content-between align-items-center" href="{{ url_for('memo.index') }}"><img src="{{ url_for('static', filename='images/user/' ~ current_user.thumbnail) }}" alt="{{ current_user.username }}" class="user-icon me-2 fade-in fade-in-delay-8" width="" height=""><div class="user-name fade-in fade-in-delay-16"><strong>{{ current_user.username }}</strong> さん</div></a>
-                  <a class="btn btn-outline-secondary fade-in fade-in-delay-20 ms-3" href="{{ url_for('auth.logout') }}"><i class="fa fa-sign-out"></i> ログアウト</a>
+                    <a class="text-body-secondary link-opacity-50-hover d-flex justify-content-between align-items-center" href="{{ url_for('memo.index') }}"><img src="{{ url_for('static', filename='images/user/' ~ current_user.thumbnail) }}" alt="{{ current_user.username }}" class="user-icon me-2 fade-in fade-in-delay-8 rounded-circle" width="" height=""><div class="user-name fade-in fade-in-delay-16"><strong>{{ current_user.username }}</strong> さん</div></a>
+                    <a class="btn btn-outline-secondary fade-in fade-in-delay-20 ms-3" href="{{ url_for('auth.logout') }}"><i class="fa fa-sign-out"></i> ログアウト</a>
                 {% endif %}
             </div>
         </div>

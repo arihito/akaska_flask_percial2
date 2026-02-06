@@ -7,6 +7,7 @@ from forms import MemoForm
 from sqlalchemy import func, asc, desc, or_
 from markupsafe import Markup, escape
 from werkzeug.utils import secure_filename
+from utils.upload import save_upload
 import uuid
 
 # 第一引数がurl_for、第三引数がrender_templateで使用する接頭辞
@@ -140,10 +141,8 @@ def update(memo_id):
         image_file = form.image.data
         if image_file and allowed_file(image_file.filename):
             original = secure_filename(image_file.filename)
-            save_path = os.path.join(current_app.config["UPLOAD_FOLDER"], original)
-            # 同名ファイルはそのまま上書き保存される
-            image_file.save(save_path)
-            memo.image_filename = original
+            filename = save_upload(original, 'memo')
+            memo.image_filename = filename
         db.session.commit()
         flash('変更しました')
         return redirect(url_for('memo.index'))

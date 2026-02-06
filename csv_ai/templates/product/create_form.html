@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h1>新しいメモ作成</h1>
+    {% from "_formhelpers.html" import render_field %}
+    <form method="POST" action="{{ url_for('product.create') }}" >
+        {{ form.hidden_tag() }}
+
+        {{ render_field(form.product_id) }}
+        {{ render_field(form.product_name) }}
+        {{ render_field(form.price) }}
+        {{ render_field(form.released_date) }}
+
+        {{ form.submit }}
+    </form>
+
+    <a href="{{ url_for('product.top') }}">戻る</a>
+
+{% endblock %}

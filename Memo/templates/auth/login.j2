@@ -22,19 +22,19 @@
                     </div>
                 </nav>
                 <div class="form-check my-3 text-start fade-in fade-delay-14 ps-0">
-                <div class="pretty p-switch p-fill">
-                <input type="checkbox" class="form-check-input" />
-                <div class="state">
-                {{ form.remember.label(class="form-check-label") }}
-                </div>
-                </div>
+                    <div class="pretty p-switch p-fill">
+                        <input type="checkbox" class="form-check-input" />
+                        <div class="state">
+                            {{ form.remember.label(class="form-check-label") }}
+                        </div>
+                    </div>
                 </div>
                 <p class="my-4 fade-in fade-delay-16">
                     <i class="fa fa-user-plus me-2"></i>アカウントをお持ちでない場合は
                     「<a class="mt-5 mb-3 text-body-secondary" href="{{ url_for('auth.register') }}"><strong>こちら</strong></a>」から新規登録するか、<br>以下のボタンからGoogleIDでログインしてください。
                 </p>
             </form>
-            <hr class="my-5 fade-in fade-delay-10">
+            <hr class="my-5 fade-in fade-delay-10 opacity-25">
             <a class="btn btn-outline-secondary btn-lg w-100 fade-in fade-delay-18" href="{{ url_for('auth.oauth_login') }}"><i class="fa fa-google"></i>Googlでログイン</a>
         </div>'
     </div>

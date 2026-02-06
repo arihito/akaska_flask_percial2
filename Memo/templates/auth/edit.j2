@@ -7,18 +7,30 @@
                 {{ form.hidden_tag() }}
                 <h1 class="h3 mb-3 fw-normal fade-in fade-delay-1"><i class="fa fa-user-circle-o me-2"></i>ユーザー管理</h1>
                 {% if not current_user.is_oauth_user %}
-                    <p class="text-body-secondary fade-in fade-delay-2"><i class="fa fa-user me-2"></i>ユーザー名の変更が必要であれば以下を編集してください(任意)。</p>
+                    <p class="text-body-secondary fade-in fade-delay-2"><i class="fa fa-user me-2"></i>ユーザー名の変更が必要であれば以下を編集してください (任意)。</p>
                     {{ render_floating_field(form.username, "ユーザー名", wrapper_class="fade-in fade-delay-3") }}
                     <hr class="my-5 opacity-25 fade-in fade-delay-4">
-                    <p class="text-body-secondary fade-in fade-delay-12"><i class="fa fa-key me-2"></i>パスワードの変更が必要であれば以下を入力してください(任意)。</p>
-                    {{ render_floating_field(form.password, "パスワード", wrapper_class="fade-in fade-delay-6") }}
-                    {{ render_floating_field(form.confirm_password, "確認用", wrapper_class="fade-in fade-delay-9") }}
+                    <div class="form-check my-3 text-start ps-0 fade-in fade-delay-6">
+                        <div class="pretty p-switch p-fill">
+                            {{ form.change_password(
+                                class="form-check-input",
+                                id="changePasswordCheck"
+                            ) }}
+                            <div class="state">
+                                {{ form.change_password.label(class="form-check-label") }}
+                            </div>
+                        </div>
+                    </div>
+                    <div id="password-area" class="password-area">
+                        {{ render_floating_field(form.password, "パスワード") }}
+                        {{ render_floating_field(form.confirm_password, "確認用") }}
+                    </div>
                 {% else %}
                     <div class="alert alert-secondary fade-in fade-delay-3 my-5">
                         Googleログインユーザーはユーザー名・パスワードの変更はできません。
                     </div>
                 {% endif %}
-                <hr class="my-5 opacity-25 fade-in fade-delay-10">
+                <hr class="mt-4 mb-5 opacity-25 fade-in fade-delay-10">
                 <p class="text-body-secondary fade-in fade-delay-12"><i class="fa fa-envelope-o me-2"></i>メールアドレスは変更できません。</p>
                 <div class="mb-3 fade-in fade-delay-16">
                     <input class="form-control text-body-secondary mt-2 mb-4 fs-5" type="text" value="{{ email }}" disabled>
@@ -52,7 +64,7 @@
                 </div>
                 <nav class="navbar bg-body-secondary my-5 rounded-3 fade-in fade-delay-6">
                     <div class="container-fluid justify-content-start my-2 mx-2">
-                        <button type="submit" class="btn btn-secondary btn-lg me-2 text-dark flex-fill fade-in fade-delay-8"><i class="fa fa-recycle me-2"></i>{{ form.submit.label.text }}</button>
+                        <button type="submit" name="submit" value="1" class="btn btn-secondary btn-lg me-2 text-dark flex-fill fade-in fade-delay-8"><i class="fa fa-recycle me-2"></i>{{ form.submit.label.text }}</button>
                         <a class="btn btn-outline-secondary btn-lg me-2 fade-in fade-delay-10" href="#" id="backBtn"><i class="fa fa-arrow-left"></i> 直前のページに戻る</a>
                     </div>
                 </nav>
