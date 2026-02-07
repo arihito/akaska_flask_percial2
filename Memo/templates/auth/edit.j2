@@ -69,6 +69,38 @@
                     </div>
                 </nav>
             </form>
+            <div class="form-check my-4 fade-in fade-delay-6 ps-0">
+              <div class="pretty p-switch p-fill">
+                {{ form.delete_user(id="deleteUserCheck") }}
+                <div class="state"><label for="deleteUserCheck">このユーザーを削除する</label></div>
+              </div>
+            </div>
+            <div id="delete-area" class="delete-area">
+              <button type="button" class="btn btn-outline-secondary btn-lg w-100" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal">
+                <i class="fa fa-trash-o me-2"></i>削除
+              </button>
+            </div>
+            <div class="modal fade" id="deleteConfirmModal" tabindex="-1">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title text-center"><i class="fa fa-exclamation-circle me-2"></i>ユーザー削除の確認</h5>
+                  </div>
+                  <div class="modal-body">この操作は取り消せません。本当に削除しますか？</div>
+                  <div class="modal-footer d-flex gap-3">
+                    <button type="button" class="btn btn-secondary flex-fill" data-bs-dismiss="modal">
+                      <i class="fa fa-reply me-2"></i>キャンセル
+                    </button>
+                    <form method="post" action="{{ url_for('auth.delete') }}" class="d-block flex-fill m-0">
+                      {{ form.hidden_tag() }}
+                      <button type="submit" class="btn btn-danger w-100">
+                        <i class="fa fa-trash me-2"></i>削除を実行
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
         </div>
     </div>
 {% endblock content %}

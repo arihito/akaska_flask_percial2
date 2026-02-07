@@ -498,8 +498,9 @@ pre.file-tag[data-tag]::before {
     cursor: pointer;
 }
 
-/* パスワード変更フォーム */
-.password-area {
+/* フェードイン */
+.password-area,
+.delete-area {
     opacity: 0;
     transform: translateY(20px);
     max-height: 0;
@@ -510,7 +511,8 @@ pre.file-tag[data-tag]::before {
         max-height 0.85s ease;
 }
 
-.password-area.is-visible {
+.password-area.is-visible,
+.delete-area.is-visible {
     opacity: 1;
     transform: translateY(0);
     max-height: 500px; /* 十分大きければOK */

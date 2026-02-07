@@ -8,12 +8,13 @@
                 <h1 class="h3 mb-3 fw-normal fade-in fade-delay-1"><i class="fa fa-sign-in me-2"></i>ログイン</h1>
                 {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
-                        {% for category, message in messages %}
-                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% for alert_type, message in messages %}
+                        {% set icon = 'exclamation-triangle' if alert_type == 'danger' else 'check' %}
+                            <div class="alert alert-{{ alert_type }} text-center"><i class="fa fa-{{ icon }} me-2"></i>{{ message }}</div>
                         {% endfor %}
                     {% endif %}
                 {% endwith %}
-                {{ render_floating_field(form.username, "Email address", wrapper_class="fade-in fade-delay-2", autofocus=True) }}
+                {{ render_floating_field(form.email, "Email address", wrapper_class="fade-in fade-delay-2", autofocus=True) }}
                 {{ render_floating_field(form.password, "Password", wrapper_class="fade-in fade-delay-4") }}
                 <nav class="navbar bg-body-secondary my-3 rounded-3 fade-in fade-delay-6">
                     <div class="container-fluid justify-content-start my-2 mx-2">

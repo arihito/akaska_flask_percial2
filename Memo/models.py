@@ -40,6 +40,7 @@ class User(UserMixin, db.Model):
     oauth_sub = db.Column(db.String(255)) # Googleのsub/id
     memos = relationship('Memo', back_populates='user')
     favorites = relationship('Favorite', back_populates='user', cascade="all, delete-orphan")
+    @property
     def is_oauth_user(self):
         return self.oauth_provider is not None
     def set_password(self, password):
@@ -48,6 +49,3 @@ class User(UserMixin, db.Model):
         if not self.password:
             return False
         return check_password_hash(self.password, password)
-    @property
-    def is_oauth_user(self):
-        return self.oauth_provider is not None

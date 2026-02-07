@@ -124,20 +124,42 @@
         });
 
         // チェックボックスをオンにした時だけパスワード変更フォームを表示
-        const checkbox = document.getElementById('changePasswordCheck');
-        const passwordArea = document.getElementById('password-area');
+        const pass_check = document.getElementById('changePasswordCheck');
+        const pass_area = document.getElementById('password-area');
         const toggle = () => {
-            if (checkbox.checked) {
-                passwordArea.classList.add('is-visible');
+            if (pass_check.checked) {
+                pass_area.classList.add('is-visible');
             } else {
-                passwordArea.classList.remove('is-visible');
+                pass_area.classList.remove('is-visible');
             }
         };
         // 初期表示（バリデーションエラー対応）
         toggle();
-        checkbox.addEventListener('change', toggle);
+        pass_check.addEventListener('change', toggle);
+
+        // ユーザー削除ボタンのフェードイン表示
+        const del_check = document.getElementById('deleteUserCheck');
+        const del_area  = document.getElementById('delete-area');
+
+        if (!del_check || !del_area) return;
+
+        del_area.classList.remove('is-visible');
+
+        del_check.addEventListener('change', () => {
+            del_area.classList.toggle('is-visible', del_check.checked);
+        });
     })
 })()
+
+// ユーザー削除ボタン
+document.getElementById('deleteUserCheck').addEventListener('change', function () {
+    const area = document.getElementById('delete-button-area');
+    if (this.checked) {
+        area.classList.remove('d-none');
+    } else {
+        area.classList.add('d-none');
+    }
+});
 
 // 前のページに戻るボタンクリック
 document.getElementById('backBtn').addEventListener('click', e => {
