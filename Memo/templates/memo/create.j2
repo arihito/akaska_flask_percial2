@@ -1,8 +1,8 @@
 {% extends "memo/base.j2" %}
 {% block content %}
-    <div class="d-flex align-items-center py-4 m-5">
-        <div class="form-signin p-5 w-50 m-auto">
-            <h1 class="fade-in fade-delay-1"><i class="fa fa-plus-square"></i> 記事を投稿</h1>
+    <div class="d-flex align-items-center py-md-4 m-md-5 mb-5">
+        <div class="col-12 col-md-6 form-signin p-md-5 mx-md-auto">
+            <h1 class="fade-in fade-delay-1 my-4"><i class="fa fa-plus-square"></i> 記事を投稿</h1>
             {% from 'memo/_formhelpers.j2' import render_field %}
             <form action="{{ url_for('memo.create') }}" method="post" enctype="multipart/form-data" novalidate>
                 {{ form.hidden_tag() }}

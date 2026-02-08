@@ -7,16 +7,16 @@
         <ul class="list-unstyled">
             {% for row in top10 %}
                 <li class="fade-in fade-delay-{{ loop.index }}">
-                    <a class="d-flex flex-column flex-lg-row gap-3 align-items-start align-items-lg-center py-3 link-body-emphasis text-decoration-none border-top"
+                    <a class="d-flex flex-md-row gap-3 align-items-start align-items-center py-3 link-body-emphasis text-decoration-none border-top"
                         href="{{ url_for('public.detail', memo_id=row.memo.id) }}">
-                        <img class="rounded-end"
+                        <img class="rounded"
                             src="{{ url_for('static', filename='images/memo/' ~ row.memo.image_filename) }}"
                             width="96"
                             height="96"
                             alt="記事画像"
                             style="object-fit: cover">
-                        <div class="col-lg-8">
-                            <h6 class="mb-0">{{ row.memo.title }}</h6>
+                        <div class="col-8">
+                            <h6 class="mb-0" style="line-height:1.6">{{ row.memo.title }}</h6>
                             <small class="text-body-secondary"><i class="fa fa-calendar-o"></i> {{ row.memo.created_at.strftime("%Y年%m月%d日") }}</small>
                             <span>❤️ {{ row.like_count }}</span>
                         </div>

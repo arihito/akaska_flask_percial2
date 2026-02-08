@@ -1,18 +1,35 @@
 {% extends "layout/mode.j2" %}
 
 {% block container %}
-    <nav class="navbar bg-body-secondary sticky-top flex-md-nowrap p-2 shadow">
-        <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3 fade-in fade-in-delay-4" href="#">記事管理</a>
-        <ul class="navbar-nav px-3">
-            <li class="nav-item text-nowrap d-flex justify-content-end align-items-center">
-                <div class="d-flex justify-content-between align-items-center" href="{{ url_for('memo.index') }}"><img src="{{ url_for('static', filename='images/user/' ~ current_user.thumbnail) }}" alt="{{ current_user.username }}" class="user-icon me-2 fade-in fade-in-delay-8 rounded-circle" width="" height=""><div class="user-name fade-in fade-in-delay-16"><strong>{{ current_user.username }}</strong> さん</div></div>
-                <a class="btn btn-outline-secondary fade-in fade-in-delay-20 ms-3" href="{{ url_for('auth.logout') }}"><i class="fa fa-sign-out"></i> ログアウト</a>
-            </li>
-        </ul>
+    <nav class="navbar bg-body-secondary sticky-top p-2 shadow">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <!-- 左：タイトル -->
+            <a class="navbar-brand px-md-3 fade-in fade-in-delay-4" href="{{ url_for('memo.index') }}">記事管理</a>
+            <!-- 右：ユーザー情報＋ログアウト -->
+            <div class="d-flex align-items-center">
+                <a class="d-flex align-items-center text-decoration-none me-3" href="{{ url_for('memo.index') }}">
+                    <img src="{{ url_for('static', filename='images/user/' ~ current_user.thumbnail) }}" alt="{{ current_user.username }}" class="user-icon me-2 fade-in fade-in-delay-8 rounded-circle" width="" height="">
+                    <span class="user-name fade-in fade-in-delay-16 text-body-secondary"><strong>{{ current_user.username }}</strong> さん</span>
+                </a>
+                <a class="btn btn-outline-secondary fade-in fade-in-delay-20" href="{{ url_for('auth.logout') }}"><i class="fa fa-sign-out"></i> ログアウト</a>
+            </div>
+        </div>
     </nav>
     <div class="container-fluid">
         <div class="row">
-            {% include 'layout/sidemenu.j2' %}
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-none d-md-block bg-body-tertiary sidebar collapse min-vh-100">
+                {% include 'layout/sidemenu.j2' %}
+            </nav>
+            {# OffCanvas #}
+            <nav class="offcanvas offcanvas-start d-md-none" tabindex="-1" id="sidebarOffcanvas">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="sidebarOffcanvasLabel">メニュー</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+                </div>
+                <div class="offcanvas-body">
+                    {% include "layout/sidemenu.j2" %}
+                </div>
+            </nav>
             <main class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
                 {% block title %}
                 {% endblock title %}

@@ -1,11 +1,11 @@
 {% extends "memo/base.j2" %}
 {% block content %}
-    <div class="d-flex align-items-center py-4 m-5">
-        <div class="form-signin p-5 w-50 m-auto">
+    <div class="d-flex align-items-center py-md-4 m-md-5 mb-5">
+        <div class="col-12 col-md-6 form-signin p-md-5 mx-md-auto">
             <form action="{{ url_for('auth.edit') }}" method="post" enctype="multipart/form-data" novalidate>
                 {% from "auth/_formhelpers.j2" import render_floating_field %}
                 {{ form.hidden_tag() }}
-                <h1 class="h3 mb-3 fw-normal fade-in fade-delay-1"><i class="fa fa-user-circle-o me-2"></i>ユーザー管理</h1>
+                <h1 class="my-4 fw-normal fade-in fade-delay-1"><i class="fa fa-user-circle-o me-2"></i>ユーザー管理</h1>
                 {% if not current_user.is_oauth_user %}
                     <p class="text-body-secondary fade-in fade-delay-2"><i class="fa fa-user me-2"></i>ユーザー名の変更が必要であれば以下を編集してください (任意)。</p>
                     {{ render_floating_field(form.username, "ユーザー名", wrapper_class="fade-in fade-delay-3") }}

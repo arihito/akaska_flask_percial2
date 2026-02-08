@@ -1,33 +1,49 @@
 <div class="container public_header">
-    <header class="border-bottom lh-1 py-3">
-        <div class="row flex-nowrap justify-content-between align-items-center">
-            <div class="col-8 fade-in fade-in-delay-8">
-                <a class="blog-header-logo text-body-emphasis text-decoration-none"
-                    href="{{ url_for('public.public_index') }}">tech blog</a>
-            </div>
-            <div class="col-4 d-flex justify-content-end align-items-center">
+    <header class="border-bottom py-3">
+        <div class="container">
+            <div class="row align-items-center">
+                <!-- ロゴ -->
+                <div class="col-12 col-md-6 text-center text-md-start mb-2 mb-md-0 fade-in fade-in-delay-8">
+                    <a class="blog-header-logo text-body-emphasis text-decoration-none" href="{{ url_for('public.public_index') }}">tech blog</a>
+                </div>
+                <!-- 右側（未ログイン） -->
                 {% if not current_user.is_authenticated %}
-                    <div class="btn-group" role="group">
-                        <a class="btn btn-outline-secondary fade-in fade-in-delay-16 {% if request.endpoint == 'auth.login' %}active{% endif %}" href="{{ url_for('auth.login') }}"><i class="fa fa-sign-in"></i> ログイン</a>
-                        <a class="btn btn-outline-secondary fade-in fade-in-delay-20 {% if request.endpoint == 'auth.register' %}active{% endif %}" href="{{ url_for('auth.register') }}"><i class="fa fa-user-plus"></i> 新規登録</a>
-                    </div>
-                {% elif current_user.is_authenticated %}
-                    <a class="text-body-secondary link-opacity-50-hover d-flex justify-content-between align-items-center" href="{{ url_for('memo.index') }}"><img src="{{ url_for('static', filename='images/user/' ~ current_user.thumbnail) }}" alt="{{ current_user.username }}" class="user-icon me-2 fade-in fade-in-delay-8 rounded-circle" width="" height=""><div class="user-name fade-in fade-in-delay-16"><strong>{{ current_user.username }}</strong> さん</div></a>
-                    <a class="btn btn-outline-secondary fade-in fade-in-delay-20 ms-3" href="{{ url_for('auth.logout') }}"><i class="fa fa-sign-out"></i> ログアウト</a>
+                  <div class="col-12 col-md-6">
+                      <div class="btn-group d-flex justify-content-center justify-content-md-end">
+                          <a class="btn btn-outline-secondary flex-fill flex-md-grow-0 fade-in fade-in-delay-16 {% if request.endpoint == 'auth.login' %}active{% endif %}" href="{{ url_for('auth.login') }}"><i class="fa fa-sign-in"></i> ログイン</a>
+                          <a class="btn btn-outline-secondary flex-fill flex-md-grow-0 fade-in fade-in-delay-20 {% if request.endpoint == 'auth.register' %}active{% endif %}" href="{{ url_for('auth.register') }}"><i class="fa fa-user-plus"></i> 新規登録</a>
+                      </div>
+                  </div>
+                <!-- 右側（ログイン済） -->
+                {% else %}
+                  <div class="col-12 col-md-6">
+                      <div class="d-flex align-items-center justify-content-center justify-content-md-end gap-3">
+                          <a class="text-body-secondary link-opacity-50-hover d-flex align-items-center" href="{{ url_for('memo.index') }}">
+                              <img src="{{ url_for('static', filename='images/user/' ~ current_user.thumbnail) }}" alt="{{ current_user.username }}" class="user-icon me-2 fade-in fade-in-delay-8 rounded-circle" width="32" height="32">
+                              <strong class="fade-in fade-in-delay-16">{{ current_user.username }} さん</strong></a>
+                          <a class="btn btn-outline-secondary fade-in fade-in-delay-20" href="{{ url_for('auth.logout') }}"><i class="fa fa-sign-out"></i> ログアウト</a>
+                      </div>
+                  </div>
                 {% endif %}
             </div>
         </div>
     </header>
-    <div class="nav-scroller py-1 mb-3 border-bottom">
-        <nav class="nav nav-underline justify-content-between">
-            <a class="nav-item nav-link link-body-emphasis px-3 {% if not request.view_args %}active{% endif %}"
-                href="{{ url_for('public.public_index') }}"><i class="fa fa-home"></i>トップ</a>
-            {% for key, val in STATIC_PAGES.items(): %}
-                {% if loop.index <= 11 %}
-                    <a class="nav-item nav-link link-body-emphasis px-2 fade-in fade-delay-{{ loop.index }} {% if request.endpoint == 'fixed.static_page' and request.view_args.page_name == key %}active{% endif %}"
-                        href="{{ url_for('fixed.static_page', page_name=key) }}">{{ val }}</a>
-                {% endif %}
-            {% endfor %}
+    <div class="border-bottom mb-3">
+        <nav class="navbar navbar-expand-md py-1">
+            <!-- 左：トップ（常時表示） -->
+            <a class="nav-link link-body-emphasis px-3 {% if not request.view_args %}active{% endif %}" href="{{ url_for('public.public_index') }}"><i class="fa fa-home"></i> トップ</a>
+            <!-- 右：トグルボタン（スマホのみ表示） -->
+            <button class="navbar-toggler d-md-none ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#globalNav"><span class="navbar-toggler-icon"></span></button>
+            <!-- 折りたたみメニュー -->
+            <div class="collapse navbar-collapse" id="globalNav">
+                <ul class="navbar-nav ms-md-3 flex-column flex-md-row">
+                    {% for key, val in STATIC_PAGES.items() %}
+                        {% if loop.index <= 11 %}
+                            <li class="nav-item"><a class="nav-link link-body-emphasis px-3 fade-in fade-delay-{{ loop.index }} {% if request.endpoint == 'fixed.static_page' and request.view_args.page_name == key %}active{% endif %}" href="{{ url_for('fixed.static_page', page_name=key) }}">{{ val }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
         </nav>
     </div>
 </div>
