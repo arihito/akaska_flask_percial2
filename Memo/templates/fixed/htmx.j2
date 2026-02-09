@@ -1,6 +1,104 @@
 {% extends "fixed/base.j2" %}
 
 {% block article_body %}
-<pre><code>
+<p>
+HTMXを使用して、本来JavaScriptで書くべき非同期の状態管理を
+HTML属性に
+<a href="https://zenn.dev/ak/articles/735e05d2ba8da0">簡潔にまとめた</a>
+機能。
+シンプルなアプリであればReact / Nextの構成管理に振り回されず、
+<span class="highlight-yellow">リアルタイム更新</span>
+処理が可能になる。
+</p>
+
+<table class="table table-bordered my-4">
+  <thead>
+    <tr>
+      <th style="width:15%">HTMX属性</th>
+      <th style="width:25%">概要</th>
+      <th>使用例</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>hx-<code>get</code></td>
+      <td><strong>その場で取得</strong></td>
+      <td>&lt;a hx-get="get.html"&gt;クリックで置換&lt;/a&gt;</td>
+    </tr>
+    <tr>
+      <td>hx-<code>post</code></td>
+      <td><strong>更新せずに送受信</strong></td>
+      <td>&lt;form hx-post="/result"&gt;&lt;/form&gt;</td>
+    </tr>
+    <tr>
+      <td>hx-<code>swap</code></td>
+      <td>要素の<strong>置換方法</strong></td>
+      <td>innerHTML / outerHTML</td>
+    </tr>
+    <tr>
+      <td>hx-<code>target</code></td>
+      <td><strong>ID指定</strong></td>
+      <td>&lt;a hx-target="#b"&gt;…&lt;/a&gt;</td>
+    </tr>
+    <tr>
+      <td>hx-<code>trigger</code></td>
+      <td>イベント指定</td>
+      <td>mouseover / click など</td>
+    </tr>
+    <tr>
+      <td>hx-<code>indicator</code></td>
+      <td>通信中の可視化</td>
+      <td>hx-indicator="#box"</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>
+  Flaskでの最小構成。
+  入力フォームに名前を入力して送信すると、
+  <span class="highlight-yellow">ページを更新せず</span>
+  に即座に結果が表示される。
+</p>
+
+<pre class="file-tag" data-tag="tree.txt"><code class="language-bash">
+mkdir -p htmx_basic/templates && \
+t htmx_basic/app.py htmx_basic/templates/index.j2 && \
+cd htmx_basic && pi flask
+
+[ htmx_basic ]
+├─ templates/
+│  └─ index.j2
+└─ app.py
+</code></pre>
+
+<pre class="file-tag" data-tag="index.j2"><code class="language-html">
+&lt;script src="https://unpkg.com/htmx.org@1.9.10"&gt;&lt;/script&gt;
+
+&lt;form hx-post="/hello"
+      hx-target="#result"
+      hx-swap="innerHTML"&gt;
+  &lt;input type="text" name="name"&gt;
+  &lt;button type="submit"&gt;送信&lt;/button&gt;
+&lt;/form&gt;
+
+&lt;div id="result"&gt;&lt;/div&gt;
+</code></pre>
+
+<pre class="file-tag" data-tag="app.py"><code class="language-python">
+from flask import Flask, render_template, request
+
+app = Flask(__name__)
+
+@app.route("/")
+def index():
+    return render_template("index.j2")
+
+@app.route("/hello", methods=["POST"])
+def hello():
+    name = request.form.get("name", "World")
+    return f"&lt;p&gt;Hello, {name}!&lt;/p&gt;"
+
+if __name__ == "__main__":
+    app.run(debug=True)
 </code></pre>
 {% endblock %}

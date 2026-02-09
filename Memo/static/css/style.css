@@ -211,6 +211,7 @@ h6 {
     background: none;
     border: none;
     cursor: pointer;
+    text-decoration: underline;
     transition: transform 0.2s ease;
 }
 
@@ -219,6 +220,7 @@ h6 {
     --bs-link-color: #ffffff;
     --bs-link-hover-color: #e0e0e0;
 }
+
 
 /* ハートアニメーション */
 .heart-burst {

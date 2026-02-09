@@ -1,6 +1,160 @@
 {% extends "fixed/base.j2" %}
 
 {% block article_body %}
-<pre><code>
+<p>
+  <code>Flask-login</code>はセッション(クッキー)とサーバにステートを持たせる認証なのに対し、
+  <code>Flask-JWT-Extended</code> は<strong>トークンベース</strong> (JWT)なので
+  ステートレス(ヘッダー利用)のため、REST APIの設計思想に則った拡張しやすい大規模開発向けの実装となる。
+  ただ、互いに競合するわけではなく、フロントエンドはJSONを利用したトークンベースで
+  <code>@jwt_required()</code>で制限し、管理画面はflask-loginを使用し
+  <code>@login_required</code>で制限するような状況に応じて共存させることも可能。
+</p>
+
+<pre class="file-tag" data-tag="console"><code>mkdir -p JWT-login JWT-login/auth-app JWT-login/hello-app/templates && \
+t JWT-login/auth-app/app.py \
+  JWT-login/hello-app/app.py \
+  JWT-login/hello-app/templates/index.j2 \
+  JWT-login/hello-app/templates/login.j2 && \
+pi flask && \
+pi flask_jwt_extended==4.5.2 && \
+pi requests==2.31.0 && \
+cd JWT-login
+
+# Python 3.10.19
+# Flask 2.3.2
+# Werkzeug 2.3.8
+
+[ JWT-login ]
+├─ auth-app
+│   └─ app.py            ← 仮認証後トークンを生成
+└─ hello-app
+    ├─ templates
+    │   ├─ index.j2
+    │   └─ login.j2
+    └─ app.py            ← ログイン時にトークンを発行
+
+┌────────────────────────────────────┐    ┌────────────────────────────────────────┐
+│          auth-app/app.py           │    │            hello-app/app.py            │
+├────────────────────────────────────│    ├────────────────────────────────────────│
+│ login(id, pass):                   ├─┐  │ authenticate(id, pass):                ├─┐
+│  return create_access_token()      │ │  │  POST /login                            │ │
+│                                    │ │  │                                        │ │
+│ get_info():                        │ └─▶│ show_login():                           │ │
+│  return get_jwt_identity()         │ ┌──│  access_token = authenticate()          │◀┘
+└────────────────────────────────────┘ └─▶│  GET /info (Bearer token)               │
+                                          │  render_template(index.j2)              │
+                                          └────────────────────┬───────────────────┘
+                                              POST              │ GET
+                                          ┌───────────────┐    ┌───────────────┐
+                                          │    login.j2   │    │    index.j2   │
+                                          └───────────────┘    └───────────────┘
+</code></pre>
+
+<pre class="file-tag" data-tag="auth-app/app.py"><code>from flask import Flask, jsonify, request
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
+
+app = Flask(__name__)
+app.config['JWT_SECRET_KEY'] = 'secret-key'
+jwt = JWTManager(app)
+
+users = {
+    'user1': {
+        'password': 'pass1',
+        'name': '太郎',
+        'email': 'taro@sample.com',
+        'phone': '090-1234-5678'
+    },
+    'user2': {
+        'password': 'pass2',
+        'name': '次郎',
+        'email': 'jiro@sample.com',
+        'phone': '080-1234-5678'
+    }
+}
+
+@app.route('/login', methods=['POST'])
+def login():
+    user_id = request.json.get('id')
+    password = request.json.get('password')
+
+    if user_id not in users or users[user_id]['password'] != password:
+        return jsonify({'error': '認証失敗：無効な資格情報です'}), 401
+
+    return jsonify(create_access_token(identity=user_id))
+
+@app.route('/info', methods=['GET'])
+@jwt_required()
+def get_info():
+    current_user_id = get_jwt_identity()
+    return jsonify(users[current_user_id])
+
+if __name__ == '__main__':
+    app.run(port=5001)
+</code></pre>
+
+<pre class="file-tag" data-tag="hello-app/app.py"><code>from flask import Flask, render_template, request
+import requests
+
+app = Flask(__name__)
+
+LOGIN_URL = 'http://localhost:5001/login'
+INFO_URL  = 'http://localhost:5001/info'
+
+def authenticate(id, password):
+    response = requests.post(LOGIN_URL, json={
+        'id': id,
+        'password': password
+    })
+    if response.status_code == 200:
+        return response.json()['access_token']
+
+@app.route('/', methods=['GET', 'POST'])
+def show_login():
+    if request.method == 'POST':
+        id = request.form.get('id')
+        password = request.form.get('password')
+
+        access_token = authenticate(id, password)
+
+        if access_token:
+            headers = {'Authorization': f'Bearer {access_token}'}
+            response = requests.get(INFO_URL, headers=headers)
+
+            if response.status_code == 200:
+                return render_template('index.j2', user=response.json())
+
+            return '<h1 style="color:red">Error: トークン処理失敗</h1>', 401
+
+        return '<h1 style="color:red">Error: 認証失敗</h1>', 401
+
+    return render_template('login.j2')
+</code></pre>
+
+<pre class="file-tag" data-tag="templates/login.j2"><code>&lt;h1&gt;ログイン&lt;/h1&gt;
+&lt;form method="post" novalidate&gt;
+    &lt;p&gt;ユーザID：&lt;input type="text" name="id" required&gt;&lt;/p&gt;
+    &lt;p&gt;パスワード：&lt;input type="password" name="password" required&gt;&lt;/p&gt;
+    &lt;p&gt;&lt;input type="submit" value="送信"&gt;&lt;/p&gt;
+&lt;/form&gt;
+</code></pre>
+
+<pre class="file-tag" data-tag="templates/index.j2"><code>&lt;h1&gt;ユーザ情報&lt;/h1&gt;
+&lt;h2&gt;別サービスから情報を取得しました&lt;/h2&gt;
+&lt;h2&gt;&#123;&#123; user.name &#125;&#125;&lt;/h2&gt;
+&lt;p&gt;Email：&#123;&#123; user.email &#125;&#125;&lt;/p&gt;
+&lt;p&gt;電話：&#123;&#123; user.phone &#125;&#125;&lt;/p&gt;
+&lt;p&gt;&lt;a href="&#123;&#123; url_for('show_login') &#125;&#125;"&gt;ログイン画面に戻る&lt;/a&gt;&lt;/p&gt;
+</code></pre>
+
+<pre class="file-tag" data-tag="console"><code># 認証サービス起動
+cd auth-app
+flask run --port=5001
+
+# 別タブで
+cd hello-app
+flask run --port=5000
+
+# user1 / pass1 でログイン
+# JWT取得 → Bearerトークンで /info にアクセス → ユーザ情報取得
 </code></pre>
 {% endblock %}
