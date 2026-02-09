@@ -1,5 +1,5 @@
-from flask import Blueprint, render_template, request
-from models import db, Memo, Favorite
+from flask import Blueprint, render_template, request, abort
+from models import db, Memo, Favorite, Category
 from flask_login import current_user
 from sqlalchemy import func
 import markdown
@@ -40,6 +40,11 @@ def public_index():
     top1 = None
     if top10:
         top1 = top10[0]
+    # ---- カテゴリータブ用 ----
+    selected_ids = request.form.getlist("categories")
+    if len(selected_ids) > 3:
+        abort(400)
+    memos.categories = Category.query.filter(Category.id.in_(selected_ids)).all()
     return render_template('public/index.j2', 
         memos=memos,
         page=page,

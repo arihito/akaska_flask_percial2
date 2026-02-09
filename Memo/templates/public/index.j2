@@ -21,6 +21,13 @@
                                         <span class="badge rounded-pill">Package</span>
                                         <span class="badge rounded-pill">Auth</span>
                                     </span>
+                                    <div class="article-categories">
+                                        {% for cat in article.categories %}
+                                            <span class="badge" style="background-color: {{ cat.color }}">
+                                                {{ cat.name }}
+                                            </span>
+                                        {% endfor %}
+                                    </div>
                                     <i class="fa fa-calendar-o"></i> {{ top1.memo.created_at.strftime("%Y年%m月%d日") }} by {{ top1.memo.user.username }}<i class="fa fa-gratipay ms-3" style="color:#603"></i>{{ top1.like_count }}いいね
                                 </p>
                                 <p class="card-text">{{ top1.memo.content | truncate(200, False, '...') }}</p>

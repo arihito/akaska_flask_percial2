@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 # seed用にFlaskアプリを1つ生成しconfigを読み込みdb/login_manager/Blueprintを初期化する
 from app import app, db
-from models import User, Memo, Favorite
+from models import User, Memo, Favorite, Category
 from factories.user_factory import UserFactory
 from factories.body_factory import BodyFactory
 import pytz
@@ -57,6 +57,16 @@ MEMO_TITLE_FACTORY = [
     "Swagger(Flasgger)によるAPIドキュメント自動生成",
 ]
 
+CATEGORY_SEED = [
+    ("Python", "#391A63"),
+    ("Flask", "#000000"),
+    ("SQL", "#52190F"),
+    ("CSS", "#111E50"),
+    ("API", "#3A340A"),
+    ("Auth", "#342647"),
+    ("Package", "#0B3F1B"),
+]
+
 IMAGE_POOL = [f"{i:02}.jpg" for i in range(1, 13)]
 
 
@@ -93,6 +103,15 @@ def seed_data():
         all_bodies = BodyFactory.get_all_bodies()
         print(f"読み込んだMarkdown記事数: {len(all_bodies)}件")
 
+        # --- Category 作成 ---
+        categories = []
+        for name, color in CATEGORY_SEED:
+            category = Category.query.filter_by(name=name).first()
+            if not category:
+                category = Category(name=name, color=color)
+                db.session.add(category)
+            categories.append(category)
+
         memos = []
         for idx, user in enumerate(users):
             # 最初のユーザーだけ24件、それ以外は1~3件
@@ -118,8 +137,15 @@ def seed_data():
                 )
                 db.session.add(memo)
                 memos.append(memo)
+                
+                # --- Memo にタグ付与 ---
+                memos = Memo.query.all()
+                for memo in memos:
+                    memo.categories.clear()
+                    memo.categories.extend(
+                        random.sample(categories, k=random.randint(1, 3))
+                    )
 
-        db.session.commit()
         print(f"メモ作成完了: {len(memos)}件")
 
         print("お気に入り作成...")
