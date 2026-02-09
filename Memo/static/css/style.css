@@ -217,6 +217,14 @@ h6 {
     color: crimson;
 }
 
+
+.like-area {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 10;
+}
+
 /* カラーモード時のリンク色を白にする */
 [data-bs-theme="dark"] {
     --bs-link-color: #ffffff;
@@ -288,6 +296,9 @@ h6 {
     height: 300px;
     object-fit: cover;
     display: block;
+}
+.memo-img-wrap a {
+    pointer-events: auto;
 }
 
 /* 管理画面サムネ */
@@ -561,4 +572,46 @@ pre.file-tag[data-tag]::before {
 input[type="radio"]:checked + .thumb-label .thumb-img {
     border-color: #ccc; /* Bootstrap primary */
     box-shadow: 0 0 0 6px rgba(13, 110, 253, 0.5);
+}
+
+/* 投稿記事マークダウンスタイル */
+.public h2 {
+    font-size: 2.5rem;        /* display-5 相当 */
+    font-weight: 300;
+    margin-top: 3rem;         /* mt-5 */
+    background-color: #212529;
+    color: #f8f9fa;
+    border-radius: 0.375rem;
+}
+
+.public h2::before {
+    content: "\f085";              /* fa-cogs */
+    font-family: FontAwesome;      /* FA4.7 固有 */
+    font-style: normal;
+    font-weight: normal;
+    display: inline-block;
+    margin-right: 0.5rem;
+    font-size: 0.9em;
+    vertical-align: middle;
+}
+.public h3 {
+    font-size: 2rem;          /* display-6 相当 */
+    font-weight: 300;
+    margin-top: 3rem;         /* mt-5 */
+    margin-bottom: 0.5rem;  
+}
+.public ul {
+    margin: 1rem 0;           /* my-3 */
+    padding: 0;
+    list-style: none;
+    border-radius: 0.375rem;
+    border: 1px solid #dee2e6;
+}
+.public li {
+    padding: 0.75rem 1.25rem;
+    border-bottom: 1px solid #dee2e6;
+    background-color: #fff;
+}
+.public li:last-child {
+    border-bottom: none;
 }

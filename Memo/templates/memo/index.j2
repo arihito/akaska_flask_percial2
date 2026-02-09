@@ -11,24 +11,24 @@
                     {% if current_order == 'desc' %}
                         <a class="btn btn-outline-secondary btn-lg fade-in fade-delay-8 w-100 w-md-auto text-nowrap"
                             href="{{ url_for('memo.index', order='asc', q=q, likes=likes) }}">
-                            <i class="fa fa-arrow-up"></i> 投稿日の古い順
+                            <i class="fa fa-sort-numeric-asc"></i> 投稿日の古い順
                         </a>
                     {% else %}
                         <a class="btn btn-outline-secondary btn-lg fade-in fade-delay-8 w-100 w-md-auto text-nowrap"
                             href="{{ url_for('memo.index', order='desc', q=q, likes=likes) }}">
-                            <i class="fa fa-arrow-down"></i> 投稿日の新しい順
+                            <i class="fa fa-sort-numeric-desc"></i> 投稿日の新しい順
                         </a>
                     {% endif %}
                     {% set current_likes = request.args.get('likes', 'desc') %}
                     {% if current_likes == 'desc' %}
                         <a class="btn btn-outline-secondary btn-lg fade-in fade-delay-12 w-100 w-md-auto text-nowrap"
                             href="{{ url_for('memo.index', likes='asc', q=q, order=order) }}">
-                            <i class="fa fa-sort-amount-asc"></i> いいね多い順
+                            <i class="fa fa-sort-amount-desc"></i> いいね多い順
                         </a>
                     {% else %}
                         <a class="btn btn-outline-secondary btn-lg fade-in fade-delay-12 w-100 w-md-auto text-nowrap"
                             href="{{ url_for('memo.index', likes='desc', q=q, order=order) }}">
-                            <i class="fa fa-sort-amount-desc"></i> いいね少ない順
+                            <i class="fa fa-sort-amount-asc"></i> いいね少ない順
                         </a>
                     {% endif %}
                 </div>
@@ -76,7 +76,7 @@
                             <td style="text-align:left">
                                 <h6 class="font-bold fs-4">{{ memo.marked_title | safe }}</h6>
                             </td>
-                            <td class="w-25" style="text-align:left">{{ memo.marked_content | safe }}</td>
+                            <td class="w-25" style="text-align:left;line-height:1.4;font-size:1.1rem;">{{ memo.content | truncate(120, False, '...') }}</td>
                             <td>
                                 <small><i class="fa fa-heart" style="color:pink"></i> {{ like_count }} いいね</small>
                             </td>

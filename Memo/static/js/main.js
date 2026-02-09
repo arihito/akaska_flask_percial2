@@ -75,6 +75,10 @@
             })
         })
 
+        // pre要素内コードハイライト
+        hljs.highlightAll();
+        hljs.initLineNumbersOnLoad();
+
         // スクロールフェードイン
         const observer = new IntersectionObserver(entries => {
             entries.forEach(entry => {
@@ -151,6 +155,8 @@
     })
 })()
 
+
+
 // ユーザー削除ボタン
 document.getElementById('deleteUserCheck').addEventListener('change', function () {
     const area = document.getElementById('delete-button-area');
@@ -161,6 +167,14 @@ document.getElementById('deleteUserCheck').addEventListener('change', function (
     }
 });
 
+// トップに戻るアニメーションボタン
+document.getElementById('scrollTopBtn').addEventListener('click', () => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+});
+
 // 前のページに戻るボタンクリック
 document.getElementById('backBtn').addEventListener('click', e => {
     e.preventDefault();
@@ -169,6 +183,7 @@ document.getElementById('backBtn').addEventListener('click', e => {
 
 // いいねアイコンクリック
 document.addEventListener("click", async function (e) {
+console.log("###################DOC CLICK#################", e.target);
     const btn = e.target.closest(".btn-like");
     if (!btn) return;
 

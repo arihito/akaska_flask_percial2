@@ -12,10 +12,12 @@
 </style>
     <div class="mb-4 rounded text-body-emphasis bg-body-secondary article-img"></div>
     <div class="row">
-        <div class="col-md-9">
+        <div class="col-md-9 public">
             <h1 class="display-4 my-3 pb-4 border-bottom">{{ memo.title }}</h1>
             <p><i class="fa fa-user"></i>投稿者: {{ memo.user.username }}<span class="px-2">|</span> <i class="fa fa-calendar"></i>投稿日時: {{ memo.created_at.strftime("%Y-%m-%d %H:%M") }}<span class="px-2">|</span> ❤️ {{ like_count }} いいね</p>
-            <p class="markdown-body">{{ memo.content | markdown | safe }}</p>
+            <p class="markdown-body">
+                {{ memo.content | markdown | safe }}
+            </p>
             <nav class="navbar bg-body-secondary my-5 rounded-3">
                 <div class="container-fluid d-none d-md-flex justify-content-start my-2 mx-2">
                     <a class="btn btn-secondary btn-lg text-dark flex-fill fade-in fade-delay-4 me-md-2" id="scrollTopBtn"><i class="fa fa-arrow-up"></i> ページの最上部に戻る</a>

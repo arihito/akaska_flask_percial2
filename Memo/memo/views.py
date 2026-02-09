@@ -1,7 +1,7 @@
 import os
 import math
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
-from models import db, Memo, User, Favorite
+from models import db, Memo, Favorite
 from flask_login import login_required, current_user
 from forms import MemoForm
 from sqlalchemy import func, asc, desc, or_
@@ -68,22 +68,22 @@ def index():
     memos = []
     for memo, like_count in raw_memos:
         memo.weekday_ja = WEEKDAYS_JA[memo.created_at.weekday()]
-        # ---- マーキング処理（HTML安全）----
+        # ---- 検索ワードのマーキング処理 ----
         if q:
-            safe_title = escape(memo.title)   # ← ① まず完全に無害化（Markup型）
-            safe_q = escape(q)                # ← 検索語も無害化
+            safe_title = escape(memo.title)         # タイトルをMarkup型をサニタイズ
+            safe_q = escape(q)                      # 検索ワードもサニタイズ
             marked = safe_title.replace(
                 safe_q,
-                Markup(f"<mark>{safe_q}</mark>")  # ← ② ここで初めてHTMLを注入
+                Markup(f"<mark>{safe_q}</mark>")    # マーカ要素を付与したHTMLを挿入
             )
-            memo.marked_title = Markup(marked)    # ← ③ 最終的に Markup 型にする
-            safe_content = escape(memo.content)   # ← ① まず完全に無害化（Markup型）
-            safe_q = escape(q)                # ← 検索語も無害化
+            memo.marked_title = Markup(marked)      # 本文を最終的にMarkup型に変換
+            safe_content = escape(memo.content)     # Markup型をサニタイズ
+            safe_q = escape(q)                      # 検索ワードもサニタイズ
             marked = safe_content.replace(
                 safe_q,
-                Markup(f"<mark>{safe_q}</mark>")  # ← ② ここで初めてHTMLを注入
+                Markup(f"<mark>{safe_q}</mark>")    # マーカ要素を付与したHTMLを挿入
             )
-            memo.marked_content = Markup(marked)    # ← ③ 最終的に Markup 型にする
+            memo.marked_content = Markup(marked)    # 最終的にMarkup型に変換
         else:
             memo.marked_title = memo.title
             memo.marked_content = memo.content
@@ -116,7 +116,8 @@ def create():
             original = secure_filename(image_file.filename)
             ext = original.rsplit(".", 1)[1].lower()
             filename = f"{uuid.uuid4().hex}.{ext}"
-            save_path = os.path.join(current_app.config["UPLOAD_FOLDER"], filename)
+            upload_folder = current_app.config["UPLOAD_FOLDERS"]["memo"]
+            save_path = os.path.join(upload_folder, filename)
             image_file.save(save_path)
         memo = Memo(
             title=form.title.data,

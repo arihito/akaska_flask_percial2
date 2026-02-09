@@ -18,7 +18,7 @@
                                 <p class="blog-post-meta">
                                     {{ top1.memo.created_at.strftime("%Y-%m-%d") }} by {{ top1.memo.user.username }}❤️ {{ top1.like_count }} いいね
                                 </p>
-                                <p class="card-text">{{ top1.memo.content }}</p>
+                                <p class="card-text">{{ top1.memo.content | truncate(200, False, '...') }}</p>
                             </div>
                         </div>
                         <div class="col-md-4 d-none d-md-block">
@@ -50,7 +50,7 @@
                                 <div class="mb-1 text-body-secondary">
                                     <i class="fa fa-calendar-o"></i> {{ memo.created_at.strftime("%Y年%m月%d日") }}
                                 </div>
-                                <p class="card-text mb-auto">{{ memo.content }}</p>
+                                <p class="card-text mb-auto">{{ memo.content | truncate(150, False, '...') }}</p>
                                 {% if current_user.is_authenticated and memo.user_id != current_user.id %}
                                     <div class="like-area" data-memo-id="{{ memo.id }}">
                                         {% if memo.id in favorite_memo_ids %}

@@ -27,7 +27,7 @@ def login():
         user = User.query.filter_by(email=form.email.data.strip().lower()).first()
 
         # ユーザー情報とパスワードの認証チェック通常ログイン判定
-        if not user or not check_password_hash(user.password, form.password.data):
+        if not user or not (user.password and check_password_hash(user.password, form.password.data)):
             # エラーメッセージはセキュリティ上どちらが原因かを限定表示しない
             flash('メールアドレスまたはパスワードが正しくありません', 'danger')
             return render_template('auth/login.j2', form=form)

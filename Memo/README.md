@@ -14,70 +14,128 @@
 
 <details>
 <summary>樹形図詳細</summary>
+![](https://img.shields.io/badge/TreeGraph_20260209-222243.svg)
 <pre><code>
-📁 Memo
-├─ 📄 README.md
-├─ 📄 app.py
-├─ 📁 auth
-│  └─ 📄 views.py
-├─ 📄 config.py
-├─ 📁 factories
-│  └─ 📄 user_factory.py
-├─ 📁 favorite
-│  └─ 📄 views.py
-├─ 📁 fixed
-│  └─ 📄 views.py
-├─ 📄 forms.py
-├─ 📁 instance
-│  └─ 📄 memodb.sqlite
-├─ 📁 memo
-│  └─ 📄 views.py
-├─ 📁 migrations
-├─ 📄 models.py
-├─ 📁 public
-│  └─ 📄 views.py
-├─ 📄 seed.py
-├─ 📁 static
-│  ├─ 📁 css
-│  │  └─ 📄 style.css
-│  ├─ 📁 images
-│  │  ├─ 📁 fixed
-│  │  ├─ 📁 memo
-│  │  ├─ 📁 nouse
-│  │  └─ 📁 user
-│  └─ 📁 js
-│     └─ 📄 main.js
-├─ 📁 templates
-│  ├─ 📁 auth
-│  │  ├─ 📄 _formhelpers.j2
-│  │  ├─ 📄 edit.j2
-│  │  ├─ 📄 login.j2
-│  │  └─ 📄 register.j2
-│  ├─ 📄 base.j2
-│  ├─ 📁 errors
-│  │  └─ 📄 404.j2
-│  ├─ 📁 fixed
-│  │  ├─ 📄 base.j2
-│  │  ├─ 📄 ...
-│  │  └─ 📄 upload.j2
-│  ├─ 📁 layout
-│  │  ├─ 📄 footer.j2
-│  │  ├─ 📄 globalnav.j2
-│  │  ├─ 📄 head.j2
-│  │  ├─ 📄 mode.j2
-│  │  └─ 📄 sidemenu.j2
-│  ├─ 📁 memo
-│  │  ├─ 📄 _formhelpers.j2
-│  │  ├─ 📄 base.j2
-│  │  ├─ 📄 create.j2
-│  │  ├─ 📄 index.j2
-│  │  └─ 📄 update.j2
-│  └─ 📁 public
-│     ├─ 📄 aside.j2
-│     ├─ 📄 detail.j2
-│     └─ 📄 index.j2
-├─ 📄 tree.txt
-└─ 📄 views.py
+[ Memo ]
+├─ 📄README.md
+├─ 📁__pycache__
+├─ 📄app.py
+├─ 📁auth
+│   ├─ 📄__init__.py
+│   ├─ 📁__pycache__
+│   └─ 📄views.py
+├─ 📄config.py
+├─ 📁data
+│   └─ 📁sample_articles
+│       ├─ 📄api_001.md
+│       ├─ 📄auth_001.md
+│       ├─ 📄api_002.md
+│       ├─ 📄basic_001.md
+│       ├─ 📄basic_002.md
+│       ├─ 📄crud_001.md
+│       ├─ 📄crud_002.md
+│       ├─ 📄package_001.md
+│       ├─ 📄ui_001.md
+│       └─ 📄ui_002.md
+├─ 📁errors
+│   ├─ 📄__init__.py
+│   ├─ 📁__pycache__
+│   └─ 📄views.py
+├─ 📁factories
+│   ├─ 📄__init__.py
+│   ├─ 📁__pycache__
+│   ├─ 📄body_factory.py
+│   └─ 📄user_factory.py
+├─ 📁favorite
+│   ├─ 📄__init__.py
+│   ├─ 📁__pycache__
+│   └─ 📄views.py
+├─ 📁fixed
+│   ├─ 📄__init__.py
+│   ├─ 📁__pycache__
+│   └─ 📄views.py
+├─ 📄forms.py
+├─ 📁instance
+│   └─ 📄memodb.sqlite
+├─ 📄libraries.txt
+├─ 📁memo
+│   ├─ 📄__init__.py
+│   ├─ 📁__pycache__
+│   └─ 📄views.py
+├─ 📁migrations
+│   ├─ 📄README
+│   ├─ 📁__pycache__
+│   ├─ 📄alembic.ini
+│   ├─ 📄env.py
+│   ├─ 📄script.py.mako
+│   └─ 📁versions
+├─ 📄models.py
+├─ 📁public
+│   ├─ 📄__init__.py
+│   ├─ 📁__pycache__
+│   └─ 📄views.py
+├─ 📄seed.py
+├─ 📁static
+│   ├─ 📁css
+│   │   └─ 📄style.css
+│   ├─ 📁images
+│   │   ├─ 📁fixed
+│   │   ├─ 📁memo
+│   │   ├─ 📁nouse
+│   │   ├─ 📁other
+│   │   └─ 📁user
+│   └─ 📁js
+│       └─ 📄main.js
+├─ 📁templates
+│   ├─ 📁auth
+│   │   ├─ 📄_formhelpers.j2
+│   │   ├─ 📄edit.j2
+│   │   ├─ 📄login.j2
+│   │   └─ 📄register.j2
+│   ├─ 📄base.j2
+│   ├─ 📁errors
+│   │   └─ 📄404.j2
+│   ├─ 📁fixed
+│   │   ├─ 📄base.j2
+│   │   ├─ 📄copyright.j2
+│   │   ├─ 📄crud.j2
+│   │   ├─ 📄deploy.j2
+│   │   ├─ 📄disclaimer.j2
+│   │   ├─ 📄drop.j2
+│   │   ├─ 📄help.j2
+│   │   ├─ 📄htmx.j2
+│   │   ├─ 📄i18n.j2
+│   │   ├─ 📄jwt.j2
+│   │   ├─ 📄legal.j2
+│   │   ├─ 📄oauth.j2
+│   │   ├─ 📄paging.j2
+│   │   ├─ 📄policy.j2
+│   │   ├─ 📄refactor.j2
+│   │   ├─ 📄stripe.j2
+│   │   ├─ 📄terms.j2
+│   │   ├─ 📄twofactor.j2
+│   │   └─ 📄upload.j2
+│   ├─ 📁layout
+│   │   ├─ 📄footer.j2
+│   │   ├─ 📄globalnav.j2
+│   │   ├─ 📄head.j2
+│   │   ├─ 📄mode.j2
+│   │   └─ 📄sidemenu.j2
+│   ├─ 📁memo
+│   │   ├─ 📄_formhelpers.j2
+│   │   ├─ 📄base.j2
+│   │   ├─ 📄create.j2
+│   │   ├─ 📄index.j2
+│   │   └─ 📄update.j2
+│   └─ 📁public
+│       ├─ 📄aside.j2
+│       ├─ 📄detail.j2
+│       └─ 📄index.j2
+├─ 📄tree.txt
+└─ 📁utils
+    ├─ 📁__pycache__
+    │   └─ 📄upload.cpython-310.pyc
+    └─ 📄upload.py
 </code></pre>
 </details>
 
@@ -88,116 +146,50 @@
 
 <details>
 <summary>ライブラリ一覧</summary>
+![](https://img.shields.io/badge/PackageList_20260209-222243.svg)
 <pre><code>
 Package                      Version
 ---------------------------- -----------
-alembic                      1.18.0
-aniso8601                    10.0.1
-annotated-types              0.7.0
-anyio                        4.12.1
-attrs                        25.4.0
-blinker                      1.9.0
-certifi                      2026.1.4
-cffi                         2.0.0
-charset-normalizer           3.4.4
-click                        8.3.1
-colorama                     0.4.6
-contourpy                    1.3.3
-cryptography                 46.0.3
-cssbeautifier                1.15.4
-cycler                       0.12.1
-distro                       1.9.0
-djlint                       1.36.4
-dnspython                    2.8.0
-EditorConfig                 0.17.1
-email-validator              1.1.3
-factory_boy                  3.3.3
-Faker                        40.1.2
-Flask                        2.3.3
-Flask-Dance                  7.1.0
-Flask-DebugToolbar           0.16.0
-Flask-Login                  0.6.2
-Flask-Migrate                3.1.0
-Flask-SQLAlchemy             2.5.1
-Flask-WTF                    1.2.2
-fonttools                    4.61.1
-google-ai-generativelanguage 0.6.15
-google-api-core              2.29.0
-google-api-python-client     2.188.0
-google-auth                  2.48.0
-google-auth-httplib2         0.3.0
-google-genai                 1.60.0
-google-generativeai          0.8.6
-googleapis-common-protos     1.72.0
-greenlet                     3.3.0
-grpcio                       1.76.0
-grpcio-status                1.71.2
-gunicorn                     20.1.0
-h11                          0.16.0
-htmlmin                      0.1.12
-httpcore                     1.0.9
-httplib2                     0.31.2
-httpx                        0.28.1
-idna                         3.11
-importlib_resources          6.5.2
-itsdangerous                 2.2.0
-Jinja2                       3.1.6
-jsbeautifier                 1.15.4
-jsmin                        3.0.1
-json5                        0.13.0
-jsonschema                   4.26.0
-jsonschema-specifications    2025.9.1
-kiwisolver                   1.4.9
-lesscpy                      0.15.1
-Mako                         1.3.10
-Markdown                     3.10.1
-MarkupSafe                   3.0.3
-matplotlib                   3.10.8
-numpy                        2.4.1
-oauthlib                     3.3.1
-packaging                    26.0
-pandas                       3.0.0
-pathspec                     1.0.3
-pillow                       12.1.0
-pip                          24.2
-ply                          3.11
-proto-plus                   1.27.0
-protobuf                     5.29.5
-pyasn1                       0.6.2
-pyasn1_modules               0.4.2
-pycparser                    2.23
-pydantic                     2.12.5
-pydantic_core                2.41.5
-pyOpenSSL                    25.3.0
-pyparsing                    3.3.2
-python-dateutil              2.9.0.post0
-python-dotenv                0.19.2
-pytz                         2025.2
-PyYAML                       6.0.3
-rcssmin                      1.2.2
-referencing                  0.37.0
-regex                        2025.11.3
-requests                     2.32.5
-requests-oauthlib            2.0.0
-rpds-py                      0.30.0
-rsa                          4.9.1
-setuptools                   80.9.0
-six                          1.17.0
-sniffio                      1.3.1
-SQLAlchemy                   1.4.29
-tenacity                     9.1.2
-tqdm                         4.67.1
-typing_extensions            4.15.0
-typing-inspection            0.4.2
-tzdata                       2025.3
-uritemplate                  4.2.0
-urllib3                      2.6.3
-URLObject                    3.0.0
-websockets                   15.0.1
-Werkzeug                     2.3.8
-Wikipedia-API                0.5.8
-WTForms                      3.0.1
-xxhash                       3.6.0
+alembic            1.18.3
+Authlib            1.6.6
+blinker            1.9.0
+certifi            2026.1.4
+cffi               2.0.0
+charset-normalizer 3.4.4
+click              8.3.1
+colorama           0.4.6
+cryptography       46.0.4
+dnspython          2.8.0
+email-validator    2.3.0
+factory_boy        3.3.3
+Faker              40.1.2
+Flask              2.3.3
+Flask-DebugToolbar 0.16.0
+Flask-Login        0.6.3
+Flask-Migrate      4.1.0
+Flask-SQLAlchemy   3.1.1
+Flask-WTF          1.2.2
+greenlet           3.3.1
+idna               3.11
+itsdangerous       2.2.0
+Jinja2             3.1.6
+Mako               1.3.10
+Markdown           3.10.1
+MarkupSafe         3.0.3
+pip                25.3
+pycparser          3.0
+python-dotenv      1.2.1
+pytz               2025.2
+requests           2.32.5
+setuptools         80.9.0
+SQLAlchemy         2.0.46
+tomli              2.4.0
+typing_extensions  4.15.0
+tzdata             2025.3
+urllib3            2.6.3
+Werkzeug           2.3.8
+wheel              0.45.1
+WTForms            3.2.1
 </code></pre>
 </details>
 
@@ -317,19 +309,18 @@ xxhash                       3.6.0
 <summary>実装中機能一覧</summary>
 <ul>
   <li>ユーザーID変更時のリアルタイムバリデーション</li>
-  <li>二段階認証
-    <ul>
-      <li>ユーザーの削除時に二段階認証ユーザーはトークンを入力</li>
-      <li>メール送信</li>
-    </ul>
-  </li>
-  <li>Markdownの記事本文のボリュームを増やすため1000字程度で別ファイルに10件</li>
-  <li>検索と並び替えの固定記事作成(AIで基本フロー生成)</li>
+  <li>ダミーの記事本文ボリュームを増やすため1000字程度で別ファイルにMarkdown形式で10件作成</li>
   <li>カテゴリー
     <ul>
       <li>複数カテゴリー追加(多対多):basic/CRUD/UI/auth/package/APIなど</li>
       <li>カテゴリー検索</li>
       <li>カテゴリー選択に同期した絞り込みレコメンド表示</li>
+    </ul>
+  </li>
+  <li>二段階認証
+    <ul>
+      <li>ユーザーの削除時に二段階認証ユーザーはトークンを入力</li>
+      <li>メール送信</li>
     </ul>
   </li>
   <li>管理者(Admin)ページ作成
@@ -341,8 +332,8 @@ xxhash                       3.6.0
       <li>管理者会員パスワード発行サブスクによるカード決済</li>
     </ul>
   </li>
-  <li>投稿記事の要約文をAIによる自動生成</li>
   <li>多言語設定</li>
+  <li>投稿記事の要約文をAIによる自動生成</li>
 </ul>
 </details>
 
