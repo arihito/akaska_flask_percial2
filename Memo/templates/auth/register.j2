@@ -6,7 +6,10 @@
             <h1 class="h3 mb-3 fw-normal fade-in fade-delay-1"><i class="fa fa-user-plus me-2"></i>新規登録</h1>
             <form action="{{ url_for('auth.register') }}" method="post" novalidate>
                 {{ form.hidden_tag() }}
-                {{ render_floating_field(form.username, "User name", wrapper_class="fade-in fade-delay-2", autofocus=True) }}
+                <div class="fade-in fade-delay-2">
+                    {{ render_floating_field(form.username, "User name", wrapper_class="mb-2", autofocus=True) }}
+                    <div id="username-status" class="mb-3"></div>
+                </div>
                 {{ render_floating_field(form.email, "Email address", wrapper_class="fade-in fade-delay-4") }}
                 {{ render_floating_field(form.password, "Password", wrapper_class="fade-in fade-delay-6") }}
                 <nav class="navbar bg-body-secondary my-3 rounded-3 fade-in fade-delay-8">

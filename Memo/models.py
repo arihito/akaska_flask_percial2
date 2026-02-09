@@ -32,7 +32,7 @@ class Favorite(db.Model):
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.String(50), unique=True, nullable=True)
+    username = db.Column(db.String(12), unique=True, nullable=True)
     email = db.Column(db.String(120), unique=True, nullable=True)
     password = db.Column(db.String(120), nullable=True)
     thumbnail = db.Column(db.String(50), nullable=False, default='default.png')

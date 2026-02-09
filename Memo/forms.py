@@ -19,6 +19,7 @@ from wtforms.validators import (
     EqualTo,
     Optional,
     Email,
+    Regexp
 )
 from models import Memo, User
 
@@ -97,8 +98,19 @@ class SignUpForm(LoginForm):  # ログイン処理と同じなため機能を継
         "ユーザー名",
         validators=[
             DataRequired(message="ユーザー名を入力してください"),
-            Length(max=50),
+            Length(min=3, max=12),
+            Regexp(
+                r'^[ぁ-んァ-ヶー一-龯a-zA-Z0-9_\-\.]+$',
+                message="使用できない文字が含まれています"
+            )
         ],
+        render_kw={
+            "autocomplete": "new-password",
+            "spellcheck": "false",
+            "autocapitalize": "none",
+            "inputmode": "latin",
+            "lang": "ja"
+        }
     )
     email = EmailField(
         "メールアドレス",

@@ -1,5 +1,6 @@
 import os
-from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, session
+import re
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, session, jsonify
 from models import db, User
 from forms import LoginForm, SignUpForm, EditUserForm
 from flask_login import login_user, logout_user, login_required, current_user
@@ -173,3 +174,21 @@ def auth_google():
     login_user(user)
     flash('Googleログインが成功しました', 'secondary')
     return redirect(url_for('memo.index'))
+
+USERNAME_PATTERN = re.compile(r'^[ぁ-んァ-ヶー一-龯a-zA-Z0-9_\-\.]{3,12}$')
+
+# リアルタイムバリデーション
+@auth_bp.route('/api/check_userid')
+def check_userid():
+    value = request.args.get("value", "")
+    # 長さチェック
+    if not (3 <= len(value) <= 12):
+        return jsonify({"length_error": True})
+    # 使用可能文字チェック
+    if not USERNAME_PATTERN.match(value):
+        return jsonify({"invalid_char": True})
+    exists = User.query.filter_by(username=value).first()
+    return jsonify({
+        "available": not exists,
+        "exists": bool(exists)
+    })
