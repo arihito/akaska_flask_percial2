@@ -1,14 +1,14 @@
 <div class="position-sticky top-0 pt-3">
     <ul class="nav flex-column">
-        <li class="nav-item fade-in fade-in-delay-1"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'public.public_index' %}active{% endif %}" href="{{ url_for('public.public_index') }}"><i class="fa fa-list-alt"></i>全体一覧</a></li>
+        <li class="nav-item fade-in fade-in-delay-1"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'public.public_index' %}active{% endif %}" href="{{ url_for('public.public_index') }}"><i class="fa fa-wpforms"></i>共有トップ</a></li>
         <hr>
-        <li class="nav-item fade-in fade-in-delay-2"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'memo.index' %}active{% endif %}" href="{{ url_for('memo.index') }}"><i class="fa fa-list"></i>投稿一覧</a></li>
+        <li class="nav-item fade-in fade-in-delay-2"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'memo.index' %}active{% endif %}" href="{{ url_for('memo.index') }}"><i class="fa fa-address-card"></i>マイページ</a></li>
         <hr>
         <li class="nav-item fade-in fade-in-delay-3"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'memo.create' %}active{% endif %}" href="{{ url_for('memo.create') }}"><i class="fa fa-plus-square"></i>記事追加</a></li>
         <hr>
-        <li class="nav-item fade-in fade-in-delay-4"><a class="nav-link text-body-secondary fs-5" href="" disabled><i class="fa fa-line-chart"></i>記事分析</a></li>
+        <li class="nav-item fade-in fade-in-delay-5"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'auth.edit' %}active{% endif %}" href="{{ url_for('auth.edit') }}"><i class="fa fa-user-circle-o"></i>ユーザー編集</a></li>
         <hr>
-        <li class="nav-item fade-in fade-in-delay-5"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'auth.edit' %}active{% endif %}" href="{{ url_for('auth.edit') }}"><i class="fa fa-user"></i>ユーザ管理</a></li>
+        <li class="nav-item fade-in fade-in-delay-4"><a class="nav-link text-body-secondary fs-5" href="" disabled><i class="fa fa-cog"></i>管理者専用</a></li>
     </ul>
     <hr>
     <h6 class="text-body-secondary fs-5 ms-4 ps-2 mt-4 pt-2 mb-3 font-bold"><i class="fa fa-file-code-o"></i> 開発管理</h6>

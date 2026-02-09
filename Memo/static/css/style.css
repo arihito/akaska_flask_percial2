@@ -2,6 +2,8 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=WDXL+Lubrifont+JP+N&display=swap');
+
 
 /* カラーモード用　*/
 
@@ -208,21 +210,8 @@ h6 {
 .btn-like {
     background: none;
     border: none;
-    font-size: 1rem;
     cursor: pointer;
     transition: transform 0.2s ease;
-}
-
-.btn-like.active {
-    color: crimson;
-}
-
-
-.like-area {
-    position: absolute;
-    bottom: 1rem;
-    right: 1rem;
-    z-index: 10;
 }
 
 /* カラーモード時のリンク色を白にする */
@@ -614,4 +603,20 @@ input[type="radio"]:checked + .thumb-label .thumb-img {
 }
 .public li:last-child {
     border-bottom: none;
+}
+
+/* カテゴリータグ */
+.category_tag span.badge {
+    font-size: .7rem;
+    font-family: "WDXL Lubrifont JP N", sans-serif;
+    font-weight: 400;
+}
+[data-bs-theme="dark"] .category_tag span.badge {
+    color: #000;
+    background-color: #555;
+}
+
+[data-bs-theme="light"] .category_tag span.badge {
+    color: #fff;
+    background-color: #333;
 }

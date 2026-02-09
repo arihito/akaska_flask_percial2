@@ -2,7 +2,7 @@
 {% block title %}
     <div class="d-md-flex justify-content-md-between align-items-center pt-3 pb-2 mt-4 mb-3 border-bottom">
         <h1 class="fade-in fade-delay-4">
-            <i class="fa fa-list-alt"></i> {{ user.username }}さんの記事一覧
+            <i class="fa fa-address-card"></i> {{ user.username }}さんの記事一覧
         </h1>
         <div class="d-md-flex flex-column flex-md-row align-items-md-center mb-1">
             <div class="btn-toolbar mb-2 mb-md-0">
@@ -34,7 +34,7 @@
                 </div>
             </div>
             <form method="get" action="{{ url_for('memo.index', page=page, order=order, q=q, likes=likes) }}" class="input-group ms-md-3 fade-in fade-delay-16">
-                <span class="input-group-text">検索</span>
+                <span class="input-group-text"><i class="fa fa-search"></i> 検索</span>
                 <div class="form-floating">
                     <input type="text" name="q" placeholder="タイトル・本文を検索" value="{{ q }}" class="form-control" id="floatingInputGroup1">
                     <label for="floatingInputGroup1">検索ワード</label>
@@ -74,11 +74,16 @@
                         <tr style="cursor:pointer" class="clickable-row fade-in fade-delay-{{ loop.index * 2 }} text-decoration-none text-body-secondary" data-href="{{ url_for('public.detail', memo_id=row.memo.id) }}">
                             <td>{{ memo.id }}</td>
                             <td style="text-align:left">
+                                <div class="category_tag mb-1">
+                                    <span class="badge rounded-pill">API</span>
+                                    <span class="badge rounded-pill">Package</span>
+                                    <span class="badge rounded-pill">Auth</span>
+                                </div>
                                 <h6 class="font-bold fs-4">{{ memo.marked_title | safe }}</h6>
                             </td>
                             <td class="w-25" style="text-align:left;line-height:1.4;font-size:1.1rem;">{{ memo.content | truncate(120, False, '...') }}</td>
                             <td>
-                                <small><i class="fa fa-heart" style="color:pink"></i> {{ like_count }} いいね</small>
+                                <small><i class="fa fa-gratipay" style="color:#603"></i> {{ like_count }}いいね</small>
                             </td>
                             <td>
                                 {% if memo.image_filename %}
@@ -115,7 +120,14 @@
                     <a href="{{ url_for('public.detail', memo_id=row.memo.id) }}" class="stretched-link"></a>
                     <div class="d-grid gap-2" style="grid-template-columns: 1fr 3fr 3fr 3fr 3fr;grid-template-rows: 2fr 2fr 1fr 1fr;">
                         <div style="grid-row: span 1;" class="d-flex align-items-center border-end pe-2">{{ memo.id }}</div>
-                        <div class="fw-bold fs-4 d-flex align-items-center" style="grid-column: span 12;grid-row: span 1;">{{ memo.marked_title | safe }}</div>
+                        <div class="fw-bold fs-4 d-flex align-items-center" style="grid-column: span 12;grid-row: span 1;">
+                            <div class="category_tag mb-1">
+                                <span class="badge rounded-pill">API</span>
+                                <span class="badge rounded-pill">Package</span>
+                                <span class="badge rounded-pill">Auth</span>
+                            </div>
+                            {{ memo.marked_title | safe }}
+                        </div>
                         <div style="grid-column: span 13;grid-row: span 1;">{{ memo.marked_content | safe }}</div>
                         <div style="grid-column: span 3;grid-row: span 2;">
                             {% if memo.image_filename %}
@@ -130,7 +142,7 @@
                             {{ memo.created_at.strftime("%H時%M分%S秒") }}
                             ({{ memo.weekday_ja }})
                         </div>
-                        <div style="grid-column: span 4;border-top: dotted 1px #666" class="pt-2"><small><i class="fa fa-heart" style="color:pink"></i> {{ like_count }} いいね</small></div>
+                        <div style="grid-column: span 4;border-top: dotted 1px #666" class="pt-2"><small><i class="fa fa-gratipay" style="color:#603"></i> {{ like_count }} いいね</small></div>
                         <div style="grid-column: span 3"><a class="btn btn-outline-secondary action-btn w-100 w-auto text-nowrap position-relative z-1" href="{{ url_for('memo.update', memo_id=memo.id) }}"><i class="fa fa-pencil"></i>編集</a></div>
                         <div style="grid-column: span 3"><a class="btn btn-outline-secondary action-btn w-100 w-auto text-nowrap position-relative z-1" href="{{ url_for('memo.delete', memo_id=memo.id) }}"><i class="fa fa-trash-o"></i>削除</a></div>
                     </div>

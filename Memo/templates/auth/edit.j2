@@ -5,7 +5,7 @@
             <form action="{{ url_for('auth.edit') }}" method="post" enctype="multipart/form-data" novalidate>
                 {% from "auth/_formhelpers.j2" import render_floating_field %}
                 {{ form.hidden_tag() }}
-                <h1 class="my-4 fw-normal fade-in fade-delay-1"><i class="fa fa-user-circle-o me-2"></i>ユーザー管理</h1>
+                <h1 class="my-4 fw-normal fade-in fade-delay-1"><i class="fa fa-user-circle-o me-2"></i>ユーザー編集</h1>
                 {% if not current_user.is_oauth_user %}
                     <p class="text-body-secondary fade-in fade-delay-2"><i class="fa fa-user me-2"></i>ユーザー名の変更が必要であれば以下を編集してください (任意)。</p>
                     {{ render_floating_field(form.username, "ユーザー名", wrapper_class="fade-in fade-delay-3") }}

@@ -131,7 +131,7 @@
         const pass_check = document.getElementById('changePasswordCheck');
         const pass_area = document.getElementById('password-area');
         const toggle = () => {
-            if (pass_check.checked) {
+            if (pass_check?.checked) {
                 pass_area.classList.add('is-visible');
             } else {
                 pass_area.classList.remove('is-visible');
@@ -155,10 +155,8 @@
     })
 })()
 
-
-
 // ユーザー削除ボタン
-document.getElementById('deleteUserCheck').addEventListener('change', function () {
+document.getElementById('deleteUserCheck')?.addEventListener('change', function () {
     const area = document.getElementById('delete-button-area');
     if (this.checked) {
         area.classList.remove('d-none');
@@ -168,7 +166,7 @@ document.getElementById('deleteUserCheck').addEventListener('change', function (
 });
 
 // トップに戻るアニメーションボタン
-document.getElementById('scrollTopBtn').addEventListener('click', () => {
+document.getElementById('scrollTopBtn')?.addEventListener('click', () => {
   window.scrollTo({
     top: 0,
     behavior: 'smooth'
@@ -176,7 +174,7 @@ document.getElementById('scrollTopBtn').addEventListener('click', () => {
 });
 
 // 前のページに戻るボタンクリック
-document.getElementById('backBtn').addEventListener('click', e => {
+document.getElementById('backBtn')?.addEventListener('click', e => {
     e.preventDefault();
     history.back();
 });
@@ -209,8 +207,8 @@ console.log("###################DOC CLICK#################", e.target);
     // UI 更新
     btn.classList.toggle("active", data.liked);
     btn.dataset.action = data.liked ? "remove" : "add";
-    btn.innerHTML = (data.liked ? "❤️" : "🤍")
-        + ` <span class="like-count">${data.like_count}</span>`;
+    btn.innerHTML = (data.liked ? "<i class='fa fa-heart' style='color:#e06'></i>" : "<i class='fa fa-heart-o' style='color:#666'></i>")
+        + ` <span class="like-count text-body-secondary">${data.like_count}いいね</span>`;
 
     animateHeart(btn);
 });
