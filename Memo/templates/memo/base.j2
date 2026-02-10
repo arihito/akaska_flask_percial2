@@ -37,7 +37,7 @@
                     {% if messages %}
                         {% for alert_type, message in messages %}
                         {% set icon = 'exclamation-triangle' if alert_type == 'danger' else 'check' %}
-                            <div class="alert alert-{{ alert_type }} text-center"><i class="fa fa-{{ icon }} me-2"></i>{{ message }}</div>
+                            <div class="alert alert-{{ alert_type }} text-center {% if request.endpoint == 'auth.edit' %}mt-5 w-50 mx-auto{% endif %}"><i class="fa fa-{{ icon }} me-2"></i>{{ message }}</div>
                         {% endfor %}
                     {% endif %}
                 {% endwith %}

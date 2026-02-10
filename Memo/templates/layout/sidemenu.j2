@@ -1,62 +1,62 @@
 <div class="position-sticky top-0 pt-3">
     <ul class="nav flex-column">
-        <li class="nav-item fade-in fade-in-delay-1"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'public.public_index' %}active{% endif %}" href="{{ url_for('public.public_index') }}"><i class="fa fa-wpforms"></i>トップページ</a></li>
+        <li class="nav-item fade-in fade-in-delay-1"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'public.public_index' %}active{% endif %}" href="{{ url_for('public.public_index') }}"><i class="fa fa-wpforms me-2"></i>トップページ</a></li>
         <hr>
-        <li class="nav-item fade-in fade-in-delay-2"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'memo.index' %}active{% endif %}" href="{{ url_for('memo.index') }}"><i class="fa fa-address-card"></i>マイページ</a></li>
+        <li class="nav-item fade-in fade-in-delay-2"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'memo.index' %}active{% endif %}" href="{{ url_for('memo.index') }}"><i class="fa fa-address-card me-2"></i>マイページ</a></li>
         <hr>
-        <li class="nav-item fade-in fade-in-delay-3"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'memo.create' %}active{% endif %}" href="{{ url_for('memo.create') }}"><i class="fa fa-plus-square"></i>記事追加</a></li>
+        <li class="nav-item fade-in fade-in-delay-3"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'memo.create' %}active{% endif %}" href="{{ url_for('memo.create') }}"><i class="fa fa-plus-square me-2"></i>記事追加</a></li>
         <hr>
-        <li class="nav-item fade-in fade-in-delay-5"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'auth.edit' %}active{% endif %}" href="{{ url_for('auth.edit') }}"><i class="fa fa-user-circle-o"></i>ユーザー編集</a></li>
+        <li class="nav-item fade-in fade-in-delay-5"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'auth.edit' %}active{% endif %}" href="{{ url_for('auth.edit') }}"><i class="fa fa-user-circle-o me-2"></i>ユーザー編集</a></li>
         <hr>
-        <li class="nav-item fade-in fade-in-delay-4"><a class="nav-link text-body-secondary fs-5" href="" disabled><i class="fa fa-cog"></i>管理者専用</a></li>
+        <li class="nav-item fade-in fade-in-delay-4"><a class="nav-link text-body-secondary fs-5" href="" disabled><i class="fa fa-cog me-2"></i>管理者専用</a></li>
     </ul>
     <hr>
-    <h6 class="text-body-secondary fs-5 ms-4 ps-2 mt-4 pt-2 mb-3 font-bold"><i class="fa fa-file-code-o"></i> 開発関連資料</h6>
+    <h6 class="text-body-secondary fs-5 ms-4 ps-2 mt-4 pt-2 mb-3 font-bold"><i class="fa fa-file-code-o me-2"></i> 開発関連資料</h6>
     <div class="accordion" id="accordionPanelsStayOpenExample">
         <div class="accordion-item">
             <h2 class="accordion-header">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne"><i class="fa fa-files-o"></i>成果物</button>
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne"><i class="fa fa-files-o me-2"></i>成果物</button>
             </h2>
             <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
                 <div class="accordion-body">
                     <ul class="nav flex-column">
-                        <li class="nav-item fade-in fade-in-delay-8"><a class="nav-link text-body-secondary" href=""><i class="fa fa-list-alt"></i>要件定義</a></li>
+                        <li class="nav-item fade-in fade-in-delay-8"><a class="nav-link text-body-secondary" href=""><i class="fa fa-list-alt me-2"></i>要件定義</a></li>
                         <hr>
-                        <li class="nav-item fade-in fade-in-delay-9"><a class="nav-link text-body-secondary" href=""><i class="fa fa-wpforms"></i>画面設計図</a></li>
+                        <li class="nav-item fade-in fade-in-delay-9"><a class="nav-link text-body-secondary" href=""><i class="fa fa-wpforms me-2"></i>画面設計図</a></li>
                         <hr>
-                        <li class="nav-item fade-in fade-in-delay-10"><a class="nav-link text-body-secondary" href=""><i class="fa fa-sitemap"></i>ER図</a></li>
+                        <li class="nav-item fade-in fade-in-delay-10"><a class="nav-link text-body-secondary" href=""><i class="fa fa-sitemap me-2"></i>ER図</a></li>
                         <hr>
-                        <li class="nav-item fade-in fade-in-delay-11"><a class="nav-link text-body-secondary" href=""><i class="fa fa-table"></i>クラス設計図</a></li>
+                        <li class="nav-item fade-in fade-in-delay-11"><a class="nav-link text-body-secondary" href=""><i class="fa fa-table me-2"></i>クラス設計図</a></li>
                     </ul>
                 </div>
             </div>
         </div>
         <div class="accordion-item">
             <h2 class="accordion-header">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo"><i class="fa fa-database"></i>バックアップ</button>
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo"><i class="fa fa-database me-2"></i>バックアップ</button>
             </h2>
             <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse show">
                 <div class="accordion-body">
                     <ul class="nav flex-column">
-                        <li class="nav-item fade-in fade-in-delay-10"><a class="nav-link text-body-secondary"href="https://github.com/arihito/akaska_flask_percial2/tree/main/Memo" target="_blank"><i class="fa fa-github"></i>GitHub</a></li>
+                        <li class="nav-item fade-in fade-in-delay-10"><a class="nav-link text-body-secondary"href="https://github.com/arihito/akaska_flask_percial2/tree/main/Memo" target="_blank"><i class="fa fa-github me-2"></i>GitHub</a></li>
                     </ul>
                 </div>
             </div>
         </div>
         <div class="accordion-item">
             <h2 class="accordion-header">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree"><i class="fa fa-book"></i>利用サービスガイド</button>
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree"><i class="fa fa-book me-2"></i>利用サービスガイド</button>
             </h2>
             <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse show">
                 <div class="accordion-body">
                     <ul class="nav flex-column">
-                        <li class="nav-item fade-in fade-in-delay-12"><a class="nav-link text-body-secondary"href="https://flask.palletsprojects.com/en/stable/" target="_blank"><i class="fa fa-flask"></i>Flask3.x</a></li>
+                        <li class="nav-item fade-in fade-in-delay-12"><a class="nav-link text-body-secondary"href="https://flask.palletsprojects.com/en/stable/" target="_blank"><i class="fa fa-flask me-2"></i>Flask3.x</a></li>
                         <hr>
-                        <li class="nav-item fade-in fade-in-delay-13"><a class="nav-link text-body-secondary"href="https://getbootstrap.jp/docs/5.3/getting-started/introduction/" target="_blank"><i class="fa fa-bold"></i>Bootstrap5.3</a></li>
+                        <li class="nav-item fade-in fade-in-delay-13"><a class="nav-link text-body-secondary"href="https://getbootstrap.jp/docs/5.3/getting-started/introduction/" target="_blank"><i class="fa fa-bold me-2"></i>Bootstrap5.3</a></li>
                         <hr>
-                        <li class="nav-item fade-in fade-in-delay-14"><a class="nav-link text-body-secondary"href="https://fontawesome.com/v4/icons/" target="_blank"><i class="fa fa-font-awesome"></i>FontAwesome4.7</a></li>
+                        <li class="nav-item fade-in fade-in-delay-14"><a class="nav-link text-body-secondary"href="https://fontawesome.com/v4/icons/" target="_blank"><i class="fa fa-font-awesome me-2"></i>FontAwesome4.7</a></li>
                         <hr>
-                        <li class="nav-item fade-in fade-in-delay-15"><a class="nav-link text-body-secondary"href="https://github.com/alexandresanlim/Badges4-README.md-Profile#-blog-" target="_blank"><i class="fa fa-tags"></i>Shields.io</a></li>
+                        <li class="nav-item fade-in fade-in-delay-15"><a class="nav-link text-body-secondary"href="https://github.com/alexandresanlim/Badges4-README.md-Profile#-blog-" target="_blank"><i class="fa fa-tags me-2"></i>Shields.io</a></li>
                     </ul>
                 </div>
             </div>

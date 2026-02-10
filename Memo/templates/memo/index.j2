@@ -2,50 +2,75 @@
 {% block title %}
     <div class="d-md-flex justify-content-md-between align-items-center pt-3 pb-2 mt-4 mb-3 border-bottom">
         <h1 class="fade-in fade-delay-4">
-            <i class="fa fa-address-card"></i> {{ user.username }}さんの記事一覧
+            <i class="fa fa-address-card me-2"></i>{{ user.username }}さんの記事一覧
         </h1>
         <div class="d-md-flex flex-column flex-md-row align-items-md-center mb-1">
             <div class="btn-toolbar mb-2 mb-md-0">
                 <div class="btn-group w-100">
-                    {% set current_order = request.args.get('order', 'desc') %}
+                    {% set current_order = params.get('order', 'desc') %}
                     {% if current_order == 'desc' %}
-                        <a class="btn btn-outline-secondary btn-lg fade-in fade-delay-8 w-100 w-md-auto text-nowrap"
-                            href="{{ url_for('memo.index', order='asc', q=q, likes=likes) }}">
-                            <i class="fa fa-sort-numeric-asc"></i> 投稿日の古い順
+                        {% set p = params.copy() %}
+                        {% set _ = p.update({'order': 'asc', 'page': 1}) %}
+                        <a class="btn btn-outline-secondary btn-lg fade-in fade-delay-12 w-100 w-md-auto text-nowrap"
+                        href="{{ url_for('memo.index', **p) }}">
+                            <i class="fa fa-sort-numeric-asc me-2"></i>投稿日の古い順
                         </a>
                     {% else %}
-                        <a class="btn btn-outline-secondary btn-lg fade-in fade-delay-8 w-100 w-md-auto text-nowrap"
-                            href="{{ url_for('memo.index', order='desc', q=q, likes=likes) }}">
-                            <i class="fa fa-sort-numeric-desc"></i> 投稿日の新しい順
+                        {% set p = params.copy() %}
+                        {% set _ = p.update({'order': 'desc', 'page': 1}) %}
+                        <a class="btn btn-outline-secondary btn-lg fade-in fade-delay-12 w-100 w-md-auto text-nowrap"
+                        href="{{ url_for('memo.index', **p) }}">
+                            <i class="fa fa-sort-numeric-desc me-2"></i>投稿日の新しい順
                         </a>
                     {% endif %}
-                    {% set current_likes = request.args.get('likes', 'desc') %}
+                    {% set current_likes = params.get('likes') %}
                     {% if current_likes == 'desc' %}
+                        {% set p = params.copy() %}
+                        {% set _ = p.update({'likes': 'asc', 'page': 1}) %}
                         <a class="btn btn-outline-secondary btn-lg fade-in fade-delay-12 w-100 w-md-auto text-nowrap"
-                            href="{{ url_for('memo.index', likes='asc', q=q, order=order) }}">
-                            <i class="fa fa-sort-amount-desc"></i> いいね多い順
+                        href="{{ url_for('memo.index', **p) }}">
+                            <i class="fa fa-sort-amount-asc me-2"></i>いいね少ない順
                         </a>
                     {% else %}
+                        {% set p = params.copy() %}
+                        {% set _ = p.update({'likes': 'desc', 'page': 1}) %}
                         <a class="btn btn-outline-secondary btn-lg fade-in fade-delay-12 w-100 w-md-auto text-nowrap"
-                            href="{{ url_for('memo.index', likes='desc', q=q, order=order) }}">
-                            <i class="fa fa-sort-amount-asc"></i> いいね少ない順
+                        href="{{ url_for('memo.index', **p) }}">
+                            <i class="fa fa-sort-amount-desc me-2"></i>いいね多い順
                         </a>
                     {% endif %}
                 </div>
             </div>
-            <form method="get" action="{{ url_for('memo.index', page=page, order=order, q=q, likes=likes) }}" class="input-group ms-md-3 fade-in fade-delay-16">
-                <span class="input-group-text"><i class="fa fa-search"></i> 検索</span>
+            <form method="get" action="{{ url_for('memo.index') }}" class="w-100 w-md-auto mb-2 mb-md-0 ms-md-3 fade-in fade-delay-14">
+                {% for k, v in params.items() if k != 'category_id' %}
+                    <input type="hidden" name="{{ k }}" value="{{ v }}">
+                {% endfor %}
+                <select name="category_id" class="form-select form-select-lg"  onchange="this.form.submit()">
+                    <option value="">すべてのカテゴリー</option>
+                    {% for category in categories %}
+                        <option value="{{ category.id }}" {% if params.get('category_id')|int == category.id %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </form>
+            <form method="get" action="{{ url_for('memo.index') }}" class="input-group ms-md-3 fade-in fade-delay-16">
+                {% for k, v in params.items() if k != 'q' %}
+                    <input type="hidden" name="{{ k }}" value="{{ v }}">
+                {% endfor %}
+                <span class="input-group-text"><i class="fa fa-search me-2"></i>検索</span>
                 <div class="form-floating">
-                    <input type="text" name="q" placeholder="タイトル・本文を検索" value="{{ q }}" class="form-control" id="floatingInputGroup1">
+                    <input type="text" name="q" placeholder="タイトル・本文を検索" value="{{ params.get('q','') }}" class="form-control" id="floatingInputGroup1">
                     <label for="floatingInputGroup1">検索ワード</label>
                 </div>
                 <button class="btn btn-outline-secondary" type="submit">探す</button>
             </form>
-            <button class="btn btn-secondary btn-lg d-md-none mt-3 mb-2 fade-in fade-delay-20 w-100" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas"><i class="fa fa-bars"></i> メニュー</button>
+            <button class="btn btn-secondary btn-lg d-md-none mt-3 mb-2 fade-in fade-delay-20 w-100" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas"><i class="fa fa-bars me-2"></i>メニュー</button>
         </div>
     </div>
 {% endblock title %}
 {% block content %}
+
     {% if memos == [] %}
         <div class="d-flex justify-content-center align-items-center h-50">
             <div class="alert alert-secondary fade-in fade-delay-3 mt-5 fs-3 p-4 text-center">
@@ -53,6 +78,7 @@
             </div>
         </div>
     {% else %}
+        {# PC用一覧テーブル #}
         <div class="table-responsive">
             <table class="table table-striped table-hover table-sm admin-table d-none d-md-table">
                 <thead>
@@ -74,16 +100,18 @@
                         <tr style="cursor:pointer" class="clickable-row fade-in fade-delay-{{ loop.index * 2 }} text-decoration-none text-body-secondary" data-href="{{ url_for('public.detail', memo_id=row.memo.id) }}">
                             <td>{{ memo.id }}</td>
                             <td style="text-align:left">
-                                <div class="category_tag mb-1">
-                                    {% for category in memo.categories %}
-                                        <span class="badge rounded-pill" style="background-color: {{ category.color }}">{{ category.name }}</span>
-                                    {% endfor %}
+                                <div class="d-flex flex-column">
+                                    <div class="category_tag mb-2">
+                                        {% for category in memo.categories %}
+                                            <span class="badge rounded-pill" style="background-color: {{ category.color }}">{{ category.name }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    <h6 class="font-bold fs-4">{{ memo.marked_title | safe }}</h6>
                                 </div>
-                                <h6 class="font-bold fs-4">{{ memo.marked_title | safe }}</h6>
                             </td>
                             <td class="w-25" style="text-align:left;line-height:1.4;font-size:1.1rem;">{{ memo.content | truncate(120, False, '...') }}</td>
                             <td>
-                                <small><i class="fa fa-gratipay" style="color:#603"></i> {{ like_count }}いいね</small>
+                                <small><i class="fa fa-gratipay me-2" style="color:#603"></i>{{ like_count }}いいね</small>
                             </td>
                             <td>
                                 {% if memo.image_filename %}
@@ -101,62 +129,79 @@
                             </td>
                             <td>
                                 <a class="btn btn-outline-secondary action-btn"
-                                    href="{{ url_for('memo.update', memo_id=memo.id) }}"><i class="fa fa-pencil"></i>編集</a>
+                                    href="{{ url_for('memo.update', memo_id=memo.id) }}"><i class="fa fa-pencil me-1"></i>編集</a>
                             </td>
                             <td>
                                 <a class="btn btn-outline-secondary action-btn"
-                                    href="{{ url_for('memo.delete', memo_id=memo.id) }}"><i class="fa fa-trash-o"></i>削除</a>
+                                    href="{{ url_for('memo.delete', memo_id=memo.id) }}"><i class="fa fa-trash-o me-1"></i>削除</a>
                             </td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+        {# スマホ用一覧グリッド #}
         <div class="d-md-none">
             {% for row in memos %}
                 {% set memo = row.memo %}
                 {% set like_count = row.like_count %}
                 <div class="border rounded p-2 mb-3 shadow-sm position-relative fade-in fade-delay-{{ loop.index * 2 }} text-decoration-none text-body-secondary">
                     <a href="{{ url_for('public.detail', memo_id=row.memo.id) }}" class="stretched-link"></a>
-                    <div class="d-grid gap-2" style="grid-template-columns: 1fr 3fr 3fr 3fr 3fr;grid-template-rows: 2fr 2fr 1fr 1fr;">
-                        <div style="grid-row: span 1;" class="d-flex align-items-center border-end pe-2">{{ memo.id }}</div>
-                        <div class="fw-bold fs-4 d-flex align-items-center" style="grid-column: span 12;grid-row: span 1;">
+                    <div class="d-grid gap-2" style="grid-template-columns: repeat(16, 1fr);">
+                        <div style="grid-column: span 1;" class="d-flex align-items-center border-end pe-2">{{ memo.id }}</div>
+                        <div class="fw-bold fs-4 d-flex align-items-center" style="grid-column: span 15;">
                             <div class="category_tag mb-1">
-                                <span class="badge rounded-pill">API</span>
-                                <span class="badge rounded-pill">Package</span>
-                                <span class="badge rounded-pill">Auth</span>
+                                {% for category in memo.categories %}
+                                    <span class="badge rounded-pill" style="background-color: {{ category.color }}">{{ category.name }}</span>
+                                {% endfor %}
                             </div>
                             {{ memo.marked_title | safe }}
                         </div>
-                        <div style="grid-column: span 13;grid-row: span 1;">{{ memo.marked_content | safe }}</div>
-                        <div style="grid-column: span 3;grid-row: span 2;">
+                        <div style="grid-column: 1 / -1;">{{ memo.marked_content | truncate(200, False, '...') }}</div>
+                        <div style="grid-column: span 4;">
                             {% if memo.image_filename %}
                                 <div class="d-flex justify-content-center align-items-center">
                                     <img src="{{ url_for('static', filename='images/memo/' ~ memo.image_filename) }}" class="admin-img rounded-3" width="" height="" alt="記事画像">
                                 </div>
                             {% endif %}
                         </div>
-                        <div class="pt-3 border-top" style="grid-column: span 10;font-size:15px">
+                        <div class="pt-3 border-top" style="grid-column: span 12;font-size:15px">
                             <i class="fa fa-calendar-o"></i>
                             {{ memo.created_at.strftime("%Y年%m月%d日") }}
                             {{ memo.created_at.strftime("%H時%M分%S秒") }}
                             ({{ memo.weekday_ja }})
                         </div>
-                        <div style="grid-column: span 4;border-top: dotted 1px #666" class="pt-2"><small><i class="fa fa-gratipay" style="color:#603"></i> {{ like_count }} いいね</small></div>
-                        <div style="grid-column: span 3"><a class="btn btn-outline-secondary action-btn w-100 w-auto text-nowrap position-relative z-1" href="{{ url_for('memo.update', memo_id=memo.id) }}"><i class="fa fa-pencil"></i>編集</a></div>
-                        <div style="grid-column: span 3"><a class="btn btn-outline-secondary action-btn w-100 w-auto text-nowrap position-relative z-1" href="{{ url_for('memo.delete', memo_id=memo.id) }}"><i class="fa fa-trash-o"></i>削除</a></div>
+                        <div style="grid-column: span 4;border-top: dotted 1px #666" class="pt-2"><small><i class="fa fa-gratipay" style="color:#603 me-2"></i>{{ like_count }} いいね</small></div>
+                        <div style="grid-column: span 4;"><a class="btn btn-outline-secondary action-btn w-100 w-auto text-nowrap position-relative z-1" href="{{ url_for('memo.update', memo_id=memo.id) }}"><i class="fa fa-pencil"></i>編集</a></div>
+                        <div style="grid-column: span 4;"><a class="btn btn-outline-secondary action-btn w-100 w-auto text-nowrap position-relative z-1" href="{{ url_for('memo.delete', memo_id=memo.id) }}"><i class="fa fa-trash-o"></i>削除</a></div>
                     </div>
                 </div>
             {% endfor %}
         </div>
-        {% if is_pagenate %}
+        {% if is_paginate %}
             <nav aria-label="Page navigation" class="mt-3 mb-5 fade-in fade-delay-16">
                 <ul class="pagination justify-content-center pagination-secondary">
-                    <li class="page-item {% if page <= 1 %}disabled{% endif %}"><a class="page-link" href="{{ url_for('memo.index', page=page-1, q=q, order=order, likes=likes) }}"><i class="fa fa-arrow-left"></i></a></li>
-                    {% for p in range(1, pages + 1) %}
-                        <li class="page-item {% if p == page %}active{% endif %}"><a class="page-link" href="{{ url_for('memo.index', page=p, q=q, order=order, likes=likes) }}">{{ p }}</a></li>
+                    <li class="page-item {% if page <= 1 %}disabled{% endif %}">
+                        {% set p = params.copy() %}
+                        {% set _ = p.update({'page': page - 1}) %}
+                        <a class="page-link" href="{{ url_for('memo.index', **p) }}">
+                            <i class="fa fa-arrow-left"></i>
+                        </a>
+                    </li>
+                    {% for pnum in range(1, pages + 1) %}
+                        {% set p = params.copy() %}
+                        {% set _ = p.update({'page': pnum}) %}
+                        <li class="page-item {% if pnum == page %}active{% endif %}">
+                            <a class="page-link" href="{{ url_for('memo.index', **p) }}">{{ pnum }}</a>
+                        </li>
                     {% endfor %}
-                    <li class="page-item {% if page >= pages %}disabled{% endif %}"><a class="page-link" href="{{ url_for('memo.index', page=page+1, q=q, order=order, likes=likes) }}"><i class="fa fa-arrow-right"></i></a></li>
+                    <li class="page-item {% if page >= pages %}disabled{% endif %}">
+                        {% set p = params.copy() %}
+                        {% set _ = p.update({'page': page + 1}) %}
+                        <a class="page-link" href="{{ url_for('memo.index', **p) }}">
+                            <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </li>
                 </ul>
             </nav>
         {% endif %}

@@ -207,19 +207,17 @@ img.change-mode {
     filter: grayscale(100%);
 }
 
-/* ダークモード専用 */
 [data-bs-theme="dark"] img.change-mode {
     background-color: #212529;
     mix-blend-mode: color-dodge;
 }
 
-/* ライトモード専用 */
 [data-bs-theme="light"] img.change-mode {
     mix-blend-mode: multiply;
     background-color: #f8f9fa;
 }
 
-/* 共通：用語ハイライト */
+/* 用語ハイライト */
 code {
     color: palevioletred;
 }
@@ -228,8 +226,21 @@ code {
 mark {
     padding: 3px 6px;
     margin: 0 4px;
-    border-radius: 3px;
+    border-radius: 5px;
+    border: 1px solid #446;
 }
+
+[data-bs-theme="dark"] mark {
+    color: #eeb;
+    background-color: #212529;
+    mix-blend-mode: color-dodge;
+}
+
+[data-bs-theme="light"] mark {
+    mix-blend-mode: multiply;
+    background-color: #f8f9fa;
+}
+
 
 /* カテゴリータグ */
 .category_tag span.badge {
@@ -299,7 +310,7 @@ mark {
 
 /* キービジュアル */
 .key_visual {
-    background: url("../images/fixed/keyvisual.jpg") 0 0 / cover no-repeat;
+    background: url("../images/fixed/keyvisual.jpg") center center / cover no-repeat;
     filter: grayscale(80%);
     height: 300px;
 }

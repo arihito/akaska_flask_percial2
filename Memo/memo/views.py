@@ -22,55 +22,52 @@ def allowed_file(filename):
 @memo_bp.route('/')
 @login_required
 def index():
+    print(f'================================{dict(request.args)}')
     WEEKDAYS_JA = ['月', '火', '水', '木', '金', '土', '日']
     per_page = 10
     page = request.args.get('page', 1, type=int)
     q = request.args.get('q', '').strip()
-    base_query = (
-        db.session.query(Memo, func.count(Favorite.id).label("like_count"))
-            .outerjoin(Favorite, Memo.id == Favorite.memo_id)
-            .filter(Memo.user_id == current_user.id)
-    )
+    categories = Category.query.order_by(Category.name).all()
+    category_id = request.args.get('category_id', type=int)
+    params = request.args.to_dict()
+    # ---- 「base_query」条件の上積み ---- 
+    base_query = (db.session.query(Memo, func.count(Favorite.id).label("like_count")).outerjoin(Favorite, Memo.id == Favorite.memo_id).filter(Memo.user_id == current_user.id))
     # ---- 総件数（ページ数算出用）----
     total = base_query.group_by(Memo.id).count()
     pages = math.ceil(total / per_page)
     offset = (page - 1) * per_page
-    is_paginate = total > per_page
+    is_paginate = pages > 1
     # ---- 検索条件 ----
     if q:
         like_expr = f"%{q}%"
-        base_query = base_query.filter(
-            or_(
-                Memo.title.ilike(like_expr),
-                Memo.content.ilike(like_expr)
-            )
-        )
+        base_query = base_query.filter(or_(Memo.title.ilike(like_expr),Memo.content.ilike(like_expr)))
+    # ---- カテゴリー条件 ----
+    if category_id:
+        base_query = (base_query.join(Memo.categories).filter(Category.id == category_id))
+
     order = request.args.get('order', 'desc')   # 日付用
     likes = request.args.get('likes', None)     # いいね用（優先）
-    # ---- 並び順の決定 ----
+    # ---- いいね順の決定 ----
     if likes == 'asc':
         order_by_clause = asc(func.count(Favorite.id))
     elif likes == 'desc':
         order_by_clause = desc(func.count(Favorite.id))
     else:
-        # likes指定がない場合は日付順
+        # ---- いいね順がない場合は日付順 ---- 
         order_by_clause = asc(Memo.created_at) if order == 'asc' else desc(Memo.created_at)
-    raw_memos = (
-        db.session.query(Memo, func.count(Favorite.id).label("like_count"))
-            .outerjoin(Favorite, Memo.id == Favorite.memo_id)
-            .filter(Memo.user_id == current_user.id)
-            .group_by(Memo.id)
-            .order_by(order_by_clause)
-            .limit(per_page)
-            .offset(offset)
-            .all()
-    )
+    #  ---- 「raw_querey」表示用の確定データ取得 ---- 
+    raw_query = (
+    db.session.query(Memo, func.count(Favorite.id).label("like_count")).outerjoin(Favorite, Memo.id == Favorite.memo_id).filter(Memo.user_id == current_user.id))
+    # ---- カテゴリー条件 ----
+    if category_id:
+        raw_query = (raw_query.join(Memo.categories).filter(Category.id == category_id))
+    raw_memos = (raw_query.group_by(Memo.id).order_by(order_by_clause).limit(per_page).offset(offset).all())
     memos = []
     for memo, like_count in raw_memos:
         memo.weekday_ja = WEEKDAYS_JA[memo.created_at.weekday()]
         # ---- 検索ワードのマーキング処理 ----
         if q:
-            safe_title = escape(memo.title)         # タイトルをMarkup型をサニタイズ
+            safe_title = escape(memo.title)         # タイトルをMarkup型にサニタイズ
             safe_q = escape(q)                      # 検索ワードもサニタイズ
             marked = safe_title.replace(
                 safe_q,
@@ -98,8 +95,9 @@ def index():
         memos=memos,
         top5=top5,
         user=current_user,
-        q=q,
+        categories=categories,
         is_paginate=is_paginate,
+        params=params,
         page=page,
         pages=pages,
         total=total
