@@ -11,19 +11,14 @@
                 <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
                 {{ render_field(form.content, wrapper_class="fade-in fade-delay-6") }}
                 <script>
-                const easyMDE = new EasyMDE({
-                    element: document.getElementById("content"),
-                    spellChecker: false,
-                    autofocus: true,
-                    placeholder: "Markdownで本文を入力してください"
-                });
+                const easyMDE = new EasyMDE({element: document.getElementById("content"), spellChecker: false, autofocus: true, placeholder: "Markdownで本文を入力してください"});
                 </script>
                 {% set selected_category_ids = [] %}
                 {% include "memo/_categories.j2" with context %}
                 {{ render_field(form.image, wrapper_class="fade-in fade-delay-9") }}
                 <div class="d-flex g-3 mt-4">
-                    {{ form.submit(class="btn btn-secondary fade-in fade-delay-12 w-100") }}
-                    <a class="btn btn-outline-secondary fade-in fade-delay-15 ms-3" style="width:40%" href="{{ url_for('memo.index') }}"><i class="fa fa-reply"></i>一覧ページへ戻る</a>
+                    {{ form.submit(class="btn btn-secondary py-3 fade-in fade-delay-12 w-100") }}
+                    <a class="btn btn-outline-secondary py-3 fade-in fade-delay-15 ms-3" style="width:40%" href="{{ url_for('memo.index') }}"><i class="fa fa-reply"></i>一覧ページへ戻る</a>
                 </div>
             </form>
         </div>

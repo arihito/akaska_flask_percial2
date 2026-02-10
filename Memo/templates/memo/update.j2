@@ -26,16 +26,12 @@
                 <div class="d-flex justify-content-between">
                     {{ render_field(form.image, wrapper_class="fade-in fade-delay-9") }}
                     {% if memo.image_filename %}
-                        <img src="{{ url_for('static', filename='images/memo/' ~ memo.image_filename) }}"
-                        class="image-fluid rounded"
-                        width=""
-                        height="58"
-                        alt="記事画像">
+                        <img src="{{ url_for('static', filename='images/memo/' ~ memo.image_filename) }}" class="image-fluid rounded change-mode" width="" height="58" alt="記事画像">
                     {% endif %}
                 </div>
                 <div class="d-flex g-3 mt-4">
-                    {{ form.submit(class="btn btn-secondary fade-in fade-delay-12 w-100") }}
-                    <a class="btn btn-outline-secondary fade-in fade-delay-15 ms-3" style="width:40%" href="{{ url_for('memo.index') }}"><i class="fa fa-reply"></i>一覧ページへ戻る</a>
+                    {{ form.submit(class="btn btn-secondary py-3 fade-in fade-delay-12 w-100") }}
+                    <a class="btn btn-outline-secondary py-3 fade-in fade-delay-15 ms-3" style="width:40%" href="{{ url_for('memo.index') }}"><i class="fa fa-reply"></i>一覧ページへ戻る</a>
                 </div>
             </form>
         </div>

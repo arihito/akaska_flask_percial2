@@ -9,7 +9,7 @@
                         <div class="col-md-8">
                             <div class="card-body p-4">
                                 <h3 class="pb-4 mb-4 fst-italic border-bottom">
-                                    <i class="fa fa-calendar-o"></i>今週のオススメ記事
+                                    <i class="fa fa-calendar-o me-2"></i>今週のオススメ記事
                                 </h3>
                                 <div class="category_tag mb-2">
                                     {% for category in top1.memo.categories %}
@@ -17,10 +17,10 @@
                                     {% endfor %}
                                 </div>
                                 {% if top1.memo.image_filename %}
-                                    <div class="mt-4 mb-3 d-md-none"><img style="height:240px;object-fit:cover;" src="{{ url_for('static', filename='images/memo/' ~ top1.memo.image_filename) }}" class="img-fluid rounded" width="" height="" alt="記事画像"></div>
+                                    <div class="mt-4 mb-3 d-md-none"><img style="height:240px;object-fit:cover;" src="{{ url_for('static', filename='images/memo/' ~ top1.memo.image_filename) }}" class="img-fluid rounded change-mode" width="" height="" alt="記事画像"></div>
                                 {% endif %}
                                 <h2 class="card-title display-6 link-body-emphasis mb-1"><a class="text-body-secondary text-decoration-none" href="{{ url_for('public.detail', memo_id=top1.memo.id) }}">{{ top1.memo.title }}</a></h2>
-                                <p class="blog-post-meta">
+                                <p class="mb-2 text-body-secondary">
                                     <i class="fa fa-calendar-o"></i> {{ top1.memo.created_at.strftime("%Y年%m月%d日") }} by {{ top1.memo.user.username }}<i class="fa fa-gratipay ms-3" style="color:#603"></i>{{ top1.like_count }}いいね
                                 </p>
                                 <p class="card-text">{{ top1.memo.content | truncate(200, False, '...') }}</p>
@@ -28,7 +28,7 @@
                         </div>
                         <div class="col-md-4 d-none d-md-block">
                             <div class="h-100">
-                                <a href="{{ url_for('public.detail', memo_id=top1.memo.id) }}"><img class="w-100 h-100 rounded-end" src="{{ url_for('static', filename='images/memo/' ~ top1.memo.image_filename) }}" width="100" height="" alt="記事画像" style="object-fit: cover"></a>
+                                <a href="{{ url_for('public.detail', memo_id=top1.memo.id) }}"><img class="w-100 h-100 rounded-end change-mode" src="{{ url_for('static', filename='images/memo/' ~ top1.memo.image_filename) }}" width="100" height="" alt="記事画像" style="object-fit: cover"></a>
                             </div>
                         </div>
                     </div>
@@ -43,7 +43,7 @@
                             <div class="memo-img-wrap">
                                 <a href="{{ url_for('public.detail', memo_id=row.memo.id) }}"
                                     class="text-decoration-none">
-                                    <img src="{{ url_for('static', filename='images/memo/' ~ memo.image_filename) }}" alt="記事画像" width="" height="">
+                                    <img class="change-mode" src="{{ url_for('static', filename='images/memo/' ~ memo.image_filename) }}" alt="記事画像" width="" height="">
                                 </a>
                             </div>
                             <div class="col pt-2 px-4 pb-3 d-flex flex-column position-static">
@@ -71,7 +71,7 @@
                                     {% elif current_user.is_authenticated and memo.user_id == current_user.id %}
                                         <small class="ms-2"><i class="fa fa-heart" style="color:#603"></i>{{ like_count }}いいね (<i class="fa fa-address-card me-1"></i>自身の記事)</small>
                                     {% else %}
-                                        <a class="text-body-secondary ms-2" href="{{ url_for('auth.login') }}"><i class="fa fa-heart" style="color:#603"></i>{{ like_count }}いいね(ログイン後にクリック)</a>
+                                        <a class="text-body-secondary ms-2" href="{{ url_for('auth.login') }}"><i class="fa fa-heart" style="color:#603"></i>{{ like_count }}いいね (まずはログイン!)</a>
                                     {% endif %}
                                 </div>
                                 <p class="card-text mb-auto">{{ memo.content | truncate(150, False, '...') }}</p>

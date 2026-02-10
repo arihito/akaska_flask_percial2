@@ -57,14 +57,14 @@
             <table class="table table-striped table-hover table-sm admin-table d-none d-md-table">
                 <thead>
                     <tr>
-                        <th class="fade-in fade-delay-1">番号</th>
-                        <th class="fade-in fade-delay-3">見出し</th>
-                        <th class="fade-in fade-delay-5">本文</th>
-                        <th class="fade-in fade-delay-7">いいね</th>
-                        <th class="fade-in fade-delay-9">画像</th>
-                        <th class="fade-in fade-delay-11">日時</th>
-                        <th class="fade-in fade-delay-13">編集</th>
-                        <th class="fade-in fade-delay-15">削除</th>
+                        <th class="pb-3 fade-in fade-delay-1">番号</th>
+                        <th class="pb-3 fade-in fade-delay-3">見出し</th>
+                        <th class="pb-3 fade-in fade-delay-5">本文</th>
+                        <th class="pb-3 fade-in fade-delay-7">いいね</th>
+                        <th class="pb-3 fade-in fade-delay-9">画像</th>
+                        <th class="pb-3 fade-in fade-delay-11">日時</th>
+                        <th class="pb-3 fade-in fade-delay-13">編集</th>
+                        <th class="pb-3 fade-in fade-delay-15">削除</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -88,7 +88,7 @@
                             <td>
                                 {% if memo.image_filename %}
                                     <div class="d-flex justify-content-center align-items-center">
-                                        <img src="{{ url_for('static', filename='images/memo/' ~ memo.image_filename) }}" class="admin-img rounded-3" width="" height="" alt="記事画像">
+                                        <img src="{{ url_for('static', filename='images/memo/' ~ memo.image_filename) }}" class="admin-img rounded-3 change-mode" width="" height="" alt="記事画像">
                                     </div>
                                 {% endif %}
                             </td>

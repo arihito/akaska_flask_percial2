@@ -9,7 +9,7 @@
                 <li class="fade-in fade-delay-{{ loop.index }}">
                     <a class="d-flex flex-md-row gap-3 align-items-start align-items-center py-3 link-body-emphasis text-decoration-none border-top"
                         href="{{ url_for('public.detail', memo_id=row.memo.id) }}">
-                        <img class="rounded"
+                        <img class="rounded change-mode"
                             src="{{ url_for('static', filename='images/memo/' ~ row.memo.image_filename) }}"
                             width="96"
                             height="96"
