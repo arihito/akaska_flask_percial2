@@ -11,23 +11,16 @@
                                 <h3 class="pb-4 mb-4 fst-italic border-bottom">
                                     <i class="fa fa-calendar-o"></i>今週のオススメ記事
                                 </h3>
+                                <div class="category_tag mb-2">
+                                    {% for category in top1.memo.categories %}
+                                        <span class="badge rounded-pill" style="background-color: {{ category.color }}">{{ category.name }}</span>
+                                    {% endfor %}
+                                </div>
                                 {% if top1.memo.image_filename %}
                                     <div class="mt-4 mb-3 d-md-none"><img style="height:240px;object-fit:cover;" src="{{ url_for('static', filename='images/memo/' ~ top1.memo.image_filename) }}" class="img-fluid rounded" width="" height="" alt="記事画像"></div>
                                 {% endif %}
                                 <h2 class="card-title display-6 link-body-emphasis mb-1"><a class="text-body-secondary text-decoration-none" href="{{ url_for('public.detail', memo_id=top1.memo.id) }}">{{ top1.memo.title }}</a></h2>
                                 <p class="blog-post-meta">
-                                    <span class="category_tag me-2">
-                                        <span class="badge rounded-pill">API</span>
-                                        <span class="badge rounded-pill">Package</span>
-                                        <span class="badge rounded-pill">Auth</span>
-                                    </span>
-                                    <div class="article-categories">
-                                        {% for cat in article.categories %}
-                                            <span class="badge" style="background-color: {{ cat.color }}">
-                                                {{ cat.name }}
-                                            </span>
-                                        {% endfor %}
-                                    </div>
                                     <i class="fa fa-calendar-o"></i> {{ top1.memo.created_at.strftime("%Y年%m月%d日") }} by {{ top1.memo.user.username }}<i class="fa fa-gratipay ms-3" style="color:#603"></i>{{ top1.like_count }}いいね
                                 </p>
                                 <p class="card-text">{{ top1.memo.content | truncate(200, False, '...') }}</p>
@@ -50,18 +43,15 @@
                             <div class="memo-img-wrap">
                                 <a href="{{ url_for('public.detail', memo_id=row.memo.id) }}"
                                     class="text-decoration-none">
-                                    <img src="{{ url_for('static', filename='images/memo/' ~ memo.image_filename) }}"
-                                        alt="記事画像"
-                                        width=""
-                                        height="">
+                                    <img src="{{ url_for('static', filename='images/memo/' ~ memo.image_filename) }}" alt="記事画像" width="" height="">
                                 </a>
                             </div>
                             <div class="col pt-2 px-4 pb-3 d-flex flex-column position-static">
-                                <span class="category_tag mb-2">
-                                    <span class="badge rounded-pill">API</span>
-                                    <span class="badge rounded-pill">Package</span>
-                                    <span class="badge rounded-pill">Auth</span>
-                                </span>
+                                <div class="category_tag mb-2">
+                                    {% for category in memo.categories %}
+                                        <span class="badge rounded-pill" style="background-color: {{ category.color }}">{{ category.name }}</span>
+                                    {% endfor %}
+                                </div>
                                 <h3 class="mb-0"><a class="text-body-secondary text-decoration-none" href="{{ url_for('public.detail', memo_id=row.memo.id) }}">{{ memo.title }}</a></h3>
                                 <div class="mb-1 text-body-secondary">
                                     <i class="fa fa-calendar-o"></i> {{ memo.created_at.strftime("%Y年%m月%d日") }}

@@ -1,0 +1,27 @@
+<div class="mt-2 mb-4">
+  <label class="form-label">カテゴリー（最大3つ）</label>
+  <div id="category-wrapper" class="d-flex flex-wrap gap-2">
+    {% for category in categories %}
+      {% set checked = category.id in selected_category_ids %}
+      <button
+        type="button"
+        class="badge rounded-pill category-badge {{ 'selected' if checked }}"
+        style="background-color: {{ category.color }};"
+        data-category-id="{{ category.id }}"
+        data-checked="{{ '1' if checked else '0' }}"
+      >
+        {{ category.name }}
+      </button>
+      <input
+        type="checkbox"
+        name="categories"
+        value="{{ category.id }}"
+        class="d-none category-checkbox"
+        {% if checked %}checked{% endif %}
+      >
+    {% endfor %}
+  </div>
+  <div id="category-error" class="alert alert-secondary text-danger small mt-4 d-none">
+    <i class="fa fa-exclamation-triangle me-1"></i>3個以上は選択できません。
+  </div>
+</div>

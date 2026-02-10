@@ -75,9 +75,9 @@
                             <td>{{ memo.id }}</td>
                             <td style="text-align:left">
                                 <div class="category_tag mb-1">
-                                    <span class="badge rounded-pill">API</span>
-                                    <span class="badge rounded-pill">Package</span>
-                                    <span class="badge rounded-pill">Auth</span>
+                                    {% for category in memo.categories %}
+                                        <span class="badge rounded-pill" style="background-color: {{ category.color }}">{{ category.name }}</span>
+                                    {% endfor %}
                                 </div>
                                 <h6 class="font-bold fs-4">{{ memo.marked_title | safe }}</h6>
                             </td>

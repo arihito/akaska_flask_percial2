@@ -16,10 +16,10 @@
                             alt="記事画像"
                             style="object-fit: cover">
                         <div class="col-8">
-                            <div class="category_tag mb-1">
-                                <span class="badge rounded-pill">API</span>
-                                <span class="badge rounded-pill">Package</span>
-                                <span class="badge rounded-pill">Auth</span>
+                            <div class="category_tag mb-2">
+                                {% for category in row.memo.categories %}
+                                    <span class="badge rounded-pill" style="background-color: {{ category.color }}">{{ category.name }}</span>
+                                {% endfor %}
                             </div>
                             <h6 class="mb-0" style="line-height:1.6">{{ row.memo.title }}</h6>
                             <small class="text-body-secondary"><i class="fa fa-calendar-o"></i> {{ row.memo.created_at.strftime("%Y年%m月%d日") }}</small>

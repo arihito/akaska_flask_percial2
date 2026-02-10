@@ -21,6 +21,8 @@
                     placeholder: "Markdownで本文を入力してください"
                 });
                 </script>
+                {% set selected_category_ids = memo.categories | map(attribute="id") | list %}
+                {% include "memo/_categories.j2" with context %}
                 <div class="d-flex justify-content-between">
                     {{ render_field(form.image, wrapper_class="fade-in fade-delay-9") }}
                     {% if memo.image_filename %}

@@ -1,7 +1,7 @@
 import os
 import math
-from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
-from models import db, Memo, Favorite
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, abort
+from models import db, Memo, Favorite, Category
 from flask_login import login_required, current_user
 from forms import MemoForm
 from sqlalchemy import func, asc, desc, or_
@@ -97,7 +97,7 @@ def index():
         'memo/index.j2',
         memos=memos,
         top5=top5,
-        user=current_user, 
+        user=current_user,
         q=q,
         is_paginate=is_paginate,
         page=page,
@@ -109,14 +109,18 @@ def index():
 @login_required
 def create():
     form = MemoForm()
+    categories = Category.query.order_by(Category.name).all()
     if form.validate_on_submit():
+        # ファイルアップロード
         image_file = form.image.data
         filename = "nofile.jpg"
         if image_file and allowed_file(image_file.filename):
             original = secure_filename(image_file.filename)
+            # 重複禁止
             ext = original.rsplit(".", 1)[1].lower()
             filename = f"{uuid.uuid4().hex}.{ext}"
             upload_folder = current_app.config["UPLOAD_FOLDERS"]["memo"]
+            # 目的に応じたフォルダーパスに振り分け
             save_path = os.path.join(upload_folder, filename)
             image_file.save(save_path)
         memo = Memo(
@@ -125,29 +129,48 @@ def create():
             user_id=current_user.id,
             image_filename=filename
         )
+        # カテゴリー取得
+        selected_ids = request.form.getlist("categories")
+        if len(selected_ids) > 3:
+            abort(400)
+        memo.categories = Category.query.filter(Category.id.in_(selected_ids)).all()
         db.session.add(memo)
         db.session.commit()
-        flash('登録しました')
+        flash('登録しました', 'secondary')
         return redirect(url_for('memo.index'))
-    return render_template('memo/create.j2', form=form)
+    return render_template('memo/create.j2', categories=categories, form=form)
 
 @memo_bp.route('/update/<int:memo_id>', methods=['GET', 'POST'])
 @login_required
 def update(memo_id):
     memo = Memo.query.filter_by(id=memo_id, user_id=current_user.id).first_or_404()
     form = MemoForm(obj=memo)  # 既存データをフォームに流し込む
+    categories = Category.query.order_by(Category.name).all()
+    selected_category_ids = [c.id for c in memo.categories]
     if form.validate_on_submit():
         memo.title = request.form['title']
         memo.content = request.form['content']
         image_file = form.image.data
+        # ファイル更新
         if image_file and allowed_file(image_file.filename):
             original = secure_filename(image_file.filename)
             filename = save_upload(original, 'memo')
             memo.image_filename = filename
+        # カテゴリー更新
+        selected_ids = request.form.getlist("categories")
+        if len(selected_ids) > 3:
+            abort(400)
+        memo.categories = Category.query.filter(Category.id.in_(selected_ids)).all()
         db.session.commit()
-        flash('変更しました')
+        flash('変更しました', 'secondary')
         return redirect(url_for('memo.index'))
-    return render_template('memo/update.j2', memo=memo, form=form)
+    return render_template(
+        'memo/update.j2',
+        memo=memo,
+        categories=categories,
+        selected_category_ids=selected_category_ids,
+        form=form
+    )
 
 @memo_bp.route('/delete/<int:memo_id>')
 @login_required

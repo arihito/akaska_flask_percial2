@@ -1,5 +1,7 @@
 (() => {
-    'use strict';
+  'use strict';
+  
+  console.log("🔥 main.js loaded");
 
     // カラーモード
     const getStoredTheme = () => localStorage.getItem('theme')
@@ -60,7 +62,8 @@
     })
 
     // ページが読み込まれた実行
-    window.addEventListener('DOMContentLoaded', () => {
+  window.addEventListener('DOMContentLoaded', () => {
+      console.log('🔥🔥 DOMContentLoaded')
 
         // カラーモード
         showActiveTheme(getPreferredTheme())
@@ -132,14 +135,14 @@
         const pass_area = document.getElementById('password-area');
         const toggle = () => {
             if (pass_check?.checked) {
-                pass_area.classList.add('is-visible');
+                pass_area?.classList.add('is-visible');
             } else {
-                pass_area.classList.remove('is-visible');
+                pass_area?.classList.remove('is-visible');
             }
         };
         // 初期表示（バリデーションエラー対応）
         toggle();
-        pass_check.addEventListener('change', toggle);
+        pass_check?.addEventListener('change', toggle);
 
         // ユーザー削除ボタンのフェードイン表示
         const del_check = document.getElementById('deleteUserCheck');
@@ -152,6 +155,7 @@
         del_check.addEventListener('change', () => {
             del_area.classList.toggle('is-visible', del_check.checked);
         });
+
     })
 })()
 
@@ -179,11 +183,46 @@ document.getElementById('backBtn')?.addEventListener('click', e => {
     history.back();
 });
 
-// いいねアイコンクリック
-document.addEventListener("click", async function (e) {
-console.log("###################DOC CLICK#################", e.target);
+document.addEventListener("click", async (e) => {
+
+    /* ========= カテゴリ ========= */
+    const badge = e.target.closest(".category-badge");
+    if (badge) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const wrapper = document.getElementById("category-wrapper");
+        if (!wrapper || !wrapper.contains(badge)) return;
+
+        const MAX = 3;
+        const error = document.getElementById("category-error");
+        const allBadges = wrapper.querySelectorAll(".category-badge");
+        const index = Array.from(allBadges).indexOf(badge);
+        const checkboxes = wrapper.querySelectorAll(".category-checkbox");
+        const checkbox = checkboxes[index];
+
+        const checkedCount =
+            wrapper.querySelectorAll(".category-checkbox:checked").length;
+
+        if (!checkbox.checked && checkedCount >= MAX) {
+            error?.classList.remove("d-none");
+            return;
+        }
+
+        error?.classList.add("d-none");
+        checkbox.checked = !checkbox.checked;
+        badge.classList.toggle("selected", checkbox.checked);
+        return; // ★ ここで終了
+    }
+
+    /* ========= いいね ========= */
     const btn = e.target.closest(".btn-like");
     if (!btn) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    console.log("LIKE CLICK", btn);
 
     const container = btn.closest(".like-area");
     const memoId = container.dataset.memoId;
@@ -195,23 +234,24 @@ console.log("###################DOC CLICK#################", e.target);
 
     const res = await fetch(url, {
         method: "POST",
-        headers: {
-            "X-Requested-With": "XMLHttpRequest"
-        }
+        headers: { "X-Requested-With": "XMLHttpRequest" }
     });
 
     if (!res.ok) return;
 
     const data = await res.json();
 
-    // UI 更新
     btn.classList.toggle("active", data.liked);
     btn.dataset.action = data.liked ? "remove" : "add";
-    btn.innerHTML = (data.liked ? "<i class='fa fa-heart' style='color:#e06'></i>" : "<i class='fa fa-heart-o' style='color:#666'></i>")
+    btn.innerHTML =
+        (data.liked
+            ? "<i class='fa fa-heart' style='color:#e06'></i>"
+            : "<i class='fa fa-heart-o' style='color:#666'></i>")
         + ` <span class="like-count text-body-secondary">${data.like_count}いいね</span>`;
 
     animateHeart(btn);
 });
+
 
 // ハートアニメーション
 function animateHeart(btn) {

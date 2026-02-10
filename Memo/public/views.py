@@ -13,7 +13,7 @@ def markdown_to_html(text):
         text,
         extensions=["fenced_code", "tables"]
     )
-    
+
 @public_bp.route('/')
 def public_index():
     page = request.args.get('page', 1, type=int)
@@ -21,7 +21,7 @@ def public_index():
     raw_memos = pagination.items
     total_pages = pagination.pages
     memos = [{"memo": memo, "like_count": like_count} for memo, like_count in raw_memos]
-        
+
     # ---- ログインユーザーのいいね済みID ----
     favorite_memo_ids = []
     if current_user.is_authenticated:
@@ -40,19 +40,14 @@ def public_index():
     top1 = None
     if top10:
         top1 = top10[0]
-    # ---- カテゴリータブ用 ----
-    selected_ids = request.form.getlist("categories")
-    if len(selected_ids) > 3:
-        abort(400)
-    memos.categories = Category.query.filter(Category.id.in_(selected_ids)).all()
     return render_template('public/index.j2', 
         memos=memos,
         page=page,
         total_pages=total_pages, 
         favorite_memo_ids=favorite_memo_ids, 
-        top10=top10, 
+        top10=top10,
         top1=top1)
-        
+
 @public_bp.route('/detail/<int:memo_id>')
 def detail(memo_id):
     memo = Memo.query.get_or_404(memo_id)

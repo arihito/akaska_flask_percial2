@@ -18,15 +18,8 @@
                     placeholder: "Markdownで本文を入力してください"
                 });
                 </script>
-                <div class="category-select">
-                    {% for cat in categories %}
-                        <label class="category-label" style="background-color: {{ cat.color }}">
-                            <input type="checkbox" name="categories" value="{{ cat.id }}"
-                            {% if cat in article.categories %}checked{% endif %}>
-                            {{ cat.name }}
-                        </label>
-                    {% endfor %}
-                </div>
+                {% set selected_category_ids = [] %}
+                {% include "memo/_categories.j2" with context %}
                 {{ render_field(form.image, wrapper_class="fade-in fade-delay-9") }}
                 <div class="d-flex g-3 mt-4">
                     {{ form.submit(class="btn btn-secondary fade-in fade-delay-12 w-100") }}

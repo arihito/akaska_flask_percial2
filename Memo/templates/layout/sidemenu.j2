@@ -1,6 +1,6 @@
 <div class="position-sticky top-0 pt-3">
     <ul class="nav flex-column">
-        <li class="nav-item fade-in fade-in-delay-1"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'public.public_index' %}active{% endif %}" href="{{ url_for('public.public_index') }}"><i class="fa fa-wpforms"></i>共有トップ</a></li>
+        <li class="nav-item fade-in fade-in-delay-1"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'public.public_index' %}active{% endif %}" href="{{ url_for('public.public_index') }}"><i class="fa fa-wpforms"></i>トップページ</a></li>
         <hr>
         <li class="nav-item fade-in fade-in-delay-2"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'memo.index' %}active{% endif %}" href="{{ url_for('memo.index') }}"><i class="fa fa-address-card"></i>マイページ</a></li>
         <hr>
@@ -11,7 +11,7 @@
         <li class="nav-item fade-in fade-in-delay-4"><a class="nav-link text-body-secondary fs-5" href="" disabled><i class="fa fa-cog"></i>管理者専用</a></li>
     </ul>
     <hr>
-    <h6 class="text-body-secondary fs-5 ms-4 ps-2 mt-4 pt-2 mb-3 font-bold"><i class="fa fa-file-code-o"></i> 開発管理</h6>
+    <h6 class="text-body-secondary fs-5 ms-4 ps-2 mt-4 pt-2 mb-3 font-bold"><i class="fa fa-file-code-o"></i> 開発関連資料</h6>
     <div class="accordion" id="accordionPanelsStayOpenExample">
         <div class="accordion-item">
             <h2 class="accordion-header">
@@ -45,7 +45,7 @@
         </div>
         <div class="accordion-item">
             <h2 class="accordion-header">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree"><i class="fa fa-book"></i>外部資料</button>
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree"><i class="fa fa-book"></i>利用サービスガイド</button>
             </h2>
             <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse show">
                 <div class="accordion-body">

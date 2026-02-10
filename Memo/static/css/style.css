@@ -610,35 +610,33 @@ input[type="radio"]:checked + .thumb-label .thumb-img {
     font-size: 0.7rem;
     font-family: "WDXL Lubrifont JP N", sans-serif;
     font-weight: 400;
+    border: 1px solid rgba(255, 255, 255, .1);
 }
+
 [data-bs-theme="dark"] .category_tag span.badge {
-    color: #000;
-    background-color: #555;
+    color: #ccc;
+    filter: grayscale(60%);
 }
-
 [data-bs-theme="light"] .category_tag span.badge {
-    color: #fff;
-    background-color: #333;
+    color: #999;
+    filter: invert(1) grayscale(80%);
+    opacity: .6;
 }
 
-/* カテゴリータブ */
-.category-label {
-    display: inline-flex;
-    align-items: center;
-    padding: 4px 10px;
-    border-radius: 999px;
-    font-size: 0.85rem;
-    color: #fff;
+.category-badge {
     cursor: pointer;
-    margin: 4px;
-}
-.category-label input {
-    display: none;
+    user-select: none;
+    opacity: 0.6;
+    border: 2px solid transparent;
+    transition: all 0.3s ease-in-out;
 }
 
-.badge {
-    border-radius: 999px;
-    padding: 3px 8px;
-    font-size: 0.75rem;
-    color: #fff;
+.category-badge:hover {
+    opacity: 1;
+}
+
+.category-badge.selected {
+    border-color: rgba(255,255,255,.6);
+    box-shadow: 0 0 3px rgba(255,255,255,.3);
+    opacity: 1;
 }
