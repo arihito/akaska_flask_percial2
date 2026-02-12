@@ -5,6 +5,7 @@
 @import url("https://fonts.googleapis.com/css2?family=WDXL+Lubrifont+JP+N&display=swap");
 
 /* ============== 初期値 =============== */
+/* フォントサイズ系カスタム変数 */
 /* 見出し */
 /* テーブル */
 /* ============== 共通部品 =============== */
@@ -46,8 +47,26 @@
 /* いいねボタン */
 /* ハートアニメーション */
 
-
 /* ============== 初期値 =============== */
+
+/* フォントサイズ系カスタム変数 */
+:root {
+    --fs-base: 1rem;
+    --fs-small: 0.85rem;
+    --fs-sm: 0.9rem;
+    --fs-md: 1.1rem;
+    --fs-lg: 1.2rem;
+    --fs-xl: 1.4rem;
+    --fs-2xl: 1.8rem;
+    --fs-3xl: 2rem;
+    --fs-4xl: 2.5rem;
+    --fs-h1: 2.8rem;
+    --fs-h2: 2.5rem;
+    --fs-h3: 2rem;
+    --fs-badge: 0.7rem;
+    --fs-placeholder: 1.125rem;
+    --fs-placeholder-lg: 3.5rem;
+}
 
 /* 見出し */
 h1,
@@ -56,14 +75,12 @@ h3,
 h4,
 h5,
 h6 {
-    font-family:
-        "Google Sans", "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
-        "Hiragino Sans", Meiryo, sans-serif;
+    font-family: "Google Sans", "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
 }
 
 /* テーブル */
 table.table-striped {
-    font-size: 1.2rem;
+    font-size: var(--fs-lg);
     line-height: 2;
 }
 
@@ -71,7 +88,7 @@ table.table-striped {
 
 /* カラーモードボタン　*/
 .bd-placeholder-img {
-    font-size: 1.125rem;
+    font-size: var(--fs-placeholder);
     text-anchor: middle;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -80,7 +97,7 @@ table.table-striped {
 
 @media (min-width: 768px) {
     .bd-placeholder-img-lg {
-        font-size: 3.5rem;
+        font-size: var(--fs-placeholder-lg);
     }
 }
 
@@ -176,7 +193,7 @@ table.table-striped {
 .blog-header-logo {
     padding-left: 126px;
     font-family: "Noto Serif", Meiryo, sans-serif;
-    font-size: 1.8rem;
+    font-size: var(--fs-2xl);
     letter-spacing: 0.04em;
 }
 
@@ -242,13 +259,12 @@ mark {
     background-color: #f8f9fa;
 }
 
-
 /* カテゴリータグ */
 .category_tag span.badge {
-    font-size: 0.7rem;
+    font-size: var(--fs-badge);
     font-family: "WDXL Lubrifont JP N", sans-serif;
     font-weight: 400;
-    border: 1px solid rgba(255, 255, 255, .1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 [data-bs-theme="dark"] .category_tag span.badge {
@@ -258,7 +274,7 @@ mark {
 [data-bs-theme="light"] .category_tag span.badge {
     color: #999;
     filter: invert(1) grayscale(80%);
-    opacity: .6;
+    opacity: 0.6;
 }
 
 .category-badge {
@@ -274,8 +290,8 @@ mark {
 }
 
 .category-badge.selected {
-    border-color: rgba(255,255,255,.6);
-    box-shadow: 0 0 3px rgba(255,255,255,.3);
+    border-color: rgba(255, 255, 255, 0.6);
+    box-shadow: 0 0 3px rgba(255, 255, 255, 0.3);
     opacity: 1;
 }
 
@@ -306,12 +322,12 @@ mark {
     border-color: var(--bs-secondary-border-subtle);
 }
 
-
 /* ============== トップページ =============== */
 
 /* キービジュアル */
 .key_visual {
-    background: url("../images/fixed/keyvisual.jpg") center center / cover no-repeat;
+    background: url("../images/fixed/keyvisual.jpg") center center / cover
+        no-repeat;
     filter: grayscale(80%);
     height: 300px;
 }
@@ -367,7 +383,7 @@ mark {
     right: 0;
     transform: rotate(45deg);
     color: #caa;
-    font-size: .7rem;
+    font-size: var(--fs-badge);
     font-weight: bold;
     z-index: 2;
 }
@@ -420,7 +436,6 @@ mark {
     aspect-ratio: 1 / 1;
     object-fit: cover;
 }
-
 
 /* ============== ユーザー編集 =============== */
 
@@ -487,7 +502,7 @@ input[type="radio"]:checked + .thumb-label .thumb-img {
 
 /* 固定ページ */
 .markdown-body {
-    font-size: 1.4rem;
+    font-size: var(--fs-xl);
     line-height: 2;
 }
 
@@ -520,7 +535,7 @@ pre.file-tag[data-tag]::before {
     position: absolute;
     top: 0;
     right: 1em;
-    font-size: 0.7rem;
+    font-size: var(--fs-badge);
     line-height: 1;
     padding: 0.8em 1.2em;
     color: #ccc;
@@ -538,7 +553,7 @@ pre.file-tag[data-tag]::before {
 
 /* 投稿記事詳細マークダウン */
 .public h2 {
-    font-size: 2.5rem;
+    font-size: var(--fs-4xl);
     font-weight: 300;
     margin-top: 3rem;
     background-color: #212529;
@@ -553,11 +568,11 @@ pre.file-tag[data-tag]::before {
     font-weight: normal;
     display: inline-block;
     margin-right: 0.5rem;
-    font-size: 0.9em;
+    font-size: var(--fs-3xl);
     vertical-align: middle;
 }
 .public h3 {
-    font-size: 2rem;
+    font-size: var(--fs-3xl);
     font-weight: 300;
     margin-top: 3rem;
     margin-bottom: 0.5rem;
@@ -667,7 +682,6 @@ pre.file-tag[data-tag]::before {
     }
 }
 
-
 /* いいねボタン */
 .btn-like {
     background: none;
@@ -685,11 +699,10 @@ pre.file-tag[data-tag]::before {
 /* ハートアニメーション */
 .heart-burst {
     position: absolute;
-    font-size: 1.5rem;
+    font-size: var(--fs-xl);
     animation: pop 0.6s ease forwards;
     pointer-events: none;
 }
-
 @keyframes pop {
     0% {
         transform: scale(0.2) translateY(0);
