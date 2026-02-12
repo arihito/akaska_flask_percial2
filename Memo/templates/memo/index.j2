@@ -147,33 +147,53 @@
                 {% set like_count = row.like_count %}
                 <div class="border rounded p-2 mb-3 shadow-sm position-relative fade-in fade-delay-{{ loop.index * 2 }} text-decoration-none text-body-secondary">
                     <a href="{{ url_for('public.detail', memo_id=row.memo.id) }}" class="stretched-link"></a>
-                    <div class="d-grid gap-2" style="grid-template-columns: repeat(16, 1fr);">
-                        <div style="grid-column: span 1;" class="d-flex align-items-center border-end pe-2">{{ memo.id }}</div>
-                        <div class="fw-bold fs-4 d-flex align-items-center" style="grid-column: span 15;">
-                            <div class="category_tag mb-1">
-                                {% for category in memo.categories %}
-                                    <span class="badge rounded-pill" style="background-color: {{ category.color }}">{{ category.name }}</span>
-                                {% endfor %}
+                    <div class="d-grid gap-2" style="grid-template-columns: repeat(16, 1fr);grid-auto-rows: auto;">
+                        <!-- =========================
+                              1段目：ID + (カテゴリ＋タイトル)
+                        ========================== -->
+                        <!-- ID -->
+                        <div style="grid-column: 1 / 2;" class="d-flex align-items-center border-end pe-2">{{ memo.id }}</div>
+                        <!-- カテゴリ＋タイトル（縦積み） -->
+                        <div style="grid-column: 2 / -1;" class="d-flex flex-column">
+                            <!-- カテゴリー -->
+                            <div class="category_tag mb-1">{% for category in memo.categories %}<span class="badge rounded-pill" style="background-color: {{ category.color }}">{{ category.name }}</span>{% endfor %}</div>
+                            <!-- タイトル -->
+                            <div class="fw-bold py-2 fs-5">{{ memo.marked_title | safe }}</div>
+                        </div>
+                        <!-- =========================
+                              2段目：本文
+                        ========================== -->
+                        <div style="grid-column: 1 / -1;" class="mb-2">
+                            {{ memo.marked_content | truncate(120, False, '...') }}
+                        </div>
+                        <!-- =========================
+                              3段目：画像 + 右側情報
+                        ========================== -->
+                        {% if memo.image_filename %}
+                            <!-- 画像 -->
+                            <div style="grid-column: 1 / 6;grid-row: span 2;">
+                                <img src="{{ url_for('static', filename='images/memo/' ~ memo.image_filename) }}" class="admin-img img-fluid change-mode rounded-3" alt="記事画像" width="" height="">
                             </div>
-                            {{ memo.marked_title | safe }}
+                        {% endif %}
+                        <!-- 右側情報（縦積み） -->
+                        <div style="grid-column: 6 / -1;" class="d-flex flex-column justify-content-start">
+                            <!-- 日付 -->
+                            <div class="mb-2 small">
+                                <i class="fa fa-calendar-o"></i>
+                                {{ memo.created_at.strftime("%Y年%m月%d日 %H:%M") }}
+                                ({{ memo.weekday_ja }})
+                            </div>
+                            <!-- いいね -->
+                            <div class="mb-2 small">
+                                <i class="fa fa-gratipay"></i>
+                                {{ like_count }} いいね
+                            </div>
+                            <!-- ボタン -->
+                            <div class="d-flex gap-2 mt-auto">
+                                <a class="btn btn-outline-secondary btn-sm w-50 position-relative z-1" href="{{ url_for('memo.update', memo_id=memo.id) }}">編集</a>
+                                <a class="btn btn-outline-secondary btn-sm w-50 position-relative z-1" href="{{ url_for('memo.delete', memo_id=memo.id) }}">削除</a>
+                            </div>
                         </div>
-                        <div style="grid-column: 1 / -1;">{{ memo.marked_content | truncate(200, False, '...') }}</div>
-                        <div style="grid-column: span 4;">
-                            {% if memo.image_filename %}
-                                <div class="d-flex justify-content-center align-items-center">
-                                    <img src="{{ url_for('static', filename='images/memo/' ~ memo.image_filename) }}" class="admin-img rounded-3" width="" height="" alt="記事画像">
-                                </div>
-                            {% endif %}
-                        </div>
-                        <div class="pt-3 border-top" style="grid-column: span 12;font-size:15px">
-                            <i class="fa fa-calendar-o"></i>
-                            {{ memo.created_at.strftime("%Y年%m月%d日") }}
-                            {{ memo.created_at.strftime("%H時%M分%S秒") }}
-                            ({{ memo.weekday_ja }})
-                        </div>
-                        <div style="grid-column: span 4;border-top: dotted 1px #666" class="pt-2"><small><i class="fa fa-gratipay" style="color:#603 me-2"></i>{{ like_count }} いいね</small></div>
-                        <div style="grid-column: span 4;"><a class="btn btn-outline-secondary action-btn w-100 w-auto text-nowrap position-relative z-1" href="{{ url_for('memo.update', memo_id=memo.id) }}"><i class="fa fa-pencil"></i>編集</a></div>
-                        <div style="grid-column: span 4;"><a class="btn btn-outline-secondary action-btn w-100 w-auto text-nowrap position-relative z-1" href="{{ url_for('memo.delete', memo_id=memo.id) }}"><i class="fa fa-trash-o"></i>削除</a></div>
                     </div>
                 </div>
             {% endfor %}

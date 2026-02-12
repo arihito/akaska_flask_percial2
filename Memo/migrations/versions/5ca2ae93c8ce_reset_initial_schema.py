@@ -1,8 +1,8 @@
 """reset initial schema
 
-Revision ID: 2cfb19b8de9d
+Revision ID: 5ca2ae93c8ce
 Revises: 
-Create Date: 2026-02-10 16:28:51.356430
+Create Date: 2026-02-12 13:36:44.405198
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '2cfb19b8de9d'
+revision = '5ca2ae93c8ce'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -64,8 +64,7 @@ def upgrade():
     sa.Column('category_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['category_id'], ['categories.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['memo_id'], ['memos.id'], ondelete='CASCADE'),
-    sa.PrimaryKeyConstraint('memo_id', 'category_id'),
-    info={'bind_key': None}
+    sa.PrimaryKeyConstraint('memo_id', 'category_id')
     )
     # ### end Alembic commands ###
 

@@ -67,7 +67,7 @@ CATEGORY_SEED = [
     ("Package", "#0B3F1B"),
 ]
 
-IMAGE_POOL = [f"{i:02}.jpg" for i in range(1, 13)]
+IMAGE_POOL = [f"{i:02}.jpg" for i in range(1, 22)]
 
 
 # --- ランダム日付生成関数 ---

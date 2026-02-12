@@ -22,6 +22,7 @@
 /* ============== トップページ =============== */
 /* キービジュアル */
 /* 一覧の画像の隙間調整 */
+/* カテゴリーオススメ一覧 */
 /* ============== マイページ =============== */
 /* サイドメニューのホバー演出 */
 /* メニューホバー時 */
@@ -341,6 +342,35 @@ mark {
     pointer-events: auto;
 }
 
+/* カテゴリーオススメ一覧 */
+.recommend {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.recommend::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    border-top: 50px solid #312;
+    border-left: 50px solid transparent;
+    z-index: 1;
+}
+.recommend::after {
+    content: "オススメ";
+    position: absolute;
+    top: 10px;
+    right: 0;
+    transform: rotate(45deg);
+    color: #caa;
+    font-size: .7rem;
+    font-weight: bold;
+    z-index: 2;
+}
 
 /* ============== マイページ =============== */
 

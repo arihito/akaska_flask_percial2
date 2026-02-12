@@ -99,6 +99,36 @@
                     </li>
                 </ul>
             </nav>
+            {# カテゴリー一致オススメ #}
+            {% if recommended %}
+                <div class="container my-5">
+                    <h4 class="mb-3 fade-in fade-delay-4"><i class="fa fa-share-alt me-2"></i>あなたの興味の近いオススメ記事<span class="ms-3" style="font-size:.8rem">あなたの投稿記事に付与したカテゴリーから、より多く付与された他者の記事を表示します</span></h4>
+                    <div class="row g-3">
+                        {% for memo in recommended %}
+                        <div class="col-md-4 fade-in fade-delay-{{ loop.index }}">
+                            <a style="" class="card recommend p-2 d-flex flex-md-row align-items-start align-items-center link-body-emphasis text-decoration-none" href="{{ url_for('public.detail', memo_id=memo.id) }}">
+                                <img class="rounded change-mode me-2"
+                                    src="{{ url_for('static', filename='images/memo/' ~ memo.image_filename) }}"
+                                    width="96"
+                                    height="96"
+                                    alt="記事画像"
+                                    style="object-fit: cover;">
+                                <div class="col-8">
+                                    <div class="category_tag mb-2">
+                                        {% for category in memo.categories %}
+                                            <span class="badge rounded-pill" style="background-color: {{ category.color }}">{{ category.name }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    <h6 class="mb-0" style="line-height:1.2">{{ memo.title }}</h6>
+                                    <small class="text-body-secondary"><i class="fa fa-calendar-o"></i> {{ memo.created_at.strftime("%Y年%m月%d日") }}</small>
+                                    <span class="text-body-secondary" style="font-size:0.8rem"><i class="fa fa-gratipay" style="color:#603"></i>{{ like_count }}いいね</span>
+                                </div>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
         </div>
         {% include "public/aside.j2" %}
     </div>
