@@ -317,15 +317,26 @@ WTForms            3.2.1
 <ul>
   <li>管理者(Admin)ページ作成
     <ul>
-      <li>固定ページの増減(HTMX)で非同期管理</li>
+      <li>グラフ生成[**ビルドアニメーション**](https://codepen.io/nickspiel/pen/LpepvQ)</li>
+      <li>固定ページの増減(HTMX)を非同期で**リアルタイム管理**</li>
       <li>カテゴリー管理</li>
       <li>ユーザーバン(論理削除)</li>
       <li>NGワード内包記事AI判定による自動バン</li>
-      <li>管理者会員パスワード発行サブスクによるカード決済</li>
+      <li>管理者会員パスワード発行サブスクによる<a href="https://codepen.io/blacklead-studio/pen/xbwaqxE" target="_brank">**カード決済**</a></li>
     </ul>
   </li>
-  <li>多言語設定</li>
+  <li>管理者ログイン時のUIエフェクト
+      <ul>
+        <li>**エレクトロニックフレーム**</li>
+        <li>![**ノイズボタン**](https://codepen.io/jh3y/pen/PwzeRwy)</li>
+        <li>![記事一覧の**ホバー時拡大**](https://codepen.io/Adir-SL/pen/RNRyVQL)</li>
+        <li>![ホバー時中の**画像を拡大**](https://codepen.io/lessthanthree/pen/LENwGyZ)</li>
+        <li>![**背景波紋**](https://codepen.io/soju22/pen/myVWBGa)</li>
+      </ul>
+  </li>
+  <li>アコーディオンタブによる多言語設定</li>
   <li>投稿記事の要約文をAIによる自動生成</li>
+  <li>**スワイパー**</li>
   <li>二段階認証
     <ul>
       <li>ユーザーの削除時に二段階認証ユーザーはトークンを入力</li>
