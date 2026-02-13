@@ -26,6 +26,7 @@
 /* カテゴリーオススメ一覧 */
 /* ============== マイページ =============== */
 /* サイドメニューのホバー演出 */
+/* サイドメニューのモーダル */
 /* メニューホバー時 */
 /* メニューアクティブ状態 */
 /* 一覧テーブル */
@@ -412,6 +413,11 @@ mark {
     background-color: var(--bs-secondary-bg-subtle);
     color: var(--bs-secondary-text-emphasis);
     font-weight: 600;
+}
+
+/* サイドメニューのモーダル */
+.modal-dialog.modal-fullscree {
+    max-width: 95vw;
 }
 
 /* 一覧テーブル */

@@ -200,6 +200,7 @@ WTForms            3.2.1
 
 <details>
 <summary>実装済み機能一覧</summary>
+<!-- START_TERM -->
 <ul>
   <li>
     環境構築
@@ -305,6 +306,7 @@ WTForms            3.2.1
     </ul>
   </li>
 </ul>
+<!-- END_TERM -->
 </details>
 
 <hr width="800">
@@ -315,6 +317,15 @@ WTForms            3.2.1
 <details>
 <summary>実装中機能一覧</summary>
 <ul>
+  <li>管理者ログイン時のUIエフェクト
+      <ul>
+        <li>**エレクトロニックフレーム**スーパーユーザーモード発動</li>
+        <li>![**ノイズボタン**](https://codepen.io/jh3y/pen/PwzeRwy)</li>
+        <li>![記事一覧の**ホバー時拡大**](https://codepen.io/Adir-SL/pen/RNRyVQL)</li>
+        <li>![ホバー時中の**画像を拡大**](https://codepen.io/lessthanthree/pen/LENwGyZ)</li>
+        <li>![**背景波紋**](https://codepen.io/soju22/pen/myVWBGa)</li>
+      </ul>
+  </li>
   <li>管理者(Admin)ページ作成
     <ul>
       <li>グラフ生成[**ビルドアニメーション**](https://codepen.io/nickspiel/pen/LpepvQ)</li>
@@ -324,15 +335,6 @@ WTForms            3.2.1
       <li>NGワード内包記事AI判定による自動バン</li>
       <li>管理者会員パスワード発行サブスクによる<a href="https://codepen.io/blacklead-studio/pen/xbwaqxE" target="_brank">**カード決済**</a></li>
     </ul>
-  </li>
-  <li>管理者ログイン時のUIエフェクト
-      <ul>
-        <li>**エレクトロニックフレーム**</li>
-        <li>![**ノイズボタン**](https://codepen.io/jh3y/pen/PwzeRwy)</li>
-        <li>![記事一覧の**ホバー時拡大**](https://codepen.io/Adir-SL/pen/RNRyVQL)</li>
-        <li>![ホバー時中の**画像を拡大**](https://codepen.io/lessthanthree/pen/LENwGyZ)</li>
-        <li>![**背景波紋**](https://codepen.io/soju22/pen/myVWBGa)</li>
-      </ul>
   </li>
   <li>アコーディオンタブによる多言語設定</li>
   <li>投稿記事の要約文をAIによる自動生成</li>
@@ -385,7 +387,6 @@ WTForms            3.2.1
       <li>
         ツール互換性判定と代替案
         <ul>
-          <li><strong>ERAlchemy2　○ 可能：</strong>SQLAlchemyのmetadataを介するため、Flaskのバージョンに依存せず動作します。</li>
           <li><strong>Pyreverse　○ 可能：</strong>ソースコード（.py）を静的解析するため、実行環境のライブラリ依存関係は関係ありません。</li>
           <li>
             <strong>Flask-Diagrams　× 厳しい：</strong>

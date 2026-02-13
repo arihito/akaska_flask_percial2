@@ -1,5 +1,7 @@
 import os
 import math
+import uuid
+import requests
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, abort
 from models import db, Memo, Favorite, Category
 from flask_login import login_required, current_user
@@ -8,7 +10,7 @@ from sqlalchemy import func, asc, desc, or_
 from markupsafe import Markup, escape
 from werkzeug.utils import secure_filename
 from utils.upload import save_upload
-import uuid
+from pathlib import Path
 
 # 第一引数がurl_for、第三引数がrender_templateで使用する接頭辞
 memo_bp = Blueprint('memo', __name__, url_prefix='/memo')
@@ -18,6 +20,35 @@ def allowed_file(filename):
         "." in filename and
         filename.rsplit(".", 1)[1].lower() in current_app.config["ALLOWED_EXTENSIONS"]
     )
+
+
+def get_readme_from_github():
+    url = "https://raw.githubusercontent.com/arihito/akaska_flask_percial2/main/Memo/README.md"
+    response = requests.get(url, timeout=5)
+    if response.status_code == 200:
+        return response.text
+    else:
+        return "READMEの取得に失敗しました。"
+
+README_PATH = Path(__file__).resolve().parent.parent / "README.md"
+def get_readme_term():
+    with open(README_PATH, encoding="utf-8") as f:
+        content = f.read()
+
+    start_marker = "<!-- START_TERM -->"
+    end_marker = "<!-- END_TERM -->"
+
+    start = content.find(start_marker)
+    end = content.find(end_marker)
+
+    if start == -1 or end == -1:
+        return "Termセクションが見つかりません。"
+
+    # マーカー自体を除外
+    start += len(start_marker)
+
+    return content[start:end].strip()
+
 
 @memo_bp.route('/')
 @login_required
@@ -30,6 +61,7 @@ def index():
     categories = Category.query.order_by(Category.name).all()
     category_id = request.args.get('category_id', type=int)
     params = request.args.to_dict()
+    readme_excerpt = get_readme_term()
     # ---- 「base_query」条件の上積み ---- 
     base_query = (db.session.query(Memo, func.count(Favorite.id).label("like_count")).outerjoin(Favorite, Memo.id == Favorite.memo_id).filter(Memo.user_id == current_user.id))
     # ---- 総件数（ページ数算出用）----
@@ -100,7 +132,8 @@ def index():
         params=params,
         page=page,
         pages=pages,
-        total=total
+        total=total,
+        readme_excerpt=readme_excerpt
     )
 
 @memo_bp.route('/create', methods=['GET', 'POST'])
