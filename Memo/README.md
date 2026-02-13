@@ -201,7 +201,7 @@ WTForms            3.2.1
 <details>
 <summary>実装済み機能一覧</summary>
 <!-- START_TERM -->
-<ul>
+<ul class="term">
   <li>
     環境構築
     <ul>
@@ -213,7 +213,7 @@ WTForms            3.2.1
   <li>投稿のCRUD実装
       <ul>
         <li>Bootstrapでトップはヘッダーナビ、管理画面は再度ナビにテンプレートを分割</li>
-        <li>テーブル行クリックで詳細画面に移動し、内包ボタンとの衝突回避</li>
+        <li>テーブル行クリックで詳細画面に移動し、内包ボタンとの<code>衝突回避</code></li>
         <li>ダミーの記事本文ボリュームを増やすため1000字程度で別ファイルにMarkdown形式で10件作成</li>
         <li>固定ページの動的生成</li>
       </ul>
@@ -227,7 +227,7 @@ WTForms            3.2.1
       <li>Reactを使用したユーザーID変更時のリアルタイムバリデーション</li>
     </ul>
   </li>
-  <li>認可（自身の投稿のみCRUD制限）</li>
+  <li>認可（自身の投稿のみにCRUDを制限）</li>
   <li>タイトルと本文内の部分一致検索、検索用語のハイライト</li>
   <li>
     多対多のいいね機能
@@ -306,31 +306,6 @@ WTForms            3.2.1
     </ul>
   </li>
 </ul>
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-<div class="row">
-  <div class="col-4">
-    <div id="list-example" class="list-group">
-      <a class="list-group-item list-group-item-action" href="#list-item-1">Item 1</a>
-      <a class="list-group-item list-group-item-action" href="#list-item-2">Item 2</a>
-      <a class="list-group-item list-group-item-action" href="#list-item-3">Item 3</a>
-      <a class="list-group-item list-group-item-action" href="#list-item-4">Item 4</a>
-    </div>
-  </div>
-  <div class="col-8">
-    <div style="height:200px;overflow:auto;scroll-behavior: smooth;" data-bs-spy="scroll" data-bs-target="#list-example" data-bs-smooth-scroll="true" class="scrollspy-example" tabindex="0">
-      <h4 id="list-item-1">Item 1</h4>
-      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus illum nostrum reprehenderit voluptate atque velit, itaque eaque dolorum fugiat unde asperiores aut veniam cum exercitationem consectetur laboriosam tempore esse laborum.</p>
-      <h4 id="list-item-2">Item 2</h4>
-      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus illum nostrum reprehenderit voluptate atque velit, itaque eaque dolorum fugiat unde asperiores aut veniam cum exercitationem consectetur laboriosam tempore esse laborum.</p>
-      <h4 id="list-item-3">Item 3</h4>
-      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus illum nostrum reprehenderit voluptate atque velit, itaque eaque dolorum fugiat unde asperiores aut veniam cum exercitationem consectetur laboriosam tempore esse laborum.</p>
-      <h4 id="list-item-4">Item 4</h4>
-      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus illum nostrum reprehenderit voluptate atque velit, itaque eaque dolorum fugiat unde asperiores aut veniam cum exercitationem consectetur laboriosam tempore esse laborum.</p>
-    </div>
-  </div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 <!-- END_TERM -->
 </details>
 

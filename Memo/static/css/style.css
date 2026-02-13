@@ -26,9 +26,10 @@
 /* カテゴリーオススメ一覧 */
 /* ============== マイページ =============== */
 /* サイドメニューのホバー演出 */
-/* サイドメニューのモーダル */
 /* メニューホバー時 */
 /* メニューアクティブ状態 */
+/* サイドメニューのモーダル */
+/* サイドメニュー要件定義リスト */
 /* 一覧テーブル */
 /* 一覧テーブル行のクリッカブル */
 /* 一覧サムネイル(正方形) */
@@ -418,6 +419,35 @@ mark {
 /* サイドメニューのモーダル */
 .modal-dialog.modal-fullscree {
     max-width: 95vw;
+}
+
+/* サイドメニュー要件定義リスト */
+ul.term {
+    padding-left: 0;
+    list-style-type: none;
+    line-height: 3;
+    font-weight: bold;
+}
+ul.term > li {
+    background-color: #313539;
+}
+
+ul.term > li::before {
+    font-family: FontAwesome;
+    content: "\f046";
+    font-size: var(--fs-2xl);
+    margin: 0 10px 0 20px;
+}
+ul.term > li ul {
+    padding-bottom: 30px;
+    border-top: 1px solid #666;
+    background-color: #212529;
+    font-weight: normal;
+}
+ul.term > li ul li {
+    margin-top: 5px;
+    padding: 5px 0 0 5px;
+    border-bottom: 1px dotted #444;
 }
 
 /* 一覧テーブル */
