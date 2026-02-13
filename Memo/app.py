@@ -7,11 +7,12 @@ from werkzeug.exceptions import NotFound
 from errors.views import show_404_page
 
 # Blueprints
-from public.views import public_bp
-from auth.views import auth_bp
-from memo.views import memo_bp
-from favorite.views import favorite_bp
-from fixed.views import fixed_bp, STATIC_PAGES
+from public.views import public_bp              # トップページ
+from auth.views import auth_bp                  # ログイン認証
+from memo.views import memo_bp                  # マイページ
+from favorite.views import favorite_bp          # いいね
+from docs.views import docs_bp                  # 成果物
+from fixed.views import fixed_bp, STATIC_PAGES  # 固定ページ
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -31,6 +32,7 @@ app.register_blueprint(public_bp)
 app.register_blueprint(auth_bp)
 app.register_blueprint(memo_bp)
 app.register_blueprint(favorite_bp)
+app.register_blueprint(docs_bp)
 app.register_blueprint(fixed_bp)
 
 # 全テンプレートに値を共有

@@ -1,0 +1,29 @@
+﻿機能定義書
+
+業務,機能名,説明,ランク
+_debug_toolbar,表示,/_debug_toolbar/static/<path:filename> の処理,B
+debugtoolbar,表示,/_debug_toolbar/views/template/<key> の処理,B
+debugtoolbar,登録,/_debug_toolbar/views/template/<key>/save の処理,A
+debugtoolbar,登録,/_debug_toolbar/views/template/<key> の処理,A
+debugtoolbar,登録,/_debug_toolbar/views/sqlalchemy/sql_explain の処理,A
+debugtoolbar,登録,/_debug_toolbar/views/sqlalchemy/sql_select の処理,A
+public,表示,/ の処理,B
+public,表示,/detail/<int:memo_id> の処理,B
+auth,登録,/auth/ の処理,A
+auth,登録,/auth/register の処理,A
+auth,表示,/auth/logout の処理,B
+auth,登録,/auth/edit の処理,A
+auth,登録,/auth/delete の処理,A
+auth,表示,/auth/oauth_login の処理,B
+auth,表示,/auth/callback の処理,B
+auth,表示,/auth/google/callback の処理,B
+auth,表示,/auth/api/check_userid の処理,B
+memo,表示,/memo/ の処理,B
+memo,登録,/memo/create の処理,A
+memo,登録,/memo/update/<int:memo_id> の処理,A
+memo,表示,/memo/delete/<int:memo_id> の処理,B
+favorite,登録,/favorite/add/<int:memo_id> の処理,A
+favorite,登録,/favorite/remove/<int:memo_id> の処理,A
+docs,表示,/diagram の処理,B
+docs,表示,/generate-docs の処理,B
+fixed,表示,/fixed/<page_name> の処理,B

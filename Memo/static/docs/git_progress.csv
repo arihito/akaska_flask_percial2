@@ -1,0 +1,57 @@
+﻿Git進行表
+
+コミットID,作成者,日付,メッセージ
+1a7ef2a,譚ｾ逕ｰ譛我ｺｺ,2026-02-13,test: README code_tag
+9c27155,譚ｾ逕ｰ譛我ｺｺ,2026-02-13,test: README scrollspy
+1b90f83,kenshu,2026-02-13,add: UML auto making
+ff8f0c5,譚ｾ逕ｰ譛我ｺｺ,2026-02-12,edit: README Intruction
+5c852ec,譚ｾ逕ｰ譛我ｺｺ,2026-02-12,edit: custom variables for font size
+b2c5439,kenshu,2026-02-12,add: category recommend
+1c84a0c,譚ｾ逕ｰ譛我ｺｺ,2026-02-10,add: state management
+4732206,譚ｾ逕ｰ譛我ｺｺ,2026-02-10,refactor: css
+e28ce05,kenshu,2026-02-10,add: add & update category tag
+1819b9d,譚ｾ逕ｰ譛我ｺｺ,2026-02-09,pending: category
+a432ac9,譚ｾ逕ｰ譛我ｺｺ,2026-02-09,add: jwt & HTMX articles
+0e65ae7,譚ｾ逕ｰ譛我ｺｺ,2026-02-09,add: React realtime username valid
+7fa9710,譚ｾ逕ｰ譛我ｺｺ,2026-02-09,edit: heart click & UI
+2e01396,kenshu,2026-02-09,peding: like button
+1086ef3,kenshu,2026-02-08,add: RWD
+e4366e8,kenshu,2026-02-07,add: delete user
+c65e3a9,譚ｾ逕ｰ譛我ｺｺ,2026-02-06,add: update thumbnail & password
+9df0c2f,kenshu,2026-02-06,pending: fileupload separate
+2dc1316,譚ｾ逕ｰ譛我ｺｺ,2026-02-05,edit: logout flash
+502dfdb,譚ｾ逕ｰ譛我ｺｺ,2026-02-05,edit: config
+44d8fbe,譚ｾ逕ｰ譛我ｺｺ,2026-02-05,add: google oauth
+9251bff,譚ｾ逕ｰ譛我ｺｺ,2026-02-05,add: login checkbox pill & autofocus
+682bd86,kenshu,2026-02-05,add: user icon
+50df403,譚ｾ逕ｰ譛我ｺｺ,2026-02-04,add: fade-in colormode
+c9bbe8a,kenshu,2026-02-04,add: dotEnv
+aa70188,譚ｾ逕ｰ譛我ｺｺ,2026-02-03,add: 404page
+8dc5dbb,譚ｾ逕ｰ譛我ｺｺ,2026-02-03,add: sort & search state keeping
+0f45152,譚ｾ逕ｰ譛我ｺｺ,2026-02-03,edit: README in details HTML
+4389108,譚ｾ逕ｰ譛我ｺｺ,2026-02-03,edit: README
+08a5083,譚ｾ逕ｰ譛我ｺｺ,2026-02-03,add: admin.jpg
+cccca1e,譚ｾ逕ｰ譛我ｺｺ,2026-02-03,edit: README
+19d6041,譚ｾ逕ｰ譛我ｺｺ,2026-02-03,add: READEME draft
+b4aa4b6,kenshu,2026-02-03,add: factory
+a89e50e,譚ｾ逕ｰ譛我ｺｺ,2026-02-02,add: fixed pages
+184bc3c,kenshu,2026-02-02,add: footer
+522a389,kenshu,2026-02-01,edit: fixed page add img pre format
+04b988f,譚ｾ逕ｰ譛我ｺｺ,2026-01-30,add: fixed page
+9e1f1a2,譚ｾ逕ｰ譛我ｺｺ,2026-01-30,add: remember login
+7375cb0,譚ｾ逕ｰ譛我ｺｺ,2026-01-27,add: user management
+b617ffe,譚ｾ逕ｰ譛我ｺｺ,2026-01-27,add: like count
+eb4f392,譚ｾ逕ｰ譛我ｺｺ,2026-01-27,edit: img update
+48cca52,譚ｾ逕ｰ譛我ｺｺ,2026-01-22,add: images
+33f2881,譚ｾ逕ｰ譛我ｺｺ,2026-01-22,edit: admin display
+8ad37e0,譚ｾ逕ｰ譛我ｺｺ,2026-01-21,add: Memo References Likes Login
+bbcdf9b,譚ｾ逕ｰ譛我ｺｺ,2026-01-19,add: checkbox sended storage remove
+efc7f47,譚ｾ逕ｰ譛我ｺｺ,2026-01-19,add: checkbox state manage
+106735d,譚ｾ逕ｰ譛我ｺｺ,2026-01-17,add: README img
+414c8e4,譚ｾ逕ｰ譛我ｺｺ,2026-01-17,edit: README
+68fd187,譚ｾ逕ｰ譛我ｺｺ,2026-01-17,add: checkbox delete & update
+bf94910,譚ｾ逕ｰ譛我ｺｺ,2026-01-17,edit: README.md
+15f6bc3,ArihitoMatsuda,2026-01-17,add README.md
+a5971d3,譚ｾ逕ｰ譛我ｺｺ,2026-01-16,add tasklist
+e387c05,譚ｾ逕ｰ譛我ｺｺ,2026-01-14,add htmx-basic
+b4b9473,譚ｾ逕ｰ譛我ｺｺ,2026-01-14,add practice & htmx

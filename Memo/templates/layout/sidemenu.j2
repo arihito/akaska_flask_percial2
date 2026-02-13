@@ -22,13 +22,13 @@
                     <ul class="nav flex-column">
                         <li class="nav-item fade-in fade-in-delay-8"><a class="nav-link text-body-secondary" href="" data-bs-toggle="modal" data-bs-target="#modal_term"><i class="fa fa-list-alt me-2"></i>要件定義</a></li>
                         <hr>
-                        <li class="nav-item fade-in fade-in-delay-9"><a class="nav-link text-body-secondary" href="" data-bs-toggle="modal" data-bs-target="#modal_screen"><i class="fa fa-wpforms me-2"></i>画面設計図</a></li>
-                        <hr>
                         <li class="nav-item fade-in fade-in-delay-10"><a class="nav-link text-body-secondary" href="" data-bs-toggle="modal" data-bs-target="#modal_er"><i class="fa fa-sitemap me-2"></i>ER図</a></li>
                         <hr>
                         <li class="nav-item fade-in fade-in-delay-11"><a class="nav-link text-body-secondary" href="" data-bs-toggle="modal" data-bs-target="#modal_class"><i class="fa fa-table me-2"></i>クラス設計図</a></li>
                         <hr>
                         <li class="nav-item fade-in fade-in-delay-11"><a class="nav-link text-body-secondary" href="" data-bs-toggle="modal" data-bs-target="#modal_class_depend"><i class="fa fa-sitemap me-2"></i>クラス継承依存関係図</a></li>
+                        <hr>
+                        <li class="nav-item fade-in fade-in-delay-11"><a class="nav-link text-body-secondary" href="" data-bs-toggle="modal" data-bs-target="#modal_app"><i class="fa fa-share-alt me-2"></i>アプリ全体構成図</a></li>
                     </ul>
                 </div>
             </div>
@@ -87,23 +87,6 @@
     </div>
   </div>
 </div>
-<!-- Modal_screen 画面設計図 -->
-<div class="modal fade" id="modal_screen" data-bs-backdrop="static" data-bs-keyboard="false">
-  <div class="modal-dialog modal-xl modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="modal_screen_Label">画面設計図</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <img class="img-fluid" style="filter:invert(1)" src="{{ url_for('static', filename='docs/er.svg')}}" width="" height="" alt="ER図">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary btn-lg w-100" data-bs-dismiss="modal"><i class="fa fa-times me-2"></i>閉じる</button>
-      </div>
-    </div>
-  </div>
-</div>
 <!-- Modal_er ER図 -->
 <div class="modal fade" id="modal_er" data-bs-backdrop="static" data-bs-keyboard="false">
   <div class="modal-dialog modal-xl modal-dialog-centered">
@@ -148,6 +131,23 @@
       </div>
       <div class="modal-body">
         <img class="img-fluid" style="filter:invert(1)" src="{{ url_for('static', filename='docs/packages_Memo.svg')}}" width="" height="" alt="ER図">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-lg w-100" data-bs-dismiss="modal"><i class="fa fa-times me-2"></i>閉じる</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal_app アプリ全体構成図 -->
+<div class="modal fade" id="modal_app" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="modal_app_Label">アプリ全体構成図</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <img class="img-fluid" style="filter:invert(1)" src="{{ url_for('static', filename='docs/architecture.png')}}" width="" height="" alt="ER図">
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary btn-lg w-100" data-bs-dismiss="modal"><i class="fa fa-times me-2"></i>閉じる</button>

@@ -1,24 +1,16 @@
 .
 |-- README.md
 |-- __pycache__
-|   |-- app.cpython-310.pyc
 |   |-- app.cpython-312.pyc
-|   |-- app.cpython-313.pyc
-|   |-- config.cpython-310.pyc
 |   |-- config.cpython-312.pyc
-|   |-- forms.cpython-310.pyc
 |   |-- forms.cpython-312.pyc
-|   |-- models.cpython-310.pyc
 |   |-- models.cpython-312.pyc
-|   |-- models.cpython-313.pyc
-|   |-- views.cpython-310.pyc
 |   `-- views.cpython-312.pyc
 |-- app.py
 |-- auth
 |   |-- __init__.py
 |   |-- __pycache__
-|   |   |-- __init__.cpython-310.pyc
-|   |   |-- views.cpython-310.pyc
+|   |   |-- __init__.cpython-312.pyc
 |   |   `-- views.cpython-312.pyc
 |   `-- views.py
 |-- classes_Memo.svg
@@ -35,33 +27,38 @@
 |       |-- package_001.md
 |       |-- ui_001.md
 |       `-- ui_002.md
+|-- docs
+|   |-- __init__.py
+|   |-- __pycache__
+|   |   |-- __init__.cpython-312.pyc
+|   |   `-- views.cpython-312.pyc
+|   `-- views.py
 |-- errors
 |   |-- __init__.py
 |   |-- __pycache__
-|   |   |-- __init__.cpython-310.pyc
-|   |   `-- views.cpython-310.pyc
+|   |   |-- __init__.cpython-312.pyc
+|   |   `-- views.cpython-312.pyc
 |   `-- views.py
 |-- factories
 |   |-- __init__.py
 |   |-- __pycache__
-|   |   |-- __init__.cpython-310.pyc
-|   |   |-- body_factory.cpython-310.pyc
-|   |   `-- user_factory.cpython-310.pyc
+|   |   |-- __init__.cpython-312.pyc
+|   |   |-- body_factory.cpython-312.pyc
+|   |   `-- user_factory.cpython-312.pyc
 |   |-- body_factory.py
 |   |-- category_factory.py
 |   `-- user_factory.py
 |-- favorite
 |   |-- __init__.py
 |   |-- __pycache__
-|   |   |-- __init__.cpython-310.pyc
-|   |   |-- views.cpython-310.pyc
+|   |   |-- __init__.cpython-312.pyc
 |   |   `-- views.cpython-312.pyc
 |   `-- views.py
 |-- fixed
 |   |-- __init__.py
 |   |-- __pycache__
-|   |   |-- __init__.cpython-310.pyc
-|   |   `-- views.cpython-310.pyc
+|   |   |-- __init__.cpython-312.pyc
+|   |   `-- views.cpython-312.pyc
 |   `-- views.py
 |-- forms.py
 |-- instance
@@ -70,14 +67,12 @@
 |-- memo
 |   |-- __init__.py
 |   |-- __pycache__
-|   |   |-- __init__.cpython-310.pyc
-|   |   |-- views.cpython-310.pyc
+|   |   |-- __init__.cpython-312.pyc
 |   |   `-- views.cpython-312.pyc
 |   `-- views.py
 |-- migrations
 |   |-- README
 |   |-- __pycache__
-|   |   |-- env.cpython-310.pyc
 |   |   `-- env.cpython-312.pyc
 |   |-- alembic.ini
 |   |-- env.py
@@ -85,23 +80,27 @@
 |   `-- versions
 |       |-- 30db46ef949d_reset_initial_schema.py
 |       `-- __pycache__
-|           `-- 5ca2ae93c8ce_reset_initial_schema.cpython-310.pyc
+|           `-- 30db46ef949d_reset_initial_schema.cpython-312.pyc
 |-- models.py
+|-- os.py
 |-- public
 |   |-- __init__.py
 |   |-- __pycache__
-|   |   |-- __init__.cpython-310.pyc
-|   |   |-- views.cpython-310.pyc
+|   |   |-- __init__.cpython-312.pyc
 |   |   `-- views.cpython-312.pyc
 |   `-- views.py
 |-- seed.py
+|-- simple_web_service.png
 |-- static
 |   |-- css
 |   |   `-- style.css
 |   |-- docs
-|   |   |-- classes_.._Memo.svg
+|   |   |-- architecture.png
 |   |   |-- classes_Memo.svg
-|   |   `-- er.svg
+|   |   |-- diagram.png
+|   |   |-- er.svg
+|   |   |-- packages_Memo.svg
+|   |   `-- tree.txt
 |   |-- images
 |   |   |-- fixed
 |   |   |   |-- copyright.jpg
@@ -241,7 +240,7 @@
 |-- tree.txt
 `-- utils
     |-- __pycache__
-    |   `-- upload.cpython-310.pyc
+    |   `-- upload.cpython-312.pyc
     `-- upload.py
 
-42 directories, 202 files
+44 directories, 199 files

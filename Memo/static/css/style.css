@@ -428,6 +428,10 @@ ul.term {
     line-height: 3;
     font-weight: bold;
 }
+ul.term::before {
+    content: '※ 赤字は工夫したポイント';
+    font-size: var(--fs-small);
+}
 ul.term > li {
     background-color: #313539;
 }
