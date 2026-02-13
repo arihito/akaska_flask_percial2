@@ -21,29 +21,17 @@ def allowed_file(filename):
         filename.rsplit(".", 1)[1].lower() in current_app.config["ALLOWED_EXTENSIONS"]
     )
 
-
-def get_readme_from_github():
-    url = "https://raw.githubusercontent.com/arihito/akaska_flask_percial2/main/Memo/README.md"
-    response = requests.get(url, timeout=5)
-    if response.status_code == 200:
-        return response.text
-    else:
-        return "READMEの取得に失敗しました。"
-
+# READMEの取得
 README_PATH = Path(__file__).resolve().parent.parent / "README.md"
 def get_readme_term():
     with open(README_PATH, encoding="utf-8") as f:
         content = f.read()
-
     start_marker = "<!-- START_TERM -->"
     end_marker = "<!-- END_TERM -->"
-
     start = content.find(start_marker)
     end = content.find(end_marker)
-
     if start == -1 or end == -1:
         return "Termセクションが見つかりません。"
-
     # マーカー自体を除外
     start += len(start_marker)
 
