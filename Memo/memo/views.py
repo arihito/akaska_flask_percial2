@@ -41,7 +41,6 @@ def get_readme_term():
 @memo_bp.route('/')
 @login_required
 def index():
-    print(f'================================{dict(request.args)}')
     WEEKDAYS_JA = ['月', '火', '水', '木', '金', '土', '日']
     per_page = 10
     page = request.args.get('page', 1, type=int)
@@ -50,6 +49,7 @@ def index():
     category_id = request.args.get('category_id', type=int)
     params = request.args.to_dict()
     readme_excerpt = get_readme_term()
+    print(f'###############{readme_excerpt}')
     # ---- 「base_query」条件の上積み ---- 
     base_query = (db.session.query(Memo, func.count(Favorite.id).label("like_count")).outerjoin(Favorite, Memo.id == Favorite.memo_id).filter(Memo.user_id == current_user.id))
     # ---- 総件数（ページ数算出用）----
