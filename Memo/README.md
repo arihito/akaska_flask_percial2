@@ -293,6 +293,18 @@ WTForms            3.2.1
       <li>カテゴリー選択に同期した絞り込み<code>レコメンド表示</code></li>
     </ul>
   </li>
+  <li>
+    成果物生成
+    <ul>
+      <li>ERAlchemy2でER図自動生成</li>
+      <li>pylint / pyreverseによるクラス図作成</li>
+      <li>Flask-Diagramsで画面遷移の可視化</li>
+      <li>△Template Visualizerでテンプレート樹形図化</li>
+      <li>△FlasggerでAPI一覧を生成(or <a href="https://flask-smorest.readthedocs.io/">flask-smorest</a>)</li>
+      <li>△Storybook for Jinjaによるコンポーネント可視化(Node.jsによる複雑化)</li>
+      <li>Watchdog（Flask-SocketIO）による管理画面の.pyや.htmlを変更検知&自動更新</li>
+    </ul>
+  </li>
 </ul>
 <!-- END_TERM -->
 </details>
@@ -305,8 +317,10 @@ WTForms            3.2.1
 <details>
 <summary>実装中機能一覧</summary>
 <ul>
+  <li>CloudCode操作方法の確認</li>
   <li>管理者ログイン時のUIエフェクト
       <ul>
+        <li>CLAUDE CODE PluginのFrontend Designを使用</li>
         <li>**エレクトロニックフレーム**スーパーユーザーモード発動</li>
         <li>![**ノイズボタン**](https://codepen.io/jh3y/pen/PwzeRwy)</li>
         <li>![記事一覧の**ホバー時拡大**](https://codepen.io/Adir-SL/pen/RNRyVQL)</li>
@@ -320,12 +334,19 @@ WTForms            3.2.1
       <li>固定ページの増減(HTMX)を非同期で**リアルタイム管理**</li>
       <li>カテゴリー管理</li>
       <li>ユーザーバン(論理削除)</li>
-      <li>NGワード内包記事AI判定による自動バン</li>
       <li>管理者会員パスワード発行サブスクによる<a href="https://codepen.io/blacklead-studio/pen/xbwaqxE" target="_brank">**カード決済**</a></li>
     </ul>
   </li>
-  <li>アコーディオンタブによる多言語設定</li>
-  <li>投稿記事の要約文をAIによる自動生成</li>
+  <li>生成AI機能(仮案)
+      <ul>
+          <li>可読性・記述量など複数の観点からスコア化しグラフ生成する</li>
+          <li>タイトル入力で記事の自動生成</li>
+          <li>記事本文からカテゴリーの自動選択</li>
+          <li>記事本文の自動英語翻訳</li>
+          <li>記事本文の要約を自動生成し一覧解説に掲載</li>
+          <li>NGワード内包記事判定による自動バン</li>
+      </ul>
+  </li>
   <li>**スワイパー**</li>
   <li>二段階認証
     <ul>
@@ -333,7 +354,7 @@ WTForms            3.2.1
       <li>メール送信</li>
     </ul>
   </li>
-</ul>
+</。ul>
 </details>
 
 <hr width="800">
@@ -356,43 +377,11 @@ WTForms            3.2.1
       <li><a href="https://developer.jamstack-media.com/docs/flask/9.-%E3%83%86%E3%82%B9%E3%83%88/9.1-%E3%83%A6%E3%83%8B%E3%83%83%E3%83%88%E3%83%86%E3%82%B9%E3%83%88%E3%81%A8%E7%B5%B1%E5%90%88%E3%83%86%E3%82%B9%E3%83%88%E3%81%AE%E4%BD%9C%E6%88%90/">結合</a>テスト</li>
     </ul>
   </li>
-  <li>
-    成果物生成
-    <ul>
-      <li>ERAlchemy2でER図自動生成</li>
-      <li>pylint / pyreverseによるクラス図作成</li>
-      <li>Flask-Diagramsで画面遷移の可視化</li>
-      <li>Template Visualizerでテンプレート樹形図化</li>
-      <li>FlasggerでAPI一覧を生成</li>
-      <li>Storybook for Jinjaによるコンポーネント可視化</li>
-      <li>
-        上記を管理画面上でページの自動更新化
-        <ul>
-          <li><strong>Watchdog</strong>（Pythonライブラリ）を使い、<code>.py</code> ファイルや <code>.html</code> ファイルの変更を監視。</li>
-          <li>変更を検知したら、WebSocket（Flask-SocketIO）を通じてブラウザに「再読み込み信号」を送り図を更新。</li>
-        </ul>
-      </li>
-      <li>
-        ツール互換性判定と代替案
-        <ul>
-            <strong>Flask-Diagrams　× 厳しい：</strong>
-            最終更新が古く、Flask 2.3以降のRouting構造に対応していない可能性が高いです。
-            ⇒ <code>app.url_map</code> をループで回して <strong>Mermaid形式の文字列</strong> を生成
-          </li>
-          <li><strong>Template Visualizer　△ 微妙：</strong>VS Code拡張などの静的解析ツールなら使えますが、Flask 2.3の内部構造と連携するものは注意が必要です。</li>
-          <li>
-            <strong>Flasgger　△ 注意：</strong>Werkzeug 2.3以上でエラーが出るケースが報告されています。
-            ⇒ <a href="https://flask-smorest.readthedocs.io/">flask-smorest</a>
-          </li>
-          <li><strong>Storybook for Jinja　△ 難易度高：</strong>Node.js環境とのハイブリッド構成になるため、管理画面への組み込みは複雑です。</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
   <li>デプロイ
       <ul>
           <li>Rendarの利用確認</li>
           <li>GitHub Actionの追加</li>
+          <li>自動テストによるCI/CD</li>
       </ul>
   </li>
 </ul>

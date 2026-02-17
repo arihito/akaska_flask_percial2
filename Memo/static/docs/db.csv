@@ -1,0 +1,26 @@
+﻿No,主キー,外部キー,カラム名,項目名,データ型,NOT NULL,一意制,default,更新,備考
+1,PK,,id,メモID,Integer,YES,YES,,AUTO_INCREMENT,,memos
+2,,,title,タイトル,String(50),YES,,,,"",memos
+3,,,content,本文,Text,YES,,,,"",memos
+4,,FK(users.id),user_id,ユーザーID,Integer,YES,,,,"",memos
+5,,,created_at,作成日時,DateTime(timezone=True),YES,,datetime.now(UTC),,memos
+6,,,image_filename,画像ファイル名,String(255),YES,,nofile.jpg,,memos
+7,PK,,id,カテゴリーID,Integer,YES,YES,,,,"categories"
+8,,,name,カテゴリー名,String(12),YES,YES,,,"",categories
+9,,,color,カラーコード,String(7),YES,,,,"",categories
+10,,,created_at,作成日時,DateTime(timezone=True),YES,,datetime.now(UTC),,categories
+11,PK,,id,お気に入りID,Integer,YES,YES,,AUTO_INCREMENT,,favorites
+12,,FK(users.id),user_id,ユーザーID,Integer,YES,,,"",favorites
+13,,FK(memos.id),memo_id,メモID,Integer,YES,,,"",favorites
+14,,,rank,ランク,Integer,NO,,,,"1〜5想定",favorites
+15,,,created_at,作成日時,DateTime(timezone=True),YES,,datetime.now(UTC),,favorites
+16,,,user_id+memo_id,ユーザー×メモ一意制約,Integer,YES,YES,,,"複合一意制約",favorites
+17,PK,,id,ユーザーID,Integer,YES,YES,,AUTO_INCREMENT,,users
+18,,,username,ユーザー名,String(12),NO,YES,,,"",users
+19,,,email,メールアドレス,String(120),NO,YES,,,"",users
+20,,,password,パスワード,String(120),NO,,,,"ハッシュ保存",users
+21,,,thumbnail,サムネイル,String(50),YES,,default.png,,users
+22,,,oauth_provider,OAuthプロバイダ,String(50),NO,,,,"例: google",users
+23,,,oauth_sub,OAuth識別子,String(255),NO,,,,"Google sub",users
+24,PK,FK(memos.id),memo_id,メモID,Integer,YES,YES,,,"memo_categories(中間)"
+25,PK,FK(categories.id),category_id,カテゴリーID,Integer,YES,YES,,,"memo_categories(中間)"

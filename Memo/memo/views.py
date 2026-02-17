@@ -21,22 +21,42 @@ def allowed_file(filename):
         filename.rsplit(".", 1)[1].lower() in current_app.config["ALLOWED_EXTENSIONS"]
     )
 
-# READMEの取得
-README_PATH = Path(__file__).resolve().parent.parent / "README.md"
-def get_readme_term():
-    with open(README_PATH, encoding="utf-8") as f:
-        content = f.read()
-    start_marker = "<!-- START_TERM -->"
-    end_marker = "<!-- END_TERM -->"
+# マークダウンのコード取得
+BASE_DIR = Path(__file__).resolve().parent.parent
+def get_markdown_content(relative_path: str, start_marker: str = None, end_marker: str = None):
+    """
+    Markdownファイルを取得する共通関数
+
+    :param relative_path: プロジェクトルートからの相対パス
+    :param start_marker: 部分取得開始マーカー（省略可）
+    :param end_marker: 部分取得終了マーカー（省略可）
+    :return: Markdown文字列
+    """
+    md_path = BASE_DIR / relative_path
+    if not md_path.exists():
+        return f"{relative_path} が見つかりません。"
+    content = md_path.read_text(encoding="utf-8")
+    # マーカー未指定なら全文返却
+    if not start_marker or not end_marker:
+        return content.strip()
     start = content.find(start_marker)
     end = content.find(end_marker)
     if start == -1 or end == -1:
-        return "Termセクションが見つかりません。"
-    # マーカー自体を除外
+        return "指定されたセクションが見つかりません。"
     start += len(start_marker)
-
     return content[start:end].strip()
 
+# 要件定義
+def get_requirements_definition():
+    return get_markdown_content(
+        "README.md",
+        start_marker="<!-- START_TERM -->",
+        end_marker="<!-- END_TERM -->"
+    )
+
+# コーディング規約
+def get_coding_standards():
+    return get_markdown_content("static/docs/CODING_STANDARDS.md")
 
 @memo_bp.route('/')
 @login_required
@@ -48,9 +68,9 @@ def index():
     categories = Category.query.order_by(Category.name).all()
     category_id = request.args.get('category_id', type=int)
     params = request.args.to_dict()
-    readme_excerpt = get_readme_term()
-    print(f'###############{readme_excerpt}')
-    # ---- 「base_query」条件の上積み ---- 
+    requirements_definition = get_requirements_definition()
+    coding_standards = get_coding_standards()
+    # ---- 「base_query」条件の上積み ----
     base_query = (db.session.query(Memo, func.count(Favorite.id).label("like_count")).outerjoin(Favorite, Memo.id == Favorite.memo_id).filter(Memo.user_id == current_user.id))
     # ---- 総件数（ページ数算出用）----
     total = base_query.group_by(Memo.id).count()
@@ -121,7 +141,8 @@ def index():
         page=page,
         pages=pages,
         total=total,
-        readme_excerpt=readme_excerpt
+        requirements_definition=requirements_definition,
+        coding_standards=coding_standards
     )
 
 @memo_bp.route('/create', methods=['GET', 'POST'])
