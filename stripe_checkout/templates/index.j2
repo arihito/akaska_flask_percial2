@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>stripe checkout form</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+  </head>
+  <body>
+    <form action="{{ url_for('create_checkout_session') }}"
+          method="post"
+          novalidate>
+      <button type="submit">決済する</button>
+    </form>
+    {% if stripe_customer %}
+        <p>ストライプユーザ：{{ stripe_customer or '' }}</p>
+        <p>ユーザ：{{ customer or '' }}</p>
+        <p>カード：{{ cards or '' }}</p>
+    {% endif %}
+  </body>
+</html>

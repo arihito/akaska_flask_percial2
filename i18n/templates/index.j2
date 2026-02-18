@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>i18n</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+  </head>
+  <body>
+    <h1>{{ _("Hello, world!") }}</h1>
+    <p>{{ _("no translate word") }}</p>
+    <!-- 動的な翻訳 -->
+    <p>{{ _("Hello, %(username)s", username=user.name) }}</p>
+  </body>
+</html>

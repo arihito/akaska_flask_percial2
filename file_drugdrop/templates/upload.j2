@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>Dropzone Upload</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <!-- Dropzone CDN -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/basic.min.css" />
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.js"></script>
+    <style>
+        .dz-message {
+            font-size: 20px;
+            color: #666;
+        }
+        .dropzone {
+            border: 2px dashed #777;
+            border-radius: 10px;
+            background: #f9f9f9;
+        }
+        .fade-img {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-img.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+  </head>
+  <body>
+    <h2>Drag & Drop File Upload</h2>
+    <!-- Dropzone Form -->
+    <form action="/upload" class="dropzone" id="myDropzone">
+    </form>
+    <div class="image-list">
+      {% for img in images %}
+        <img src="{{ url_for('static', filename=img) }}"
+             class="fade-img"
+             width="120"
+             height=""
+             alt="">
+      {% endfor %}
+    </div>
+    <script>
+Dropzone.options.myDropzone = {
+    paramName: "file",
+    maxFilesize: 5,
+    acceptedFiles: ".png,.jpg,.jpeg,.gif",
+
+    init: function () {
+        this.on("success", function (file, response) {
+
+            // アップロードされた画像パスを作成
+            const imgPath = "/static/images/" + file.name;
+
+            // img 要素作成
+            const img = document.createElement("img");
+            img.src = imgPath;
+            img.className = "fade-img";
+            img.width = 120;
+
+            // 画像リストに追加
+            const container = document.querySelector(".image-list");
+            container.prepend(img);
+
+            // 次フレームでフェードイン
+            requestAnimationFrame(() => {
+                img.classList.add("is-visible");
+            });
+        });
+
+        this.on("error", function (file, message) {
+            console.error("Error:", message);
+        });
+    }
+};
+
+// 初期表示分のフェードイン
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".fade-img").forEach((img, index) => {
+        setTimeout(() => {
+            img.classList.add("is-visible");
+        }, index * 100);
+    });
+});
+    </script>
+  </body>
+</html>

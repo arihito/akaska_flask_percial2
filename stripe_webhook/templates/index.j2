@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>stripe webhook</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+  </head>
+  <body>
+    <h2>みたらし団子（1本）600円</h2>
+    <ul id="toppings">
+      <li data-id="kinako" data-price="0">きなこ（無料）</li>
+      <li data-id="matcha" data-price="50">抹茶（+50円）</li>
+      <li data-id="black" data-price="100">黒ごま（+100円）</li>
+      <li data-id="special" data-price="150">特製（+150円）</li>
+    </ul>
+    <p>
+      選択トッピング数：<span id="count">0</span> / 6
+    </p>
+    <p>
+      合計金額：<span id="total">600</span> 円
+    </p>
+    <button id="pay">決済する</button>
+    <script>
+        const BASE_PRICE = 600;
+        const MAX_TOPPINGS = 6;
+
+        let selected = {};
+        let toppingCount = 0;
+
+        const totalEl = document.getElementById("total");
+        const countEl = document.getElementById("count");
+
+        document.querySelectorAll("#toppings li").forEach(li => {
+            li.addEventListener("click", () => {
+                /* liをクリックするとidと価格を個々に取得 */
+                const id = li.dataset.id;
+                const price = Number(li.dataset.price);
+
+                    /* 選択済みに追加 */
+                if (!selected[id]) selected[id] = { qty: 0, price };
+
+                    /* 個々の選択が2以上、もしくは全体で6個以上であれば追加終了 */
+                if (selected[id].qty >= 2 || toppingCount >= MAX_TOPPINGS) {
+                return;
+                }
+
+                selected[id].qty += 1;
+                toppingCount += 1;
+        		/* 合計金額の更新 */
+                updateTotal();
+            });
+        });
+
+        function updateTotal() {
+            /* お団子の基本料金 */
+        let total = BASE_PRICE;
+        /* 選択済みのトッピング料金を加算 */
+        Object.values(selected).forEach(item => {
+            total += item.qty * item.price;
+        });
+
+        totalEl.textContent = total;
+        countEl.textContent = toppingCount;
+        }
+
+        /* 購入ボタンを押したらJSONでPOST送信 */
+        document.getElementById("pay").addEventListener("click", () => {
+        fetch("/checkout/create", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(selected)
+        })
+        .then(res => res.json())
+        .then(data => window.location = data.url);
+        });
+        </script>
+  </body>
+</html>
