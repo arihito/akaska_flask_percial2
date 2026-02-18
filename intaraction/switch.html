@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Switch</title>
+        <style>
+            @charset "UTF-8";
+
+            @import "https://unpkg.com/open-props" layer(design.system);
+            @import "https://unpkg.com/open-props/normalize.min.css"
+                layer(demo.support);
+
+            ::view-transition-group(*) {
+                animation-timing-function: var(--ease-squish-1);
+                animation-timing-function: var(--ease-spring-2);
+                animation-duration: 0.75s;
+            }
+
+            /* fixex ghosting at the bottom */
+            ::view-transition-old(opt-1),
+            ::view-transition-old(opt-2),
+            ::view-transition-old(opt-3),
+            ::view-transition-old(opt-4),
+            ::view-transition-old(opt-5),
+            ::view-transition-new(opt-1),
+            ::view-transition-new(opt-2),
+            ::view-transition-new(opt-3),
+            ::view-transition-new(opt-4),
+            ::view-transition-new(opt-5) {
+                height: 100%;
+            }
+
+            @layer demo {
+                .bento {
+                    display: grid;
+                    grid-template-columns: 6fr 1fr;
+                    grid-template-rows: repeat(4, 1fr);
+                    gap: var(--size-3);
+
+                    min-inline-size: 75vw;
+                    aspect-ratio: var(--ratio-widescreen);
+
+                    & > * {
+                        border-radius: var(--radius-3);
+                        background: var(--surface-2);
+
+                        @media (prefers-reduced-motion: no-preference) {
+                            &:nth-child(1) {
+                                view-transition-name: opt-1;
+                                & > label {
+                                    view-transition-name: opt-1-label;
+                                    width: 100%;
+                                }
+                                & > input {
+                                    view-transition-name: opt-1-input;
+                                }
+                            }
+                            &:nth-child(2) {
+                                view-transition-name: opt-2;
+                                & > label {
+                                    view-transition-name: opt-2-label;
+                                    width: 100%;
+                                }
+                                & > input {
+                                    view-transition-name: opt-2-input;
+                                }
+                            }
+                            &:nth-child(3) {
+                                view-transition-name: opt-3;
+                                & > label {
+                                    view-transition-name: opt-3-label;
+                                    width: 100%;
+                                }
+                                & > input {
+                                    view-transition-name: opt-3-input;
+                                }
+                            }
+                            &:nth-child(4) {
+                                view-transition-name: opt-4;
+                                & > label {
+                                    view-transition-name: opt-4-label;
+                                    width: 100%;
+                                }
+                                & > input {
+                                    view-transition-name: opt-4-input;
+                                }
+                            }
+                            &:nth-child(5) {
+                                view-transition-name: opt-5;
+                                & > label {
+                                    view-transition-name: opt-5-label;
+                                    width: 100%;
+                                }
+                                & > input {
+                                    view-transition-name: opt-5-input;
+                                }
+                            }
+
+                            & :is(label, input) {
+                                width: fit-content;
+                            }
+                        }
+                    }
+
+                    & > div:has(input:checked) {
+                        grid-row: 1 / -1;
+                        grid-column: 1;
+                        font-size: 3rem;
+                    }
+                }
+            }
+
+            @layer demo.support {
+                html {
+                    view-transition-name: none;
+                }
+
+                body {
+                    display: grid;
+                    place-content: center;
+                    padding: var(--size-5);
+                    gap: var(--size-5);
+                }
+
+                fieldset {
+                    border: none;
+
+                    > div {
+                        display: grid;
+                        grid: 1fr / 1fr;
+                        padding: var(--size-3);
+
+                        & > label {
+                            grid-area: 1 / 1;
+                        }
+                    }
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <fieldset id="radiento" class="bento">
+            <div>
+                <input
+                    type="radio"
+                    id="tag01"
+                    name="drone"
+                    value="tag01"
+                />
+                <label for="tag01">tag01</label>
+            </div>
+
+            <div>
+                <input
+                    type="radio"
+                    id="tag02"
+                    name="drone"
+                    value="tag02"
+                    checked
+                />
+                <label for="tag02">tag02</label>
+            </div>
+
+            <div>
+                <input type="radio" id="tag03" name="drone" value="tag03" />
+                <label for="tag03">tag03</label>
+            </div>
+
+            <div>
+                <input
+                    type="radio"
+                    id="tag04"
+                    name="drone"
+                    value="tag04"
+                />
+                <label for="tag04">tag04</label>
+            </div>
+
+            <div>
+                <input type="radio" id="tag05" name="drone" value="tag05" />
+                <label for="tag05">tag05</label>
+            </div>
+        </fieldset>
+        <script>
+            document.querySelectorAll("#radiento input").forEach((radio) => {
+                radio.onclick = (e) => {
+                    if (!document.startViewTransition) return;
+
+                    e.preventDefault();
+
+                    document.startViewTransition(() => {
+                        e.target.checked = true;
+                    });
+                };
+            });
+        </script>
+    </body>
+</html>

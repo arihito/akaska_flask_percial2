@@ -1,0 +1,246 @@
+@supports selector(::details-content) {
+	.warning {
+		display: none;
+	}
+}
+
+.accordion-wrapper {
+	display: flex;
+	flex-direction: row;
+	gap: 1rem;
+	width: min-content;
+	margin: 0 auto;
+}
+
+details {
+	display: flex;
+	flex-direction: row;
+
+	background: transparent;
+	color: white;
+	
+	height: 4rem;
+	border-radius: 2rem;
+	overflow: hidden;
+	background-image: linear-gradient(90deg, rgba(22, 33, 44, 1), rgba(22, 33, 44, 1));
+	
+	/* To make the image work …*/
+	position: relative;
+	z-index: 1;
+	
+	/* Hide marker */
+	::marker {
+		content: '';
+	}
+	
+    /* &:nth-of-type(1) {background-image: linear-gradient(90deg, rgba(243, 170, 196, 1), rgba(246, 190, 232, 1) 33%, rgba(255, 247, 216, 1) 76%, rgba(183, 187, 255, 1)); }
+    &:nth-of-type(2) {background-image: linear-gradient(90deg, rgba(255, 22, 22, 1), rgba(5, 0, 255, 1));    }
+    &:nth-of-type(3) {background-image: linear-gradient(90deg, rgba(255, 22, 22, 1), rgba(255, 182, 0, 1));}
+    &:nth-of-type(4) {background-image: linear-gradient(90deg, rgba(255, 22, 22, 1), rgba(183, 1, 1, 1));}
+    &:nth-of-type(5) {background-image: linear-gradient(90deg, rgba(0, 0, 0, 1), rgba(255, 255, 255, 1) 13% 63%, rgba(255, 22, 22, 1) 80%, rgba(5, 0, 255, 1));} */
+
+	/* The image is tucked in the summary, because otherwise it would be hidden when not [open] as it ends up in the ::details-content pseudo */
+	summary img {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		z-index: -1;
+		transition: filter 0.5s ease;
+		filter: grayscale(1)
+	}
+	/* Animate the image */
+	&[open] summary img {
+		filter: brightness(1);
+	}
+	
+	summary {
+		padding: 1rem 1em;
+		width: 4rem;
+		flex-shrink: 0; /* Prevent shrinking */
+		text-align: center;
+		
+		span {
+			display: grid;
+			place-content: center;
+			width: 100%;
+			aspect-ratio: 1;
+			border-radius: 50%;
+			background: rgb(0 0 0 / 0.25);
+
+            img {
+                width: 2rem;
+                height: 2rem;
+                margin: 1rem;
+                object-fit: cover;
+                z-index: 20;
+            }
+		}
+		
+		&:focus {
+			outline: none;
+		}
+	}
+	
+	.details-content-wrapper {
+		padding: 1rem 0.5rem;
+		width: 200px;
+	}
+	
+	&:hover, &:has(summary:focus) {
+		outline: 3px solid #468;
+		outline-offset: 3px;
+	}
+}
+
+.details-content-wrapper {
+	/* We need margin-trim … */
+	:first-child { margin-top: 0; }
+	:last-child {	margin-bottom: 0;	}
+	
+	/* Animate-in the text when open */
+	p {
+		transform: translateY(2rem);
+		opacity: 0;
+		transition: all 0.5s ease;
+		transition-delay: 0.5s;
+	}
+	
+	[open] & p {
+		transform: none;
+		opacity: 1;
+		transition-delay: 0.5s;
+	}
+}
+
+/* Animation */
+::details-content {
+	transition: width 0.5s ease, content-visibility 0.5s ease allow-discrete;
+	width: 0;
+}
+
+[open]::details-content {
+	width: 100px;
+}
+
+@layer reset {
+	* {
+		margin: 0;
+		padding: 0;
+		box-sizing: border-box;
+	}
+
+	html,
+	body {
+		height: 100%;
+	}
+	
+	html {
+		font-size: 14px;
+	}
+}
+
+@layer baselayout {
+	html {
+		background: white;
+		color: #444;
+		font-family: system-ui;
+		line-height: 1.42;
+		
+		overscroll-behavior-x: none;
+		overflow: auto;
+	}
+
+	main {
+		max-width: 90ch;
+		margin: 0 auto;
+		padding-bottom: 10rem;
+	}
+
+	p {
+		margin-bottom: 1em;
+	}
+	
+	h1, h2 {
+		margin: 4em 0 1em;
+	}
+	h3 {
+		margin: 1em 0 0.5em;
+	}
+	
+	#demo {
+		padding: 1em;
+		border: 1px solid #ccc;
+		background: #f4f6f9;
+	}
+}
+
+@layer code {
+	pre {
+		border: 1px solid #dedede;
+		padding: 1em;
+		background: #f7f7f7;
+		font-family: "Courier 10 Pitch", Courier, monospace;
+		overflow-x: auto;
+		border-left: 0.4em solid cornflowerblue;
+		tab-size: 4;
+	}
+
+	code:not(pre code) {
+		background: #f7f7f7;
+		border: 1px solid rgb(0 0 0 / 0.2);
+		padding: 0.1rem 0.3rem;
+		margin: 0.1rem 0;
+		border-radius: 0.2rem;
+		/* 			display: inline-block; */
+		-webkit-box-decoration-break: clone;
+		white-space: pre-wrap;
+	}
+}
+
+@layer warning {
+	.warning {
+		box-sizing: border-box;
+		padding: 1em;
+		margin: 1em 0;
+		border: 1px solid #ccc;
+		background: rgba(255 255 205 / 0.8);
+	}
+
+	.warning > :first-child {
+		margin-top: 0;
+	}
+
+	.warning > :last-child {
+		margin-bottom: 0;
+	}
+
+	.warning a {
+		color: blue;
+	}
+	.warning--info {
+		border: 1px solid #123456;
+		background: rgb(205 230 255 / 0.8);
+	}
+	.warning--alarm {
+		border: 1px solid red;
+		background: #ff000010;
+	}
+}
+
+/* Hide a bunch of stuff when embedded */
+:root[data-embed="yep"] {
+	main {
+		padding: 2em 1em;
+		
+		:not(p.warning, p.warning *, #demo, #demo *, #demo ~ p, #demo ~ p *) {
+			display: none;
+		}
+	}
+	#demo ~ p {
+		margin-top: 1em;
+		text-align: center;
+	}
+}
