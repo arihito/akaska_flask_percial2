@@ -296,13 +296,14 @@ WTForms            3.2.1
   <li>
     成果物生成
     <ul>
+      <li><code>Figma</code>による画面レイアウトと画面遷移図の作成</li>
       <li>ERAlchemy2でER図自動生成</li>
       <li>pylint / pyreverseによるクラス図作成</li>
       <li>Flask-Diagramsで画面遷移の可視化</li>
-      <li>△Template Visualizerでテンプレート樹形図化</li>
-      <li>△FlasggerでAPI一覧を生成(or <a href="https://flask-smorest.readthedocs.io/">flask-smorest</a>)</li>
-      <li>△Storybook for Jinjaによるコンポーネント可視化(Node.jsによる複雑化)</li>
-      <li>Watchdog（Flask-SocketIO）による管理画面の.pyや.htmlを変更検知&自動更新</li>
+      <li><del>△Template Visualizerでテンプレート樹形図化</del></li>
+      <li><del>△FlasggerでAPI一覧を生成(or <a href="https://flask-smorest.readthedocs.io/">flask-smorest</a>)</del></li>
+      <li><del>△Storybook for Jinjaによるコンポーネント可視化(Node.jsによる複雑化)</del></li>
+      <li><del>△Watchdog（Flask-SocketIO）による管理画面の.pyや.htmlを変更検知&自動更新</del></li>
     </ul>
   </li>
 </ul>

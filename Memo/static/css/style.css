@@ -49,6 +49,8 @@
 /* いいねボタン */
 /* ハートアニメーション */
 
+
+
 /* ============== 初期値 =============== */
 
 /* フォントサイズ系カスタム変数 */
@@ -628,6 +630,25 @@ pre.file-tag[data-tag]::before {
     padding: 0.75rem 1.25rem;
     border-bottom: 1px solid #dee2e6;
     background-color: #fff;
+}
+[data-bs-theme="dark"] .public ul {
+    border: 1px solid #456;
+}
+[data-bs-theme="dark"] .public li {
+    border-bottom: 1px solid #345;
+    background-color: #123;
+}
+
+.public th,
+.public td {
+  padding: 10px;
+}
+[data-bs-theme="dark"] .public th {
+    border-bottom: 1px solid #345;
+    background-color: #123;
+}
+[data-bs-theme="dark"] .public td {
+    border-bottom: 1px solid #345;
 }
 .public li:last-child {
     border-bottom: none;

@@ -80,11 +80,17 @@ GOOGLE_CLIENT_SECRET=your-client-secret
 
 ## 要件定義
 @README.md
+```
+> [!WARNING]
+> **実装中機能**：今回の課題の中で追加予定の機能。
+```
 
 ## 関連ドキュメント
 @static/docs/*
 - [用語集](static/docs/GLOSSARY.md)
 - [コーディング規約](static/docs/CODING_STANDARDS.md)
+- [画面遷移図](static/docs/page_flow.png)
+- [画面レイアウト図](https://www.figma.com/proto/U3Oai4u2vkgBTBAvfhmzRn/%E7%84%A1%E9%A1%8C?node-id=2-2&t=1DnO2VYQVCShvLJY-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=2%3A2&show-proto-sidebar=1)
 - [ER図](static/docs/er.svg)
 - [クラス設計図](static/docs/classes_Memo.svg)
 - [クラス依存関係図](static/docs/packages_Memo.svg)
@@ -104,7 +110,7 @@ pyreverse -o svg -p Memo app.py models.py forms.py config.py auth errors memo pu
 ## アプリ構成図作成
 http://127.0.0.1:5000/diagram
 
-## アプリ樹形図
+## アプリ樹形図作成
 ```
 tree > static/docs/tree.txt
 ```
