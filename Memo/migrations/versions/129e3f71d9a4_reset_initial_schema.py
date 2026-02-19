@@ -1,8 +1,8 @@
 """reset initial schema
 
-Revision ID: 30db46ef949d
+Revision ID: 129e3f71d9a4
 Revises: 
-Create Date: 2026-02-12 17:22:05.044111
+Create Date: 2026-02-18 19:14:17.673652
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '30db46ef949d'
+revision = '129e3f71d9a4'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -34,6 +34,10 @@ def upgrade():
     sa.Column('thumbnail', sa.String(length=50), nullable=False),
     sa.Column('oauth_provider', sa.String(length=50), nullable=True),
     sa.Column('oauth_sub', sa.String(length=255), nullable=True),
+    sa.Column('is_admin', sa.Boolean(), nullable=False),
+    sa.Column('is_paid', sa.Boolean(), nullable=False),
+    sa.Column('admin_password', sa.String(length=120), nullable=True),
+    sa.Column('subscription_expires_at', sa.DateTime(timezone=True), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email'),
     sa.UniqueConstraint('username')
@@ -64,8 +68,7 @@ def upgrade():
     sa.Column('category_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['category_id'], ['categories.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['memo_id'], ['memos.id'], ondelete='CASCADE'),
-    sa.PrimaryKeyConstraint('memo_id', 'category_id'),
-    info={'bind_key': None}
+    sa.PrimaryKeyConstraint('memo_id', 'category_id')
     )
     # ### end Alembic commands ###
 

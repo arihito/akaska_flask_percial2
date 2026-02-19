@@ -1,0 +1,35 @@
+{% extends "layout/mode.j2" %}
+
+{% block container %}
+    <nav class="navbar bg-body-secondary sticky-top p-2 shadow">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <!-- 左：タイトル -->
+            <a class="navbar-brand px-md-3 fade-in fade-in-delay-4" href="{{ url_for('admin.index') }}"><i class="fa fa-shield me-2"></i>管理者パネル</a>
+            <!-- 右：ユーザー情報＋ログアウト -->
+            <div class="d-flex align-items-center">
+                <a class="d-flex align-items-center text-decoration-none me-3" href="{{ url_for('memo.index') }}">
+                    <img src="{{ url_for('static', filename='images/user/' ~ current_user.thumbnail) }}" alt="{{ current_user.username }}" class="user-icon me-2 fade-in fade-in-delay-8 rounded-circle" width="" height="">
+                    <span class="user-name fade-in fade-in-delay-16 text-body-secondary"><strong>{{ current_user.username }}</strong> さん</span>
+                </a>
+                <a class="btn btn-outline-secondary me-2 fade-in fade-in-delay-20" href="{{ url_for('memo.index') }}"><i class="fa fa-arrow-left me-1"></i>マイページ</a>
+                <a class="btn btn-outline-secondary fade-in fade-in-delay-20" href="{{ url_for('admin.logout') }}"><i class="fa fa-sign-out me-1"></i>管理者ログアウト</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <div class="row">
+            <main class="col-12 px-md-4">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for alert_type, message in messages %}
+                        {% set icon = 'exclamation-triangle' if alert_type == 'danger' else 'check' %}
+                            <div class="alert alert-{{ alert_type }} text-center mt-3"><i class="fa fa-{{ icon }} me-2"></i>{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                {% block content %}
+                {% endblock content %}
+            </main>
+        </div>
+    </div>
+{% endblock container %}

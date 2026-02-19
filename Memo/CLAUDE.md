@@ -77,6 +77,42 @@ GOOGLE_CLIENT_SECRET=your-client-secret
 - `auth_bp` の `oauth_login` はBlueprintインポート時にFlaskアプリが未初期化のため `current_app` を使用している
 - `seed.py` 実行は既存のFavorite→Memo→Userを全削除してから再作成する（開発環境専用）
 - OAuthユーザーはユーザー名・パスワード変更不可（`is_oauth_user` プロパティで判定）
+- ボタンに `btn-danger` / `btn-outline-danger` は使用しない。`secondary` ベースで統一する
+
+## プロジェクト構造
+
+このプロジェクトのルートは `Memo/` だが、親ディレクトリ `Percial2/` 配下に
+参照すべきお試し機能・サンプルコードが存在する。
+
+### ディレクトリ構成
+```
+Percial2/                    # 親ディレクトリ（絶対パス: C:/Users/arihi/Dropbox/DevOps/Flask/Percial2）
+├── Memo/                    # メインアプリのプロジェクトルート（ここがカレント）
+├── stripe_checkout/         # Stripe決済のお試し実装
+└── （その他お試し機能）/
+```
+
+### ファイル参照時の注意
+- `Percial2/` 配下のフォルダを参照する場合は、絶対パスを使用すること
+- Windows環境の場合: `C:/Users/arihi/Dropbox/DevOps/Flask/Percial2/`
+
+## 機能試用サンプル
+- ドラッグ＆ドロップ：@file_drugdrop
+- 多言語機能：@i18n
+- Stripe決済：@stripe_checkout
+- StripeWebhook：@stripe_webhook
+
+## インタラクションUIサンプル
+- 多言語セレクトメニュー：@intaraction/i18n_ui
+- スライドカード：@intaraction/SwiperCard
+- 管理画面用棒グラフ：@intaraction/barChart.html
+- エレクトロニックフレーム：@intaraction/electronic.html
+- スクロールメニュー：@intaraction/scrollspy.html
+- ボックス交換UI：@intaraction/switch.html
+- ![**ノイズボタン**](https://codepen.io/jh3y/pen/PwzeRwy)
+- ![記事一覧の**ホバー時拡大**](https://codepen.io/Adir-SL/pen/RNRyVQL)
+- ![ホバー時中の**画像を拡大**](https://codepen.io/lessthanthree/pen/LENwGyZ)
+- ![**背景波紋**](https://codepen.io/soju22/pen/myVWBGa)
 
 ## 要件定義
 @README.md
@@ -96,6 +132,7 @@ GOOGLE_CLIENT_SECRET=your-client-secret
 - [クラス依存関係図](static/docs/packages_Memo.svg)
 - [アプリ構成図](static/docs/architecture.png)
 - [アプリ樹形図](static/docs/tree.txt)
+- [機能定義書](static/docs/function_definition.csv)
 
 ## ER図作成
 ```
@@ -126,7 +163,7 @@ tree > static/docs/tree.txt
 - 通常のコーディング → Sonnet
 - アプリ全体の解析・複雑なリファクタリング → Opus
 
-## Bash alias一覧
+## .bashrc aliasのショートカットコマンド一覧
 @C:\Users\arihi\.bashrc
 
 # 役割
@@ -191,3 +228,7 @@ IMPORTANT:
 - 参照されたファイル/パス/挙動は、必ず実際に読んで確認してから説明・提案する。
 - 未確認なら「未確認」と明示し、読む/調べる/質問するのどれかに倒す。
 - 同じミスを指摘された場合、同じミスを繰り返さないようにclaude.mdを自身で更新する。
+
+# 検証時のルール
+- デバッグプリントをコンソールに出力する際は、わかりやすいように「############デバッグタイトル############」とする。
+- どうしても検証結果がでない場合、試用階層でミニマムな機能を作成し問題無く稼働するかどうかを試すことも検討する。

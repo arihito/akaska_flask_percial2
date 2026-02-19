@@ -187,3 +187,11 @@ class EditUserForm(FlaskForm):
         if self.change_password.data:
             if not field.data:
                 raise ValidationError("確認用パスワードを入力してください")
+
+
+class AdminLoginForm(FlaskForm):
+    admin_password = PasswordField(
+        "管理者パスワード：",
+        validators=[DataRequired("管理者パスワードは必須入力です。")]
+    )
+    submit = SubmitField("管理者ログイン")

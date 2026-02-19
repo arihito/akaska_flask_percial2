@@ -53,6 +53,11 @@ class User(UserMixin, db.Model):
     thumbnail = db.Column(db.String(50), nullable=False, default='default.png')
     oauth_provider = db.Column(db.String(50)) # 'google'
     oauth_sub = db.Column(db.String(255)) # Googleのsub/id
+    # 管理者関連
+    is_admin = db.Column(db.Boolean, nullable=False, default=False)
+    is_paid = db.Column(db.Boolean, nullable=False, default=False)
+    admin_password = db.Column(db.String(120), nullable=True)
+    subscription_expires_at = db.Column(db.DateTime(timezone=True), nullable=True)
     memos = relationship('Memo', back_populates='user')
     favorites = relationship('Favorite', back_populates='user', cascade="all, delete-orphan")
     @property
@@ -64,4 +69,10 @@ class User(UserMixin, db.Model):
         if not self.password:
             return False
         return check_password_hash(self.password, password)
+    def set_admin_password(self, password):
+        self.admin_password = generate_password_hash(password)
+    def check_admin_password(self, password):
+        if not self.admin_password:
+            return False
+        return check_password_hash(self.admin_password, password)
 

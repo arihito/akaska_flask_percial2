@@ -1,3 +1,4 @@
+import os
 import random
 from datetime import datetime, timedelta
 
@@ -94,9 +95,22 @@ def seed_data():
         User.query.delete()
         db.session.commit()
 
+        print("管理者ユーザー作成...")
+        admin_user = User(
+            username="admin",
+            email=os.getenv('MAIL_USERNAME', 'admin@example.com'),
+            is_admin=True,
+            is_paid=True,
+        )
+        admin_user.set_password("Admin1234!(")
+        admin_user.set_admin_password("Admin1234!(")
+        db.session.add(admin_user)
+        db.session.commit()
+
         print("ユーザー作成...")
         users = UserFactory.create_batch(15)
         db.session.commit()
+        users = [admin_user] + users
 
         print("メモ作成...")
         # BodyFactoryから全記事本文を取得

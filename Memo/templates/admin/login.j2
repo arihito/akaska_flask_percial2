@@ -1,0 +1,42 @@
+{% extends "base.j2" %}
+{% block content %}
+    <div class="d-flex align-items-center py-md-4 m-md-5 mb-5">
+        <div class="col-12 col-md-6 form-signin p-md-5 mx-md-auto">
+            <form action="{{ url_for('admin.login') }}" method="post" novalidate>
+                {% from "auth/_formhelpers.j2" import render_floating_field %}
+                {{ form.hidden_tag() }}
+                <h1 class="h3 mb-3 fw-normal fade-in fade-delay-1"><i class="fa fa-shield me-2"></i>管理者ログイン</h1>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for alert_type, message in messages %}
+                        {% set icon = 'exclamation-triangle' if alert_type == 'danger' else 'check' %}
+                            <div class="alert alert-{{ alert_type }} text-center"><i class="fa fa-{{ icon }} me-2"></i>{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                <div class="alert alert-secondary fade-in fade-delay-2">
+                    <p class="mb-2"><i class="fa fa-info-circle me-2"></i><strong>管理者アクセスについて</strong></p>
+                    <ul class="mb-0 small">
+                        <li>管理者の承認を受けた上で、<strong>5,000円の決済</strong>をすることで、<strong>10日間</strong>限定で管理画面へのアクセスが有効になります。</li>
+                        <li>ログインする際は、登録したメールに送られる<strong>トークンパスワード</strong>を入力してください。</li>
+                        <li>トークンパスワードはサブスク期間中は同じものを使用します。</li>
+                    </ul>
+                </div>
+                {{ render_floating_field(form.admin_password, "Token Password", wrapper_class="fade-in fade-delay-4", autofocus=True) }}
+                <nav class="navbar bg-body-secondary my-3 rounded-3 fade-in fade-delay-6">
+                    <div class="container-fluid justify-content-start my-2 mx-2">
+                        <button type="submit" class="btn btn-secondary btn-lg me-2 text-dark flex-fill fade-in fade-delay-8"><i class="fa fa-shield me-2"></i>{{ form.submit.label.text }}</button>
+                        <a class="btn btn-outline-secondary btn-lg me-2 fade-in fade-delay-10" href="{{ url_for('memo.index') }}"><i class="fa fa-arrow-left me-1"></i>マイページに戻る</a>
+                    </div>
+                </nav>
+            </form>
+            <div class="my-5 fade-in fade-delay-12">
+                <hr class="opacity-25">
+            </div>
+            <div class="fade-in fade-delay-14">
+                <p class="text-body-secondary mb-3"><i class="fa fa-credit-card me-2"></i>まだ決済がお済みでない方は、こちらから決済手続きを行ってください。</p>
+                <a class="btn btn-outline-secondary btn-lg w-100" href="{{ url_for('admin.payment') }}"><i class="fa fa-credit-card me-2"></i>決済ページへ進む</a>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

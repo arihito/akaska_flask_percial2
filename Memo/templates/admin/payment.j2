@@ -1,0 +1,41 @@
+{% extends "base.j2" %}
+{% block content %}
+    <div class="d-flex align-items-center py-md-4 m-md-5 mb-5">
+        <div class="col-12 col-md-6 form-signin p-md-5 mx-md-auto">
+            <h1 class="h3 mb-3 fw-normal fade-in fade-delay-1"><i class="fa fa-credit-card me-2"></i>管理者プラン決済</h1>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for alert_type, message in messages %}
+                    {% set icon = 'exclamation-triangle' if alert_type == 'danger' else 'check' %}
+                        <div class="alert alert-{{ alert_type }} text-center"><i class="fa fa-{{ icon }} me-2"></i>{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            <div class="card fade-in fade-delay-2">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fa fa-shield me-2"></i>管理者アクセスプラン</h5>
+                    <p class="card-text text-body-secondary">管理者権限で全機能にアクセスできます。</p>
+                    <ul class="list-unstyled mb-3">
+                        <li class="mb-2"><i class="fa fa-check text-success me-2"></i>投稿記事評価グラフ閲覧</li>
+                        <li class="mb-2"><i class="fa fa-check text-success me-2"></i>固定ページ管理</li>
+                        <li class="mb-2"><i class="fa fa-check text-success me-2"></i>カテゴリー管理</li>
+                        <li class="mb-2"><i class="fa fa-check text-success me-2"></i>ユーザーサムネイル管理</li>
+                        <li class="mb-2"><i class="fa fa-check text-success me-2"></i>ユーザー利用管理</li>
+                    </ul>
+                    <hr>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="fs-4 fw-bold">&#165;5,000</span>
+                        <span class="badge bg-secondary fs-6">10日間</span>
+                    </div>
+                    <form action="{{ url_for('admin.create_checkout_session') }}" method="POST">
+                        {{ form.hidden_tag() }}
+                        <button type="submit" class="btn btn-secondary btn-lg w-100"><i class="fa fa-credit-card me-2"></i>Stripe決済へ進む</button>
+                    </form>
+                </div>
+            </div>
+            <div class="my-4 fade-in fade-delay-4">
+                <a class="btn btn-outline-secondary btn-lg w-100" href="{{ url_for('admin.login') }}"><i class="fa fa-arrow-left me-1"></i>管理者ログインに戻る</a>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

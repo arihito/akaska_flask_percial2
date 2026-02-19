@@ -13,13 +13,19 @@ from memo.views import memo_bp                  # マイページ
 from favorite.views import favorite_bp          # いいね
 from docs.views import docs_bp                  # 成果物
 from fixed.views import fixed_bp, STATIC_PAGES  # 固定ページ
+from admin.views import admin_bp                # 管理者
+from admin.webhook import webhook_bp            # Stripe Webhook
 
+import stripe
+from flask_mail import Mail
 from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
 app.config.from_object('config.Config')
+stripe.api_key = app.config['STRIPE_SECRET_KEY']
 db.init_app(app)
+mail = Mail(app)
 toolbar = DebugToolbarExtension(app)
 migrate = Migrate(app, db)
 login_manager = LoginManager()
@@ -34,6 +40,8 @@ app.register_blueprint(memo_bp)
 app.register_blueprint(favorite_bp)
 app.register_blueprint(docs_bp)
 app.register_blueprint(fixed_bp)
+app.register_blueprint(admin_bp)
+app.register_blueprint(webhook_bp)
 
 # 全テンプレートに値を共有
 @app.context_processor
