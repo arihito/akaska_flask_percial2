@@ -8,7 +8,7 @@
         <hr>
         <li class="nav-item fade-in fade-in-delay-5"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'auth.edit' %}active{% endif %}" href="{{ url_for('auth.edit') }}"><i class="fa fa-user-circle-o me-2"></i>ユーザー編集</a></li>
         <hr>
-        <li class="nav-item fade-in fade-in-delay-4"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint and request.endpoint.startswith('admin.') %}active{% endif %}" href="{{ url_for('admin.login') }}"><i class="fa fa-cog me-2"></i>管理者専用</a></li>
+        <li class="nav-item fade-in fade-in-delay-4"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint and request.endpoint.startswith('admin.') %}active{% endif %}" href="{{ url_for('admin.login') }}"><i class="fa fa-shield me-2"></i>管理者専用</a></li>
     </ul>
     <hr>
     <h6 class="text-body-secondary fs-5 ms-4 ps-2 mt-4 pt-2 mb-3 font-bold"><i class="fa fa-file-code-o me-2"></i> 開発関連資料</h6>

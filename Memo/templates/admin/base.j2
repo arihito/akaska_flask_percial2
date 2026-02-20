@@ -1,10 +1,11 @@
 {% extends "layout/mode.j2" %}
+{% block page_title %}{% endblock %}
 
 {% block container %}
     <nav class="navbar bg-body-secondary sticky-top p-2 shadow">
         <div class="container-fluid d-flex justify-content-between align-items-center">
             <!-- 左：タイトル -->
-            <a class="navbar-brand px-md-3 fade-in fade-in-delay-4" href="{{ url_for('admin.index') }}"><i class="fa fa-shield me-2"></i>管理者パネル</a>
+            <a class="navbar-brand px-md-3 fade-in fade-in-delay-4" href="{{ url_for('admin.index') }}"><i class="fa fa-shield me-2"></i>管理者専用</a>
             <!-- 右：ユーザー情報＋ログアウト -->
             <div class="d-flex align-items-center">
                 <a class="d-flex align-items-center text-decoration-none me-3" href="{{ url_for('memo.index') }}">
@@ -18,7 +19,10 @@
     </nav>
     <div class="container-fluid">
         <div class="row">
-            <main class="col-12 px-md-4">
+            <nav id="adminSidebarMenu" class="col-md-3 col-lg-2 d-none d-md-block bg-body-tertiary sidebar collapse min-vh-100">
+                {% include 'admin/sidemenu.j2' %}
+            </nav>
+            <main class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
                 {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
                         {% for alert_type, message in messages %}

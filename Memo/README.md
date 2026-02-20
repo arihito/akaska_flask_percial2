@@ -306,6 +306,17 @@ WTForms            3.2.1
       <li><del>△Watchdog（Flask-SocketIO）による管理画面の.pyや.htmlを変更検知&自動更新</del></li>
     </ul>
   </li>
+  <li>管理者ログイン
+      <ul>
+        <li>管理者承認待ちボタン(既存の管理者による承認)</li>
+        <li>管理者へのFlask-mailによる**承認依頼のメール送信**</li>
+        <li>承認後の**カード決済処理**</li>
+        <li>決済後の**トークンパスワード生成と登録**後にユーザーへのメール送信</li>
+        <li>プログレスバーによる進捗アニメーション</li>
+        <li>スーパーユーザーモード認証後の**エレクトロニックフレーム**発動</li>
+      </ul>
+  </li>
+
 </ul>
 <!-- END_TERM -->
 </details>
@@ -318,24 +329,15 @@ WTForms            3.2.1
 <details>
 <summary>実装中機能一覧</summary>
 <ul>
-  <li>CloudCode操作方法の確認</li>
-  <li>管理者ログイン時のUIエフェクト
-      <ul>
-        <li>CLAUDE CODE PluginのFrontend Designを使用</li>
-        <li>**エレクトロニックフレーム**スーパーユーザーモード発動</li>
-        <li>![**ノイズボタン**](https://codepen.io/jh3y/pen/PwzeRwy)</li>
-        <li>![記事一覧の**ホバー時拡大**](https://codepen.io/Adir-SL/pen/RNRyVQL)</li>
-        <li>![ホバー時中の**画像を拡大**](https://codepen.io/lessthanthree/pen/LENwGyZ)</li>
-        <li>![**背景波紋**](https://codepen.io/soju22/pen/myVWBGa)</li>
-      </ul>
-  </li>
-  <li>管理者(Admin)ページ作成
+  <li>CLAUDE CODE PluginのFrontend Designを使用</li>
+  <li>送信メールのHTMLデザイン・Stripeの決済画面デザイン</li>
+  <li>管理者ページ作成
     <ul>
-      <li>グラフ生成[**ビルドアニメーション**](https://codepen.io/nickspiel/pen/LpepvQ)</li>
+      <li>グラフ生成**ビルドアニメーション**</li>
       <li>固定ページの増減(HTMX)を非同期で**リアルタイム管理**</li>
       <li>カテゴリー管理</li>
       <li>ユーザーバン(論理削除)</li>
-      <li>管理者会員パスワード発行サブスクによる<a href="https://codepen.io/blacklead-studio/pen/xbwaqxE" target="_brank">**カード決済**</a></li>
+      <li>管理者会員パスワード発行サブスクによる</li>
     </ul>
   </li>
   <li>生成AI機能(仮案)

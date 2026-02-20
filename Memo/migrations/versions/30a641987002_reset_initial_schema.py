@@ -1,8 +1,8 @@
 """reset initial schema
 
-Revision ID: 129e3f71d9a4
+Revision ID: 30a641987002
 Revises: 
-Create Date: 2026-02-18 19:14:17.673652
+Create Date: 2026-02-19 16:00:01.101811
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '129e3f71d9a4'
+revision = '30a641987002'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -35,6 +35,7 @@ def upgrade():
     sa.Column('oauth_provider', sa.String(length=50), nullable=True),
     sa.Column('oauth_sub', sa.String(length=255), nullable=True),
     sa.Column('is_admin', sa.Boolean(), nullable=False),
+    sa.Column('is_applied', sa.Boolean(), nullable=False),
     sa.Column('is_paid', sa.Boolean(), nullable=False),
     sa.Column('admin_password', sa.String(length=120), nullable=True),
     sa.Column('subscription_expires_at', sa.DateTime(timezone=True), nullable=True),

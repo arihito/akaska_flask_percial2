@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <style>
+    /**
+ * Stepbar
+ *
+ * Step Bar Progress Bar for Bootstrap.
+ *
+ * Author: Kushal Pandya <kushalspandya@gmail.com> (https://doublslash.com)
+ */
+
+$light_gray: #e4e4e7;
+
+$step-count: 3;
+
+$step-states: "pending", "active", "pass", "fail";
+
+$state-to-glyph: (
+    pending: "\e234",
+    active: "\e031",
+    pass: "\e013",
+    fail: "\e101"
+);
+
+$state-to-color: (
+    pending: #f8ac59,
+    active: #1c84c6,
+    pass: #1ab394,
+    fail: #ed5565
+);
+
+@keyframes active-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.container {
+    margin-top: 20px;
+
+    h2 {
+        text-align: center;
+    }
+
+    h4 {
+        color: #999;
+        text-align: center;
+    }
+
+    .stepbar-progress {
+        margin-top: 30px;
+    }
+}
+
+.stepbar-progress {
+    width: 100%;
+    height: 32px;
+    border-collapse: collapse;
+
+    .step-item {
+        width: 32px;
+
+        .step-body {
+            position: relative;
+            display: block;
+            width: 32px;
+            height: 32px;
+            background-color: $light_gray;
+            border: 5px solid $light_gray;
+            border-radius: 50%;
+
+            .glyphicon:before {
+                color: white;
+                margin: auto 4px 0 4px;
+                line-height: 20px;
+            }
+        }
+    }
+
+    .step-item-progress {
+        width: 100% / ($step-count - 1);
+        height: 32px;
+        verticle-align: middle;
+
+        .progress-body {
+            display: block;
+            height: 11px;
+            background-color: $light_gray;
+            border-top: 3px solid $light_gray;
+            border-bottom: 3px solid $light_gray;
+
+            background-image: -webkit-linear-gradient(
+                -45deg,
+                rgba(255, 255, 255, 0.3) 0%,
+                transparent 5%,
+                rgba(255, 255, 255, 0.3) 10%,
+                transparent 15%,
+                rgba(255, 255, 255, 0.3) 20%,
+                transparent 25%,
+                rgba(255, 255, 255, 0.3) 30%,
+                transparent 35%,
+                rgba(255, 255, 255, 0.3) 40%,
+                transparent 45%,
+                rgba(255, 255, 255, 0.3) 50%,
+                transparent 55%,
+                rgba(255, 255, 255, 0.3) 60%,
+                transparent 65%,
+                rgba(255, 255, 255, 0.3) 70%,
+                transparent 75%,
+                rgba(255, 255, 255, 0.3) 80%,
+                transparent 85%,
+                rgba(255, 255, 255, 0.3) 90%,
+                transparent 95%,
+                rgba(255, 255, 255, 0.3) 100%
+            );
+
+            background-image: -moz-linear-gradient(
+                -45deg,
+                rgba(255, 255, 255, 0.3) 0%,
+                transparent 5%,
+                rgba(255, 255, 255, 0.3) 10%,
+                transparent 15%,
+                rgba(255, 255, 255, 0.3) 20%,
+                transparent 25%,
+                rgba(255, 255, 255, 0.3) 30%,
+                transparent 35%,
+                rgba(255, 255, 255, 0.3) 40%,
+                transparent 45%,
+                rgba(255, 255, 255, 0.3) 50%,
+                transparent 55%,
+                rgba(255, 255, 255, 0.3) 60%,
+                transparent 65%,
+                rgba(255, 255, 255, 0.3) 70%,
+                transparent 75%,
+                rgba(255, 255, 255, 0.3) 80%,
+                transparent 85%,
+                rgba(255, 255, 255, 0.3) 90%,
+                transparent 95%,
+                rgba(255, 255, 255, 0.3) 100%
+            );
+
+            background-image: -ms-linear-gradient(
+                -45deg,
+                rgba(255, 255, 255, 0.3) 0%,
+                transparent 5%,
+                rgba(255, 255, 255, 0.3) 10%,
+                transparent 15%,
+                rgba(255, 255, 255, 0.3) 20%,
+                transparent 25%,
+                rgba(255, 255, 255, 0.3) 30%,
+                transparent 35%,
+                rgba(255, 255, 255, 0.3) 40%,
+                transparent 45%,
+                rgba(255, 255, 255, 0.3) 50%,
+                transparent 55%,
+                rgba(255, 255, 255, 0.3) 60%,
+                transparent 65%,
+                rgba(255, 255, 255, 0.3) 70%,
+                transparent 75%,
+                rgba(255, 255, 255, 0.3) 80%,
+                transparent 85%,
+                rgba(255, 255, 255, 0.3) 90%,
+                transparent 95%,
+                rgba(255, 255, 255, 0.3) 100%
+            );
+
+            background-image: -o-linear-gradient(
+                -45deg,
+                rgba(255, 255, 255, 0.3) 0%,
+                transparent 5%,
+                rgba(255, 255, 255, 0.3) 10%,
+                transparent 15%,
+                rgba(255, 255, 255, 0.3) 20%,
+                transparent 25%,
+                rgba(255, 255, 255, 0.3) 30%,
+                transparent 35%,
+                rgba(255, 255, 255, 0.3) 40%,
+                transparent 45%,
+                rgba(255, 255, 255, 0.3) 50%,
+                transparent 55%,
+                rgba(255, 255, 255, 0.3) 60%,
+                transparent 65%,
+                rgba(255, 255, 255, 0.3) 70%,
+                transparent 75%,
+                rgba(255, 255, 255, 0.3) 80%,
+                transparent 85%,
+                rgba(255, 255, 255, 0.3) 90%,
+                transparent 95%,
+                rgba(255, 255, 255, 0.3) 100%
+            );
+
+            background-image: linear-gradient(
+                -45deg,
+                rgba(255, 255, 255, 0.3) 0%,
+                transparent 5%,
+                rgba(255, 255, 255, 0.3) 10%,
+                transparent 15%,
+                rgba(255, 255, 255, 0.3) 20%,
+                transparent 25%,
+                rgba(255, 255, 255, 0.3) 30%,
+                transparent 35%,
+                rgba(255, 255, 255, 0.3) 40%,
+                transparent 45%,
+                rgba(255, 255, 255, 0.3) 50%,
+                transparent 55%,
+                rgba(255, 255, 255, 0.3) 60%,
+                transparent 65%,
+                rgba(255, 255, 255, 0.3) 70%,
+                transparent 75%,
+                rgba(255, 255, 255, 0.3) 80%,
+                transparent 85%,
+                rgba(255, 255, 255, 0.3) 90%,
+                transparent 95%,
+                rgba(255, 255, 255, 0.3) 100%
+            );
+
+            transition: all 1s ease;
+
+            .body-fill {
+                width: 20px;
+                height: 5px;
+                background-color: #1ab394;
+            }
+        }
+    }
+
+    .step-item-first .step-body:after,
+    .step-item-middle .step-body:after,
+    .step-item-middle .step-body:before,
+    .step-item-last .step-body:before {
+        content: "";
+        position: absolute;
+        top: calc(50% - 6px);
+        height: 11px;
+        width: 6px;
+        background-color: $light_gray;
+        border-top: 3px solid $light_gray;
+        border-bottom: 3px solid $light_gray;
+    }
+
+    .step-item-first,
+    .step-item-middle {
+        .step-body:after {
+            left: 100%;
+        }
+    }
+
+    .step-item-middle,
+    .step-item-last {
+        .step-body:before {
+            right: 100%;
+        }
+    }
+}
+
+.stepbar-progress {
+    @mixin step-status(
+        $step: "1",
+        $status-color: #e4e4e7,
+        $status-icon: "",
+        $animate: false
+    ) {
+        .step-item[data-step="#{$step}"] .step-body {
+            background-color: $status-color;
+
+            .glyphicon {
+                @if $animate == true {
+                    animation: active-spin infinite 1s linear;
+                }
+
+                &:before {
+                    content: $status-icon;
+                }
+            }
+        }
+    }
+
+    @mixin fill-step-progress($from-step, $to-step, $status-color: #e4e4e7) {
+        .step-item[data-step="#{$from-step}"] .step-body:after,
+        .step-item[data-step="#{$from-step}"]
+            + .step-item-progress
+            .progress-body,
+        .step-item[data-step="#{$to-step}"] .step-body:before {
+            background-color: $status-color;
+        }
+    }
+
+    /* Individual Steps */
+    @each $state in $step-states {
+        $animate-glyphicon: $state == "active";
+        $state-pass-glyph: map-get($state-to-glyph, "pass");
+        $current-state-color: map-get($state-to-color, $state);
+        $current-state-glyph: map-get($state-to-glyph, $state);
+
+        // Upto step 1
+        &[data-current-step="1"][data-step-status="#{$state}"] {
+            @include step-status(
+                "1",
+                $current-state-color,
+                $current-state-glyph,
+                $animate-glyphicon
+            );
+        }
+
+        // Upto step 2
+        &[data-current-step="2"][data-step-status="#{$state}"] {
+            @include step-status("1", $current-state-color, $state-pass-glyph);
+            @include step-status(
+                "2",
+                $current-state-color,
+                $current-state-glyph,
+                $animate-glyphicon
+            );
+            @include fill-step-progress("1", "2", $current-state-color);
+        }
+
+        // Upto step 3
+        &[data-current-step="3"][data-step-status="#{$state}"] {
+            @include step-status("1", $current-state-color, $state-pass-glyph);
+            @include step-status("2", $current-state-color, $state-pass-glyph);
+            @include step-status(
+                "3",
+                $current-state-color,
+                $current-state-glyph,
+                $animate-glyphicon
+            );
+            @include fill-step-progress("1", "2", $current-state-color);
+            @include fill-step-progress("2", "3", $current-state-color);
+        }
+    }
+}
+    </style>
+</head>
+<body>
+    <!--
+Modify just data-current-step and data-step-status values to change progressbar status.
+-->
+
+<div class="container">
+    <h2>Stepbar v0.1</h2>
+    <h4>Fully resizable, dynamic Multi-step progress bar using Glyphicons from Bootstrap.</h4>
+    <table class="stepbar-progress" data-current-step="1" data-step-status="pending">
+        <caption>First Step Pending</caption>
+        <tbody>
+            <tr>
+                <td class="step-item step-item-first" data-step="1">
+                    <span class="step-body">
+                        <span class="glyphicon"></span>
+                    </span>
+                </td>
+                <td class="step-item-progress">
+                    <span class="progress-body">
+                        <span class="body-fill"></span>
+                    </span>
+                </td>
+                <td class="step-item step-item-middle" data-step="2">
+                    <span class="step-body">
+                        <span class="glyphicon"></span>
+                    </span>
+                </td>
+                <td class="step-item-progress">
+                    <span class="progress-body">
+                        <span class="body-fill"></span>
+                    </span>
+                </td>
+                <td class="step-item step-item-last" data-step="3">
+                    <span class="step-body">
+                        <span class="glyphicon"></span>
+                    </span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="stepbar-progress" data-current-step="2" data-step-status="active">
+        <caption>Second Step Active</caption>
+        <tbody>
+            <tr>
+                <td class="step-item step-item-first" data-step="1">
+                    <span class="step-body">
+                        <span class="glyphicon"></span>
+                    </span>
+                </td>
+                <td class="step-item-progress">
+                    <span class="progress-body">
+                        <span class="body-fill"></span>
+                    </span>
+                </td>
+                <td class="step-item step-item-middle" data-step="2">
+                    <span class="step-body">
+                        <span class="glyphicon"></span>
+                    </span>
+                </td>
+                <td class="step-item-progress">
+                    <span class="progress-body">
+                        <span class="body-fill"></span>
+                    </span>
+                </td>
+                <td class="step-item step-item-last" data-step="3">
+                    <span class="step-body">
+                        <span class="glyphicon"></span>
+                    </span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="stepbar-progress" data-current-step="2" data-step-status="fail">
+        <caption>Second Step FAILED</caption>
+        <tbody>
+            <tr>
+                <td class="step-item step-item-first" data-step="1">
+                    <span class="step-body">
+                        <span class="glyphicon"></span>
+                    </span>
+                </td>
+                <td class="step-item-progress">
+                    <span class="progress-body">
+                        <span class="body-fill"></span>
+                    </span>
+                </td>
+                <td class="step-item step-item-middle" data-step="2">
+                    <span class="step-body">
+                        <span class="glyphicon"></span>
+                    </span>
+                </td>
+                <td class="step-item-progress">
+                    <span class="progress-body">
+                        <span class="body-fill"></span>
+                    </span>
+                </td>
+                <td class="step-item step-item-last" data-step="3">
+                    <span class="step-body">
+                        <span class="glyphicon"></span>
+                    </span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="stepbar-progress" data-current-step="2" data-step-status="pass">
+        <caption>Second Step Passed</caption>
+        <tbody>
+            <tr>
+                <td class="step-item step-item-first" data-step="1">
+                    <span class="step-body">
+                        <span class="glyphicon"></span>
+                    </span>
+                </td>
+                <td class="step-item-progress">
+                    <span class="progress-body">
+                        <span class="body-fill"></span>
+                    </span>
+                </td>
+                <td class="step-item step-item-middle" data-step="2">
+                    <span class="step-body">
+                        <span class="glyphicon"></span>
+                    </span>
+                </td>
+                <td class="step-item-progress">
+                    <span class="progress-body">
+                        <span class="body-fill"></span>
+                    </span>
+                </td>
+                <td class="step-item step-item-last" data-step="3">
+                    <span class="step-body">
+                        <span class="glyphicon"></span>
+                    </span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="stepbar-progress" data-current-step="3" data-step-status="pending">
+        <caption>Last Step Pending</caption>
+        <tbody>
+            <tr>
+                <td class="step-item step-item-first" data-step="1">
+                    <span class="step-body">
+                        <span class="glyphicon"></span>
+                    </span>
+                </td>
+                <td class="step-item-progress">
+                    <span class="progress-body">
+                        <span class="body-fill"></span>
+                    </span>
+                </td>
+                <td class="step-item step-item-middle" data-step="2">
+                    <span class="step-body">
+                        <span class="glyphicon"></span>
+                    </span>
+                </td>
+                <td class="step-item-progress">
+                    <span class="progress-body">
+                        <span class="body-fill"></span>
+                    </span>
+                </td>
+                <td class="step-item step-item-last" data-step="3">
+                    <span class="step-body">
+                        <span class="glyphicon"></span>
+                    </span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="stepbar-progress" data-current-step="3" data-step-status="pass">
+        <caption>All Steps Passed</caption>
+        <tbody>
+            <tr>
+                <td class="step-item step-item-first" data-step="1">
+                    <span class="step-body">
+                        <span class="glyphicon"></span>
+                    </span>
+                </td>
+                <td class="step-item-progress">
+                    <span class="progress-body">
+                        <span class="body-fill"></span>
+                    </span>
+                </td>
+                <td class="step-item step-item-middle" data-step="2">
+                    <span class="step-body">
+                        <span class="glyphicon"></span>
+                    </span>
+                </td>
+                <td class="step-item-progress">
+                    <span class="progress-body">
+                        <span class="body-fill"></span>
+                    </span>
+                </td>
+                <td class="step-item step-item-last" data-step="3">
+                    <span class="step-body">
+                        <span class="glyphicon"></span>
+                    </span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+</body>
+</html>

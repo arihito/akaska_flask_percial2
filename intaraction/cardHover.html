@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>cardHover</title>
+        <style>
+            body {
+                margin: 0;
+                font-family: "Geist", sans-serif;
+                font-weight: 400;
+            }
+
+            header {
+                position: sticky;
+                top: 0;
+                container-type: scroll-state;
+                container-name: sticky-scroll;
+                z-index: 1;
+            }
+
+            .header-wrapper {
+                display: flex;
+                color: white;
+                justify-content: space-between;
+                background-color: black;
+                padding: 24px 5vw;
+                backdrop-filter: blur(6px);
+                transition: background-color 150ms linear 0s;
+            }
+
+            .logo {
+                font-family: "Playwrite NZ Basic", cursive;
+                font-weight: 400;
+                scale: 1;
+                transform-origin: center left;
+                transition: scale 150ms ease-in-out 0s;
+            }
+
+            .logo-type,
+            .flex {
+                transition: color 150ms linear 150ms;
+            }
+
+            .flex {
+                display: flex;
+                align-items: center;
+                gap: 24px;
+            }
+
+            .flex span {
+                height: fit-content;
+            }
+
+            .title {
+                padding: 12px 5vw;
+            }
+
+            .cards-wrapper {
+                display: flex;
+                gap: 1.5vw;
+                flex-wrap: wrap;
+                justify-content: center;
+                padding: 24px 0;
+            }
+
+            .card {
+                width: 17vw;
+                min-width: 240px;
+                aspect-ratio: 2 / 1.5;
+                border-radius: 12px;
+                background-color: white;
+                position: relative;
+                overflow: hidden;
+                box-shadow: 0 0 0 1px lightgrey;
+                transition: scale 150ms ease-in-out 0s;
+                cursor: pointer;
+                background-repeat: no-repeat;
+                background-size: 60%;
+                background-position: top center;
+                background-image: url(https://thumbs.dreamstime.com/b/single-salmon-sushi-maki-isolated-white-background-235193245.jpg);
+            }
+
+            .card::before {
+                content: "15$";
+                position: absolute;
+                top: 0;
+                right: 0;
+                margin: 6px;
+                font-size: 0.75em;
+                padding: 6px;
+                aspect-ratio: 1 / 1;
+                border-radius: 999px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: #dddddd;
+            }
+
+            .card::after {
+                content: "Sushi Roll";
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                padding: 12px;
+                background-color: #dddddd;
+            }
+
+            .card:nth-last-of-type(2n) {
+                background-image: url(https://static.vecteezy.com/system/resources/previews/055/538/671/non_2x/single-salmon-avocado-sushi-roll-isolated-on-transparent-png.png);
+            }
+
+            .card:nth-last-of-type(3n) {
+                background-image: url(https://static.vecteezy.com/system/resources/previews/048/053/195/non_2x/a-single-sushi-roll-with-avocado-crab-and-salmon-png.png);
+            }
+
+            .card:nth-last-of-type(4n) {
+                background-image: url(https://static.vecteezy.com/system/resources/previews/055/538/663/non_2x/single-salmon-avocado-sushi-roll-isolated-on-white-png.png);
+            }
+
+            .card:hover {
+                box-shadow: 0 0 0 1px black;
+                scale: 1.05;
+            }
+
+            @container sticky-scroll scroll-state(stuck) {
+                .header-wrapper {
+                    background-color: #000000cc;
+                }
+
+                .logo {
+                    scale: 2.5;
+                    transition: scale 150ms ease-in-out 150ms;
+                }
+
+                .logo-type,
+                .flex {
+                    color: transparent;
+                    transition: color 150ms linear 0s;
+                }
+            }
+
+            @media screen and (max-width: 500px) {
+                .cards-wrapper {
+                    gap: 4vw;
+                }
+
+                .card {
+                    width: 44vw;
+                    min-width: unset;
+                }
+
+                h2 {
+                    font-size: 1.2rem;
+                }
+
+                .card::before {
+                    width: 1.5rem;
+                    height: 1.5rem;
+                }
+
+                .card::after {
+                    padding: 1.5vw;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <div class="header-wrapper">
+                <div class="logo"> 🍣 <span class="logo-type"> Bento Sushi </span>
+                </div>
+                <div class="flex">
+                    <span>Clients</span>
+                    <span>Menu</span>
+                    <span>Contact</span>
+                </div>
+            </div>
+        </header>
+        <main>
+            <h2 class="title">This is a coding example of the sticky scroll new CSS properties, please scroll down to see the effect.<br />
+    As of Feb 2026, this only works in Desktop Chrome.</h2>
+            <div class="cards-wrapper">
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+            </div>
+        </main>
+    </body>
+</html>

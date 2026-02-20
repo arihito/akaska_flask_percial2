@@ -134,6 +134,47 @@
 
         toggleVisible("changePasswordCheck", "password-area");
         toggleVisible("deleteUserCheck", "delete-area");
+
+        // EasyMDEマークダウンエディタ
+        if (typeof EasyMDE !== "undefined" && document.getElementById("content")) {
+            new EasyMDE({
+                element: document.getElementById("content"),
+                spellChecker: false,
+                autofocus: true,
+                placeholder: "Markdownで本文を入力してください",
+            });
+        }
+
+        // 404翻訳ボタン
+        const translateBtn = document.getElementById("translate-btn");
+        if (translateBtn) {
+            translateBtn.addEventListener("click", async () => {
+                const target = document.getElementById("error-text");
+                const text = target.innerText;
+                try {
+                    const res = await fetch(
+                        "https://translate.googleapis.com/translate_a/single" +
+                        "?client=gtx&sl=auto&tl=ja&dt=t&q=" + encodeURIComponent(text),
+                    );
+                    const data = await res.json();
+                    target.innerText = data[0].map((item) => item[0]).join("");
+                } catch (e) {
+                    console.error("Translation failed:", e);
+                }
+            });
+        }
+
+        // ステップバーアニメーション（admin/login）
+        const barDelays = { "delay-1": 300, "delay-2": 1050, "delay-3": 1800 };
+        Object.keys(barDelays).forEach((cls) => {
+            const bar = document.querySelector(".step-bar.done." + cls);
+            if (!bar) return;
+            const fill = bar.querySelector(".progress-bar");
+            setTimeout(() => {
+                fill.style.transition = "width 0.65s ease";
+                fill.style.width = "100%";
+            }, barDelays[cls]);
+        });
     });
 })();
 

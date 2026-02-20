@@ -46,7 +46,10 @@ app.register_blueprint(webhook_bp)
 # 全テンプレートに値を共有
 @app.context_processor
 def inject_static_pages():
-    return dict(STATIC_PAGES=STATIC_PAGES)
+    return dict(
+        STATIC_PAGES=STATIC_PAGES,
+        SITE_NAME=app.config['SITE_NAME'],
+    )
 
 @login_manager.user_loader
 def load_user(user_id):

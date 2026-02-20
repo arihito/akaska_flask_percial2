@@ -55,6 +55,7 @@ class User(UserMixin, db.Model):
     oauth_sub = db.Column(db.String(255)) # Googleのsub/id
     # 管理者関連
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
+    is_applied = db.Column(db.Boolean, nullable=False, default=False)
     is_paid = db.Column(db.Boolean, nullable=False, default=False)
     admin_password = db.Column(db.String(120), nullable=True)
     subscription_expires_at = db.Column(db.DateTime(timezone=True), nullable=True)

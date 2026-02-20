@@ -1,7 +1,88 @@
 {% extends "base.j2" %}
+{% block page_title %}管理者ログイン | {{ SITE_NAME }}{% endblock %}
 {% block content %}
-    <div class="d-flex align-items-center py-md-4 m-md-5 mb-5">
-        <div class="col-12 col-md-6 form-signin p-md-5 mx-md-auto">
+
+{# ステップ判定 #}
+{% if current_user.is_paid %}
+    {% set current_step = 4 %}
+{% elif current_user.is_admin %}
+    {% set current_step = 3 %}
+{% elif current_user.is_applied %}
+    {% set current_step = 2 %}
+{% else %}
+    {% set current_step = 1 %}
+{% endif %}
+
+{% if current_step == 4 %}
+{# SVG Turbulence フィルター（エレクトロニックフレーム用） #}
+<svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden;" aria-hidden="true">
+    <defs>
+        <filter id="turbulent-displace" colorInterpolationFilters="sRGB" x="-20%" y="-20%" width="140%" height="140%">
+            <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise1" seed="1"/>
+            <feOffset in="noise1" dx="0" dy="0" result="offsetNoise1">
+                <animate attributeName="dy" values="700; 0" dur="6s" repeatCount="indefinite" calcMode="linear"/>
+            </feOffset>
+            <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise2" seed="1"/>
+            <feOffset in="noise2" dx="0" dy="0" result="offsetNoise2">
+                <animate attributeName="dy" values="0; -700" dur="6s" repeatCount="indefinite" calcMode="linear"/>
+            </feOffset>
+            <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise1" seed="2"/>
+            <feOffset in="noise1" dx="0" dy="0" result="offsetNoise3">
+                <animate attributeName="dx" values="490; 0" dur="6s" repeatCount="indefinite" calcMode="linear"/>
+            </feOffset>
+            <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise2" seed="2"/>
+            <feOffset in="noise2" dx="0" dy="0" result="offsetNoise4">
+                <animate attributeName="dx" values="0; -490" dur="6s" repeatCount="indefinite" calcMode="linear"/>
+            </feOffset>
+            <feComposite in="offsetNoise1" in2="offsetNoise2" result="part1"/>
+            <feComposite in="offsetNoise3" in2="offsetNoise4" result="part2"/>
+            <feBlend in="part1" in2="part2" mode="color-dodge" result="combinedNoise"/>
+            <feDisplacementMap in="SourceGraphic" in2="combinedNoise" scale="30" xChannelSelector="R" yChannelSelector="B"/>
+        </filter>
+    </defs>
+</svg>
+
+{# 背景波紋 #}
+<div class="ripple-bg" aria-hidden="true">
+    <div class="ripple r1"></div>
+    <div class="ripple r2"></div>
+    <div class="ripple r3"></div>
+    <div class="ripple r4"></div>
+</div>
+{% endif %}
+
+    <div class="d-flex align-items-center pb-md-4 m-md-5 mb-5">
+        <div class="col-12 col-md-6 form-signin pb-md-5 mx-md-auto superuser-flame{% if current_step == 4 %} step-4{% endif %}">
+
+            {# ---- Step Bar ---- #}
+            <div class="step-row fade-in fade-delay-1">
+                {% set steps = [
+                    (1, 'fa-paper-plane', '管理者申請'),
+                    (2, 'fa-clock-o',    '承認待ち'),
+                    (3, 'fa-credit-card','決済'),
+                    (4, 'fa-shield',     'ログイン'),
+                ] %}
+                {% for num, icon, label in steps %}
+                    {% if num < current_step %}
+                        {% set cls = 'done' %}
+                    {% elif num == current_step %}
+                        {% set cls = 'active' %}
+                    {% else %}
+                        {% set cls = '' %}
+                    {% endif %}
+                    <div class="step-node {{ cls }}">
+                        <div class="step-icon"><i class="fa {{ icon }}"></i></div>
+                        <div class="step-label">{{ label }}</div>
+                    </div>
+                    {% if not loop.last %}
+                        <div class="progress step-bar {% if num < current_step %}done delay-{{ num }}{% endif %}">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated"></div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            {# ---- End Step Bar ---- #}
+
             <form action="{{ url_for('admin.login') }}" method="post" novalidate>
                 {% from "auth/_formhelpers.j2" import render_floating_field %}
                 {{ form.hidden_tag() }}
@@ -14,29 +95,70 @@
                         {% endfor %}
                     {% endif %}
                 {% endwith %}
-                <div class="alert alert-secondary fade-in fade-delay-2">
-                    <p class="mb-2"><i class="fa fa-info-circle me-2"></i><strong>管理者アクセスについて</strong></p>
-                    <ul class="mb-0 small">
-                        <li>管理者の承認を受けた上で、<strong>5,000円の決済</strong>をすることで、<strong>10日間</strong>限定で管理画面へのアクセスが有効になります。</li>
-                        <li>ログインする際は、登録したメールに送られる<strong>トークンパスワード</strong>を入力してください。</li>
-                        <li>トークンパスワードはサブスク期間中は同じものを使用します。</li>
+                <div class="auth-process fade-in fade-delay-2">
+                    <h5 class="fs-5"><i class="fa fa-info-circle me-2"></i>管理者アクセスについて</h5>
+                    <ul class="mb-0">
+                        <li><span class="order-num">①</span>最初に運営者へ<strong>管理者申請</strong>を行い、承認を受ける必要があります。</li>
+                        <li><span class="order-num">②</span>承認後に<strong>5,000円の決済</strong>が可能になり、<strong>10日間</strong>限定で管理画面へのアクセスが有効になります。</li>
+                        <li><span class="order-num">③</span>ログインする際は、決済完了後に登録したメール先に送られてくる<strong>トークンパスワード</strong>を入力してください。</li>
+                        <li><span class="order-num">④</span>トークンパスワードは利用期間内は同じものを使用します。</li>
                     </ul>
                 </div>
                 {{ render_floating_field(form.admin_password, "Token Password", wrapper_class="fade-in fade-delay-4", autofocus=True) }}
                 <nav class="navbar bg-body-secondary my-3 rounded-3 fade-in fade-delay-6">
                     <div class="container-fluid justify-content-start my-2 mx-2">
-                        <button type="submit" class="btn btn-secondary btn-lg me-2 text-dark flex-fill fade-in fade-delay-8"><i class="fa fa-shield me-2"></i>{{ form.submit.label.text }}</button>
+                        <button type="submit" class="btn btn-lg me-2 flex-fill fade-in fade-delay-8{% if current_step == 4 %} noise-btn{% else %} btn-secondary text-dark{% endif %}">
+                            <i class="fa fa-shield me-2"></i>{{ form.submit.label.text }}
+                        </button>
                         <a class="btn btn-outline-secondary btn-lg me-2 fade-in fade-delay-10" href="{{ url_for('memo.index') }}"><i class="fa fa-arrow-left me-1"></i>マイページに戻る</a>
                     </div>
                 </nav>
             </form>
+
             <div class="my-5 fade-in fade-delay-12">
                 <hr class="opacity-25">
             </div>
-            <div class="fade-in fade-delay-14">
-                <p class="text-body-secondary mb-3"><i class="fa fa-credit-card me-2"></i>まだ決済がお済みでない方は、こちらから決済手続きを行ってください。</p>
-                <a class="btn btn-outline-secondary btn-lg w-100" href="{{ url_for('admin.payment') }}"><i class="fa fa-credit-card me-2"></i>決済ページへ進む</a>
-            </div>
+
+            {% if current_user.is_admin %}
+                {# 承認済み：決済ボタン表示 #}
+                <div class="fade-in fade-delay-14">
+                    <p class="text-body-secondary mb-3"><i class="fa fa-credit-card me-2"></i>まだ決済がお済みでない方は、こちらから決済手続きを行ってください。</p>
+                    <a class="btn btn-outline-secondary btn-lg w-100" href="{{ url_for('admin.payment') }}"><i class="fa fa-credit-card me-2"></i>決済ページへ進む</a>
+                </div>
+            {% elif current_user.is_applied %}
+                {# 申請済み・未承認：申請中メッセージ #}
+                <div class="alert alert-secondary fade-in fade-delay-14">
+                    <i class="fa fa-clock-o me-2"></i>申請済みです。運営者の承認をお待ちください。
+                </div>
+            {% else %}
+                {# 未申請：申請ボタン表示 #}
+                <div class="fade-in fade-delay-14">
+                    <p class="text-body-secondary mb-3"><i class="fa fa-hand-o-up me-2"></i>管理者権限を希望する方は、まず運営者に申請してください。</p>
+                    <form action="{{ url_for('admin.apply') }}" method="post">
+                        {{ form.hidden_tag() }}
+                        <button type="submit" class="btn btn-outline-secondary btn-lg w-100"><i class="fa fa-paper-plane me-2"></i>管理者申請を送る</button>
+                    </form>
+                </div>
+            {% endif %}
+
         </div>
     </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    /* 完了コネクターを時差付きで幅を伸ばし、到達後にストライプアニメーション開始 */
+    var barDelays = { 'delay-1': 300, 'delay-2': 1050, 'delay-3': 1800 };
+    Object.keys(barDelays).forEach(function (cls) {
+        var bar = document.querySelector('.step-bar.done.' + cls);
+        if (!bar) return;
+        var fill = bar.querySelector('.progress-bar');
+        var delay = barDelays[cls];
+        setTimeout(function () {
+            fill.style.transition = 'width 0.65s ease';
+            fill.style.width = '100%';
+        }, delay);
+    });
+});
+</script>
+
 {% endblock content %}

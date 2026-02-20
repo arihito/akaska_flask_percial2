@@ -77,7 +77,8 @@ GOOGLE_CLIENT_SECRET=your-client-secret
 - `auth_bp` の `oauth_login` はBlueprintインポート時にFlaskアプリが未初期化のため `current_app` を使用している
 - `seed.py` 実行は既存のFavorite→Memo→Userを全削除してから再作成する（開発環境専用）
 - OAuthユーザーはユーザー名・パスワード変更不可（`is_oauth_user` プロパティで判定）
-- ボタンに `btn-danger` / `btn-outline-danger` は使用しない。`secondary` ベースで統一する
+- ボタンに `btn-danger` / `btn-outline-danger` `warning` `info`などカラフルな色は使用しない。`secondary` ベースで統一する。
+- サイト全体のメインカラーは`#234`とする。準じた配色として`#345`や`#456`、対する明るい色には`#ccc`を使用する。
 
 ## プロジェクト構造
 
@@ -103,16 +104,18 @@ Percial2/                    # 親ディレクトリ（絶対パス: C:/Users/ar
 - StripeWebhook：@stripe_webhook
 
 ## インタラクションUIサンプル
+- エレクトロニックフレーム：@intaraction/electronic.html
+- ふやけたボタン：@intaraction/liquidButton.html
 - 多言語セレクトメニュー：@intaraction/i18n_ui
 - スライドカード：@intaraction/SwiperCard
 - 管理画面用棒グラフ：@intaraction/barChart.html
-- エレクトロニックフレーム：@intaraction/electronic.html
 - スクロールメニュー：@intaraction/scrollspy.html
 - ボックス交換UI：@intaraction/switch.html
-- ![**ノイズボタン**](https://codepen.io/jh3y/pen/PwzeRwy)
-- ![記事一覧の**ホバー時拡大**](https://codepen.io/Adir-SL/pen/RNRyVQL)
-- ![ホバー時中の**画像を拡大**](https://codepen.io/lessthanthree/pen/LENwGyZ)
-- ![**背景波紋**](https://codepen.io/soju22/pen/myVWBGa)
+- カードのホバー時拡大：@intaraction/cardHover.html
+- カードのホバー時、画像と共に拡大：@intaraction/cardImgHover
+- クレジットカードスライダー：@intaraction/creditCardSlider
+- グラフ生成：
+
 
 ## 要件定義
 @README.md
@@ -181,6 +184,7 @@ IMPORTANT:
 - 可能な限り AskUserQuestion を使って、選択式（A/B/C、Yes/No、数値、短文）で答えやすくする。
 - 質問は優先度順に、1回あたり 3~7 個。まずブロッカー（答えがないと進めない）を先に。
 - 仕様決めが必要な箇所は、必ず「複数案 + 推奨案 + トレードオフ」を提示して選んでもらう。
+- ただし、複数のテンプレートファイルの似たような箇所の変更は、毎回確認せずに一度の質問で一気に修正して構わない。
 
 # ワークフロー（必ずこの順で）
 ## Phase 0: インテイク（最初のターン）

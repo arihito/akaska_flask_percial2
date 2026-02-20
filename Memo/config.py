@@ -54,6 +54,9 @@ class Config(object):
     ADMIN_PLAN_PRICE = 5000      # 管理者プラン料金（円）
     ADMIN_PLAN_DAYS = 10         # 管理者プラン有効日数
 
+    # サイト名
+    SITE_NAME = os.getenv('SITE_NAME', 'Flask tech blog')
+
     # メール送信（Gmail SMTP）
     MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = 587

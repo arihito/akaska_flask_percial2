@@ -1,0 +1,22 @@
+<div class="position-sticky top-0 pt-3">
+    <ul class="nav flex-column">
+        <li class="nav-item fade-in fade-in-delay-1">
+            <a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'admin.index' %}active{% endif %}"
+               href="{{ url_for('admin.index') }}">
+                <i class="fa fa-dashboard me-2"></i>ダッシュボード
+            </a>
+        </li>
+        <hr>
+        <li class="nav-item fade-in fade-in-delay-2">
+            <a class="nav-link text-body-secondary fs-5" href="{{ url_for('memo.index') }}">
+                <i class="fa fa-address-card me-2"></i>マイページ
+            </a>
+        </li>
+        <hr>
+        <li class="nav-item fade-in fade-in-delay-3">
+            <a class="nav-link text-body-secondary fs-5" href="{{ url_for('public.public_index') }}">
+                <i class="fa fa-wpforms me-2"></i>トップページ
+            </a>
+        </li>
+    </ul>
+</div>
