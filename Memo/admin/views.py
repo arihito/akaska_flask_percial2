@@ -73,16 +73,27 @@ def apply():
         subject='【メモアプリ】管理者申請が届きました',
         recipients=[admin_email],
     )
-    msg.body = (
-        f"管理者申請が届きました。\n\n"
-        f"━━━━━━━━━━━━━━━━━━━━\n"
-        f"ユーザー名: {current_user.username}\n"
-        f"メール: {current_user.email}\n"
-        f"ユーザーID: {current_user.id}\n"
-        f"━━━━━━━━━━━━━━━━━━━━\n\n"
-        f"管理画面のユーザー一覧から承認操作を行ってください。\n"
-        f"{url_for('admin.index', _external=True)}"
+
+    admin_url=url_for('admin.index', _external=True)
+    # HTMLテンプレート
+    msg.html = render_template(
+        "mail/admin_apply.j2",
+        user=current_user,
+        admin_url=admin_url
     )
+
+    # スパム対応プレーンテキスト
+    msg.body = f"""
+    管理者申請が届きました。
+
+    ユーザー名: {current_user.username}
+    メール: {current_user.email}
+    ユーザーID: {current_user.id}
+
+    管理画面:
+    {admin_url}
+    """
+
     try:
         mail.send(msg)
     except Exception as e:
@@ -90,6 +101,7 @@ def apply():
 
     flash('管理者申請を送信しました。運営者の承認をお待ちください。', 'secondary')
     return redirect(url_for('admin.login'))
+
 
 
 @admin_bp.route('/approve/<int:user_id>', methods=['POST'])
@@ -181,3 +193,17 @@ def logout():
     session.pop('is_admin_authenticated', None)
     flash('管理者からログアウトしました', 'secondary')
     return redirect(url_for('memo.index'))
+
+
+######## テストプレビュー：admin/mail-preview
+@admin_bp.route("/mail-preview")
+@login_required
+def mail_preview():
+
+    admin_url = url_for('admin.index', _external=True)
+
+    return render_template(
+        "mail/admin_apply.j2",
+        user=current_user,
+        admin_url=admin_url
+    )

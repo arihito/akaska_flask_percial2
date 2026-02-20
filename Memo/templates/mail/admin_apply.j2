@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ja">
+<body style="margin:0;padding:0;background-color:#f4f4f4;font-family:Arial,Helvetica,sans-serif;">
+
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 0;">
+<tr>
+<td align="center">
+
+<!-- メインコンテナ -->
+<table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:8px;overflow:hidden;">
+
+<!-- ヘッダー -->
+<tr>
+<th><img src="https://raw.githubusercontent.com/arihito/akaska_flask_percial2/refs/heads/main/Memo/static/images/fixed/keyvisual.jpg" alt="" width="" height=""></th>
+</tr>
+<tr>
+<td style="background:#234;padding:30px;text-align:center;">
+    <img src="cid:logo_image" width="120" alt="Logo" style="display:block;margin:0 auto 10px auto;">
+    <h1 style="color:#ffffff;margin:0;font-size:20px;font-weight:600;">
+        管理者申請通知
+    </h1>
+</td>
+</tr>
+
+<!-- 本文 -->
+<tr>
+<td style="padding:30px 40px;color:#333;font-size:14px;line-height:1.8;">
+
+    <p style="margin-top:0;">
+        新しい管理者申請が届きました。
+    </p>
+
+    <!-- 情報ボックス -->
+    <table width="100%" cellpadding="0" cellspacing="0"
+           style="background:#f9f9f9;border:1px solid #ccc;border-radius:6px;">
+        <tr>
+            <td style="padding:15px;">
+                <p style="margin:0 0 8px 0;">
+                    <strong>ユーザー名:</strong> {{ user.username }}
+                </p>
+                <p style="margin:0 0 8px 0;">
+                    <strong>メール:</strong> {{ user.email }}
+                </p>
+                <p style="margin:0;">
+                    <strong>ユーザーID:</strong> {{ user.id }}
+                </p>
+            </td>
+        </tr>
+    </table>
+
+    <!-- ボタン -->
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:25px;">
+        <tr>
+            <td align="center">
+                <a href="{{ admin_url }}"
+                   style="display:inline-block;
+                          padding:12px 24px;
+                          background:#234;
+                          color:#ffffff;
+                          text-decoration:none;
+                          border-radius:4px;
+                          font-weight:600;
+                          letter-spacing:0.5px;">
+                    管理画面を開く
+                </a>
+            </td>
+        </tr>
+    </table>
+
+</td>
+</tr>
+
+<!-- フッター -->
+<tr>
+<td style="background:#234;padding:20px;text-align:center;">
+    <p style="color:#ccc;font-size:12px;margin:0;">
+        © 2026 Flask tech blog
+    </p>
+</td>
+</tr>
+
+</table>
+
+</td>
+</tr>
+</table>
+
+</body>
+</html>
