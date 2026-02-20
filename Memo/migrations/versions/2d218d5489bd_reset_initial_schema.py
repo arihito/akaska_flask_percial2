@@ -1,8 +1,8 @@
-"""add created_at and is_banned to User
+"""reset initial schema
 
-Revision ID: 795b3d7eb630
+Revision ID: 2d218d5489bd
 Revises: 
-Create Date: 2026-02-20 20:27:44.155168
+Create Date: 2026-02-20 21:13:17.268744
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '795b3d7eb630'
+revision = '2d218d5489bd'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -39,6 +39,9 @@ def upgrade():
     sa.Column('is_applied', sa.Boolean(), nullable=False),
     sa.Column('is_paid', sa.Boolean(), nullable=False),
     sa.Column('is_banned', sa.Boolean(), nullable=False),
+    sa.Column('applied_at', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('approved_at', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('paid_at', sa.DateTime(timezone=True), nullable=True),
     sa.Column('admin_password', sa.String(length=120), nullable=True),
     sa.Column('subscription_expires_at', sa.DateTime(timezone=True), nullable=True),
     sa.PrimaryKeyConstraint('id'),

@@ -1,3 +1,4 @@
+import os
 import random
 import factory
 from factory.alchemy import SQLAlchemyModelFactory
@@ -37,7 +38,7 @@ class UserFactory(SQLAlchemyModelFactory):
     )
 
     password = factory.LazyFunction(
-        lambda: generate_password_hash("pass1234!")
+        lambda: generate_password_hash("pass1234%")
     )
 
     thumbnail = factory.Faker(

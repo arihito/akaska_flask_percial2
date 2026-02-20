@@ -1,5 +1,7 @@
+import math
+from datetime import datetime, timezone
 from functools import wraps
-from flask import Blueprint, render_template, redirect, url_for, flash, session, current_app
+from flask import Blueprint, render_template, redirect, url_for, flash, session, current_app, request
 from flask_login import login_required, current_user
 from forms import AdminLoginForm
 from flask_wtf import FlaskForm
@@ -91,15 +93,25 @@ def login():
 @admin_bp.route('/')
 @admin_required
 def index():
-    users = User.query.order_by(User.id).all()
+    per_page = 10
+    page = request.args.get('page', 1, type=int)
+    total = User.query.count()
+    pages = math.ceil(total / per_page)
+    offset = (page - 1) * per_page
+    is_paginate = pages > 1
+    users = User.query.order_by(User.id).limit(per_page).offset(offset).all()
     requirements_definition = get_requirements_definition()
     coding_standards = get_coding_standards()
     form = FlaskForm()
-    return render_template('admin/index.j2', 
-        users=users, 
+    return render_template('admin/index.j2',
+        users=users,
         form=form,
         requirements_definition=requirements_definition,
-        coding_standards=coding_standards)
+        coding_standards=coding_standards,
+        is_paginate=is_paginate,
+        page=page,
+        pages=pages,
+        total=total)
 
 
 @admin_bp.route('/apply', methods=['POST'])
@@ -115,6 +127,7 @@ def apply():
 
     from app import mail
     current_user.is_applied = True
+    current_user.applied_at = datetime.now(timezone.utc)
     db.session.commit()
 
     admin_email = current_app.config['MAIL_USERNAME']
@@ -160,6 +173,7 @@ def approve(user_id):
     from app import mail
     user = User.query.get_or_404(user_id)
     user.is_admin = not user.is_admin
+    user.approved_at = datetime.now(timezone.utc) if user.is_admin else None
     db.session.commit()
 
     if user.is_admin:

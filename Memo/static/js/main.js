@@ -164,6 +164,11 @@
             });
         }
 
+        // Bootstrapツールチップの初期化
+        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+            new bootstrap.Tooltip(el, { html: true });
+        });
+
         // ステップバーアニメーション（admin/login）
         const barDelays = { "delay-1": 300, "delay-2": 1050, "delay-3": 1800 };
         Object.keys(barDelays).forEach((cls) => {

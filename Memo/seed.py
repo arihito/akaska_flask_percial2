@@ -104,9 +104,19 @@ def seed_data():
             is_paid=True,
             created_at=random_date(user_start_date, end_date),
         )
-        admin_user.set_password("Admin1234!(")
-        admin_user.set_admin_password("Admin1234!(")
+        admin_user.set_password("admin1234%")
+        admin_user.set_admin_password("admin1234%")
         db.session.add(admin_user)
+        db.session.commit()
+
+        print("サブユーザー作成...")
+        subuser = User(
+            username="田中太郎",
+            email=os.getenv('MAIL_SUBUSER', 'subuser@example.com'),
+            created_at=random_date(user_start_date, end_date),
+        )
+        subuser.set_password("pass1234%")
+        db.session.add(subuser)
         db.session.commit()
 
         print("ユーザー作成...")
@@ -114,7 +124,7 @@ def seed_data():
         for u in users:
             u.created_at = random_date(user_start_date, end_date)
         db.session.commit()
-        users = [admin_user] + users
+        users = [admin_user, subuser] + users
 
         print("メモ作成...")
         # BodyFactoryから全記事本文を取得

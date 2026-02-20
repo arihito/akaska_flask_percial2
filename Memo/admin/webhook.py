@@ -103,6 +103,7 @@ def stripe_webhook():
                 # 決済フラグと期限を設定
                 days = current_app.config['ADMIN_PLAN_DAYS']
                 user.is_paid = True
+                user.paid_at = datetime.now(timezone.utc)
                 expires_at = datetime.now(timezone.utc) + timedelta(days=days)
                 user.subscription_expires_at = expires_at
 

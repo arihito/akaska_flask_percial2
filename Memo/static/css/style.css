@@ -934,6 +934,23 @@ pre.file-tag[data-tag]::before {
   color: #234;
 }
 
+/* 管理画面 tooltip */
+.tooltip {
+    --bs-tooltip-bg: #234;
+    --bs-tooltip-color: #ccc;
+    --bs-tooltip-max-width: 320px;
+    --bs-tooltip-border-radius: 6px;
+    --bs-tooltip-padding-x: 0.75rem;
+    --bs-tooltip-padding-y: 0.5rem;
+    --bs-tooltip-font-size: 0.78rem;
+}
+.tooltip-inner {
+    text-align: left;
+    line-height: 1.6;
+    letter-spacing: 0.02em;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
 
 /* ============== JS連携 =============== */
 
