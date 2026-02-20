@@ -1,7 +1,6 @@
 import os
 import math
 import uuid
-import requests
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, abort
 from models import db, Memo, Favorite, Category
 from flask_login import login_required, current_user
@@ -10,7 +9,6 @@ from sqlalchemy import func, asc, desc, or_
 from markupsafe import Markup, escape
 from werkzeug.utils import secure_filename
 from utils.upload import save_upload
-from pathlib import Path
 
 # 第一引数がurl_for、第三引数がrender_templateで使用する接頭辞
 memo_bp = Blueprint('memo', __name__, url_prefix='/memo')
@@ -20,43 +18,6 @@ def allowed_file(filename):
         "." in filename and
         filename.rsplit(".", 1)[1].lower() in current_app.config["ALLOWED_EXTENSIONS"]
     )
-
-# マークダウンのコード取得
-BASE_DIR = Path(__file__).resolve().parent.parent
-def get_markdown_content(relative_path: str, start_marker: str = None, end_marker: str = None):
-    """
-    Markdownファイルを取得する共通関数
-
-    :param relative_path: プロジェクトルートからの相対パス
-    :param start_marker: 部分取得開始マーカー（省略可）
-    :param end_marker: 部分取得終了マーカー（省略可）
-    :return: Markdown文字列
-    """
-    md_path = BASE_DIR / relative_path
-    if not md_path.exists():
-        return f"{relative_path} が見つかりません。"
-    content = md_path.read_text(encoding="utf-8")
-    # マーカー未指定なら全文返却
-    if not start_marker or not end_marker:
-        return content.strip()
-    start = content.find(start_marker)
-    end = content.find(end_marker)
-    if start == -1 or end == -1:
-        return "指定されたセクションが見つかりません。"
-    start += len(start_marker)
-    return content[start:end].strip()
-
-# 要件定義
-def get_requirements_definition():
-    return get_markdown_content(
-        "README.md",
-        start_marker="<!-- START_TERM -->",
-        end_marker="<!-- END_TERM -->"
-    )
-
-# コーディング規約
-def get_coding_standards():
-    return get_markdown_content("static/docs/CODING_STANDARDS.md")
 
 @memo_bp.route('/')
 @login_required
@@ -68,8 +29,6 @@ def index():
     categories = Category.query.order_by(Category.name).all()
     category_id = request.args.get('category_id', type=int)
     params = request.args.to_dict()
-    requirements_definition = get_requirements_definition()
-    coding_standards = get_coding_standards()
     # ---- 「base_query」条件の上積み ----
     base_query = (db.session.query(Memo, func.count(Favorite.id).label("like_count")).outerjoin(Favorite, Memo.id == Favorite.memo_id).filter(Memo.user_id == current_user.id))
     # ---- 総件数（ページ数算出用）----
@@ -140,9 +99,7 @@ def index():
         params=params,
         page=page,
         pages=pages,
-        total=total,
-        requirements_definition=requirements_definition,
-        coding_standards=coding_standards
+        total=total
     )
 
 @memo_bp.route('/create', methods=['GET', 'POST'])

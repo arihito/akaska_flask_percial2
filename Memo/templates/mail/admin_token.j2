@@ -1,0 +1,68 @@
+{% extends "mail/base.j2" %}
+
+{% block title %}
+    <h1 style="color:#ffffff;margin:0;font-size:20px;font-weight:600;letter-spacing:.2em;">
+        管理者トークンパスワードのお知らせ
+    </h1>
+{% endblock %}
+
+{% block content %}
+    <p style="margin-top:0;">
+        <span style="margin-right:5px;font-size:1.6rem;">■</span>{{ user.username }} 様、管理者プランの決済が完了しました。
+    </p>
+    <p style="margin-top:0;color:#555;font-size:13px;">
+        以下のトークンパスワードで管理者ログインしてください。
+    </p>
+
+    <!-- 情報ボックス -->
+    <table width="100%" cellpadding="0" cellspacing="0"
+           style="background:#f9f9f9;border:1px solid #ccc;border-radius:6px;">
+        <tr>
+            <td style="padding:5px 20px 10px;box-shadow:0 0 10px #cde;">
+                <p style="margin:0 0 8px 0;padding:5px 0;border-bottom: dotted 1px #abc">
+                    <strong style="display:inline-block;width:140px;background-color:#dde;color:#234;font-weight:bold;padding:5px 10px;border-radius:3px;margin-right:20px;">ユーザー名</strong>
+                    <span style="font-size:1.4rem;">{{ user.username }}</span>
+                </p>
+                <p style="margin:0 0 8px 0;padding:5px 0;border-bottom: dotted 1px #abc">
+                    <strong style="display:inline-block;width:140px;background-color:#dde;color:#234;font-weight:bold;padding:5px 10px;border-radius:3px;margin-right:20px;">トークンパスワード</strong>
+                    <span style="font-size:1.6rem;font-family:monospace;font-weight:bold;letter-spacing:0.1em;color:#123;">{{ raw_password }}</span>
+                </p>
+                <p style="margin:0;padding:5px 0;">
+                    <strong style="display:inline-block;width:140px;background-color:#dde;color:#234;font-weight:bold;padding:5px 10px;border-radius:3px;margin-right:20px;">有効期限</strong>
+                    <span style="font-size:1.4rem;">{{ expires_str }} (日本時間)</span>
+                </p>
+            </td>
+        </tr>
+    </table>
+
+    <!-- 注意書き -->
+    <table width="100%" cellpadding="0" cellspacing="0"
+           style="margin-top:20px;background:#eef;border:1px solid #abc;border-radius:6px;">
+        <tr>
+            <td style="padding:12px 20px;font-size:12px;color:#666;line-height:1.8;">
+                <p style="margin:0 0 4px 0;">※ このパスワードはサブスク期間中、同じものを使用します。</p>
+                <p style="margin:0;">※ 有効期限切れ後は再度決済が必要です。</p>
+            </td>
+        </tr>
+    </table>
+
+    <!-- ボタン -->
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:25px;">
+        <tr>
+            <td align="center">
+                <a href="{{ login_url }}"
+                   style="display:inline-block;
+                          margin:10px;
+                          padding:12px 24px;
+                          background:#234;
+                          color:#ffffff;
+                          text-decoration:none;
+                          border-radius:4px;
+                          font-weight:600;
+                          letter-spacing:0.5px;">
+                    管理者ログイン画面を開く
+                </a>
+            </td>
+        </tr>
+    </table>
+{% endblock %}

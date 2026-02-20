@@ -10,10 +10,16 @@
                 {{ render_field(form.title, wrapper_class="fade-in fade-delay-3") }}
                 <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
                 <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
-                {{ render_field(form.content, wrapper_class="fade-in fade-delay-6") }}
-                <script>
-                const easyMDE = new EasyMDE({element: document.getElementById("content"), spellChecker: false, autofocus: true, placeholder: "Markdownで本文を入力してください"});
-                </script>
+                <div class="mb-3 fade-in fade-delay-6">
+                    {{ form.content(id="content", class="form-control") }}
+                    {% if form.content.errors %}
+                        <div class="alert alert-danger small mt-1">
+                            <i class="fa fa-exclamation-triangle"></i>
+                            {% for error in form.content.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
                 {% set selected_category_ids = [] %}
                 {% include "memo/_categories.j2" with context %}
                 {{ render_field(form.image, wrapper_class="fade-in fade-delay-9") }}

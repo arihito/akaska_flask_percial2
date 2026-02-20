@@ -42,13 +42,6 @@
     </defs>
 </svg>
 
-{# 背景波紋 #}
-<div class="ripple-bg" aria-hidden="true">
-    <div class="ripple r1"></div>
-    <div class="ripple r2"></div>
-    <div class="ripple r3"></div>
-    <div class="ripple r4"></div>
-</div>
 {% endif %}
 
     <div class="d-flex align-items-center pb-md-4 m-md-5 mb-5">
@@ -121,19 +114,19 @@
 
             {% if current_user.is_admin %}
                 {# 承認済み：決済ボタン表示 #}
-                <div class="fade-in fade-delay-14">
+                <div class="fade-in fade-delay-8">
                     <p class="text-body-secondary mb-3"><i class="fa fa-credit-card me-2"></i>まだ決済がお済みでない方は、こちらから決済手続きを行ってください。</p>
                     <a class="btn btn-outline-secondary btn-lg w-100" href="{{ url_for('admin.payment') }}"><i class="fa fa-credit-card me-2"></i>決済ページへ進む</a>
                 </div>
             {% elif current_user.is_applied %}
                 {# 申請済み・未承認：申請中メッセージ #}
-                <div class="alert alert-secondary fade-in fade-delay-14">
+                <div class="alert alert-secondary fade-in fade-delay-8">
                     <i class="fa fa-clock-o me-2"></i>申請済みです。運営者の承認をお待ちください。
                 </div>
             {% else %}
                 {# 未申請：申請ボタン表示 #}
-                <div class="fade-in fade-delay-14">
-                    <p class="text-body-secondary mb-3"><i class="fa fa-hand-o-up me-2"></i>管理者権限を希望する方は、まず運営者に申請してください。</p>
+                <div class="fade-in fade-delay-8">
+                    <p class="text-body-secondary mb-3"><i class="fa fa-certificate me-2"></i>管理者権限を希望する方は、まず運営者に申請してください。</p>
                     <form action="{{ url_for('admin.apply') }}" method="post">
                         {{ form.hidden_tag() }}
                         <button type="submit" class="btn btn-outline-secondary btn-lg w-100"><i class="fa fa-paper-plane me-2"></i>管理者申請を送る</button>

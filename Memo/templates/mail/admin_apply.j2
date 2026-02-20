@@ -1,49 +1,26 @@
-<!DOCTYPE html>
-<html lang="ja">
-<body style="margin:0;padding:0;background-color:#f4f4f4;font-family:Arial,Helvetica,sans-serif;">
+{% extends "mail/base.j2" %}
 
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 0;">
-<tr>
-<td align="center">
-
-<!-- メインコンテナ -->
-<table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:8px;overflow:hidden;">
-
-<!-- ヘッダー -->
-<tr>
-<th><img src="https://raw.githubusercontent.com/arihito/akaska_flask_percial2/refs/heads/main/Memo/static/images/fixed/keyvisual.jpg" alt="" width="" height=""></th>
-</tr>
-<tr>
-<td style="background:#234;padding:30px;text-align:center;">
-    <img src="cid:logo_image" width="120" alt="Logo" style="display:block;margin:0 auto 10px auto;">
-    <h1 style="color:#ffffff;margin:0;font-size:20px;font-weight:600;">
+{% block title %}
+    <h1 style="color:#ffffff;margin:0;font-size:20px;font-weight:600;letter-spacing:.2em;">
         管理者申請通知
     </h1>
-</td>
-</tr>
+{% endblock %}
 
-<!-- 本文 -->
-<tr>
-<td style="padding:30px 40px;color:#333;font-size:14px;line-height:1.8;">
-
-    <p style="margin-top:0;">
-        新しい管理者申請が届きました。
+{% block content %}
+    <p style="margin-top:0;"><span style="margin-right:5px;font-size:1.6rem;">■</span>新しい管理者申請が届きました。
     </p>
 
     <!-- 情報ボックス -->
     <table width="100%" cellpadding="0" cellspacing="0"
            style="background:#f9f9f9;border:1px solid #ccc;border-radius:6px;">
         <tr>
-            <td style="padding:15px;">
-                <p style="margin:0 0 8px 0;">
-                    <strong>ユーザー名:</strong> {{ user.username }}
-                </p>
-                <p style="margin:0 0 8px 0;">
-                    <strong>メール:</strong> {{ user.email }}
-                </p>
-                <p style="margin:0;">
-                    <strong>ユーザーID:</strong> {{ user.id }}
-                </p>
+            <td style="padding:5px 20px 10px;box-shadow:0 0 10px #cde;">
+                <p style="margin:0 0 8px 0;padding:5px 0;border-bottom: dotted 1px #abc">
+                    <strong style="display:inline-block;width:120px; background-color:#dde;color:#234;font-weight:bold;padding:5px 10px;border-radius:3px;margin-right:20px;">ユーザーID</strong><span style="font-size:2rem;">{{ user.id }}</span>                </p>
+                <p style="margin:0 0 8px 0;padding:5px 0;border-bottom: dotted 1px #abc"">
+                    <strong style="display:inline-block;width:120px; background-color:#dde;color:#234;font-weight:bold;padding:5px 10px;border-radius:3px;margin-right:20px;">ユーザー名</strong><span style="font-size:2rem;">{{ user.username }}</span>                </p>
+                <p style="margin:0;padding:5px 0;">
+                    <strong style="display:inline-block;width:120px; background-color:#dde;color:#234;font-weight:bold;padding:5px 10px;border-radius:3px;margin-right:20px;">メールアドレス</strong><span style="font-size:2rem;">{{ user.email }}</span>                </p>
             </td>
         </tr>
     </table>
@@ -54,6 +31,7 @@
             <td align="center">
                 <a href="{{ admin_url }}"
                    style="display:inline-block;
+                          margin:10px;
                           padding:12px 24px;
                           background:#234;
                           color:#ffffff;
@@ -66,24 +44,4 @@
             </td>
         </tr>
     </table>
-
-</td>
-</tr>
-
-<!-- フッター -->
-<tr>
-<td style="background:#234;padding:20px;text-align:center;">
-    <p style="color:#ccc;font-size:12px;margin:0;">
-        © 2026 Flask tech blog
-    </p>
-</td>
-</tr>
-
-</table>
-
-</td>
-</tr>
-</table>
-
-</body>
-</html>
+{% endblock %}

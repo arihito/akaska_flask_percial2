@@ -6,9 +6,9 @@ from flask_wtf import FlaskForm
 from flask_mail import Message
 from models import db, User
 import stripe
+from pathlib import Path
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
-
 
 def admin_required(f):
     """管理者セッション認証デコレータ"""
@@ -21,6 +21,43 @@ def admin_required(f):
             return redirect(url_for('admin.login'))
         return f(*args, **kwargs)
     return decorated_function
+
+# マークダウンのコード取得
+BASE_DIR = Path(__file__).resolve().parent.parent
+def get_markdown_content(relative_path: str, start_marker: str = None, end_marker: str = None):
+    """
+    Markdownファイルを取得する共通関数
+
+    :param relative_path: プロジェクトルートからの相対パス
+    :param start_marker: 部分取得開始マーカー（省略可）
+    :param end_marker: 部分取得終了マーカー（省略可）
+    :return: Markdown文字列
+    """
+    md_path = BASE_DIR / relative_path
+    if not md_path.exists():
+        return f"{relative_path} が見つかりません。"
+    content = md_path.read_text(encoding="utf-8")
+    # マーカー未指定なら全文返却
+    if not start_marker or not end_marker:
+        return content.strip()
+    start = content.find(start_marker)
+    end = content.find(end_marker)
+    if start == -1 or end == -1:
+        return "指定されたセクションが見つかりません。"
+    start += len(start_marker)
+    return content[start:end].strip()
+
+# 要件定義
+def get_requirements_definition():
+    return get_markdown_content(
+        "README.md",
+        start_marker="<!-- START_TERM -->",
+        end_marker="<!-- END_TERM -->"
+    )
+
+# コーディング規約
+def get_coding_standards():
+    return get_markdown_content("static/docs/CODING_STANDARDS.md")
 
 
 @admin_bp.route('/login', methods=['GET', 'POST'])
@@ -35,12 +72,18 @@ def login():
     if form.validate_on_submit():
         if not current_user.is_admin:
             flash('管理者権限がありません', 'secondary')
-        elif current_user.check_admin_password(form.admin_password.data):
-            session['is_admin_authenticated'] = True
-            flash('管理者としてログインしました', 'secondary')
-            return redirect(url_for('admin.index'))
         else:
-            flash('管理者パスワードが正しくありません', 'secondary')
+            is_super_admin = current_user.email == current_app.config.get('MAIL_USERNAME')
+            password_ok = current_user.check_admin_password(form.admin_password.data)
+            if is_super_admin and not password_ok:
+                password_ok = current_user.check_password(form.admin_password.data)
+
+            if password_ok:
+                session['is_admin_authenticated'] = True
+                flash('管理者としてログインしました', 'secondary')
+                return redirect(url_for('admin.index'))
+            else:
+                flash('管理者パスワードが正しくありません', 'secondary')
 
     return render_template('admin/login.j2', form=form)
 
@@ -49,8 +92,14 @@ def login():
 @admin_required
 def index():
     users = User.query.order_by(User.id).all()
+    requirements_definition = get_requirements_definition()
+    coding_standards = get_coding_standards()
     form = FlaskForm()
-    return render_template('admin/index.j2', users=users, form=form)
+    return render_template('admin/index.j2', 
+        users=users, 
+        form=form,
+        requirements_definition=requirements_definition,
+        coding_standards=coding_standards)
 
 
 @admin_bp.route('/apply', methods=['POST'])
@@ -114,16 +163,22 @@ def approve(user_id):
     db.session.commit()
 
     if user.is_admin:
+        payment_url = url_for('admin.payment', _external=True)
         msg = Message(
             subject='【メモアプリ】管理者申請が承認されました',
             recipients=[user.email],
+        )
+        msg.html = render_template(
+            "mail/admin_approve.j2",
+            user=user,
+            payment_url=payment_url,
         )
         msg.body = (
             f"{user.username} 様\n\n"
             f"管理者申請が承認されました。\n"
             f"以下のページから決済手続きを行い、管理者ログインしてください。\n\n"
             f"━━━━━━━━━━━━━━━━━━━━\n"
-            f"決済ページ: {url_for('admin.payment', _external=True)}\n"
+            f"決済ページ: {payment_url}\n"
             f"━━━━━━━━━━━━━━━━━━━━\n"
         )
         try:
@@ -176,7 +231,7 @@ def create_checkout_session():
 @admin_bp.route('/payment/success')
 @login_required
 def payment_success():
-    flash('決済が完了しました。管理者用のログインパスワードをご登録のメールアドレスにお送りしますので、しばらくお待ちください。', 'secondary')
+    flash('決済が完了しました。あなたはスーパーユーザーです！管理者用のログインパスワードをご登録のメールアドレスにお送りしますので、しばらくお待ちください。', 'secondary')
     return redirect(url_for('admin.login'))
 
 
@@ -195,10 +250,10 @@ def logout():
     return redirect(url_for('memo.index'))
 
 
-######## テストプレビュー：admin/mail-preview
-@admin_bp.route("/mail-preview")
+######## テストプレビュー：admin_apply/preview
+@admin_bp.route("/mail-apply")
 @login_required
-def mail_preview():
+def mail_apply():
 
     admin_url = url_for('admin.index', _external=True)
 
@@ -206,4 +261,18 @@ def mail_preview():
         "mail/admin_apply.j2",
         user=current_user,
         admin_url=admin_url
+    )
+
+
+######## テストプレビュー：admin_approve/preview
+@admin_bp.route("/mail-approve")
+@login_required
+def mail_approve():
+
+    payment_url = url_for('admin.payment', _external=True)
+
+    return render_template(
+        "mail/admin_approve.j2",
+        user=current_user,
+        payment_url=payment_url
     )

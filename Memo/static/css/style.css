@@ -779,20 +779,49 @@ pre.file-tag[data-tag]::before {
 
 .noise-btn {
     position: relative;
-    overflow: hidden;
     background-color: #223344 !important;
     color: #b8d0e8 !important;
     border: 2px solid #3a6888 !important;
+    box-shadow:
+        0 0  8px rgba(58, 104, 136, 0.6),
+        0 0 20px rgba(58, 104, 136, 0.25),
+        inset 0 0 12px rgba(34, 51, 68, 0.5);
+    animation: liquid-morph 3s ease-in-out infinite,
+               electric-pulse 2.5s ease-in-out infinite;
+}
+.noise-btn:hover {
+    animation: liquid-morph-hover 1.2s ease-in-out infinite,
+               electric-pulse-hover 1.2s ease-in-out infinite;
 }
 .noise-btn::before {
     content: '';
     position: absolute;
     inset: 0;
-    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
-    opacity: 0.13;
+    border-radius: inherit;
+    background-image:
+        linear-gradient(
+            to bottom,
+            transparent 0%,
+            rgba(184, 208, 232, 0.55) 50%,
+            transparent 100%
+        ),
+        url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+    background-size: 100% 200%, 200px 200px;
+    opacity: 0.18;
     mix-blend-mode: overlay;
-    animation: noiseShift 0.14s steps(3) infinite;
+    animation: noiseShift 0.14s steps(3) infinite,
+               scanline 3s linear infinite;
     pointer-events: none;
+}
+.noise-btn::after {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: inherit;
+    border: 2px solid rgba(58, 104, 136, 0.85);
+    filter: url(#turbulent-displace);
+    pointer-events: none;
+    z-index: 2;
 }
 @keyframes noiseShift {
     0%   { transform: translate(0,    0); }
@@ -800,35 +829,57 @@ pre.file-tag[data-tag]::before {
     66%  { transform: translate(3px, -2px); }
     100% { transform: translate(0,    3px); }
 }
+@keyframes scanline {
+    0%   { background-position: 0 -100%, 0 0; }
+    100% { background-position: 0  200%, 0 0; }
+}
+@keyframes liquid-morph {
+    0%   { border-radius:  8px  8px  8px  8px; }
+    20%  { border-radius: 14px  6px 12px  8px; }
+    40%  { border-radius:  6px 14px  8px 12px; }
+    60%  { border-radius: 12px  8px 14px  6px; }
+    80%  { border-radius:  8px 12px  6px 14px; }
+    100% { border-radius:  8px  8px  8px  8px; }
+}
+@keyframes liquid-morph-hover {
+    0%   { border-radius: 12px  4px 16px  4px; }
+    25%  { border-radius:  4px 16px  4px 16px; }
+    50%  { border-radius: 18px  4px 12px  8px; }
+    75%  { border-radius:  4px 18px  8px 12px; }
+    100% { border-radius: 12px  4px 16px  4px; }
+}
+@keyframes electric-pulse {
+    0%, 100% {
+        box-shadow:
+            0 0  8px rgba(58, 104, 136, 0.6),
+            0 0 20px rgba(58, 104, 136, 0.25),
+            inset 0 0 12px rgba(34, 51, 68, 0.5);
+    }
+    50% {
+        box-shadow:
+            0 0 16px rgba(58, 104, 136, 0.9),
+            0 0 36px rgba(58, 104, 136, 0.5),
+            0 0 56px rgba(58, 104, 136, 0.15),
+            inset 0 0 22px rgba(34, 51, 68, 0.7);
+    }
+}
+@keyframes electric-pulse-hover {
+    0%, 100% {
+        box-shadow:
+            0 0 20px rgba(58, 104, 136, 1.0),
+            0 0 40px rgba(58, 104, 136, 0.6),
+            0 0 60px rgba(58, 104, 136, 0.3),
+            inset 0 0 24px rgba(34, 51, 68, 0.8);
+    }
+    50% {
+        box-shadow:
+            0 0 30px rgba(90, 156, 200, 1.0),
+            0 0 60px rgba(58, 104, 136, 0.7),
+            0 0 90px rgba(58, 104, 136, 0.3),
+            inset 0 0 30px rgba(34, 51, 68, 0.9);
+    }
+}
 
-/* スーパーユーザーモード：背景波紋 */
-
-.ripple-bg {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: -1;
-    overflow: hidden;
-}
-.ripple {
-    position: absolute;
-    border-radius: 50%;
-    /* border: 1px solid rgba(34, 51, 68, 0.35); */
-    border: 1px solid red;
-    opacity: 0;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    animation: rippleOut 7s linear infinite;
-}
-.r2 { animation-delay: 1.75s; }
-.r3 { animation-delay: 3.5s; }
-.r4 { animation-delay: 5.25s; }
-@keyframes rippleOut {
-    0%   { width: 0;       height: 0;       opacity: 0.45; }
-    70%  { opacity: 0.12; }
-    100% { width: 290vmax; height: 290vmax; opacity: 0; }
-}
 
 /* 認証手順解説 */
 

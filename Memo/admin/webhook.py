@@ -1,7 +1,8 @@
 import secrets
 import string
 from datetime import datetime, timedelta, timezone
-from flask import Blueprint, request, abort, current_app
+from zoneinfo import ZoneInfo
+from flask import Blueprint, request, abort, current_app, render_template, url_for
 from flask_mail import Message
 from models import db, User
 import stripe
@@ -18,7 +19,12 @@ def generate_token_password(length=16):
 def send_admin_token_mail(user, raw_password, expires_at):
     """管理者トークンパスワードをメールで送信"""
     from app import mail
-    expires_str = expires_at.strftime('%Y年%m月%d日 %H:%M')
+    _JST = ZoneInfo('Asia/Tokyo')
+    _WEEKDAYS = ['月', '火', '水', '木', '金', '土', '日']
+    expires_jst = expires_at.astimezone(_JST)
+    wd = _WEEKDAYS[expires_jst.weekday()]
+    expires_str = expires_jst.strftime(f'%Y年%m月%d日（{wd}）%H:%M')
+    login_url = url_for('admin.login', _external=True)
     msg = Message(
         subject='【メモアプリ】管理者トークンパスワードのお知らせ',
         recipients=[user.email],
@@ -29,12 +35,43 @@ def send_admin_token_mail(user, raw_password, expires_at):
         f"以下のトークンパスワードで管理者ログインしてください。\n\n"
         f"━━━━━━━━━━━━━━━━━━━━\n"
         f"トークンパスワード: {raw_password}\n"
-        f"有効期限: {expires_str} (UTC)\n"
+        f"有効期限: {expires_str} (JST)\n"
         f"━━━━━━━━━━━━━━━━━━━━\n\n"
         f"※ このパスワードはサブスク期間中は同じものを使用します。\n"
         f"※ 期限切れ後は再度決済が必要です。\n"
     )
+    msg.html = render_template(
+        'mail/admin_token.j2',
+        user=user,
+        raw_password=raw_password,
+        expires_str=expires_str,
+        login_url=login_url,
+    )
     mail.send(msg)
+
+
+# ─── 開発用：メール送信テスト ──────────────────────────────
+@webhook_bp.route('/test-token/<int:user_id>', methods=['GET'])
+def test_token(user_id):
+    """admin_token.j2 のメール送信テスト（FLASK_DEBUG=1 時のみ有効）"""
+    if not current_app.debug:
+        abort(404)
+
+    user = User.query.get(user_id)
+    if not user:
+        return f'ユーザーID {user_id} が見つかりません', 404
+
+    raw_password = generate_token_password()
+    expires_at = datetime.now(timezone.utc) + timedelta(days=30)
+
+    print(f"\n######## テスト送信開始: user_id={user_id} / email={user.email} ########")
+    try:
+        send_admin_token_mail(user, raw_password, expires_at)
+        print(f"######## テスト送信成功 ########\n")
+        return f'テストメール送信完了 → {user.email}', 200
+    except Exception as e:
+        print(f"######## テスト送信失敗: {e} ########\n")
+        return f'メール送信失敗: {e}', 500
 
 
 @webhook_bp.route('/stripe', methods=['POST'])

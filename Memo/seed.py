@@ -97,7 +97,7 @@ def seed_data():
 
         print("管理者ユーザー作成...")
         admin_user = User(
-            username="admin",
+            username="管理者",
             email=os.getenv('MAIL_USERNAME', 'admin@example.com'),
             is_admin=True,
             is_paid=True,
