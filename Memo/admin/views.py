@@ -242,6 +242,22 @@ def payment_cancel():
     return redirect(url_for('admin.payment'))
 
 
+@admin_bp.route('/ban/<int:user_id>', methods=['POST'])
+@admin_required
+def ban(user_id):
+    """ユーザー一時停止・解除"""
+    user = User.query.get_or_404(user_id)
+    user.is_banned = not user.is_banned
+    db.session.commit()
+
+    if user.is_banned:
+        flash(f'{user.username} を一時停止しました', 'secondary')
+    else:
+        flash(f'{user.username} の一時停止を解除しました', 'secondary')
+
+    return redirect(url_for('admin.index'))
+
+
 @admin_bp.route('/logout')
 @login_required
 def logout():

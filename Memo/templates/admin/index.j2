@@ -11,6 +11,7 @@
                         <th>ID</th>
                         <th>ユーザー名</th>
                         <th>メール</th>
+                        <th>登録日時</th>
                         <th>申請</th>
                         <th>承認</th>
                         <th>決済</th>
@@ -21,8 +22,14 @@
                     {% for user in users %}
                     <tr>
                         <td>{{ user.id }}</td>
-                        <td>{{ user.username }}</td>
+                        <td class="font-bold fs-4">{{ user.username }}<span class="ms-1" style="font-size:1rem">様</span></td>
                         <td>{{ user.email }}</td>
+                        <td class="align-middle" style="font-size:12px">
+                            {% set weekdays = ['月', '火', '水', '木', '金', '土', '日'] %}
+                            <i class="fa fa-calendar-o"></i>
+                            {{ user.created_at.strftime("%Y年%m月%d日") }}({{ weekdays[user.created_at.weekday()] }})<br>
+                            {{ user.created_at.strftime("%H時%M分%S秒") }}
+                        </td>
                         <td>
                             {% if user.is_applied %}
                                 <span class="badge bg-secondary">申請済</span>
@@ -44,13 +51,21 @@
                                 <span class="text-body-secondary small">―</span>
                             {% endif %}
                         </td>
-                        <td>
+                        <td class="text-nowrap">
                             <form action="{{ url_for('admin.approve', user_id=user.id) }}" method="post" class="d-inline">
                                 {{ form.hidden_tag() }}
                                 {% if user.is_admin %}
                                     <button type="submit" class="btn btn-outline-secondary btn-sm">承認取消</button>
                                 {% else %}
                                     <button type="submit" class="btn btn-secondary btn-sm text-dark">承認する</button>
+                                {% endif %}
+                            </form>
+                            <form action="{{ url_for('admin.ban', user_id=user.id) }}" method="post" class="d-inline ms-1">
+                                {{ form.hidden_tag() }}
+                                {% if user.is_banned %}
+                                    <button type="submit" class="btn btn-secondary btn-sm text-dark">停止解除</button>
+                                {% else %}
+                                    <button type="submit" class="btn btn-outline-secondary btn-sm">一時停止</button>
                                 {% endif %}
                             </form>
                         </td>

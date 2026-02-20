@@ -33,6 +33,11 @@ def login():
             flash('メールアドレスまたはパスワードが正しくありません', 'danger')
             return render_template('auth/login.j2', form=form)
 
+        # 一時停止ユーザーのブロック
+        if user.is_banned:
+            flash('あなたはサービスを妨害する違反行為が見受けられたため、一時的にユーザーアカウントが無効化されました', 'danger')
+            return render_template('auth/login.j2', form=form)
+
         # OAuth専用ユーザーのブロック
         if user.oauth_provider:
             flash('このアカウントはGoogleログイン専用です', 'secondary')

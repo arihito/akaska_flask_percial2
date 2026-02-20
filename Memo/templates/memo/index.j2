@@ -122,10 +122,9 @@
                             </td>
                             <td class="align-middle" style="font-size:12px">
                                 <i class="fa fa-calendar-o"></i>
-                                {{ memo.created_at.strftime("%Y年%m月%d日") }}
+                                {{ memo.created_at.strftime("%Y年%m月%d日") }}({{ memo.weekday_ja }})
                                 <br>
                                 {{ memo.created_at.strftime("%H時%M分%S秒") }}
-                                ({{ memo.weekday_ja }})
                             </td>
                             <td>
                                 <a class="btn btn-outline-secondary action-btn"

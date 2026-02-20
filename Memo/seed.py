@@ -81,6 +81,7 @@ def random_date(start, end):
 
 start_date = datetime(2025, 1, 1)
 end_date = datetime.now()
+user_start_date = datetime.now() - timedelta(days=365)
 
 
 # ------------------------------
@@ -101,6 +102,7 @@ def seed_data():
             email=os.getenv('MAIL_USERNAME', 'admin@example.com'),
             is_admin=True,
             is_paid=True,
+            created_at=random_date(user_start_date, end_date),
         )
         admin_user.set_password("Admin1234!(")
         admin_user.set_admin_password("Admin1234!(")
@@ -109,6 +111,8 @@ def seed_data():
 
         print("ユーザー作成...")
         users = UserFactory.create_batch(15)
+        for u in users:
+            u.created_at = random_date(user_start_date, end_date)
         db.session.commit()
         users = [admin_user] + users
 
