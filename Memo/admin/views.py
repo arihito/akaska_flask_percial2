@@ -103,6 +103,7 @@ def index():
     requirements_definition = get_requirements_definition()
     coding_standards = get_coding_standards()
     form = FlaskForm()
+    super_admin_email = current_app.config.get('MAIL_USERNAME')
     return render_template('admin/index.j2',
         users=users,
         form=form,
@@ -111,7 +112,8 @@ def index():
         is_paginate=is_paginate,
         page=page,
         pages=pages,
-        total=total)
+        total=total,
+        super_admin_email=super_admin_email)
 
 
 @admin_bp.route('/apply', methods=['POST'])
@@ -261,6 +263,10 @@ def payment_cancel():
 def ban(user_id):
     """ユーザー一時停止・解除"""
     user = User.query.get_or_404(user_id)
+    super_admin_email = current_app.config.get('MAIL_USERNAME')
+    if user.email == super_admin_email:
+        flash('スーパーアドミンは停止できません', 'secondary')
+        return redirect(url_for('admin.index'))
     user.is_banned = not user.is_banned
     db.session.commit()
 

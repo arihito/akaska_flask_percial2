@@ -78,7 +78,7 @@ GOOGLE_CLIENT_SECRET=your-client-secret
 - `seed.py` 実行は既存のFavorite→Memo→Userを全削除してから再作成する（開発環境専用）
 - OAuthユーザーはユーザー名・パスワード変更不可（`is_oauth_user` プロパティで判定）
 - ボタンに `btn-danger` / `btn-outline-danger` `warning` `info`などカラフルな色は使用しない。`secondary` ベースで統一する。
-- サイト全体のメインカラーは`#234`とする。準じた配色として`#345`や`#456`、対する明るい色には`#ccc`を使用する。
+- サイト全体のメインカラーは`#234`とする。サブカラーは`#212529`、対する明るい色には`#ccc`を使用する。
 
 ## プロジェクト構造
 
@@ -93,28 +93,33 @@ Percial2/                    # 親ディレクトリ（絶対パス: C:/Users/ar
 └── （その他お試し機能）/
 ```
 
-### ファイル参照時の注意
+# ファイル参照時の注意
 - `Percial2/` 配下のフォルダを参照する場合は、絶対パスを使用すること
-- Windows環境の場合: `C:/Users/arihi/Dropbox/DevOps/Flask/Percial2/`
+- このプロジェクト環境の場合: `C:/Users/arihi/Dropbox/DevOps/Flask/Percial2/`
 
 ## 機能試用サンプル
-- ドラッグ＆ドロップ：@file_drugdrop
-- 多言語機能：@i18n
 - Stripe決済：@stripe_checkout
 - StripeWebhook：@stripe_webhook
+- -----上記は検証または実装済み-----
+- ドラッグ＆ドロップ：@file_drugdrop
+- 多言語機能：@i18n
+- 生成AI(genai:最新ライブラリ)：@gen_ai
+- 生成AI(generativeai:非推奨ライブラリ)：@generative_ai
+- CSV読み込み生成AI：@csv_ai
+- 非同期処理：@html_basic | @html_login | html_wtf
 
 ## インタラクションUIサンプル
 - エレクトロニックフレーム：@intaraction/electronic.html
 - ふやけたボタン：@intaraction/liquidButton.html
-- 多言語セレクトメニュー：@intaraction/i18n_ui
-- スライドカード：@intaraction/SwiperCard
-- 管理画面用棒グラフ：@intaraction/barChart.html
-- スクロールメニュー：@intaraction/scrollspy.html
-- ボックス交換UI：@intaraction/switch.html
+- カードのホバー時、画像と共に拡大：@intaraction/cardImgHover.html
 - カードのホバー時拡大：@intaraction/cardHover.html
-- カードのホバー時、画像と共に拡大：@intaraction/cardImgHover
-- クレジットカードスライダー：@intaraction/creditCardSlider
-- グラフ生成：
+- -----上記は検証または実装済み-----
+- クレジットカードスライダー：@intaraction/creditCardSlider.html
+- 管理画面用棒グラフ：@intaraction/barChart.html
+- 多言語セレクトメニュー：@intaraction/i18n_ui/index.html
+- ボックス交換UI：@intaraction/switch.html
+- スライドカード：@intaraction/SwiperCard/swiper_add.html
+- スクロールメニュー：@intaraction/scrollspy.html
 
 
 ## 要件定義
@@ -166,7 +171,7 @@ tree > static/docs/tree.txt
 - 通常のコーディング → Sonnet
 - アプリ全体の解析・複雑なリファクタリング → Opus
 
-## .bashrc aliasのショートカットコマンド一覧
+## .bashrc aliasのbashのショートカットコマンド一覧
 @C:\Users\arihi\.bashrc
 
 # 役割
@@ -232,6 +237,10 @@ IMPORTANT:
 - 参照されたファイル/パス/挙動は、必ず実際に読んで確認してから説明・提案する。
 - 未確認なら「未確認」と明示し、読む/調べる/質問するのどれかに倒す。
 - 同じミスを指摘された場合、同じミスを繰り返さないようにclaude.mdを自身で更新する。
+
+# 操作ファイルちゅい店
+- CSSのスタイルはBootstrap5.3を実装し、それで賄えない特殊なスタイルは(static/css/style.css)にページ上部のメニューにコメントを付与して、カテゴリーに応じた個所に追記すること。
+- JSの実装はtemplate内ではなく(static/js/main.js)に追記し、何の機能かコメントを残す。cdnなどのリンクは(templates/layout/head.j2)に追記する。それ以外の場所に記述する際は確認する。
 
 # 検証時のルール
 - デバッグプリントをコンソールに出力する際は、わかりやすいように「############デバッグタイトル############」とする。

@@ -49,7 +49,7 @@
 /* アクティブバッジアニメーション */
 /* スーパーユーザーモード：エレクトロニックフレーム */
 /* スーパーユーザーモード：ノイズボタン */
-/* スーパーユーザーモード：背景波紋 */
+/* 決済クレジットカードスライダー */
 /* 認証手順解説 */
 /* ============== JS連携 =============== */
 /* フェードイン */
@@ -365,6 +365,7 @@ mark {
     height: 300px;
     object-fit: cover;
     display: block;
+    transition: transform 500ms ease-in-out;
 }
 .memo-img-wrap a {
     pointer-events: auto;
@@ -375,6 +376,39 @@ mark {
     position: relative;
     border-radius: 12px;
     overflow: hidden;
+    transition: transform 250ms ease-in-out, box-shadow 250ms ease-in-out;
+}
+
+.recommend:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2) !important;
+    z-index: 2;
+}
+
+/* ホバー時：おすすめカード右側画像の拡大 */
+.recommend-img img {
+    transition: transform 500ms ease-in-out;
+}
+
+.recommend:hover .recommend-img img {
+    transform: scale(1.07);
+}
+
+/* ホバー時：トップ一覧カード拡大 */
+.card-hover-item {
+    transition: transform 250ms ease-in-out, box-shadow 250ms ease-in-out;
+    position: relative;
+    z-index: 1;
+}
+
+.card-hover-item:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2) !important;
+    z-index: 2;
+}
+
+.card-hover-item:hover .memo-img-wrap img {
+    transform: scale(1.07);
 }
 
 .recommend::before {
@@ -880,6 +914,160 @@ pre.file-tag[data-tag]::before {
     }
 }
 
+/* 決済クレジットカードスライダー */
+
+/* ページ背景（ナビ・フッターより後ろ） */
+.payment-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+    background: #212529;
+}
+
+/* カードギミック表示エリア（全幅絶対配置・背景） */
+.payment-card-viewer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    #212529 20%,
+    #212529 90%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    #212529 20%,
+    #212529 90%,
+    transparent 100%
+  );
+}
+
+/* カードストリーム（右カラム内に絶対配置・中央縦揃え） */
+.payment-bg-card-stream {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    width: 100%;
+    height: 280px;
+    display: flex;
+    align-items: center;
+    overflow: visible;
+}
+.payment-bg-card-line {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    white-space: nowrap;
+    will-change: transform;
+}
+
+/* カードwrapper */
+.payment-bg-card-wrapper {
+    position: relative;
+    width: 340px;
+    height: 210px;
+    flex-shrink: 0;
+}
+.payment-bg-card-normal {
+    position: absolute;
+    top: 0; left: 0;
+    width: 340px;
+    height: 210px;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+    z-index: 2;
+    clip-path: inset(0 0 0 var(--clip-right, 0%));
+}
+.payment-bg-card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 15px;
+    filter: brightness(1.1) contrast(1.1);
+}
+.payment-bg-card-ascii {
+    position: absolute;
+    top: 0; left: 0;
+    width: 340px;
+    height: 210px;
+    border-radius: 15px;
+    overflow: hidden;
+    z-index: 1;
+    clip-path: inset(0 calc(100% - var(--clip-left, 0%)) 0 0);
+}
+.payment-bg-ascii-content {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    color: rgba(220, 210, 255, 0.6);
+    font-family: "Courier New", monospace;
+    font-size: 10px;
+    line-height: 12px;
+    overflow: hidden;
+    white-space: pre;
+    margin: 0;
+    padding: 0;
+    -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 30%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.4) 80%, rgba(0,0,0,0.2) 100%);
+    mask-image: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 30%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.4) 80%, rgba(0,0,0,0.2) 100%);
+    animation: paymentGlitch 0.1s infinite linear alternate-reverse;
+}
+@keyframes paymentGlitch {
+    0%   { opacity: 1; }
+    15%  { opacity: 0.9; }
+    16%  { opacity: 1; }
+    49%  { opacity: 0.8; }
+    50%  { opacity: 1; }
+    99%  { opacity: 0.9; }
+    100% { opacity: 1; }
+}
+.payment-bg-scan-effect {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.4), transparent);
+    animation: paymentScanEffect 0.6s ease-out;
+    pointer-events: none;
+    z-index: 5;
+}
+@keyframes paymentScanEffect {
+    0%   { transform: translateX(-100%); opacity: 0; }
+    50%  { opacity: 1; }
+    100% { transform: translateX(100%); opacity: 0; }
+}
+
+/* パーティクル・スキャナーcanvas（サイズはJSで完全管理） */
+#paymentParticleCanvas {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    z-index: 0;
+    pointer-events: none;
+}
+#paymentScannerCanvas {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    z-index: 2;
+    pointer-events: none;
+}
 
 /* 認証手順解説 */
 

@@ -27,7 +27,7 @@
                                 <p class="card-text">{{ rand1.memo.content | truncate(200, False, '...') }}</p>
                             </div>
                         </div>
-                        <div class="col-md-4 d-none d-md-block">
+                        <div class="col-md-4 d-none d-md-block recommend-img">
                             <div class="h-100">
                                 <a href="{{ url_for('public.detail', memo_id=rand1.memo.id) }}"><img class="w-100 h-100 rounded-end change-mode" src="{{ url_for('static', filename='images/memo/' ~ rand1.memo.image_filename) }}" width="100" height="" alt="記事画像" style="object-fit: cover"></a>
                             </div>
@@ -40,7 +40,7 @@
                     {% set memo = row.memo %}
                     {% set like_count = row.like_count %}
                     <div class="col-md-6 d-flex fade-in fade-delay-{{ loop.index }}">
-                        <div class="text-body-secondary row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm position-relative h-90 w-100">
+                        <div class="text-body-secondary row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm position-relative h-90 w-100 card-hover-item">
                             <div class="memo-img-wrap">
                                 <a href="{{ url_for('public.detail', memo_id=row.memo.id) }}"
                                     class="text-decoration-none">
