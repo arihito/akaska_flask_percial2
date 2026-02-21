@@ -17,10 +17,13 @@
                                     <th>カテゴリー名</th>
                                     <th>投稿数</th>
                                     <th>登録日時</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
+                                {% set weekdays = ['月', '火', '水', '木', '金', '土', '日'] %}
                                 {% for cat in categories %}
+                                {% set memo_count = cat.memos | length %}
                                 <tr class="fade-in fade-delay-{{ loop.index * 2 }}">
                                     <td class="align-middle text-body-secondary small">{{ cat.id }}</td>
                                     <td class="align-middle">
@@ -29,10 +32,28 @@
                                     <td class="align-middle fw-bold">
                                         <span class="badge" style="background-color:{{ cat.color }}">{{ cat.name }}</span>
                                     </td>
-                                    <td class="align-middle text-body-secondary small">{{ cat.memos | length }} 件</td>
+                                    <td class="align-middle text-body-secondary small">{{ memo_count }} 件</td>
                                     <td class="align-middle text-body-secondary small" style="font-size:11px">
-                                        {% set weekdays = ['月', '火', '水', '木', '金', '土', '日'] %}
                                         {{ cat.created_at.strftime("%Y/%m/%d") }}({{ weekdays[cat.created_at.weekday()] }})
+                                    </td>
+                                    <td class="align-middle text-end action-btn">
+                                        {% if memo_count == 0 %}
+                                        <form method="POST" action="{{ url_for('admin.category_delete', cat_id=cat.id) }}" class="cat-delete-form d-inline">
+                                            {{ form.hidden_tag() }}
+                                            <button type="submit" class="btn btn-outline-secondary btn-sm">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </form>
+                                        {% else %}
+                                        <span
+                                            data-bs-toggle="tooltip"
+                                            data-bs-placement="left"
+                                            title="{{ memo_count }}件の記事で使用中のため削除できません">
+                                            <button type="button" class="btn btn-outline-secondary btn-sm" disabled>
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </span>
+                                        {% endif %}
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -47,20 +68,25 @@
                 <div class="col-12">
                     <div class="border rounded p-4 bg-body-secondary fade-in fade-delay-14">
                         <h3 class="text-body-secondary mb-3 pb-2 fs-5 fade-in fade-delay-14 border-bottom"><i class="fa fa-plus me-1"></i>カテゴリーを追加</h3>
-                        <div class="row">
-                            <div class="col-12 col-md-8 mb-3 fade-in fade-delay-16">
-                                <label class="form-label small text-body-secondary">カテゴリー名　※英数12文字以内</label>
-                                <input type="text" class="form-control" placeholder="例: Python">
+                        <form id="category-add-form" method="POST" action="{{ url_for('admin.category') }}" novalidate>
+                            {{ form.hidden_tag() }}
+                            <div class="row">
+                                <div class="col-12 col-md-8 mb-1 fade-in fade-delay-16">
+                                    <label for="cat-name" class="form-label small text-body-secondary">カテゴリー名　<span class="text-body-tertiary">英数字のみ・12文字以内</span></label>
+                                    <input type="text" id="cat-name" name="name" class="form-control" placeholder="例: Python" maxlength="12" autocomplete="off">
+                                    <div id="cat-name-error" class="form-text text-danger d-none small mt-1"></div>
+                                </div>
+                                <div class="col-12 col-md-4 mb-1 fade-in fade-delay-18">
+                                    <label for="cat-color" class="form-label small text-body-secondary">カラー　<span class="text-body-tertiary">#666より暗い色</span></label>
+                                    <input type="color" id="cat-color" name="color" class="form-control form-control-color" value="#234466">
+                                    <div id="cat-color-error" class="form-text text-danger d-none small mt-1"></div>
+                                </div>
                             </div>
-                            <div class="col-12 col-md-4 mb-3 fade-in fade-delay-18">
-                                <label class="form-label small text-body-secondary">カラー　※#666より暗く</label>
-                                <input type="color" class="form-control form-control-color">
+                            <div class="d-flex g-2 mt-4">
+                                <button type="submit" id="cat-submit" class="btn btn-secondary btn-lg fade-in fade-delay-16 me-2" style="width:58%"><i class="fa fa-plus me-1"></i>追加する</button>
+                                <a class="btn btn-outline-secondary btn-lg fade-in fade-delay-18" style="width:40%" href="{{ url_for('admin.index') }}"><i class="fa fa-reply"></i>ダッシュボードへ戻る</a>
                             </div>
-                        </div>
-                        <div class="d-flex g-2 mt-4">
-                            <button type="button" class="btn btn-secondary btn-lg fade-in fade-delay-18 me-2" style="width:58%"><i class="fa fa-plus me-1"></i>追加する</button>
-                            <a class="btn btn-outline-secondary btn-lg fade-in fade-delay-20" style="width:40%" href="{{ url_for('admin.index') }}"><i class="fa fa-reply"></i>ダッシュボードへ戻る</a>
-                      </div>
+                        </form>
                     </div>
                 </div>
             </div>

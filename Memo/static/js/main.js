@@ -169,6 +169,81 @@
             new bootstrap.Tooltip(el, { html: true });
         });
 
+        // カテゴリー削除確認（admin/category）
+        document.querySelectorAll(".cat-delete-form").forEach((form) => {
+            form.addEventListener("submit", (e) => {
+                if (!confirm("このカテゴリーを削除しますか？")) e.preventDefault();
+            });
+        });
+
+        // カテゴリー追加フォームバリデーション（admin/category）
+        const catForm = document.getElementById("category-add-form");
+        if (catForm) {
+            const nameInput  = document.getElementById("cat-name");
+            const colorInput = document.getElementById("cat-color");
+            const nameError  = document.getElementById("cat-name-error");
+            const colorError = document.getElementById("cat-color-error");
+            const submitBtn  = document.getElementById("cat-submit");
+
+            // #666の輝度しきい値（0.299*102 + 0.587*102 + 0.114*102 = 102）
+            const COLOR_LIMIT = 102;
+
+            const hexToRgb = (hex) => {
+                const r = parseInt(hex.slice(1, 3), 16);
+                const g = parseInt(hex.slice(3, 5), 16);
+                const b = parseInt(hex.slice(5, 7), 16);
+                return { r, g, b };
+            };
+
+            const getLuminance = (hex) => {
+                const { r, g, b } = hexToRgb(hex);
+                return 0.299 * r + 0.587 * g + 0.114 * b;
+            };
+
+            const validateName = () => {
+                const val = nameInput.value;
+                if (!val) {
+                    nameError.textContent = "カテゴリー名を入力してください";
+                    nameError.classList.remove("d-none");
+                    return false;
+                }
+                if (!/^[A-Za-z0-9]{1,12}$/.test(val)) {
+                    nameError.textContent = "英数字のみ・12文字以内で入力してください";
+                    nameError.classList.remove("d-none");
+                    return false;
+                }
+                nameError.classList.add("d-none");
+                return true;
+            };
+
+            const validateColor = () => {
+                const lum = getLuminance(colorInput.value);
+                if (lum >= COLOR_LIMIT) {
+                    colorError.textContent = "#666より暗い色を選択してください";
+                    colorError.classList.remove("d-none");
+                    return false;
+                }
+                colorError.classList.add("d-none");
+                return true;
+            };
+
+            nameInput.addEventListener("input", () => {
+                validateName();
+                submitBtn.disabled = !validateName() || !validateColor();
+            });
+
+            colorInput.addEventListener("input", () => {
+                validateColor();
+                submitBtn.disabled = !validateName() || !validateColor();
+            });
+
+            catForm.addEventListener("submit", (e) => {
+                const nameOk  = validateName();
+                const colorOk = validateColor();
+                if (!nameOk || !colorOk) e.preventDefault();
+            });
+        }
+
         // ステップバーアニメーション（admin/login）
         const barDelays = { "delay-1": 300, "delay-2": 1050, "delay-3": 1800 };
         Object.keys(barDelays).forEach((cls) => {

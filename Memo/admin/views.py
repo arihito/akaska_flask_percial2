@@ -278,12 +278,38 @@ def ban(user_id):
     return redirect(url_for('admin.index'))
 
 
-@admin_bp.route('/category')
+@admin_bp.route('/category', methods=['GET', 'POST'])
 @admin_required
 def category():
     from models import Category
+    form = FlaskForm()
+    if request.method == 'POST' and form.validate_on_submit():
+        name = request.form.get('name', '').strip()
+        color = request.form.get('color', '').strip()
+        if Category.query.filter_by(name=name).first():
+            flash(f'カテゴリー「{name}」はすでに存在します', 'secondary')
+        else:
+            new_cat = Category(name=name, color=color)
+            db.session.add(new_cat)
+            db.session.commit()
+            flash(f'カテゴリー「{name}」を追加しました', 'secondary')
+        return redirect(url_for('admin.category'))
     categories = Category.query.order_by(Category.id).all()
-    return render_template('admin/category.j2', categories=categories)
+    return render_template('admin/category.j2', categories=categories, form=form)
+
+
+@admin_bp.route('/category/delete/<int:cat_id>', methods=['POST'])
+@admin_required
+def category_delete(cat_id):
+    from models import Category
+    cat = Category.query.get_or_404(cat_id)
+    if cat.memos:
+        flash(f'カテゴリー「{cat.name}」は{len(cat.memos)}件の記事で使用中のため削除できません', 'secondary')
+        return redirect(url_for('admin.category'))
+    db.session.delete(cat)
+    db.session.commit()
+    flash(f'カテゴリー「{cat.name}」を削除しました', 'secondary')
+    return redirect(url_for('admin.category'))
 
 
 @admin_bp.route('/user_thumb')
