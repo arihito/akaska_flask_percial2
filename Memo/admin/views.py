@@ -278,6 +278,21 @@ def ban(user_id):
     return redirect(url_for('admin.index'))
 
 
+@admin_bp.route('/category')
+@admin_required
+def category():
+    from models import Category
+    categories = Category.query.order_by(Category.id).all()
+    return render_template('admin/category.j2', categories=categories)
+
+
+@admin_bp.route('/user_thumb')
+@admin_required
+def user_thumb():
+    users = User.query.order_by(User.id).all()
+    return render_template('admin/user_thumb.j2', users=users)
+
+
 @admin_bp.route('/logout')
 @login_required
 def logout():

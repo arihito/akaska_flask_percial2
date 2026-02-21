@@ -2,10 +2,11 @@
 {% block page_title %}管理者ダッシュボード | {{ SITE_NAME }}{% endblock %}
 {% block content %}
     <div class="py-4">
-        <h2 class="h4 mb-4 fade-in fade-in-delay-1"><i class="fa fa-dashboard me-2"></i>ダッシュボード</h2>
-        <h3 class="h5 mb-3 fade-in fade-in-delay-2"><i class="fa fa-users me-2"></i>ユーザー一覧</h3>
+        <h2 class="my-4 fade-in fade-delay-4">
+            <i class="fa fa-users me-2"></i>ユーザー一覧
+        </h2>
         {# PC用テーブル #}
-        <div class="table-responsive fade-in fade-in-delay-3">
+        <div class="table-responsive">
             <table class="table table-striped table-hover table-sm d-none d-md-table">
                 <thead>
                     <tr>
@@ -21,7 +22,7 @@
                 </thead>
                 <tbody>
                     {% for user in users %}
-                    <tr>
+                    <tr class="fade-in fade-delay-{{ loop.index * 2 }}">
                         <td>{{ user.id }}</td>
                         <td class="font-bold fs-4">{{ user.username }}<span class="ms-1" style="font-size:1rem">様</span></td>
                         <td>{{ user.email }}</td>
@@ -40,7 +41,8 @@
                                 {% else %}
                                     {% set tip = "申請日時: 不明" %}
                                 {% endif %}
-                                <span class="badge bg-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ tip }}" style="cursor:default">申請済</span>
+                                <span class="badge bg-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ tip }}" style="cursor:default;
+                                border:1px solid #777;border-radius:12px;">申請済</span>
                             {% else %}
                                 <span class="text-body-secondary small">―</span>
                             {% endif %}
@@ -54,7 +56,8 @@
                                 {% else %}
                                     {% set tip = "承認日時: 不明" %}
                                 {% endif %}
-                                <span class="badge bg-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ tip }}" style="cursor:default">承認済</span>
+                                <span class="badge bg-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ tip }}" style="cursor:default;
+                                border:1px solid #777;border-radius:12px;">承認済</span>
                             {% else %}
                                 <span class="text-body-secondary small">―</span>
                             {% endif %}
@@ -72,7 +75,8 @@
                                     {% set wd2 = weekdays[user.subscription_expires_at.weekday()] %}
                                     {% set tip_paid = tip_paid ~ "<br>有効期限: " ~ user.subscription_expires_at.strftime("%Y年%m月%d日") ~ "(" ~ wd2 ~ ") " ~ user.subscription_expires_at.strftime("%H:%M") %}
                                 {% endif %}
-                                <span class="badge bg-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ tip_paid }}" style="cursor:default">決済済</span>
+                                <span class="badge bg-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ tip_paid }}" style="cursor:default;
+                                border:1px solid #777;border-radius:12px;">決済済</span>
                             {% else %}
                                 <span class="text-body-secondary small">―</span>
                             {% endif %}
@@ -83,14 +87,14 @@
                                 {% if user.is_admin %}
                                     <button type="submit" class="btn btn-outline-secondary btn-sm">承認取消</button>
                                 {% else %}
-                                    <button type="submit" class="btn btn-secondary btn-sm text-dark">承認する</button>
+                                    <button type="submit" class="btn btn-secondary btn-sm">承認する</button>
                                 {% endif %}
                             </form>
                             {% if user.email != super_admin_email %}
                             <form action="{{ url_for('admin.ban', user_id=user.id) }}" method="post" class="d-inline ms-1">
                                 {{ form.hidden_tag() }}
                                 {% if user.is_banned %}
-                                    <button type="submit" class="btn btn-secondary btn-sm text-dark">停止解除</button>
+                                    <button type="submit" class="btn btn-secondary btn-sm">停止解除</button>
                                 {% else %}
                                     <button type="submit" class="btn btn-outline-secondary btn-sm">一時停止</button>
                                 {% endif %}
@@ -133,7 +137,8 @@
                             {% else %}
                                 {% set tip = "申請日時: 不明" %}
                             {% endif %}
-                            <span class="badge bg-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ tip }}" style="cursor:default">申請済</span>
+                            <span class="badge bg-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ tip }}" style="cursor:default;
+                            border:1px solid #777;border-radius:12px;">申請済</span>
                         {% else %}
                             <span class="badge bg-secondary bg-opacity-25 text-body-secondary">未申請</span>
                         {% endif %}
@@ -145,7 +150,8 @@
                             {% else %}
                                 {% set tip = "承認日時: 不明" %}
                             {% endif %}
-                            <span class="badge bg-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ tip }}" style="cursor:default">承認済</span>
+                            <span class="badge bg-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ tip }}" style="cursor:default;
+                            border:1px solid #777;border-radius:12px;">承認済</span>
                         {% else %}
                             <span class="badge bg-secondary bg-opacity-25 text-body-secondary">未承認</span>
                         {% endif %}
@@ -161,7 +167,8 @@
                                 {% set wd2 = weekdays[user.subscription_expires_at.weekday()] %}
                                 {% set tip_paid = tip_paid ~ " / 有効期限: " ~ user.subscription_expires_at.strftime("%Y年%m月%d日") ~ "(" ~ wd2 ~ ") " ~ user.subscription_expires_at.strftime("%H:%M") %}
                             {% endif %}
-                            <span class="badge bg-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ tip_paid }}" style="cursor:default">決済済</span>
+                            <span class="badge bg-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ tip_paid }}" style="cursor:default;
+                            border:1px solid #777;border-radius:12px;">決済済</span>
                         {% else %}
                             <span class="badge bg-secondary bg-opacity-25 text-body-secondary">未決済</span>
                         {% endif %}
@@ -173,14 +180,14 @@
                             {% if user.is_admin %}
                                 <button type="submit" class="btn btn-outline-secondary btn-sm w-100">承認取消</button>
                             {% else %}
-                                <button type="submit" class="btn btn-secondary btn-sm text-dark w-100">承認する</button>
+                                <button type="submit" class="btn btn-secondary btn-sm w-100">承認する</button>
                             {% endif %}
                         </form>
                         {% if user.email != super_admin_email %}
                         <form action="{{ url_for('admin.ban', user_id=user.id) }}" method="post" class="flex-fill">
                             {{ form.hidden_tag() }}
                             {% if user.is_banned %}
-                                <button type="submit" class="btn btn-secondary btn-sm text-dark w-100">停止解除</button>
+                                <button type="submit" class="btn btn-secondary btn-sm w-100">停止解除</button>
                             {% else %}
                                 <button type="submit" class="btn btn-outline-secondary btn-sm w-100">一時停止</button>
                             {% endif %}

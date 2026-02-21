@@ -44,6 +44,7 @@
 /* コード表示 */
 /* 投稿記事詳細マークダウン */
 /* ============== 管理画面 =============== */
+/* 管理ヘッダー グラデーションアニメーション */
 /* 管理者ログイン ステップバー */
 /* ステップバーコネクター（Bootstrapプログレスバー） */
 /* アクティブバッジアニメーション */
@@ -51,6 +52,8 @@
 /* スーパーユーザーモード：ノイズボタン */
 /* 決済クレジットカードスライダー */
 /* 認証手順解説 */
+/* 管理画面背景 */
+/* ステップツールチップ */
 /* ============== JS連携 =============== */
 /* フェードイン */
 /* 初回のみ下から背景画像をフェードイン */
@@ -698,6 +701,44 @@ pre.file-tag[data-tag]::before {
 
 /* ============== 管理画面 =============== */
 
+/* 管理ヘッダー グラデーションアニメーション */
+
+.admin-navbar {
+    background: linear-gradient(
+        130deg,
+        #161819 0%,
+        rgb(43 48 53) 25%,
+        #212529 50%,
+        rgb(43 48 53) 75%,
+        #161819 100%
+    ) !important;
+    background-size: 400% 400% !important;
+    animation: adminHeaderFlow 2s ease-in-out infinite;
+    border-bottom: 1px solid #313539;
+}
+
+[data-bs-theme="light"] .admin-navbar {
+    background: linear-gradient(
+        130deg,
+        #e3e3e8 0%,
+        #dadcdf 25%,
+        #fef8f5 50%,
+        #dadcdf 75%,
+        #e3e3e8 100%
+    ) !important;
+    background-size: 400% 400% !important;
+    animation: adminHeaderFlow 2s ease-in-out infinite;
+    border-bottom: 1px solid #c1c5c9;
+}
+
+@keyframes adminHeaderFlow {
+    0%   { background-position: 0%   50%; }
+    25%  { background-position: 100%  0%; }
+    50%  { background-position: 100% 100%; }
+    75%  { background-position: 0%  100%; }
+    100% { background-position: 0%   50%; }
+}
+
 /* 管理者ログイン ステップバー */
 
 .step-row {
@@ -1122,7 +1163,22 @@ pre.file-tag[data-tag]::before {
   color: #234;
 }
 
-/* 管理画面 tooltip */
+/* 管理画面背景 */
+
+.adminMain {
+  background: linear-gradient(to top, #161819, #212529);
+}
+.sidebarMenu {
+  background: linear-gradient(to top, rgb(43 48 53), #343A40);
+}
+[data-bs-theme="light"] .adminMain {
+  background: linear-gradient(to top, #dedadc, #fefafe);
+}
+[data-bs-theme="light"] .sidebarMenu {
+  background: linear-gradient(to top, #dedadc, #fefafe);
+}
+
+/* ステップツールチップ */
 .tooltip {
     --bs-tooltip-bg: #234;
     --bs-tooltip-color: #ccc;

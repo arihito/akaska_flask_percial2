@@ -106,15 +106,16 @@ Percial2/                    # 親ディレクトリ（絶対パス: C:/Users/ar
 - 生成AI(genai:最新ライブラリ)：@gen_ai
 - 生成AI(generativeai:非推奨ライブラリ)：@generative_ai
 - CSV読み込み生成AI：@csv_ai
-- 非同期処理：@html_basic | @html_login | html_wtf
+- 非同期処理：@html_basic | @html_login | @tml_wtf
 
 ## インタラクションUIサンプル
 - エレクトロニックフレーム：@intaraction/electronic.html
 - ふやけたボタン：@intaraction/liquidButton.html
 - カードのホバー時、画像と共に拡大：@intaraction/cardImgHover.html
 - カードのホバー時拡大：@intaraction/cardHover.html
-- -----上記は検証または実装済み-----
 - クレジットカードスライダー：@intaraction/creditCardSlider.html
+- -----上記は検証または実装済み-----
+- 閃光ボタン：@intaraction/grinty.html
 - 管理画面用棒グラフ：@intaraction/barChart.html
 - 多言語セレクトメニュー：@intaraction/i18n_ui/index.html
 - ボックス交換UI：@intaraction/switch.html
