@@ -53,6 +53,7 @@
 /* 決済クレジットカードスライダー */
 /* 認証手順解説 */
 /* 管理画面背景 */
+/* 管理サイドバー 閃光エフェクト */
 /* ステップツールチップ */
 /* ============== JS連携 =============== */
 /* フェードイン */
@@ -1176,6 +1177,91 @@ pre.file-tag[data-tag]::before {
 }
 [data-bs-theme="light"] .sidebarMenu {
   background: linear-gradient(to top, #dedadc, #fefafe);
+}
+
+/* 管理サイドバー 閃光エフェクト */
+
+#sidebarMenu {
+    position: relative;
+    overflow: clip;
+    border-right: 1px solid rgba(58, 104, 136, 0.35);
+    animation: sidebarElectricPulse 3s ease-in-out infinite;
+}
+
+/* 斜め閃光（左→右、10秒に1回） */
+#sidebarMenu::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 35%;
+    height: 100%;
+    background: linear-gradient(
+        to right,
+        transparent 0%,
+        rgba(255, 255, 255, 0.6) 50%,
+        transparent 100%
+    );
+    transform: skewX(-18deg) translateX(-250%);
+    mix-blend-mode: overlay;
+    opacity: 0;
+    animation: sidebarShine 8s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* 右ボーダーを縦走りする光筋 */
+#sidebarMenu::after {
+    content: '';
+    position: absolute;
+    top: -60%;
+    right: 0;
+    width: 3px;
+    height: 60%;
+    background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(75, 76, 151, 0.9) 50%,
+        transparent 100%
+    );
+    filter: blur(1px);
+    animation: sidebarGlowLine 3.5s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* コンテンツをスキャンラインより前面に */
+#sidebarMenu > div {
+    position: relative;
+    z-index: 1;
+}
+
+/* 右ボーダーのグロー明滅 */
+@keyframes sidebarElectricPulse {
+    0%, 100% {
+        box-shadow: inset -2px 0 8px rgba(58, 104, 136, 0.15),
+                    2px 0 10px rgba(58, 104, 136, 0.10);
+        border-right-color: rgba(58, 104, 136, 0.35);
+    }
+    50% {
+        box-shadow: inset -4px 0 18px rgba(58, 104, 136, 0.45),
+                    4px 0 22px rgba(58, 104, 136, 0.30);
+        border-right-color: rgba(78, 98, 155, 0.75);
+    }
+}
+
+/* 斜め閃光：10秒に1回、最初の約1秒だけ左→右を通過 */
+@keyframes sidebarShine {
+    0%   { transform: skewX(18deg) translateX(-250%); opacity: 0; }
+    2%   { opacity: 1; }
+    12%  { transform: skewX(18deg) translateX(600%);  opacity: 0; }
+    13%, 100% { transform: skewX(18deg) translateX(600%); opacity: 0; }
+}
+
+/* 縦走り光筋 */
+@keyframes sidebarGlowLine {
+    0%   { top: -60%; }
+    100% { top: 130%; }
 }
 
 /* ステップツールチップ */

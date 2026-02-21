@@ -114,8 +114,8 @@ Percial2/                    # 親ディレクトリ（絶対パス: C:/Users/ar
 - カードのホバー時、画像と共に拡大：@intaraction/cardImgHover.html
 - カードのホバー時拡大：@intaraction/cardHover.html
 - クレジットカードスライダー：@intaraction/creditCardSlider.html
-- -----上記は検証または実装済み-----
 - 閃光ボタン：@intaraction/grinty.html
+- -----上記は検証または実装済み-----
 - 管理画面用棒グラフ：@intaraction/barChart.html
 - 多言語セレクトメニュー：@intaraction/i18n_ui/index.html
 - ボックス交換UI：@intaraction/switch.html
