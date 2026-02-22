@@ -8,7 +8,7 @@ from flask_login import login_required, current_user
 from forms import AdminLoginForm
 from flask_wtf import FlaskForm
 from flask_mail import Message
-from models import db, User, ThumbnailConfig, Memo, Favorite, Category, memo_categories
+from models import db, User, ThumbnailConfig, Memo, Favorite, Category, memo_categories, FixedPage
 from werkzeug.utils import secure_filename
 from sqlalchemy import func
 import stripe
@@ -509,6 +509,213 @@ def analyze():
 
     db.session.commit()
     return jsonify(status='ok', data=results)
+
+
+@admin_bp.route('/fixed')
+@admin_required
+def fixed():
+    """固定ページ管理一覧"""
+    pages = FixedPage.query.order_by(FixedPage.order).all()
+    form = FlaskForm()
+    fixed_img_dir = os.path.join(current_app.root_path, 'static', 'images', 'fixed')
+    images = sorted([
+        f for f in os.listdir(fixed_img_dir)
+        if os.path.isfile(os.path.join(fixed_img_dir, f))
+        and f.lower().endswith(('.jpg', '.jpeg', '.png'))
+        and f != 'keyvisual.jpg'
+    ])
+    return render_template('admin/fixed.j2', pages=pages, form=form, images=images)
+
+
+@admin_bp.route('/fixed/toggle/<int:page_id>', methods=['POST'])
+@admin_required
+def fixed_toggle(page_id):
+    """固定ページのナビ表示を切り替え"""
+    page = FixedPage.query.get_or_404(page_id)
+    form = FlaskForm()
+    if not form.validate_on_submit():
+        flash('不正なリクエストです', 'secondary')
+        return redirect(url_for('admin.fixed'))
+    page.visible = not page.visible
+    db.session.commit()
+    status = '表示' if page.visible else '非表示'
+    flash(f'「{page.title}」を{status}に変更しました', 'secondary')
+    return redirect(url_for('admin.fixed'))
+
+
+@admin_bp.route('/fixed/toggle-nav-type/<int:page_id>', methods=['POST'])
+@admin_required
+def fixed_toggle_nav_type(page_id):
+    """固定ページのナビ種別を global ↔ footer に切り替え"""
+    page = FixedPage.query.get_or_404(page_id)
+    form = FlaskForm()
+    if not form.validate_on_submit():
+        flash('不正なリクエストです', 'secondary')
+        return redirect(url_for('admin.fixed'))
+    page.nav_type = 'footer' if page.nav_type == 'global' else 'global'
+    db.session.commit()
+    label = 'フッター' if page.nav_type == 'footer' else 'グローバルナビ'
+    flash(f'「{page.title}」を{label}に変更しました', 'secondary')
+    return redirect(url_for('admin.fixed'))
+
+
+@admin_bp.route('/fixed/delete/<int:page_id>', methods=['POST'])
+@admin_required
+def fixed_delete(page_id):
+    """固定ページをDBから削除（テンプレートファイルは残す）"""
+    page = FixedPage.query.get_or_404(page_id)
+    form = FlaskForm()
+    if not form.validate_on_submit():
+        flash('不正なリクエストです', 'secondary')
+        return redirect(url_for('admin.fixed'))
+    title = page.title
+    db.session.delete(page)
+    db.session.commit()
+    flash(f'固定ページ「{title}」をDBから削除しました（テンプレートファイルは残っています）', 'secondary')
+    return redirect(url_for('admin.fixed'))
+
+
+@admin_bp.route('/fixed/edit/<int:page_id>', methods=['POST'])
+@admin_required
+def fixed_edit(page_id):
+    """固定ページのメタデータ（タイトル・要約・画像・順序）を更新"""
+    page = FixedPage.query.get_or_404(page_id)
+    form = FlaskForm()
+    if not form.validate_on_submit():
+        flash('不正なリクエストです', 'secondary')
+        return redirect(url_for('admin.fixed'))
+    page.title = request.form.get('title', page.title).strip()
+    page.summary = request.form.get('summary', page.summary or '').strip() or None
+    page.image = request.form.get('image', page.image or '').strip() or None
+    try:
+        page.order = int(request.form.get('order', page.order))
+    except (ValueError, TypeError):
+        pass
+    db.session.commit()
+    flash(f'「{page.title}」を更新しました', 'secondary')
+    return redirect(url_for('admin.fixed'))
+
+
+@admin_bp.route('/fixed/reorder', methods=['POST'])
+@admin_required
+def fixed_reorder():
+    """AJAX: 固定ページの表示順を一括更新（セクション内D&D用）"""
+    from flask import jsonify
+    data = request.get_json(silent=True) or {}
+    ids = data.get('ids', [])
+    if not ids:
+        return jsonify(status='error', message='IDリストが空です'), 400
+    for index, page_id in enumerate(ids):
+        page = FixedPage.query.get(page_id)
+        if page:
+            page.order = index
+    db.session.commit()
+    return jsonify(status='ok')
+
+
+@admin_bp.route('/fixed/generate', methods=['POST'])
+@admin_required
+def fixed_generate():
+    """AJAX: Gemini AI による固定ページコンテンツ生成"""
+    from flask import jsonify
+    from utils.ai_fixed_generate import generate_fixed_page
+
+    data = request.get_json(silent=True) or {}
+    title = data.get('title', '').strip()
+    if not title:
+        return jsonify(status='error', message='タイトルを入力してください'), 400
+
+    existing_keys = [p.key for p in FixedPage.query.all()]
+    result = generate_fixed_page(title, existing_keys)
+    if not result:
+        return jsonify(status='error', message='AI生成に失敗しました。APIキーと利用制限を確認してください'), 500
+
+    # ランダム画像を選択
+    fixed_img_dir = os.path.join(current_app.root_path, 'static', 'images', 'fixed')
+    images = [
+        f for f in os.listdir(fixed_img_dir)
+        if os.path.isfile(os.path.join(fixed_img_dir, f))
+        and f.lower().endswith(('.jpg', '.jpeg', '.png'))
+        and f != 'keyvisual.jpg'
+    ]
+    import random
+    selected_image = random.choice(images) if images else 'refactor.jpg'
+
+    return jsonify(status='ok', **result, image=selected_image)
+
+
+@admin_bp.route('/fixed/random-image')
+@admin_required
+def fixed_random_image():
+    """AJAX: ランダムに画像を返す"""
+    from flask import jsonify
+    import random
+    fixed_img_dir = os.path.join(current_app.root_path, 'static', 'images', 'fixed')
+    images = [
+        f for f in os.listdir(fixed_img_dir)
+        if os.path.isfile(os.path.join(fixed_img_dir, f))
+        and f.lower().endswith(('.jpg', '.jpeg', '.png'))
+        and f != 'keyvisual.jpg'
+    ]
+    image = random.choice(images) if images else 'refactor.jpg'
+    return jsonify(image=image)
+
+
+@admin_bp.route('/fixed/create', methods=['POST'])
+@admin_required
+def fixed_create():
+    """AI生成コンテンツをDBに保存しテンプレートファイルを書き出す"""
+    form = FlaskForm()
+    if not form.validate_on_submit():
+        flash('不正なリクエストです', 'secondary')
+        return redirect(url_for('admin.fixed'))
+
+    key = request.form.get('key', '').strip()
+    title = request.form.get('title', '').strip()
+    summary = request.form.get('summary', '').strip() or None
+    content = request.form.get('content', '').strip()
+    image = request.form.get('image', '').strip() or None
+    visible = request.form.get('visible') == 'on'
+
+    if not key or not title or not content:
+        flash('必須項目が不足しています', 'secondary')
+        return redirect(url_for('admin.fixed'))
+
+    if FixedPage.query.filter_by(key=key).first():
+        flash(f'キー「{key}」はすでに使用されています', 'secondary')
+        return redirect(url_for('admin.fixed'))
+
+    # .j2 テンプレートファイルを書き出し
+    template_dir = os.path.join(current_app.root_path, 'templates', 'fixed')
+    template_path = os.path.join(template_dir, f'{key}.j2')
+    j2_content = (
+        '{% extends "fixed/base.j2" %}\n'
+        '{% block article_body %}\n'
+        + content + '\n'
+        '{% endblock article_body %}\n'
+    )
+    try:
+        with open(template_path, 'w', encoding='utf-8') as f:
+            f.write(j2_content)
+    except Exception as e:
+        print(f"######## 固定ページテンプレート書き出し失敗: {e} ########")
+        flash('テンプレートファイルの書き出しに失敗しました', 'secondary')
+        return redirect(url_for('admin.fixed'))
+
+    max_order = db.session.query(func.max(FixedPage.order)).scalar() or 0
+    new_page = FixedPage(
+        key=key,
+        title=title,
+        summary=summary,
+        image=image,
+        visible=visible,
+        order=max_order + 1,
+    )
+    db.session.add(new_page)
+    db.session.commit()
+
+    flash(f'固定ページ「{title}」を作成しました（/fixed/{key}）', 'secondary')
+    return redirect(url_for('admin.fixed'))
 
 
 @admin_bp.route('/logout')

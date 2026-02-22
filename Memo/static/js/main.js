@@ -744,3 +744,151 @@ document.addEventListener("click", (e) => {
         return;
     }
 });
+
+/* =========================
+   固定ページ管理: AI生成・画像ランダム入れ替え
+========================== */
+(function () {
+    // 削除確認
+    document.querySelectorAll(".fixed-delete-form").forEach((form) => {
+        form.addEventListener("submit", (e) => {
+            if (!confirm("このページをDBから削除しますか？\n（テンプレートファイルは残ります）")) {
+                e.preventDefault();
+            }
+        });
+    });
+
+    const genBtn = document.getElementById("fixed-gen-btn");
+    if (!genBtn) return;
+
+    // 画像プレビューを更新するヘルパー
+    function setGenImage(filename) {
+        document.getElementById("fixed-gen-img").src = "/static/images/fixed/" + filename;
+        document.getElementById("fixed-gen-img-name").textContent = filename;
+        document.getElementById("fc-image").value = filename;
+    }
+
+    // AI 生成ボタン
+    genBtn.addEventListener("click", async () => {
+        const title = document.getElementById("fixed-gen-title").value.trim();
+        if (!title) {
+            alert("タイトルを入力してください");
+            return;
+        }
+
+        document.getElementById("fixed-gen-loading").classList.remove("d-none");
+        document.getElementById("fixed-gen-preview").classList.add("d-none");
+        document.getElementById("fixed-gen-error").classList.add("d-none");
+        genBtn.disabled = true;
+
+        try {
+            const resp = await fetch("/admin/fixed/generate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ title }),
+            });
+            const data = await resp.json();
+
+            if (data.status !== "ok") {
+                const errEl = document.getElementById("fixed-gen-error");
+                errEl.textContent = data.message || "AI生成に失敗しました";
+                errEl.classList.remove("d-none");
+                return;
+            }
+
+            // プレビューに反映
+            document.getElementById("fixed-gen-key").value = data.key;
+            document.getElementById("fixed-gen-key-label").textContent = data.key;
+            document.getElementById("fixed-gen-summary").value = data.summary;
+            document.getElementById("fixed-gen-content-preview").textContent =
+                data.content.substring(0, 500) + (data.content.length > 500 ? "…" : "");
+
+            // hidden フィールドに格納
+            document.getElementById("fc-key").value = data.key;
+            document.getElementById("fc-title").value = title;
+            document.getElementById("fc-summary").value = data.summary;
+            document.getElementById("fc-content").value = data.content;
+            setGenImage(data.image);
+
+            document.getElementById("fixed-gen-preview").classList.remove("d-none");
+        } catch (err) {
+            const errEl = document.getElementById("fixed-gen-error");
+            errEl.textContent = "通信エラーが発生しました";
+            errEl.classList.remove("d-none");
+        } finally {
+            document.getElementById("fixed-gen-loading").classList.add("d-none");
+            genBtn.disabled = false;
+        }
+    });
+
+    // 要約編集時に hidden フィールドも同期
+    document.getElementById("fixed-gen-summary").addEventListener("input", () => {
+        document.getElementById("fc-summary").value =
+            document.getElementById("fixed-gen-summary").value;
+    });
+
+    // 画像入れ替えボタン
+    document.getElementById("fixed-gen-swap-btn").addEventListener("click", async () => {
+        const btn = document.getElementById("fixed-gen-swap-btn");
+        btn.disabled = true;
+        try {
+            const resp = await fetch("/admin/fixed/random-image");
+            const data = await resp.json();
+            setGenImage(data.image);
+        } catch (err) {
+            console.error("画像取得エラー", err);
+        } finally {
+            btn.disabled = false;
+        }
+    });
+
+    /* =========================
+      固定ページ D&D 並び替え（Sortable.js）
+    ========================== */
+    function initFixedPageSortable(listId, toastId) {
+        const el = document.getElementById(listId);
+        if (!el || typeof Sortable === 'undefined') return;
+
+        Sortable.create(el, {
+            handle: '.fixed-drag-handle',
+            animation: 150,
+            ghostClass: 'sortable-ghost',
+            onEnd: async () => {
+                // 現在の並び順から id 配列を生成
+                const ids = [...el.querySelectorAll('[data-page-id]')]
+                    .map(node => parseInt(node.dataset.pageId, 10));
+
+                try {
+                    const resp = await fetch('/admin/fixed/reorder', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ ids }),
+                    });
+                    if (!resp.ok) throw new Error('reorder failed');
+
+                    // 順序列の表示を更新
+                    el.querySelectorAll('[data-page-id]').forEach((node, i) => {
+                        const display = node.querySelector('.fixed-order-display');
+                        if (display) display.textContent = i;
+                    });
+
+                    // 保存完了フィードバック
+                    const toast = document.getElementById(toastId);
+                    if (toast) {
+                        toast.classList.remove('d-none');
+                        clearTimeout(toast._hideTimer);
+                        toast._hideTimer = setTimeout(() => toast.classList.add('d-none'), 2000);
+                    }
+                } catch (err) {
+                    console.error('固定ページ並び替え保存エラー:', err);
+                }
+            },
+        });
+    }
+
+    initFixedPageSortable('sortable-global-table',  'reorder-toast-global');
+    initFixedPageSortable('sortable-footer-table',  'reorder-toast-footer');
+    initFixedPageSortable('sortable-global-mobile', 'reorder-toast-global');
+    initFixedPageSortable('sortable-footer-mobile', 'reorder-toast-footer');
+
+})();

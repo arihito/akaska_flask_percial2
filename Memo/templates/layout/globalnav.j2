@@ -37,10 +37,8 @@
             <!-- 折りたたみメニュー -->
             <div class="collapse navbar-collapse" id="globalNav">
                 <ul class="navbar-nav ms-md-3 flex-column flex-md-row">
-                    {% for key, val in STATIC_PAGES.items() %}
-                        {% if loop.index <= 11 %}
-                            <li class="nav-item"><a class="nav-link link-body-emphasis px-3 fade-in fade-delay-{{ loop.index }} {% if request.endpoint == 'fixed.static_page' and request.view_args.page_name == key %}active{% endif %}" href="{{ url_for('fixed.static_page', page_name=key) }}">{{ val }}</a></li>
-                        {% endif %}
+                    {% for key, val in GLOBAL_NAV_PAGES.items() %}
+                        <li class="nav-item"><a class="nav-link link-body-emphasis px-3 fade-in fade-delay-{{ loop.index }} {% if request.endpoint == 'fixed.static_page' and request.view_args.page_name == key %}active{% endif %}" href="{{ url_for('fixed.static_page', page_name=key) }}">{{ val }}</a></li>
                     {% endfor %}
                 </ul>
             </div>

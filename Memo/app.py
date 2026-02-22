@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_migrate import Migrate
-from models import db, User
+from models import db, User, FixedPage
 from flask_login import LoginManager
 from flask_debugtoolbar import DebugToolbarExtension
 from werkzeug.exceptions import NotFound
@@ -12,7 +12,7 @@ from auth.views import auth_bp                  # ログイン認証
 from memo.views import memo_bp                  # マイページ
 from favorite.views import favorite_bp          # いいね
 from docs.views import docs_bp                  # 成果物
-from fixed.views import fixed_bp, STATIC_PAGES  # 固定ページ
+from fixed.views import fixed_bp                 # 固定ページ
 from admin.views import admin_bp                # 管理者
 from admin.webhook import webhook_bp            # Stripe Webhook
 
@@ -43,11 +43,19 @@ app.register_blueprint(fixed_bp)
 app.register_blueprint(admin_bp)
 app.register_blueprint(webhook_bp)
 
-# 全テンプレートに値を共有
+# 全テンプレートに値を共有（GLOBAL_NAV_PAGES / FOOTER_NAV_PAGES は DB から動的に取得）
 @app.context_processor
 def inject_static_pages():
+    try:
+        pages = FixedPage.query.filter_by(visible=True).order_by(FixedPage.order).all()
+        GLOBAL_NAV_PAGES = {p.key: p.title for p in pages if p.nav_type == 'global'}
+        FOOTER_NAV_PAGES = {p.key: p.title for p in pages if p.nav_type == 'footer'}
+    except Exception:
+        GLOBAL_NAV_PAGES = {}
+        FOOTER_NAV_PAGES = {}
     return dict(
-        STATIC_PAGES=STATIC_PAGES,
+        GLOBAL_NAV_PAGES=GLOBAL_NAV_PAGES,
+        FOOTER_NAV_PAGES=FOOTER_NAV_PAGES,
         SITE_NAME=app.config['SITE_NAME'],
     )
 

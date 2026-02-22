@@ -54,6 +54,20 @@ class ThumbnailConfig(db.Model):
     visible = db.Column(db.Boolean, default=True, nullable=False)
 
 
+class FixedPage(db.Model):
+    """固定ページ管理（グローバルナビ表示・非表示・順序）"""
+    __tablename__ = 'fixed_pages'
+    id = db.Column(db.Integer, primary_key=True)
+    key = db.Column(db.String(50), unique=True, nullable=False)
+    title = db.Column(db.String(100), nullable=False)
+    summary = db.Column(db.Text, nullable=True)
+    image = db.Column(db.String(255), nullable=True)
+    visible = db.Column(db.Boolean, default=True, nullable=False)
+    nav_type = db.Column(db.String(10), default='global', nullable=False)  # 'global' or 'footer'
+    order = db.Column(db.Integer, default=0, nullable=False)
+    created_at = db.Column(db.DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
+
+
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

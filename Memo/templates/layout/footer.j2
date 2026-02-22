@@ -14,10 +14,8 @@
         参考程度にご覧いただけますと幸いです。
         </p>
         <nav class="mb-4 mb-md-5">
-            {% for key, val in STATIC_PAGES.items(): %}
-                {% if loop.index > 11 %}
-                    <span class="fade-in fade-delay-{{ loop.index }}">| </span><a class="text-body-secondary mx-3 fade-in fade-delay-{{ loop.index - 6 }}" href="{{ url_for('fixed.static_page', page_name=key) }}">{{ val }}</a><br class="d-block d-md-none">
-                {% endif %}
+            {% for key, val in FOOTER_NAV_PAGES.items() %}
+                {% if not loop.first %}<span class="fade-in fade-delay-{{ loop.index }}">| </span>{% endif %}<a class="text-body-secondary {% if loop.first %}me-3{% else %}mx-3{% endif %} fade-in fade-delay-{{ loop.index }}" href="{{ url_for('fixed.static_page', page_name=key) }}">{{ val }}</a><br class="d-block d-md-none">
             {% endfor %}
         </nav>
       </div>

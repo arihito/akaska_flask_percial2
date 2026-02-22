@@ -1,0 +1,348 @@
+{% extends "admin/base.j2" %}
+{% block page_title %}固定ページ管理 | {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="py-md-4 mx-md-3">
+    <h1 class="fade-in fade-in-delay-2 mb-4"><i class="fa fa-file-text-o me-2"></i>固定ページ管理</h1>
+
+    {# ===== グローバルナビ プレビュー ===== #}
+    <div class="card mb-4 fade-in fade-in-delay-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span><i class="fa fa-eye me-2"></i>グローバルナビ プレビュー</span>
+            <small class="text-body-secondary">表示中 <strong>{{ GLOBAL_NAV_PAGES | length }}</strong> 件 &nbsp;／&nbsp; 全 <strong>{{ pages | length }}</strong> 件</small>
+        </div>
+        <div class="card-body p-0">
+            <div class="overflow-x-auto border-0 px-2 pt-1 pb-0" style="min-width:320px">
+                {% include "layout/globalnav.j2" %}
+            </div>
+        </div>
+        <div class="card-footer text-body-secondary" style="font-size:11px">
+            <i class="fa fa-info-circle me-1"></i>下の一覧で「ナビ表示」を切り替えると、このプレビューに即時反映されます。横幅に収まるか確認しながら調整してください。
+        </div>
+    </div>
+
+    {# ===== 固定ページ一覧マクロ ===== #}
+    {% macro fixed_table(section_pages, section_label, section_id) %}
+    {% if section_pages %}
+
+    {# --- PC用テーブル --- #}
+    <div class="table-responsive">
+        <table class="table table-sm table-striped table-hover mb-0 align-middle d-none d-md-table" style="table-layout:fixed;min-width:760px">
+            <thead>
+                <tr>
+                    <th class="ps-2" style="width:32px"></th>
+                    <th style="width:50px">順序</th>
+                    <th style="width:120px;text-indent:1em">キー</th>
+                    <th style="width:160px">タイトル</th>
+                    <th class="d-none d-lg-table-cell" style="text-indent:10em;">要約</th>
+                    <th style="width:56px">画像</th>
+                    <th style="width:100px">ナビ表示</th>
+                    <th style="width:120px">ナビ種別</th>
+                    <th class="text-center pe-3" style="width:150px">操作</th>
+                </tr>
+            </thead>
+            <tbody id="sortable-{{ section_id }}-table">
+                {% for page in section_pages %}
+                <tr class="{% if not page.visible %}opacity-50{% endif %} fade-in fade-in-delay-{{ loop.index }}"
+                    data-page-id="{{ page.id }}">
+                    <td class="ps-2 text-body-secondary fixed-drag-handle" style="cursor:grab">
+                        <i class="fa fa-bars"></i>
+                    </td>
+                    <td class="text-body-secondary small fixed-order-display">{{ page.order }}</td>
+                    <td><code class="small">{{ page.key }}</code></td>
+                    <td class="fw-bold small" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+                        <a href="{{ url_for('fixed.static_page', page_name=page.key) }}" target="_blank" class="text-body-emphasis text-decoration-none link-opacity-50-hover">
+                            {{ page.title }}<i class="fa fa-external-link ms-1 small text-body-secondary"></i>
+                        </a>
+                    </td>
+                    <td class="d-none d-lg-table-cell text-body-secondary" style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+                        {% if page.summary %}
+                            {{ page.summary[:60] }}{% if page.summary | length > 60 %}…{% endif %}
+                        {% else %}
+                            <span class="text-body-tertiary">―</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if page.image %}
+                        <img src="{{ url_for('static', filename='images/fixed/' ~ page.image) }}" width="44" height="30" alt=""
+                            style="object-fit:cover;border-radius:3px;border:1px solid rgba(0,0,0,.1);filter:grayscale(100%)"
+                            title="{{ page.image }}">
+                        {% else %}
+                        <span class="text-body-tertiary small">―</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form method="POST" action="{{ url_for('admin.fixed_toggle', page_id=page.id) }}" class="d-inline">
+                            {{ form.hidden_tag() }}
+                            <button type="submit" class="btn btn-sm {% if page.visible %}btn-secondary{% else %}btn-outline-secondary{% endif %}">
+                                <i class="fa {% if page.visible %}fa-toggle-on{% else %}fa-toggle-off{% endif %} me-1"></i>
+                                {{ '表示' if page.visible else '非表示' }}
+                            </button>
+                        </form>
+                    </td>
+                    <td>
+                        <form method="POST" action="{{ url_for('admin.fixed_toggle_nav_type', page_id=page.id) }}" class="d-inline">
+                            {{ form.hidden_tag() }}
+                            <button type="submit" class="btn btn-sm {% if page.nav_type == 'global' %}btn-secondary{% else %}btn-outline-secondary{% endif %}">
+                                <i class="fa {% if page.nav_type == 'global' %}fa-globe{% else %}fa-bars{% endif %} me-1"></i>
+                                {{ 'グローバル' if page.nav_type == 'global' else 'フッター' }}
+                            </button>
+                        </form>
+                    </td>
+                    <td class="text-end pe-3">
+                        <div class="d-flex justify-content-end align-items-end gap-1">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" style="margin-bottom:1px"
+                                data-bs-toggle="modal" data-bs-target="#editModal{{ page.id }}">
+                                <i class="fa fa-pencil me-1"></i>編集
+                            </button>
+                            <form method="POST" action="{{ url_for('admin.fixed_delete', page_id=page.id) }}" class="d-inline fixed-delete-form">
+                                {{ form.hidden_tag() }}
+                                <button type="submit" class="btn btn-outline-secondary btn-sm">
+                                    <i class="fa fa-trash me-1"></i>削除
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {# --- スマホ用カードグリッド --- #}
+    <div class="d-md-none px-2 py-2" id="sortable-{{ section_id }}-mobile">
+        {% for page in section_pages %}
+        <div class="border rounded p-2 mb-3 shadow-sm {% if not page.visible %}opacity-50{% endif %} fade-in fade-in-delay-{{ loop.index }}"
+            data-page-id="{{ page.id }}">
+            <div class="d-grid gap-2" style="grid-template-columns: repeat(16, 1fr);">
+                {# 1段目：ハンドル | キー＋タイトル | 画像（右端） #}
+                <div style="grid-column: 1 / 2;cursor:grab" class="d-flex align-items-center justify-content-center text-body-secondary fixed-drag-handle">
+                    <i class="fa fa-bars small"></i>
+                </div>
+                <div style="grid-column: 2 / 13;" class="d-flex flex-column">
+                    <code class="small text-body-secondary mb-1">{{ page.key }}</code>
+                    <a href="{{ url_for('fixed.static_page', page_name=page.key) }}" target="_blank"
+                        class="fw-bold text-body-emphasis text-decoration-none link-opacity-50-hover">
+                        {{ page.title }}<i class="fa fa-external-link ms-1 small text-body-secondary"></i>
+                    </a>
+                </div>
+                {% if page.image %}
+                <div style="grid-column: 13 / -1;" class="d-flex align-items-center justify-content-end">
+                    <img src="{{ url_for('static', filename='images/fixed/' ~ page.image) }}" width="52" height="36" alt=""
+                        style="object-fit:cover;border-radius:3px;border:1px solid rgba(0,0,0,.1);filter:grayscale(100%)"
+                        title="{{ page.image }}">
+                </div>
+                {% else %}
+                <div style="grid-column: 13 / -1;"></div>
+                {% endif %}
+                {# 2段目：要約（全幅） #}
+                <div style="grid-column: 1 / -1; font-size:11px" class="text-body-secondary">
+                    {% if page.summary %}
+                        {{ page.summary[:80] }}{% if page.summary | length > 80 %}…{% endif %}
+                    {% else %}
+                        <span class="text-body-tertiary">―</span>
+                    {% endif %}
+                </div>
+                {# 3段目：トグルボタン群 #}
+                <div style="grid-column: 1 / -1;" class="d-flex flex-wrap gap-2 mt-1">
+                    <form method="POST" action="{{ url_for('admin.fixed_toggle', page_id=page.id) }}">
+                        {{ form.hidden_tag() }}
+                        <button type="submit" class="btn btn-sm {% if page.visible %}btn-secondary{% else %}btn-outline-secondary{% endif %}">
+                            <i class="fa {% if page.visible %}fa-toggle-on{% else %}fa-toggle-off{% endif %} me-1"></i>
+                            {{ '表示' if page.visible else '非表示' }}
+                        </button>
+                    </form>
+                    <form method="POST" action="{{ url_for('admin.fixed_toggle_nav_type', page_id=page.id) }}">
+                        {{ form.hidden_tag() }}
+                        <button type="submit" class="btn btn-sm {% if page.nav_type == 'global' %}btn-secondary{% else %}btn-outline-secondary{% endif %}">
+                            <i class="fa {% if page.nav_type == 'global' %}fa-globe{% else %}fa-bars{% endif %} me-1"></i>
+                            {{ 'グローバル' if page.nav_type == 'global' else 'フッター' }}
+                        </button>
+                    </form>
+                    <button type="button" class="btn btn-outline-secondary btn-sm ms-auto"
+                        data-bs-toggle="modal" data-bs-target="#editModal{{ page.id }}">
+                        <i class="fa fa-pencil me-1"></i>編集
+                    </button>
+                    <form method="POST" action="{{ url_for('admin.fixed_delete', page_id=page.id) }}" class="fixed-delete-form">
+                        {{ form.hidden_tag() }}
+                        <button type="submit" class="btn btn-outline-secondary btn-sm">
+                            <i class="fa fa-trash me-1"></i>削除
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <p class="text-body-secondary small p-3"><i class="fa fa-info-circle me-1"></i>{{ section_label }}のページがありません。</p>
+    {% endif %}
+    {% endmacro %}
+
+    {# ===== グローバルナビ一覧 ===== #}
+    {% set global_pages = pages | selectattr('nav_type', 'equalto', 'global') | list %}
+    {% set footer_pages = pages | selectattr('nav_type', 'equalto', 'footer') | list %}
+
+    <div class="card mb-4 fade-in fade-in-delay-6">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span><i class="fa fa-globe me-2"></i>グローバルナビ一覧</span>
+            <small class="text-body-secondary">{{ global_pages | length }} 件</small>
+        </div>
+        <div class="card-body p-0">
+            {{ fixed_table(global_pages, 'グローバルナビ', 'global') }}
+            {# D&Dフィードバック #}
+            <div id="reorder-toast-global" class="d-none px-3 pb-2">
+                <small class="text-body-secondary"><i class="fa fa-check-circle me-1 text-success"></i>順序を保存しました</small>
+            </div>
+        </div>
+    </div>
+
+    {# ===== フッターナビ一覧 ===== #}
+    <div class="card mb-4 fade-in fade-in-delay-7">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span><i class="fa fa-bars me-2"></i>フッターナビ一覧</span>
+            <small class="text-body-secondary">{{ footer_pages | length }} 件</small>
+        </div>
+        <div class="card-body p-0">
+            {{ fixed_table(footer_pages, 'フッターナビ', 'footer') }}
+            {# D&Dフィードバック #}
+            <div id="reorder-toast-footer" class="d-none px-3 pb-2">
+                <small class="text-body-secondary"><i class="fa fa-check-circle me-1 text-success"></i>順序を保存しました</small>
+            </div>
+        </div>
+    </div>
+
+    {# ===== AI 固定ページ生成 ===== #}
+    <div class="card fade-in fade-in-delay-8">
+        <div class="card-header"><i class="fa fa-magic me-2"></i>AI 固定ページ生成</div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-12 col-md-8">
+                    <label class="form-label small text-body-secondary">タイトル</label>
+                    <input type="text" id="fixed-gen-title" class="form-control"
+                        placeholder="例: Flaskでのテスト自動化入門">
+                </div>
+                <div class="col-12 col-md-4 d-flex align-items-end">
+                    <button type="button" id="fixed-gen-btn" class="btn btn-secondary w-100">
+                        <i class="fa fa-magic me-1"></i>このタイトルで記事を作成
+                    </button>
+                </div>
+            </div>
+
+            {# ローディング #}
+            <div id="fixed-gen-loading" class="d-none mt-3 text-center text-body-secondary">
+                <div class="spinner-border spinner-border-sm me-2"></div>AI が記事を生成中です…
+            </div>
+
+            {# エラー表示 #}
+            <div id="fixed-gen-error" class="d-none alert alert-secondary mt-3 small py-2"></div>
+
+            {# プレビューエリア #}
+            <div id="fixed-gen-preview" class="d-none mt-4">
+                <hr>
+                <h5 class="text-body-secondary mb-3 fs-6"><i class="fa fa-eye me-1"></i>生成結果プレビュー</h5>
+                <div class="row g-3">
+                    <div class="col-12 col-md-6">
+                        <label class="form-label small text-body-secondary">生成キー（URL: /fixed/<strong id="fixed-gen-key-label"></strong>）</label>
+                        <input type="text" id="fixed-gen-key" class="form-control form-control-sm font-monospace" readonly>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label small text-body-secondary">選択画像</label>
+                        <div class="d-flex align-items-center gap-3">
+                            <img id="fixed-gen-img" src="" width="88" height="60" alt=""
+                                style="object-fit:cover;border-radius:4px;border:1px solid rgba(0,0,0,.15)">
+                            <div>
+                                <div id="fixed-gen-img-name" class="small text-body-secondary mb-2"></div>
+                                <button type="button" id="fixed-gen-swap-btn" class="btn btn-outline-secondary btn-sm">
+                                    <i class="fa fa-refresh me-1"></i>画像を変更
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label small text-body-secondary">要約文（編集可）</label>
+                        <textarea id="fixed-gen-summary" class="form-control form-control-sm" rows="3"></textarea>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label small text-body-secondary">生成コンテンツ（先頭500文字）</label>
+                        <div id="fixed-gen-content-preview"
+                            class="border rounded p-2 bg-body-secondary"
+                            style="max-height:180px;overflow-y:auto;font-family:monospace;font-size:11px;white-space:pre-wrap;word-break:break-all"></div>
+                    </div>
+                    <div class="col-12">
+                        <form id="fixed-create-form" method="POST" action="{{ url_for('admin.fixed_create') }}">
+                            {{ form.hidden_tag() }}
+                            <input type="hidden" id="fc-key" name="key">
+                            <input type="hidden" id="fc-title" name="title">
+                            <input type="hidden" id="fc-summary" name="summary">
+                            <input type="hidden" id="fc-content" name="content">
+                            <input type="hidden" id="fc-image" name="image">
+                            <div class="d-flex align-items-center gap-3 mt-1">
+                                <div class="form-check mb-0">
+                                    <input class="form-check-input" type="checkbox" name="visible" id="fc-visible">
+                                    <label class="form-check-label small text-body-secondary" for="fc-visible">
+                                        すぐにナビへ表示する
+                                    </label>
+                                </div>
+                                <button type="submit" id="fixed-create-btn" class="btn btn-secondary ms-auto">
+                                    <i class="fa fa-save me-1"></i>この内容で固定ページを保存
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# ===== 編集モーダル ===== #}
+{% for page in pages %}
+<div class="modal fade" id="editModal{{ page.id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fs-6"><i class="fa fa-pencil me-1"></i>編集: <code>{{ page.key }}</code></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('admin.fixed_edit', page_id=page.id) }}">
+                {{ form.hidden_tag() }}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label small text-body-secondary">タイトル</label>
+                        <input type="text" name="title" class="form-control" value="{{ page.title }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small text-body-secondary">要約文</label>
+                        <textarea name="summary" class="form-control form-control-sm" rows="3">{{ page.summary or '' }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small text-body-secondary">画像ファイル（static/images/fixed/）</label>
+                        <select name="image" class="form-select form-select-sm">
+                            <option value="">― 未設定 ―</option>
+                            {% for img in images %}
+                            <option value="{{ img }}"
+                                {% if page.image == img %}selected{% endif %}>{{ img }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small text-body-secondary">表示順（小さいほど前）</label>
+                        <input type="number" name="order" class="form-control form-control-sm"
+                            value="{{ page.order }}" min="0" max="999">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">
+                        <i class="fa fa-times me-1"></i>キャンセル
+                    </button>
+                    <button type="submit" class="btn btn-secondary btn-sm">
+                        <i class="fa fa-save me-1"></i>保存
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock content %}

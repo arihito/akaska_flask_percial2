@@ -6,9 +6,11 @@
         <hr>
         <li class="nav-item fade-in fade-in-delay-6"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint and request.endpoint.startswith('public.public_index') %}active{% endif %}" href="{{ url_for('public.public_index') }}"><i class="fa fa-wpforms me-2"></i>トップページ</a></li>
         <hr>
-        <li class="nav-item fade-in fade-in-delay-8"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'admin.category' %}active{% endif %}" href="{{ url_for('admin.category') }}"><i class="fa fa-tags me-2"></i>カテゴリー管理</a></li>
+        <li class="nav-item fade-in fade-in-delay-7"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'admin.fixed' %}active{% endif %}" href="{{ url_for('admin.fixed') }}"><i class="fa fa-file-text-o me-2"></i>固定ページ管理</a></li>
         <hr>
         <li class="nav-item fade-in fade-in-delay-10"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'admin.user_thumb' %}active{% endif %}" href="{{ url_for('admin.user_thumb') }}"><i class="fa fa-user-circle me-2"></i>ユーザーサムネイル</a></li>
+        <hr>
+        <li class="nav-item fade-in fade-in-delay-8"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'admin.category' %}active{% endif %}" href="{{ url_for('admin.category') }}"><i class="fa fa-tags me-2"></i>カテゴリー管理</a></li>
     </ul>
     <hr>
     <h6 class="text-body-secondary fs-5 ms-4 ps-2 mt-4 pt-2 mb-3 font-bold"><i class="fa fa-file-code-o me-2"></i> 開発関連資料</h6>

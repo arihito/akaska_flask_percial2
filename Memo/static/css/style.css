@@ -1296,6 +1296,19 @@ pre.file-tag[data-tag]::before {
   background-color: #f5f5f5;
 }
 
+/* 固定ページ D&D ドラッグハンドル・ゴースト */
+.fixed-drag-handle {
+    cursor: grab;
+    opacity: 0.45;
+}
+.fixed-drag-handle:hover {
+    opacity: 1;
+}
+.sortable-ghost {
+    opacity: 0.35;
+    background-color: var(--bs-secondary-bg);
+}
+
 /* 管理サイドバー 閃光エフェクト（管理者ページ専用: .sidebarMenu クラスを持つ要素のみ） */
 
 .sidebarMenu {
