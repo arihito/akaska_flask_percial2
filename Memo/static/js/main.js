@@ -337,8 +337,41 @@ const ACTIONS = {
 };
 
 /* =========================
+    サムネイル削除ボタン（admin/user_thumb）
+========================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+    const visibilityForm = document.querySelector(".thumb-visibility-form");
+    if (!visibilityForm) return;
+
+    visibilityForm.querySelectorAll(".thumb-delete-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const item    = btn.closest(".thumb-item");
+            const overlay = item.querySelector(".thumb-delete-overlay");
+            const hidden  = item.querySelector(".thumb-delete-input");
+            const isPending = overlay.classList.contains("is-visible");
+
+            if (isPending) {
+                // 取り消し
+                overlay.classList.remove("is-visible");
+                hidden.disabled = true;
+                btn.innerHTML = '<i class="fa fa-trash-o"></i>';
+                btn.title = "削除";
+            } else {
+                // 削除フラグを立てる
+                overlay.classList.add("is-visible");
+                hidden.disabled = false;
+                btn.innerHTML = '<i class="fa fa-undo"></i>';
+                btn.title = "取り消し";
+            }
+        });
+    });
+});
+
+/* =========================
     クリックルーター
 ========================== */
+
 
 document.addEventListener("click", (e) => {
     // data-action方式

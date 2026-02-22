@@ -43,5 +43,5 @@ class UserFactory(SQLAlchemyModelFactory):
 
     thumbnail = factory.Faker(
         "random_element",
-        elements=[f"{i:02}.png" for i in range(1, 11)]
+        elements=[f"{i:03}.png" for i in range(1, 11)]
     )

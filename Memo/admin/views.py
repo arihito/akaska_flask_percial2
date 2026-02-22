@@ -1,4 +1,6 @@
 import math
+import os
+import re
 from datetime import datetime, timezone
 from functools import wraps
 from flask import Blueprint, render_template, redirect, url_for, flash, session, current_app, request
@@ -6,7 +8,8 @@ from flask_login import login_required, current_user
 from forms import AdminLoginForm
 from flask_wtf import FlaskForm
 from flask_mail import Message
-from models import db, User
+from models import db, User, ThumbnailConfig
+from werkzeug.utils import secure_filename
 import stripe
 from pathlib import Path
 
@@ -316,7 +319,112 @@ def category_delete(cat_id):
 @admin_required
 def user_thumb():
     users = User.query.order_by(User.id).all()
-    return render_template('admin/user_thumb.j2', users=users)
+    form = FlaskForm()
+
+    # static/images/user/ の全ファイルをスキャン
+    EXCLUDE = {'default.png', 'images.png'}
+    user_img_dir = os.path.join(current_app.root_path, 'static', 'images', 'user')
+    all_files = sorted([
+        f for f in os.listdir(user_img_dir)
+        if os.path.isfile(os.path.join(user_img_dir, f)) and f not in EXCLUDE
+    ])
+
+    # DB と自動同期（新ファイルは visible=True で追加、削除済みは除去）
+    existing = {tc.filename: tc for tc in ThumbnailConfig.query.all()}
+    file_set = set(all_files)
+    for filename in all_files:
+        if filename not in existing:
+            db.session.add(ThumbnailConfig(filename=filename, visible=True))
+    for filename, tc in existing.items():
+        if filename not in file_set:
+            db.session.delete(tc)
+    db.session.commit()
+
+    thumb_configs = ThumbnailConfig.query.filter(
+        ThumbnailConfig.filename.in_(file_set)
+    ).order_by(ThumbnailConfig.filename).all()
+
+    return render_template('admin/user_thumb.j2', users=users, form=form, thumb_configs=thumb_configs)
+
+
+@admin_bp.route('/user_thumb/upload', methods=['POST'])
+@admin_required
+def user_thumb_upload():
+    """サムネイル画像アップロード（3桁自動連番でファイル保存・旧ファイルは削除しない）"""
+    user_id = request.form.get('user_id', type=int)
+    file = request.files.get('file')
+
+    if not file or file.filename == '':
+        flash('ファイルが選択されていません', 'secondary')
+        return redirect(url_for('admin.user_thumb'))
+
+    # 3桁連番ファイル名を生成（ディレクトリ内の最大番号 + 1）
+    user_img_dir = os.path.join(current_app.root_path, 'static', 'images', 'user')
+    ext = os.path.splitext(secure_filename(file.filename))[1].lower()
+    pattern = re.compile(r'^(\d{3})\.')
+    max_num = max(
+        (int(m.group(1)) for f in os.listdir(user_img_dir) if (m := pattern.match(f))),
+        default=0
+    )
+    filename = f"{max_num + 1:03d}{ext}"
+    file.save(os.path.join(user_img_dir, filename))
+
+    # ThumbnailConfig に追加（visible=True）
+    if not ThumbnailConfig.query.filter_by(filename=filename).first():
+        db.session.add(ThumbnailConfig(filename=filename, visible=True))
+
+    # ユーザーが選択されている場合のみ割付
+    if user_id:
+        user = User.query.get_or_404(user_id)
+        user.thumbnail = filename
+        db.session.commit()
+        flash(f'{user.username} さんのサムネイルを更新しました（{filename}）', 'secondary')
+    else:
+        db.session.commit()
+        flash(f'サムネイルを追加しました（{filename}）', 'secondary')
+
+    return redirect(url_for('admin.user_thumb'))
+
+
+@admin_bp.route('/user_thumb/visibility', methods=['POST'])
+@admin_required
+def thumbnail_visibility_update():
+    """サムネイル表示設定の一括更新・削除処理"""
+    form = FlaskForm()
+    if not form.validate_on_submit():
+        flash('不正なリクエストです', 'secondary')
+        return redirect(url_for('admin.user_thumb'))
+
+    # ── 削除処理 ──
+    delete_files = set(request.form.getlist('delete_thumbs'))
+    deleted_count = 0
+    if delete_files:
+        for tc in ThumbnailConfig.query.filter(ThumbnailConfig.filename.in_(delete_files)).all():
+            # 使用中ユーザーを default.png に自動リセット
+            User.query.filter_by(thumbnail=tc.filename).update({'thumbnail': 'default.png'})
+            # 物理ファイル削除
+            file_path = os.path.join(current_app.root_path, 'static', 'images', 'user', tc.filename)
+            if os.path.exists(file_path):
+                try:
+                    os.remove(file_path)
+                except Exception as e:
+                    print(f"######## サムネイルファイル削除失敗: {e} ########")
+            db.session.delete(tc)
+            deleted_count += 1
+
+    # ── 表示設定更新（削除対象は除外） ──
+    checked = set(request.form.getlist('visible_thumbs')) - delete_files
+    for tc in ThumbnailConfig.query.all():
+        if tc.filename not in delete_files:
+            tc.visible = tc.filename in checked
+
+    db.session.commit()
+
+    if deleted_count:
+        flash(f'サムネイルを {deleted_count} 件削除し、表示設定を更新しました', 'secondary')
+    else:
+        flash('サムネイルの表示設定を更新しました', 'secondary')
+    return redirect(url_for('admin.user_thumb'))
 
 
 @admin_bp.route('/logout')

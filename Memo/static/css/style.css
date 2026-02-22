@@ -52,6 +52,8 @@
 /* スーパーユーザーモード：ノイズボタン */
 /* 決済クレジットカードスライダー */
 /* 認証手順解説 */
+/* サムネイル表示設定チェックボックス（admin/user_thumb） */
+/* 削除ゴミ箱ボタン・✖オーバーレイ（admin/user_thumb） */
 /* 管理画面背景 */
 /* 管理サイドバー 閃光エフェクト */
 /* ステップツールチップ */
@@ -1164,6 +1166,77 @@ pre.file-tag[data-tag]::before {
   color: #234;
 }
 
+/* サムネイル表示設定チェックボックス（admin/user_thumb） */
+
+.thumb-visibility-form .thumb-img {
+    opacity: 0.3;
+    filter: grayscale(70%);
+}
+
+.thumb-visibility-form input[type="checkbox"]:checked + .thumb-label .thumb-img {
+    opacity: 1;
+    filter: none;
+    border-color: #ccc;
+    box-shadow: 0 0 0 6px rgba(13, 110, 253, 0.5);
+}
+
+/* 削除ゴミ箱ボタン */
+
+.thumb-item {
+    position: relative;
+}
+
+.thumb-delete-btn {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(30, 30, 30, 0.7);
+    border: none;
+    color: #ccc;
+    font-size: 0.65rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    padding: 0;
+    transition: background 0.15s;
+}
+
+.thumb-delete-btn:hover {
+    background: rgba(0, 0, 0, 0.9);
+}
+
+/* 削除プレビュー ✖オーバーレイ */
+
+.thumb-delete-overlay {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: rgba(80, 80, 80, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    color: #ccc;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+}
+
+.thumb-delete-overlay.is-visible {
+    opacity: 1;
+}
+
+/* ユーザー一覧サムネイル（admin/user_thumb 下部テーブル・カード） */
+.user-thumb-list .user-thumb {
+    filter: grayscale(100%);
+    opacity: 0.7;
+}
+
 /* 管理画面背景 */
 
 .adminMain {
@@ -1179,9 +1252,10 @@ pre.file-tag[data-tag]::before {
   background: linear-gradient(to top, #dedadc, #fefafe);
 }
 
-/* 管理サイドバー 閃光エフェクト */
 
-#sidebarMenu {
+/* 管理サイドバー 閃光エフェクト（管理者ページ専用: .sidebarMenu クラスを持つ要素のみ） */
+
+.sidebarMenu {
     position: relative;
     overflow: clip;
     border-right: 1px solid rgba(58, 104, 136, 0.35);
@@ -1189,7 +1263,7 @@ pre.file-tag[data-tag]::before {
 }
 
 /* 斜め閃光（左→右、10秒に1回） */
-#sidebarMenu::before {
+.sidebarMenu::before {
     content: '';
     position: absolute;
     top: 0;
@@ -1211,7 +1285,7 @@ pre.file-tag[data-tag]::before {
 }
 
 /* 右ボーダーを縦走りする光筋 */
-#sidebarMenu::after {
+.sidebarMenu::after {
     content: '';
     position: absolute;
     top: -60%;
@@ -1231,7 +1305,7 @@ pre.file-tag[data-tag]::before {
 }
 
 /* コンテンツをスキャンラインより前面に */
-#sidebarMenu > div {
+.sidebarMenu > div {
     position: relative;
     z-index: 1;
 }

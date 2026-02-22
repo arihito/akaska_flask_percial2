@@ -1,7 +1,7 @@
 import os
 import re
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, session, jsonify
-from models import db, User
+from models import db, User, ThumbnailConfig
 from forms import LoginForm, SignUpForm, EditUserForm
 from flask_login import login_user, logout_user, login_required, current_user
 from authlib.integrations.flask_client import OAuth
@@ -79,9 +79,6 @@ def logout():
     flash('ログアウトしました', 'secondary')
     return redirect(url_for('auth.login'))
 
-# サムネイル一覧の用意
-USER_THUMBNAILS = [f"{i:02}.png" for i in range(1, 11)]
-
 # ユーザー編集
 @auth_bp.route('/edit', methods=['GET', 'POST'])
 @login_required
@@ -105,11 +102,17 @@ def edit():
         db.session.commit()
         flash('ユーザー情報を更新しました', 'secondary')
         return redirect(url_for('auth.edit'))
+
+    # 管理画面で visible=True に設定されたサムネイルのみ表示
+    thumbnails = [
+        tc.filename for tc in
+        ThumbnailConfig.query.filter_by(visible=True).order_by(ThumbnailConfig.filename).all()
+    ]
     return render_template(
         'auth/edit.j2',
         form=form,
         email=current_user.email,
-        thumbnails=USER_THUMBNAILS
+        thumbnails=thumbnails
     )
 
 # ユーザー削除

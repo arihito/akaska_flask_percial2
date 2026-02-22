@@ -44,6 +44,14 @@ class Favorite(db.Model):
     memo = relationship('Memo', back_populates='favorites')
     __table_args__ = (db.UniqueConstraint('user_id', 'memo_id', name='uq_user_memo_favorite'),)
 
+class ThumbnailConfig(db.Model):
+    """サムネイル表示設定（管理画面で on/off 管理）"""
+    __tablename__ = 'thumbnail_configs'
+    id = db.Column(db.Integer, primary_key=True)
+    filename = db.Column(db.String(255), unique=True, nullable=False)
+    visible = db.Column(db.Boolean, default=True, nullable=False)
+
+
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
