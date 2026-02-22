@@ -100,12 +100,12 @@ Percial2/                    # 親ディレクトリ（絶対パス: C:/Users/ar
 ## 機能試用サンプル
 - Stripe決済：@stripe_checkout
 - StripeWebhook：@stripe_webhook
-- -----上記は検証または実装済み-----
 - ドラッグ＆ドロップ：@file_drugdrop
-- 多言語機能：@i18n
 - 生成AI(genai:最新ライブラリ)：@gen_ai
 - 生成AI(generativeai:非推奨ライブラリ)：@generative_ai
 - CSV読み込み生成AI：@csv_ai
+- -----上記は検証または実装済み-----
+- 多言語機能：@i18n
 - 非同期処理：@html_basic | @html_login | @tml_wtf
 
 ## インタラクションUIサンプル
@@ -115,8 +115,9 @@ Percial2/                    # 親ディレクトリ（絶対パス: C:/Users/ar
 - カードのホバー時拡大：@intaraction/cardHover.html
 - クレジットカードスライダー：@intaraction/creditCardSlider.html
 - 閃光ボタン：@intaraction/grinty.html
-- -----上記は検証または実装済み-----
 - 管理画面用棒グラフ：@intaraction/barChart.html
+- 棒グラフのイメージ図：@static/images/nouse/barChart.png
+- -----上記は検証または実装済み-----
 - 多言語セレクトメニュー：@intaraction/i18n_ui/index.html
 - ボックス交換UI：@intaraction/switch.html
 - スライドカード：@intaraction/SwiperCard/swiper_add.html

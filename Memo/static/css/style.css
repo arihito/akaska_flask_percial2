@@ -1253,6 +1253,49 @@ pre.file-tag[data-tag]::before {
 }
 
 
+/* 管理画面アナリティクスチャート */
+
+.chart-card {
+  border-color: #333 !important;
+}
+.chart-card-header {
+  background-color: #212529;
+  border-bottom: 1px solid #333;
+  color: #aaa;
+  font-size: 0.9rem;
+}
+.chart-card-body {
+  background-color: #1a1d21;
+  padding: 1rem;
+}
+/* 棒グラフカード: カードbodyをflexにして残り高さをcanvasに渡す */
+.bar-chart-body {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.bar-chart-wrapper {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 0;
+}
+#analyzeBtn:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+[data-bs-theme="light"] .chart-card {
+  border-color: #ccc !important;
+}
+[data-bs-theme="light"] .chart-card-header {
+  background-color: #e9ecef;
+  border-bottom-color: #dee2e6;
+  color: #555;
+}
+[data-bs-theme="light"] .chart-card-body {
+  background-color: #f5f5f5;
+}
+
 /* 管理サイドバー 閃光エフェクト（管理者ページ専用: .sidebarMenu クラスを持つ要素のみ） */
 
 .sidebarMenu {

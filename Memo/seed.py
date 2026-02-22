@@ -142,11 +142,11 @@ def seed_data():
 
         memos = []
         for idx, user in enumerate(users):
-            # 最初のユーザーだけ24件、それ以外は1~3件
-            if idx == 0:
-                memos_per_user = 24
+            # 管理者(idx=0)と田中太郎(idx=1)は15件、それ以外は3~6件
+            if idx in (0, 1):
+                memos_per_user = 15
             else:
-                memos_per_user = random.randint(1, 3)
+                memos_per_user = random.randint(3, 6)
 
             for i in range(memos_per_user):
                 # タイトルはMEMO_TITLE_FACTORYからランダム選択
@@ -162,10 +162,11 @@ def seed_data():
                     user_id=user.id,
                     image_filename=random.choice(IMAGE_POOL),
                     created_at=random_date(start_date, end_date),
+                    view_count=random.randint(0, 1500),  # 0〜1500 で大きくばらけさせる
                 )
                 db.session.add(memo)
                 memos.append(memo)
-                
+
                 # --- Memo にタグ付与 ---
                 memos = Memo.query.all()
                 for memo in memos:
@@ -178,7 +179,7 @@ def seed_data():
 
         print("お気に入り作成...")
         for memo in memos:
-            like_count = random.randint(5, 15)
+            like_count = random.randint(0, len(users))  # 0〜全ユーザー数 で大きくばらけさせる
             liked_users = random.sample(users, min(like_count, len(users)))
 
             for user in liked_users:

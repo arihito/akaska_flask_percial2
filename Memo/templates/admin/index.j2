@@ -2,6 +2,63 @@
 {% block page_title %}管理者ダッシュボード | {{ SITE_NAME }}{% endblock %}
 {% block content %}
     <div class="py-4">
+
+        {# ===== アナリティクスチャートセクション ===== #}
+        <h2 class="my-4 fade-in fade-delay-2">
+            <i class="fa fa-bar-chart me-2"></i>アナリティクス
+        </h2>
+
+        <div class="row mb-5">
+            {# 左カラム: 棒グラフ (col-8) - d-flex で右カラムと高さを揃える #}
+            <div class="col-md-8 d-flex fade-in fade-delay-4">
+                <div class="card border-secondary chart-card w-100 d-flex flex-column">
+                    <div class="card-header chart-card-header d-flex justify-content-between align-items-center">
+                        <span><i class="fa fa-signal me-2"></i>記事品質スコア（最新5件）</span>
+                        <button id="analyzeBtn" class="btn btn-outline-secondary btn-lg">
+                            <i class="fa fa-cogs me-1"></i>AI解析
+                        </button>
+                    </div>
+                    <div class="card-body chart-card-body bar-chart-body">
+                        <div class="bar-chart-wrapper">
+                            <canvas id="barChart"></canvas>
+                        </div>
+                        <div id="analyzeLoading" class="text-center py-3 d-none">
+                            <div class="spinner-border spinner-border-sm text-secondary" role="status"></div>
+                            <span class="ms-2 text-body-secondary small">Gemini AIで解析中...</span>
+                        </div>
+                        <div id="analyzeError" class="text-center py-2 d-none">
+                            <small class="text-body-secondary">
+                                <i class="fa fa-exclamation-triangle me-1"></i>解析に失敗しました
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# 右カラム: 円グラフ x2 (col-4) #}
+            <div class="col-md-4">
+                {# 右上: カテゴリー分布 #}
+                <div class="card border-secondary chart-card mb-3 fade-in fade-delay-6">
+                    <div class="card-header chart-card-header">
+                        <i class="fa fa-pie-chart me-2"></i>カテゴリー分布
+                    </div>
+                    <div class="card-body chart-card-body">
+                        <canvas id="pieCategory" height="200"></canvas>
+                    </div>
+                </div>
+                {# 右下: ユーザー投稿数 #}
+                <div class="card border-secondary chart-card fade-in fade-delay-8">
+                    <div class="card-header chart-card-header">
+                        <i class="fa fa-pie-chart me-2"></i>投稿数 TOP5
+                    </div>
+                    <div class="card-body chart-card-body">
+                        <canvas id="pieUser" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# ===== ユーザー一覧 ===== #}
         <h2 class="my-4 fade-in fade-delay-4">
             <i class="fa fa-users me-2"></i>ユーザー一覧
         </h2>
@@ -220,4 +277,13 @@
             </nav>
         {% endif %}
     </div>
+
+    {# チャートデータをJS用に埋め込み #}
+    <script>
+        window.__CHART_DATA__ = {
+            bar: {{ bar_chart_data | safe }},
+            pieCategory: {{ pie_category_data | safe }},
+            pieUser: {{ pie_user_data | safe }},
+        };
+    </script>
 {% endblock content %}

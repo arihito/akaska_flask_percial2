@@ -369,6 +369,354 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* =========================
+    管理画面アナリティクスチャート
+========================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+    const barCanvas = document.getElementById("barChart");
+    if (!barCanvas || !window.__CHART_DATA__) return;
+
+    const chartData = window.__CHART_DATA__;
+
+    // テーマ検出
+    const isDark = () =>
+        document.documentElement.getAttribute("data-bs-theme") === "dark";
+
+    // テーマ別カラーパレット（彩度低め統一）
+    const theme = () =>
+        isDark()
+            ? {
+                  text: "#aaa",
+                  subText: "#888",
+                  gridLine: "rgba(255,255,255,0.06)",
+                  borderPie: "#0d0f11",
+                  legendBoxBorder: "#0d0f11",
+                  barColors: [
+                      "rgba(100, 110, 120, 0.75)",
+                      "rgba(80, 95, 105, 0.75)",
+                      "rgba(65, 80, 90, 0.75)",
+                      "rgba(110, 125, 135, 0.75)",
+                      "rgba(90, 100, 110, 0.75)",
+                  ],
+                  pieUserColors: [
+                      "rgba(100, 110, 120, 0.8)",
+                      "rgba(85, 95, 105, 0.8)",
+                      "rgba(70, 80, 90, 0.8)",
+                      "rgba(55, 65, 75, 0.8)",
+                      "rgba(45, 52, 60, 0.8)",
+                  ],
+                  pieCatAlpha: "B3",
+                  pieCatLighten: 0.2,
+              }
+            : {
+                  text: "#555",
+                  subText: "#777",
+                  gridLine: "rgba(0,0,0,0.06)",
+                  borderPie: "#fff",
+                  legendBoxBorder: "#fff",
+                  barColors: [
+                      "rgba(140, 150, 160, 0.7)",
+                      "rgba(120, 135, 145, 0.7)",
+                      "rgba(105, 118, 130, 0.7)",
+                      "rgba(155, 165, 172, 0.7)",
+                      "rgba(130, 142, 150, 0.7)",
+                  ],
+                  pieUserColors: [
+                      "rgba(140, 150, 160, 0.75)",
+                      "rgba(120, 132, 142, 0.75)",
+                      "rgba(105, 115, 125, 0.75)",
+                      "rgba(90, 100, 110, 0.75)",
+                      "rgba(78, 86, 95, 0.75)",
+                  ],
+                  pieCatAlpha: "99",
+                  pieCatLighten: 0.2,
+              };
+
+    // 正規化: 配列中の最大値を100としてスケーリング
+    const normalize = (values) => {
+        const maxVal = Math.max(...values, 1);
+        return values.map((v) => Math.round((v / maxVal) * 100));
+    };
+
+    // カテゴリー色を白方向へ20%ライトナー（#rrggbb → 各チャンネルを白に20%近づける）
+    const lightenHex = (hex, amount) => {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        const lr = Math.min(255, Math.round(r + (255 - r) * amount));
+        const lg = Math.min(255, Math.round(g + (255 - g) * amount));
+        const lb = Math.min(255, Math.round(b + (255 - b) * amount));
+        return `#${lr.toString(16).padStart(2, "0")}${lg.toString(16).padStart(2, "0")}${lb.toString(16).padStart(2, "0")}`;
+    };
+
+    // ---- 円グラフ1: カテゴリー分布 ----
+    // 2秒遅延でフェードイン完了後にアニメーション開始
+    const pieCatCanvas = document.getElementById("pieCategory");
+    if (pieCatCanvas && chartData.pieCategory.length > 0) {
+        setTimeout(() => {
+            const t = theme();
+            new Chart(pieCatCanvas, {
+                type: "doughnut",
+                data: {
+                    labels: chartData.pieCategory.map((d) => d.name),
+                    datasets: [
+                        {
+                            data: chartData.pieCategory.map((d) => d.count),
+                            backgroundColor: chartData.pieCategory.map(
+                                (d) => lightenHex(d.color, t.pieCatLighten) + t.pieCatAlpha,
+                            ),
+                            borderColor: t.borderPie,
+                            borderWidth: 2,
+                        },
+                    ],
+                },
+                options: {
+                    animation: {
+                        animateRotate: true,
+                        animateScale: true,
+                        duration: 1200,
+                        easing: "easeOutQuart",
+                    },
+                    plugins: {
+                        legend: {
+                            position: "bottom",
+                            labels: { color: t.text, font: { size: 11 }, boxBorderColor: t.legendBoxBorder },
+                        },
+                    },
+                },
+            });
+        }, 2000);
+    }
+
+    // ---- 円グラフ2: ユーザー投稿数 TOP5 ----
+    // 2秒遅延でフェードイン完了後にアニメーション開始
+    const pieUserCanvas = document.getElementById("pieUser");
+    if (pieUserCanvas && chartData.pieUser.length > 0) {
+        setTimeout(() => {
+            const t = theme();
+            new Chart(pieUserCanvas, {
+                type: "doughnut",
+                data: {
+                    labels: chartData.pieUser.map((d) => d.name),
+                    datasets: [
+                        {
+                            data: chartData.pieUser.map((d) => d.count),
+                            backgroundColor: t.pieUserColors.slice(
+                                0,
+                                chartData.pieUser.length,
+                            ),
+                            borderColor: t.borderPie,
+                            borderWidth: 2,
+                        },
+                    ],
+                },
+                options: {
+                    animation: {
+                        animateRotate: true,
+                        animateScale: true,
+                        duration: 1200,
+                        easing: "easeOutQuart",
+                    },
+                    plugins: {
+                        legend: {
+                            position: "bottom",
+                            labels: { color: t.text, font: { size: 11 }, boxBorderColor: t.legendBoxBorder },
+                        },
+                    },
+                },
+            });
+        }, 2000);
+    }
+
+    // ---- 棒グラフ: 記事品質スコア ----
+    let barChartInstance = null;
+
+    const renderBarChart = (data) => {
+        if (barChartInstance) barChartInstance.destroy();
+
+        const t = theme();
+
+        // X軸 = 記事グループ(5件)、データセット = 指標(5種) + 平均値ライン
+        const labels = data.map((d) => d.title);
+        const normLikes = normalize(data.map((d) => d.like_count));
+        const normViews = normalize(data.map((d) => d.view_count));
+
+        const infoScores  = data.map((d) => (d.ai_score ? d.ai_score.information  : 0));
+        const writeScores = data.map((d) => (d.ai_score ? d.ai_score.writing       : 0));
+        const readScores  = data.map((d) => (d.ai_score ? d.ai_score.readability   : 0));
+
+        // 5指標の平均値（記事ごと）
+        const avgScores = data.map((d, i) => {
+            const vals = [infoScores[i], writeScores[i], readScores[i], normLikes[i], normViews[i]];
+            return Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
+        });
+
+        // 指標名（バー下縦書きラベル用）
+        const metricNames = ["情報量", "文章力", "可読性", "いいね数", "閲覧数"];
+
+        // カスタムプラグイン: 各バー(25個)の直下に1文字ずつ縦積みで指標名を描画
+        const barMetricLabelPlugin = {
+            id: "barMetricLabel",
+            afterDraw(chart) {
+                const { ctx, chartArea } = chart;
+                const fontSize = 9;
+                const lineH = fontSize + 2;
+
+                metricNames.forEach((name, dsIdx) => {
+                    const meta = chart.getDatasetMeta(dsIdx);
+                    if (meta.hidden) return;
+                    meta.data.forEach((bar) => {
+                        ctx.save();
+                        ctx.font = `${fontSize}px sans-serif`;
+                        ctx.fillStyle = t.text;
+                        ctx.textAlign = "center";
+                        ctx.textBaseline = "top";
+                        [...name].forEach((char, ci) => {
+                            ctx.fillText(char, bar.x, chartArea.bottom + 5 + ci * lineH);
+                        });
+                        ctx.restore();
+                    });
+                });
+            },
+        };
+
+        barChartInstance = new Chart(barCanvas, {
+            type: "bar",
+            plugins: [barMetricLabelPlugin],
+            data: {
+                labels,
+                datasets: [
+                    {
+                        label: "情報量",
+                        data: infoScores,
+                        backgroundColor: t.barColors[0],
+                        pointStyle: "rect",
+                    },
+                    {
+                        label: "文章力",
+                        data: writeScores,
+                        backgroundColor: t.barColors[1],
+                        pointStyle: "rect",
+                    },
+                    {
+                        label: "可読性",
+                        data: readScores,
+                        backgroundColor: t.barColors[2],
+                        pointStyle: "rect",
+                    },
+                    {
+                        label: "いいね数",
+                        data: normLikes,
+                        backgroundColor: t.barColors[3],
+                        pointStyle: "rect",
+                    },
+                    {
+                        label: "閲覧数",
+                        data: normViews,
+                        backgroundColor: t.barColors[4],
+                        pointStyle: "rect",
+                    },
+                    {
+                        type: "line",
+                        label: "平均値",
+                        data: avgScores,
+                        borderColor: t.subText,
+                        backgroundColor: t.subText,
+                        pointBackgroundColor: t.subText,
+                        pointStyle: "circle",
+                        pointRadius: 4,
+                        fill: false,
+                        tension: 0.2,
+                        order: 0,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                layout: {
+                    padding: { bottom: 55 }, // 「いいね数」4文字分の縦積み余白
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: { color: t.subText },
+                        grid: { color: t.gridLine },
+                    },
+                    x: {
+                        ticks: { display: false }, // 記事タイトルは非表示
+                        grid: { display: false },
+                    },
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: t.text,
+                            font: { size: 11 },
+                            usePointStyle: true,  // 各データセットの pointStyle を凡例に反映
+                        },
+                    },
+                },
+                animation: {
+                    duration: 800,
+                    easing: "easeOutQuart",
+                    delay: (ctx) => {
+                        const seed =
+                            (ctx.dataIndex * 7 + ctx.datasetIndex * 13) % 25;
+                        return seed * 60;
+                    },
+                },
+            },
+        });
+    };
+
+    // 初期描画（アニメーション付き）
+    renderBarChart(chartData.bar);
+
+    // ---- 解析ボタン ----
+    const analyzeBtn = document.getElementById("analyzeBtn");
+    const analyzeLoading = document.getElementById("analyzeLoading");
+    const analyzeError = document.getElementById("analyzeError");
+
+    if (analyzeBtn) {
+        analyzeBtn.addEventListener("click", async () => {
+            analyzeBtn.disabled = true;
+            analyzeLoading.classList.remove("d-none");
+            analyzeError.classList.add("d-none");
+
+            try {
+                const csrfToken =
+                    document.querySelector('input[name="csrf_token"]')
+                        ?.value || "";
+                const res = await fetch("/admin/analyze", {
+                    method: "POST",
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest",
+                        "X-CSRFToken": csrfToken,
+                    },
+                });
+
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const json = await res.json();
+
+                if (json.status === "ok") {
+                    renderBarChart(json.data);
+                } else {
+                    throw new Error("API error");
+                }
+            } catch (e) {
+                console.error("######## 解析エラー ########", e);
+                analyzeError.classList.remove("d-none");
+            } finally {
+                analyzeBtn.disabled = false;
+                analyzeLoading.classList.add("d-none");
+            }
+        });
+    }
+});
+
+/* =========================
     クリックルーター
 ========================== */
 

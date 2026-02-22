@@ -81,6 +81,8 @@ def public_index():
 @public_bp.route('/detail/<int:memo_id>')
 def detail(memo_id):
     memo = Memo.query.get_or_404(memo_id)
+    memo.view_count = (memo.view_count or 0) + 1
+    db.session.commit()
     like_count = Favorite.query.filter_by(memo_id=memo_id).count()
     raw_top10 = db.session.query(
         Memo,

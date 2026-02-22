@@ -21,6 +21,8 @@ class Memo(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', name='fk_memos_users'), nullable=False)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
     image_filename = db.Column(db.String(255), nullable=False, default="nofile.jpg")
+    view_count = db.Column(db.Integer, nullable=False, default=0)
+    ai_score = db.Column(db.JSON, nullable=True)
     user = relationship('User', back_populates='memos')
     favorites = relationship('Favorite', back_populates='memo', cascade="all, delete-orphan")
     categories = relationship("Category", secondary=memo_categories, back_populates="memos")

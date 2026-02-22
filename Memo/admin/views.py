@@ -8,9 +8,11 @@ from flask_login import login_required, current_user
 from forms import AdminLoginForm
 from flask_wtf import FlaskForm
 from flask_mail import Message
-from models import db, User, ThumbnailConfig
+from models import db, User, ThumbnailConfig, Memo, Favorite, Category, memo_categories
 from werkzeug.utils import secure_filename
+from sqlalchemy import func
 import stripe
+import json
 from pathlib import Path
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
@@ -107,6 +109,49 @@ def index():
     coding_standards = get_coding_standards()
     form = FlaskForm()
     super_admin_email = current_app.config.get('MAIL_USERNAME')
+
+    # ---- チャート用データ ----
+    # 棒グラフ: 最新5件の記事
+    latest_memos = Memo.query.order_by(Memo.created_at.desc()).limit(5).all()
+    bar_chart_data = []
+    for memo in latest_memos:
+        like_count = Favorite.query.filter_by(memo_id=memo.id).count()
+        bar_chart_data.append({
+            'id': memo.id,
+            'title': memo.title[:20] + ('...' if len(memo.title) > 20 else ''),
+            'like_count': like_count,
+            'view_count': memo.view_count or 0,
+            'ai_score': memo.ai_score,
+        })
+
+    # 円グラフ1: カテゴリー分布（全記事）
+    cat_dist = db.session.query(
+        Category.name,
+        Category.color,
+        func.count(memo_categories.c.memo_id).label('count')
+    ).join(memo_categories, Category.id == memo_categories.c.category_id) \
+     .group_by(Category.id) \
+     .order_by(func.count(memo_categories.c.memo_id).desc()) \
+     .all()
+    pie_category_data = [
+        {'name': name, 'color': color, 'count': count}
+        for name, color, count in cat_dist
+    ]
+
+    # 円グラフ2: ユーザー別投稿数 TOP5
+    user_dist = db.session.query(
+        User.username,
+        func.count(Memo.id).label('count')
+    ).join(Memo, User.id == Memo.user_id) \
+     .group_by(User.id) \
+     .order_by(func.count(Memo.id).desc()) \
+     .limit(5) \
+     .all()
+    pie_user_data = [
+        {'name': name, 'count': count}
+        for name, count in user_dist
+    ]
+
     return render_template('admin/index.j2',
         users=users,
         form=form,
@@ -116,7 +161,11 @@ def index():
         page=page,
         pages=pages,
         total=total,
-        super_admin_email=super_admin_email)
+        super_admin_email=super_admin_email,
+        bar_chart_data=json.dumps(bar_chart_data, ensure_ascii=False),
+        pie_category_data=json.dumps(pie_category_data, ensure_ascii=False),
+        pie_user_data=json.dumps(pie_user_data, ensure_ascii=False),
+    )
 
 
 @admin_bp.route('/apply', methods=['POST'])
@@ -425,6 +474,41 @@ def thumbnail_visibility_update():
     else:
         flash('サムネイルの表示設定を更新しました', 'secondary')
     return redirect(url_for('admin.user_thumb'))
+
+
+@admin_bp.route('/analyze', methods=['POST'])
+@admin_required
+def analyze():
+    """最新5件の記事をGemini AIでスコアリングし、結果をDBに保存してJSONで返す"""
+    from utils.ai_score import analyze_memo_quality
+    from flask import jsonify
+
+    latest_memos = Memo.query.order_by(Memo.created_at.desc()).limit(5).all()
+    results = []
+    has_error = False
+
+    for memo in latest_memos:
+        if memo.ai_score:
+            scores = memo.ai_score
+        else:
+            scores = analyze_memo_quality(memo.title, memo.content)
+            if scores:
+                memo.ai_score = scores
+            else:
+                scores = {"information": 0, "writing": 0, "readability": 0}
+                has_error = True
+
+        like_count = Favorite.query.filter_by(memo_id=memo.id).count()
+        results.append({
+            'id': memo.id,
+            'title': memo.title[:20] + ('...' if len(memo.title) > 20 else ''),
+            'like_count': like_count,
+            'view_count': memo.view_count or 0,
+            'ai_score': scores,
+        })
+
+    db.session.commit()
+    return jsonify(status='ok', data=results)
 
 
 @admin_bp.route('/logout')
