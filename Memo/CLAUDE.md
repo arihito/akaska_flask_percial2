@@ -105,6 +105,7 @@ Percial2/                    # 親ディレクトリ（絶対パス: C:/Users/ar
 - 生成AI(generativeai:非推奨ライブラリ)：@generative_ai
 - CSV読み込み生成AI：@csv_ai
 - -----上記は検証または実装済み-----
+- 翻訳対象自動フラグ付与スコアリング再設計@docs/CLAUDE.translate.md
 - 多言語機能：@i18n
 - 非同期処理：@html_basic | @html_login | @tml_wtf
 
@@ -243,6 +244,24 @@ IMPORTANT:
 # 操作ファイルちゅい店
 - CSSのスタイルはBootstrap5.3を実装し、それで賄えない特殊なスタイルは(static/css/style.css)にページ上部のメニューにコメントを付与して、カテゴリーに応じた個所に追記すること。
 - JSの実装はtemplate内ではなく(static/js/main.js)に追記し、何の機能かコメントを残す。cdnなどのリンクは(templates/layout/head.j2)に追記する。それ以外の場所に記述する際は確認する。
+
+## AI機能ボタンの実装ルール（GOOGLE_API_KEY使用機能）
+AI（Gemini等）を呼び出すボタンには必ず以下の3点をセットで実装すること。
+
+1. **JSのconfirm確認**（`main.js`内のclickハンドラ先頭）
+   ```javascript
+   if (!confirm("この操作はGemini AI（有料）を使用します。\n実行しますか？")) return;
+   ```
+
+2. **「有料」表示**（ボタンテキスト末尾に付与）
+   ```html
+   <small class="ms-1 opacity-75" style="font-size:0.68em;font-weight:normal">有料</small>
+   ```
+
+3. **サーバー側レートリミット**（`admin/views.py`のAIルート先頭）
+   - `_check_ai_rate_limit(key, limit=5)` ヘルパーを使い、1日5回を上限とする
+   - 超過時は HTTP 429 + JSONエラーを返す
+   - `key` は機能名（例: `'analyze'`, `'fixed_generate'`）で区別する
 
 # 検証時のルール
 - デバッグプリントをコンソールに出力する際は、わかりやすいように「############デバッグタイトル############」とする。

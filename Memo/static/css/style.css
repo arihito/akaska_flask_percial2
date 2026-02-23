@@ -52,6 +52,7 @@
 /* スーパーユーザーモード：ノイズボタン */
 /* 決済クレジットカードスライダー */
 /* 認証手順解説 */
+/* 評価モデル解説 */
 /* サムネイル表示設定チェックボックス（admin/user_thumb） */
 /* 削除ゴミ箱ボタン・✖オーバーレイ（admin/user_thumb） */
 /* 管理画面背景 */
@@ -1164,6 +1165,18 @@ pre.file-tag[data-tag]::before {
 }
 [data-bs-theme="light"] .order-num {
   color: #234;
+}
+
+/* 評価モデル解説 */
+
+.eval-model {
+  font-size: 1.4rem;
+  line-height: 1.8;
+}
+
+.eval-model th,
+.eval-model td {
+  padding: 15px;
 }
 
 /* サムネイル表示設定チェックボックス（admin/user_thumb） */

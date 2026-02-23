@@ -22,6 +22,8 @@
             <nav id="sidebarMenu" class="sidebarMenu col-md-3 col-lg-2 d-none d-md-block sidebar collapse min-vh-100 shadow">
                 {% include 'admin/sidemenu.j2' %}
             </nav>
+            {# モーダルは overflow:clip+animation の影響を受けないようサイドバー外に配置 #}
+            {% include 'admin/sidemenu_modals.j2' %}
             <main class="adminMain col-md-9 ml-sm-auto col-lg-10 px-md-4">
                 {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}

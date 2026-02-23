@@ -1,0 +1,422 @@
+{% extends "admin/base.j2" %}
+{% block page_title %}マーケティング戦略 | {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="py-md-4 mx-md-3">
+    <h1 class="fade-in fade-in-delay-2 mb-4"><i class="fa fa-line-chart me-2"></i>マーケティング戦略</h1>
+
+    {# ===== Section 1: 評価モデル解説 ===== #}
+    <div class="eval-model accordion mb-4 fade-in fade-in-delay-3" id="accordionEvalModel">
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed fs-5 font-bold" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#collapseEvalModel">
+                    <i class="fa fa-info-circle me-2"></i>評価モデル解説
+                </button>
+            </h2>
+            <div id="collapseEvalModel" class="accordion-collapse collapse show">
+                <div class="accordion-body bg-body-tertiary">
+
+                    {# 評価目的 #}
+                    <h4 class="fw-bold pb-2 border-bottom my-2"><i class="fa fa-bullseye me-2"></i>評価目的</h4>
+                    <p class="text-body-secondary small mb-3">
+                        最新の記事5件を対象に管理画面のダッシュボード上に以下の観点を基に定量化しています。<br>また、特定のスコア以上に達すると<code>英語翻訳</code>を行えるようになります。
+                        <ul>
+                          <li><strong class="text-tertiary">検索流入</strong>が見込めるか</li>
+                          <li><strong class="text-tertiary">海外エンジニア需要</strong>があるか</li>
+                          <li><strong class="text-tertiary">長期トラフィック資産</strong>になり得るか</li>
+                          <li>SNS/技術コミュニティで<strong class="text-tertiary">共有される可能性</strong>があるか</li>
+                        </ul>
+                        <strong>最終目的：</strong><mark>翻訳<strong>コストを抑え</strong>ながら、最大の<strong>海外検索流入</strong>を生む記事を選定</mark>すること。
+                        <p class="small">
+                          一部の記事だけ翻訳しても効果が薄いように思うかもしれませんが、検索の流入は「<code>ロングテール構造</code>」です。<br>
+                          全記事を翻訳するとコストが増え効果が分散してしまうのに対し、上位20%のニッチな高品質記事が流入の80%を担うと言われています。<br>この<code>パレート型分布(20:80の法則)</code>で成果を出すことが目的で、このような集約に繋がる具体例としては以下の通りです。
+                        </p>
+                        {# PC用テーブル #}
+                        <table class="table table-sm table-striped table-bordered small d-none d-md-table">
+                          <tr>
+                            <th><i class="fa fa-cogs me-2"></i>技術系チュートリアル</th>
+                            <td>Flask実装手順</td>
+                            <td>API連携</td>
+                            <td>デプロイ解説</td>
+                          </tr>
+                          <tr>
+                            <th><i class="fa fa-exclamation-triangle me-2"></i>エラー系解決紹介</th>
+                            <td>ImportError</td>
+                            <td>SQLAlchemyエラー</td>
+                            <td>CSPエラー</td>
+                          </tr>
+                        </table>
+                        {# スマホ用グリッド #}
+                        <div class="d-md-none mb-2">
+                            <div class="border rounded mb-2 overflow-hidden">
+                                <div class="d-grid" style="grid-template-columns: repeat(16, 1fr);">
+                                    <div style="grid-column: 1 / -1;" class="px-2 py-1 bg-body-secondary small fw-bold border-bottom">
+                                        <i class="fa fa-cogs me-2"></i>技術系チュートリアル
+                                    </div>
+                                    <div style="grid-column: 1 / 6;" class="px-2 py-1 small text-body-secondary border-end">Flask実装手順</div>
+                                    <div style="grid-column: 6 / 11;" class="px-2 py-1 small text-body-secondary border-end">API連携</div>
+                                    <div style="grid-column: 11 / -1;" class="px-2 py-1 small text-body-secondary">デプロイ解説</div>
+                                </div>
+                            </div>
+                            <div class="border rounded overflow-hidden">
+                                <div class="d-grid" style="grid-template-columns: repeat(16, 1fr);">
+                                    <div style="grid-column: 1 / -1;" class="px-2 py-1 bg-body-secondary small fw-bold border-bottom">
+                                        <i class="fa fa-exclamation-triangle me-2"></i>エラー系解決紹介
+                                    </div>
+                                    <div style="grid-column: 1 / 6;" class="px-2 py-1 small text-body-secondary border-end">ImportError</div>
+                                    <div style="grid-column: 6 / 11;" class="px-2 py-1 small text-body-secondary border-end">SQLAlchemy</div>
+                                    <div style="grid-column: 11 / -1;" class="px-2 py-1 small text-body-secondary">CSPエラー</div>
+                                </div>
+                            </div>
+                        </div>
+                    </p>
+
+                    {# 評価モデル テーブル #}
+                    <h4 class="fw-bold pb-2 border-bottom mt-5 mb-2"><i class="fa fa-table me-2"></i>スコア評価モデル（100点満点）</h4>
+                    <div class="table-responsive mb-3">
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            <span class="badge rounded-pill border border-secondary text-body-secondary px-3">80点以上：即翻訳推奨</span>
+                            <span class="badge rounded-pill border border-secondary text-body-secondary opacity-75 px-3">75〜79点：翻訳候補</span>
+                            <span class="badge rounded-pill border border-secondary text-body-secondary opacity-50 px-3">60〜74点：改善後再評価</span>
+                            <span class="badge rounded-pill border border-secondary text-body-secondary opacity-25 px-3">60点未満：翻訳不要</span>
+                        </div>
+                        {# PC用テーブル #}
+                        <table class="table table-sm table-striped table-bordered small d-none d-md-table">
+                            <thead>
+                                <tr>
+                                    <th style="width:240px">カテゴリ</th>
+                                    <th style="width:120px" class="text-center">配点<span class="small">(最大)</span></th>
+                                    <th>評価観点</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="fw-bold">① SEO検索ポテンシャル</td>
+                                    <td class="text-center">40点</td>
+                                    <td>グローバル検索需要（15）・キーワード明確性（10）・検索意図一致度（15）</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">② 技術普遍性</td>
+                                    <td class="text-center">25点</td>
+                                    <td>国依存性の低さ（10）・長期有効性（10）・応用可能性（5）</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">③ コンテンツ構造品質</td>
+                                    <td class="text-center">20点</td>
+                                    <td>コード具体性（10）・論理構造（10）</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">④ 拡散適性</td>
+                                    <td class="text-center">15点</td>
+                                    <td>SNS共有適性（5）・コミュニティ需要（5）・既存エンゲージメント補正（5）</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        {# スマホ用グリッド #}
+                        <div class="d-md-none">
+                            {% set score_rows = [
+                                ('① SEO検索ポテンシャル', '40点', 'グローバル検索需要（15）・キーワード明確性（10）・検索意図一致度（15）'),
+                                ('② 技術普遍性',         '25点', '国依存性の低さ（10）・長期有効性（10）・応用可能性（5）'),
+                                ('③ コンテンツ構造品質', '20点', 'コード具体性（10）・論理構造（10）'),
+                                ('④ 拡散適性',           '15点', 'SNS共有適性（5）・コミュニティ需要（5）・既存エンゲージメント補正（5）'),
+                            ] %}
+                            {% for label, pts, criteria in score_rows %}
+                            <div class="border rounded mb-2 overflow-hidden">
+                                <div class="d-grid" style="grid-template-columns: repeat(16, 1fr);">
+                                    <div style="grid-column: 1 / 12;" class="px-2 py-2 small fw-bold bg-body-secondary border-bottom d-flex align-items-center">
+                                        {{ label }}
+                                    </div>
+                                    <div style="grid-column: 12 / -1;" class="px-2 py-2 bg-body-secondary border-bottom border-start d-flex align-items-center justify-content-center">
+                                        <span class="badge border border-secondary text-body-secondary" style="font-size:11px">{{ pts }}</span>
+                                    </div>
+                                    <div style="grid-column: 1 / -1;" class="px-2 py-2 small text-body-secondary">
+                                        {{ criteria }}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+
+                    {# 評価時の重要ルール #}
+                    <h4 class="fw-bold pb-2 border-bottom mt-5 mb-2"><i class="fa fa-exclamation-circle me-2"></i>評価時の重要ルール</h4>
+                    <ul class="text-body-secondary small mb-0">
+                        <li>文章の上手さより「<code>集客資産価値</code>」を重視</li>
+                        <li>技術的<code>普遍性</code>を高く評価</li>
+                        <li>問題<strong>解決</strong>型・エラー<strong>解決</strong>型記事を優遇</li>
+                        <li>単純な直訳ではなく「<strong>SEO最適化翻訳</strong>」前提で評価</li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# ===== Section 2: スコア化済み記事一覧 ===== #}
+    <div class="card fade-in fade-in-delay-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span><i class="fa fa-list me-2"></i>スコア化済み記事一覧</span>
+            <small class="text-body-secondary">{{ memos | length }} 件</small>
+        </div>
+
+        {% if not memos %}
+        <div class="card-body text-body-secondary text-center py-5">
+            <i class="fa fa-bar-chart fa-2x mb-3 d-block opacity-50"></i>
+            スコア化された記事がありません。<br>
+            ダッシュボードの「AI解析」ボタンで記事を解析してください。
+        </div>
+        {% else %}
+
+        {# --- PC用テーブル --- #}
+        <div class="table-responsive d-none d-md-block">
+            <table class="table table-sm table-striped table-hover mb-0 align-middle" style="min-width:900px">
+                <thead>
+                    <tr>
+                        <th style="width:300px" class="ps-3">タイトル</th>
+                        <th style="width:80px" class="text-center">総合点</th>
+                        <th style="width:150px">内訳</th>
+                        <th>推奨SEOタイトル / キーワード</th>
+                        <th style="width:100px" class="text-center">判定結果</th>
+                        <th style="width:50px" class="text-center">PV</th>
+                        <th style="width:50px" class="text-center">♡</th>
+                        <th style="width:110px" class="text-center pe-3">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for memo in memos %}
+                    {% set score = memo.ai_score.translate_score %}
+                    {% set verdict = memo.ai_score.translate_verdict %}
+                    {% set is_translatable = score >= 80 %}
+                    {% set already_translated = memo.ai_score.translated_body is defined and memo.ai_score.translated_body %}
+                    <tr class="fade-in fade-in-delay-{{ loop.index }}" data-memo-id="{{ memo.id }}">
+
+                        {# タイトル #}
+                        <td class="ps-3">
+                            <a href="{{ url_for('public.detail', memo_id=memo.id) }}"
+                               target="_blank"
+                               class="text-body-secondary text-decoration-none small">
+                                {{ memo.title[:30] }}{% if memo.title | length > 30 %}…{% endif %}
+                            </a>
+                        </td>
+
+                        {# 総合点バッジ #}
+                        <td class="text-center fs-3">
+                            {% if score >= 80 %}
+                                <span class="badge border border-secondary text-body px-2">{{ score }}</span>
+                            {% elif score >= 75 %}
+                                <span class="badge border border-secondary text-body-secondary px-2">{{ score }}</span>
+                            {% elif score >= 60 %}
+                                <span class="badge border border-secondary text-body-secondary opacity-75 px-2">{{ score }}</span>
+                            {% else %}
+                                <span class="badge border border-secondary text-body-secondary opacity-50 px-2">{{ score }}</span>
+                            {% endif %}
+                        </td>
+
+                        {# 内訳 #}
+                        <td>
+                            <div class="d-flex flex-wrap gap-1" style="font-size:11px">
+                                <span class="text-body-secondary">SEO:<strong style="font-size:1rem">{{ memo.ai_score.seo }}</strong>/<span style="font-size:0.5rem">40</span></span>
+                                <span class="text-body-secondary">技術:<strong style="font-size:1rem">{{ memo.ai_score.tech }}</strong>/<span style="font-size:0.5rem">25</span></span>
+                                <span class="text-body-secondary">構造:<strong style="font-size:1rem">{{ memo.ai_score.structure }}</strong>/<span style="font-size:0.5rem">20</span></span>
+                                <span class="text-body-secondary">拡散:<strong style="font-size:1rem">{{ memo.ai_score.spread }}</strong>/<span style="font-size:0.5rem">15</span></span>
+                            </div>
+                        </td>
+
+                        {# 推奨SEOタイトル・キーワード #}
+                        <td>
+                            {% if memo.ai_score.seo_title %}
+                            <div class="small text-body-secondary mb-1">{{ memo.ai_score.seo_title }}</div>
+                            {% endif %}
+                            {% if memo.ai_score.keywords %}
+                            <div class="d-flex flex-wrap gap-1">
+                                {% for kw in memo.ai_score.keywords[:3] %}
+                                <span class="badge border border-secondary text-body-secondary" style="font-size:10px">{{ kw }}</span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            {% if memo.ai_score.translate_reason %}
+                            <div class="text-body-secondary mt-1" style="font-size:.8rem;">評価・改善ポイント：<span class="ms-1" style="font-size:.7rem">{{ memo.ai_score.translate_reason }}</span></div>
+                            {% endif %}
+                        </td>
+
+                        {# 判定文言・流入期待度 #}
+                        <td class="text-center">
+                            <div class="small badge rounded-pill text-bg-secondary">{{ verdict }}</div>
+                            {% if memo.ai_score.inflow %}
+                            <div style="font-size:.8rem">流入: {{ memo.ai_score.inflow }}</div>
+                            {% endif %}
+                        </td>
+
+                        {# PV #}
+                        <td class="text-center small text-body-secondary">{{ memo.view_count or 0 }}</td>
+
+                        {# いいね数 #}
+                        <td class="text-center small text-body-secondary">{{ memo.like_count }}</td>
+
+                        {# AI翻訳ボタン #}
+                        <td class="text-center pe-3">
+                            {% if already_translated %}
+                                <button class="btn btn-secondary btn-sm opacity-75" disabled>
+                                    <i class="fa fa-check me-1"></i>翻訳済み
+                                </button>
+                            {% elif is_translatable %}
+                                <button class="btn btn-secondary btn-sm translate-btn" data-memo-id="{{ memo.id }}">
+                                    <i class="fa fa-recycle me-1"></i>AI翻訳
+                                    <small class="ms-1 opacity-75 badge rounded-pill text-bg-dark" style="font-size:0.5em;font-weight:normal">有料機能</small>
+                                </button>
+                            {% else %}
+                                <button class="btn btn-secondary btn-sm opacity-50" disabled
+                                        title="80点以上で翻訳可能">
+                                    <i class="fa fa-recycle me-1"></i>AI翻訳
+                                </button>
+                            {% endif %}
+                            <div id="translate-error-{{ memo.id }}" class="d-none text-body-secondary mt-1" style="font-size:10px"></div>
+                        </td>
+                    </tr>
+
+                    {# 翻訳済みアコーディオン（行の直下に挿入） #}
+                    {% if already_translated or is_translatable %}
+                    <tr id="translate-result-{{ memo.id }}" class="{% if not already_translated %}d-none{% endif %}">
+                        <td colspan="8" class="p-0">
+                            <div class="p-3 border-start border-4 border-secondary bg-body-secondary" style="border-left-color:#234 !important">
+                                <div class="mb-1 small fw-bold text-body-secondary">
+                                    <i class="fa fa-language me-1"></i>英語翻訳結果
+                                </div>
+                                <div class="mb-2 small">
+                                    <strong class="translate-title">{% if already_translated %}{{ memo.ai_score.translated_title }}{% endif %}</strong>
+                                </div>
+                                <pre class="translate-body small text-body-secondary mb-0" style="white-space:pre-wrap;font-size:11px;max-height:200px;overflow-y:auto">{% if already_translated %}{{ memo.ai_score.translated_body }}{% endif %}</pre>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endif %}
+
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {# --- モバイル用カード（グリッドレイアウト） --- #}
+        <div class="d-md-none">
+            {% for memo in memos %}
+            {% set score = memo.ai_score.translate_score %}
+            {% set verdict = memo.ai_score.translate_verdict %}
+            {% set is_translatable = score >= 80 %}
+            {% set already_translated = memo.ai_score.translated_body is defined and memo.ai_score.translated_body %}
+
+            <div class="border rounded p-3 mb-3 shadow-sm fade-in fade-in-delay-{{ loop.index }}" data-memo-id="{{ memo.id }}">
+                <div class="d-grid gap-2" style="grid-template-columns: repeat(16, 1fr);">
+
+                    {# 1段目: スコア | タイトル | 判定バッジ #}
+                    <div style="grid-column: 1 / 3;" class="d-flex align-items-center justify-content-center border-end pe-1">
+                        {% if score >= 80 %}
+                            <span class="badge border border-secondary text-body px-2" style="font-size:0.9rem">{{ score }}</span>
+                        {% elif score >= 75 %}
+                            <span class="badge border border-secondary text-body-secondary px-2" style="font-size:0.9rem">{{ score }}</span>
+                        {% elif score >= 60 %}
+                            <span class="badge border border-secondary text-body-secondary opacity-75 px-2" style="font-size:0.9rem">{{ score }}</span>
+                        {% else %}
+                            <span class="badge border border-secondary text-body-secondary opacity-50 px-2" style="font-size:0.9rem">{{ score }}</span>
+                        {% endif %}
+                    </div>
+                    <div style="grid-column: 3 / 13;" class="d-flex align-items-center ps-1">
+                        <a href="{{ url_for('public.detail', memo_id=memo.id) }}" target="_blank"
+                           class="text-body-secondary text-decoration-none small fw-bold lh-sm">
+                            {{ memo.title[:28] }}{% if memo.title | length > 28 %}…{% endif %}
+                        </a>
+                    </div>
+                    <div style="grid-column: 13 / -1;" class="d-flex align-items-center justify-content-end">
+                        <span class="badge rounded-pill text-bg-secondary" style="font-size:9px">{{ verdict }}</span>
+                    </div>
+
+                    {# 2段目: 内訳スコア（全幅） #}
+                    <div style="grid-column: 1 / -1;" class="d-flex flex-wrap gap-2 pt-1 border-top">
+                        <span class="text-body-secondary" style="font-size:11px">SEO:<strong class="ms-1">{{ memo.ai_score.seo }}</strong><small class="opacity-50">/40</small></span>
+                        <span class="text-body-secondary" style="font-size:11px">技術:<strong class="ms-1">{{ memo.ai_score.tech }}</strong><small class="opacity-50">/25</small></span>
+                        <span class="text-body-secondary" style="font-size:11px">構造:<strong class="ms-1">{{ memo.ai_score.structure }}</strong><small class="opacity-50">/20</small></span>
+                        <span class="text-body-secondary" style="font-size:11px">拡散:<strong class="ms-1">{{ memo.ai_score.spread }}</strong><small class="opacity-50">/15</small></span>
+                    </div>
+
+                    {# 3段目: SEOタイトル＋キーワード（条件付き・全幅） #}
+                    {% if memo.ai_score.seo_title or memo.ai_score.keywords %}
+                    <div style="grid-column: 1 / -1;" class="pt-1 border-top">
+                        {% if memo.ai_score.seo_title %}
+                        <div class="text-body-secondary mb-1" style="font-size:11px">
+                            <i class="fa fa-search me-1 opacity-50"></i>{{ memo.ai_score.seo_title }}
+                        </div>
+                        {% endif %}
+                        {% if memo.ai_score.keywords %}
+                        <div class="d-flex flex-wrap gap-1">
+                            {% for kw in memo.ai_score.keywords[:3] %}
+                            <span class="badge border border-secondary text-body-secondary" style="font-size:10px">{{ kw }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        {% if memo.ai_score.translate_reason %}
+                        <div class="text-body-secondary mt-1" style="font-size:10px">
+                            <span class="opacity-75">改善: </span>{{ memo.ai_score.translate_reason }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    {# 4段目: PV/いいね（左） ＋ 翻訳ボタン（右） #}
+                    <div style="grid-column: 1 / 9;" class="d-flex align-items-center pt-1 border-top">
+                        <span class="text-body-secondary" style="font-size:11px">
+                            <i class="fa fa-eye me-1 opacity-50"></i>{{ memo.view_count or 0 }}
+                            <i class="fa fa-heart ms-2 me-1 opacity-50"></i>{{ memo.like_count }}
+                        </span>
+                    </div>
+                    <div style="grid-column: 9 / -1;" class="d-flex align-items-center justify-content-end pt-1 border-top">
+                        {% if already_translated %}
+                            <button class="btn btn-secondary btn-sm opacity-75" disabled>
+                                <i class="fa fa-check me-1"></i>翻訳済み
+                            </button>
+                        {% elif is_translatable %}
+                            <button class="btn btn-secondary btn-sm translate-btn" data-memo-id="{{ memo.id }}">
+                                <i class="fa fa-recycle me-1"></i>AI翻訳
+                                <small class="ms-1 opacity-75" style="font-size:0.68em;font-weight:normal">有料</small>
+                            </button>
+                        {% else %}
+                            <button class="btn btn-secondary btn-sm opacity-50" disabled title="80点以上で翻訳可能">
+                                <i class="fa fa-recycle me-1"></i>AI翻訳
+                            </button>
+                        {% endif %}
+                    </div>
+
+                    {# エラー表示 #}
+                    <div style="grid-column: 1 / -1;">
+                        <div id="translate-error-{{ memo.id }}-sp" class="d-none text-body-secondary" style="font-size:10px"></div>
+                    </div>
+
+                </div>
+
+                {# 翻訳結果エリア（翻訳済み or 翻訳後に動的表示） #}
+                {% if already_translated %}
+                <div id="translate-result-{{ memo.id }}-sp" class="mt-2 p-2 border-start border-4 bg-body-secondary" style="border-left-color:#234 !important">
+                    <div class="small fw-bold text-body-secondary mb-1"><i class="fa fa-language me-1"></i>英語翻訳結果</div>
+                    <div class="small mb-1"><strong class="translate-title">{{ memo.ai_score.translated_title }}</strong></div>
+                    <pre class="translate-body small text-body-secondary mb-0" style="white-space:pre-wrap;font-size:10px;max-height:150px;overflow-y:auto">{{ memo.ai_score.translated_body }}</pre>
+                </div>
+                {% else %}
+                <div id="translate-result-{{ memo.id }}-sp" class="d-none mt-2 p-2 border-start border-4 bg-body-secondary" style="border-left-color:#234 !important">
+                    <div class="small fw-bold text-body-secondary mb-1"><i class="fa fa-language me-1"></i>英語翻訳結果</div>
+                    <div class="small mb-1"><strong class="translate-title"></strong></div>
+                    <pre class="translate-body small text-body-secondary mb-0" style="white-space:pre-wrap;font-size:10px;max-height:150px;overflow-y:auto"></pre>
+                </div>
+                {% endif %}
+
+            </div>
+            {% endfor %}
+        </div>
+
+        {% endif %}
+
+    </div>{# /card #}
+
+    {# CSRFトークン（translate-btn の fetch に使用） #}
+    <form class="d-none">{{ form.hidden_tag() }}</form>
+
+</div>
+{% endblock %}

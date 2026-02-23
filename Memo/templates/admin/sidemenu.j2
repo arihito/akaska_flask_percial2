@@ -6,11 +6,13 @@
         <hr>
         <li class="nav-item fade-in fade-in-delay-6"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint and request.endpoint.startswith('public.public_index') %}active{% endif %}" href="{{ url_for('public.public_index') }}"><i class="fa fa-wpforms me-2"></i>トップページ</a></li>
         <hr>
-        <li class="nav-item fade-in fade-in-delay-7"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'admin.fixed' %}active{% endif %}" href="{{ url_for('admin.fixed') }}"><i class="fa fa-file-text-o me-2"></i>固定ページ管理</a></li>
+        <li class="nav-item fade-in fade-in-delay-7"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'admin.marketing' %}active{% endif %}" href="{{ url_for('admin.marketing') }}"><i class="fa fa-line-chart me-2"></i>マーケティング戦略</a></li>
+        <hr>
+        <li class="nav-item fade-in fade-in-delay-8"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'admin.fixed' %}active{% endif %}" href="{{ url_for('admin.fixed') }}"><i class="fa fa-file-text-o me-2"></i>固定ページ管理</a></li>
         <hr>
         <li class="nav-item fade-in fade-in-delay-10"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'admin.user_thumb' %}active{% endif %}" href="{{ url_for('admin.user_thumb') }}"><i class="fa fa-user-circle me-2"></i>ユーザーサムネイル</a></li>
         <hr>
-        <li class="nav-item fade-in fade-in-delay-8"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'admin.category' %}active{% endif %}" href="{{ url_for('admin.category') }}"><i class="fa fa-tags me-2"></i>カテゴリー管理</a></li>
+        <li class="nav-item fade-in fade-in-delay-11"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'admin.category' %}active{% endif %}" href="{{ url_for('admin.category') }}"><i class="fa fa-tags me-2"></i>カテゴリー管理</a></li>
     </ul>
     <hr>
     <h6 class="text-body-secondary fs-5 ms-4 ps-2 mt-4 pt-2 mb-3 font-bold"><i class="fa fa-file-code-o me-2"></i> 開発関連資料</h6>
@@ -54,132 +56,4 @@
             </div>
         </div>
     </div>
-</div>
-
-<!-- Modal_term 要件定義 -->
-<div class="modal fade" id="modal_term" data-bs-backdrop="static" data-bs-keyboard="false">
-  <div class="modal-dialog modal-xl modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="modal_term_Label">要件定義</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        {% if requirements_definition is defined %}
-          <div class="markdown-body">
-            {{ requirements_definition | markdown | safe }}
-          </div>
-        {% endif %}
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary btn-lg w-100" data-bs-dismiss="modal"><i class="fa fa-times me-2"></i>閉じる</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- Modal_coding コーディング規約 -->
-<div class="modal fade" id="modal_coding" data-bs-backdrop="static" data-bs-keyboard="false">
-  <div class="modal-dialog modal-xl modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="modal_coding_Label">コーディング規約</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body public">
-        {% if coding_standards is defined %}
-          <div class="markdown-body">
-            {{ coding_standards | markdown | safe }}
-          </div>
-        {% endif %}
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary btn-lg w-100" data-bs-dismiss="modal"><i class="fa fa-times me-2"></i>閉じる</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- Modal_flow 画面遷移図 -->
-<div class="modal fade" id="modal_flow" data-bs-backdrop="static" data-bs-keyboard="false">
-  <div class="modal-dialog modal-xl modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="modal_flow_Label">画面遷移図</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <img class="img-fluid" style="filter:invert(1)" src="{{ url_for('static', filename='docs/page_flow.png')}}" width="" height="" alt="ER図">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary btn-lg w-100" data-bs-dismiss="modal"><i class="fa fa-times me-2"></i>閉じる</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- Modal_er ER図 -->
-<div class="modal fade" id="modal_er" data-bs-backdrop="static" data-bs-keyboard="false">
-  <div class="modal-dialog modal-xl modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="modal_er_Label">ER図</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <img class="img-fluid" style="filter:invert(1)" src="{{ url_for('static', filename='docs/er.svg')}}" width="" height="" alt="ER図">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary btn-lg w-100" data-bs-dismiss="modal"><i class="fa fa-times me-2"></i>閉じる</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- Modal_class クラス設計図 -->
-<div class="modal fade" id="modal_class" data-bs-backdrop="static" data-bs-keyboard="false">
-  <div class="modal-dialog modal-fullscree modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="modal_class_Label">クラス設計図</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <img class="img-fluid" style="filter:invert(1)" src="{{ url_for('static', filename='docs/classes_Memo.svg')}}" width="" height="" alt="ER図">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary btn-lg w-100" data-bs-dismiss="modal"><i class="fa fa-times me-2"></i>閉じる</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- Modal_class_depend クラス継承依存関係図 -->
-<div class="modal fade" id="modal_class_depend" data-bs-backdrop="static" data-bs-keyboard="false">
-  <div class="modal-dialog modal-fullscree modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="modal_class_depend_Label">クラス継承依存関係図</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <img class="img-fluid" style="filter:invert(1)" src="{{ url_for('static', filename='docs/packages_Memo.svg')}}" width="" height="" alt="ER図">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary btn-lg w-100" data-bs-dismiss="modal"><i class="fa fa-times me-2"></i>閉じる</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- Modal_app アプリ全体構成図 -->
-<div class="modal fade" id="modal_app" data-bs-backdrop="static" data-bs-keyboard="false">
-  <div class="modal-dialog modal-xl modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="modal_app_Label">アプリ全体構成図</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <img class="img-fluid" style="filter:invert(1)" src="{{ url_for('static', filename='docs/architecture.png')}}" width="" height="" alt="ER図">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary btn-lg w-100" data-bs-dismiss="modal"><i class="fa fa-times me-2"></i>閉じる</button>
-      </div>
-    </div>
-  </div>
 </div>

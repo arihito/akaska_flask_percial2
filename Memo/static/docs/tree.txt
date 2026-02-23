@@ -1,246 +1,245 @@
-.
-|-- README.md
-|-- __pycache__
-|   |-- app.cpython-312.pyc
-|   |-- config.cpython-312.pyc
-|   |-- forms.cpython-312.pyc
-|   |-- models.cpython-312.pyc
-|   `-- views.cpython-312.pyc
-|-- app.py
-|-- auth
-|   |-- __init__.py
-|   |-- __pycache__
-|   |   |-- __init__.cpython-312.pyc
-|   |   `-- views.cpython-312.pyc
-|   `-- views.py
-|-- classes_Memo.svg
-|-- config.py
-|-- data
-|   `-- sample_articles
-|       |-- api_001.md
-|       |-- api_002.md
-|       |-- auth_001.md
-|       |-- basic_001.md
-|       |-- basic_002.md
-|       |-- crud_001.md
-|       |-- crud_002.md
-|       |-- package_001.md
-|       |-- ui_001.md
-|       `-- ui_002.md
-|-- docs
-|   |-- __init__.py
-|   |-- __pycache__
-|   |   |-- __init__.cpython-312.pyc
-|   |   `-- views.cpython-312.pyc
-|   `-- views.py
-|-- errors
-|   |-- __init__.py
-|   |-- __pycache__
-|   |   |-- __init__.cpython-312.pyc
-|   |   `-- views.cpython-312.pyc
-|   `-- views.py
-|-- factories
-|   |-- __init__.py
-|   |-- __pycache__
-|   |   |-- __init__.cpython-312.pyc
-|   |   |-- body_factory.cpython-312.pyc
-|   |   `-- user_factory.cpython-312.pyc
-|   |-- body_factory.py
-|   |-- category_factory.py
-|   `-- user_factory.py
-|-- favorite
-|   |-- __init__.py
-|   |-- __pycache__
-|   |   |-- __init__.cpython-312.pyc
-|   |   `-- views.cpython-312.pyc
-|   `-- views.py
-|-- fixed
-|   |-- __init__.py
-|   |-- __pycache__
-|   |   |-- __init__.cpython-312.pyc
-|   |   `-- views.cpython-312.pyc
-|   `-- views.py
-|-- forms.py
-|-- instance
-|   `-- memodb.sqlite
-|-- libraries.txt
-|-- memo
-|   |-- __init__.py
-|   |-- __pycache__
-|   |   |-- __init__.cpython-312.pyc
-|   |   `-- views.cpython-312.pyc
-|   `-- views.py
-|-- migrations
-|   |-- README
-|   |-- __pycache__
-|   |   `-- env.cpython-312.pyc
-|   |-- alembic.ini
-|   |-- env.py
-|   |-- script.py.mako
-|   `-- versions
-|       |-- 30db46ef949d_reset_initial_schema.py
-|       `-- __pycache__
-|           `-- 30db46ef949d_reset_initial_schema.cpython-312.pyc
-|-- models.py
-|-- os.py
-|-- public
-|   |-- __init__.py
-|   |-- __pycache__
-|   |   |-- __init__.cpython-312.pyc
-|   |   `-- views.cpython-312.pyc
-|   `-- views.py
-|-- seed.py
-|-- simple_web_service.png
-|-- static
-|   |-- css
-|   |   `-- style.css
-|   |-- docs
-|   |   |-- architecture.png
-|   |   |-- classes_Memo.svg
-|   |   |-- diagram.png
-|   |   |-- er.svg
-|   |   |-- packages_Memo.svg
-|   |   `-- tree.txt
-|   |-- images
-|   |   |-- fixed
-|   |   |   |-- copyright.jpg
-|   |   |   |-- crud.jpg
-|   |   |   |-- deploy.jpg
-|   |   |   |-- disclaimer.jpg
-|   |   |   |-- drop.jpg
-|   |   |   |-- help.jpg
-|   |   |   |-- htmx.jpg
-|   |   |   |-- i18n.jpg
-|   |   |   |-- jwt.jpg
-|   |   |   |-- keyvisual.jpg
-|   |   |   |-- legal.jpg
-|   |   |   |-- oauth.jpg
-|   |   |   |-- paging.jpg
-|   |   |   |-- policy.jpg
-|   |   |   |-- refactor
-|   |   |   |   |-- dl.png
-|   |   |   |   `-- miniconda_thumb.jpg
-|   |   |   |-- refactor.jpg
-|   |   |   |-- search.jpg
-|   |   |   |-- sort.jpg
-|   |   |   |-- stripe.jpg
-|   |   |   |-- stripe_mypage.png
-|   |   |   |-- terms.jpg
-|   |   |   |-- twofactor.jpg
-|   |   |   `-- upload.jpg
-|   |   |-- memo
-|   |   |   |-- 01.jpg
-|   |   |   |-- 02.jpg
-|   |   |   |-- 03.jpg
-|   |   |   |-- 04.jpg
-|   |   |   |-- 05.jpg
-|   |   |   |-- 06.jpg
-|   |   |   |-- 07.jpg
-|   |   |   |-- 08.jpg
-|   |   |   |-- 09.jpg
-|   |   |   |-- 10.jpg
-|   |   |   |-- 11.jpg
-|   |   |   |-- 12.jpg
-|   |   |   |-- 13.jpg
-|   |   |   |-- 14.jpg
-|   |   |   |-- 15.jpg
-|   |   |   |-- 16.jpg
-|   |   |   |-- 17.jpg
-|   |   |   |-- 18.jpg
-|   |   |   |-- 19.jpg
-|   |   |   |-- 20.jpg
-|   |   |   |-- 21.jpg
-|   |   |   `-- nofile.jpg
-|   |   |-- nouse
-|   |   |   |-- 01.png
-|   |   |   |-- 02.png
-|   |   |   |-- 03.png
-|   |   |   |-- 04.png
-|   |   |   |-- 05.png
-|   |   |   |-- 06.png
-|   |   |   |-- 07.png
-|   |   |   |-- 08.png
-|   |   |   |-- 09.png
-|   |   |   |-- 10.png
-|   |   |   |-- 11.png
-|   |   |   |-- 12.png
-|   |   |   |-- 13.png
-|   |   |   |-- 14.png
-|   |   |   |-- 15.png
-|   |   |   |-- c448d3591c184bcb8cedba25135f9c2a.png
-|   |   |   |-- nofile.jpg
-|   |   |   `-- wallpaper.jpg
-|   |   |-- other
-|   |   |   |-- 404.png
-|   |   |   |-- admin.png
-|   |   |   |-- capture.png
-|   |   |   `-- icon.png
-|   |   `-- user
-|   |       |-- 01.png
-|   |       |-- 02.png
-|   |       |-- 03.png
-|   |       |-- 04.png
-|   |       |-- 05.png
-|   |       |-- 06.png
-|   |       |-- 07.png
-|   |       |-- 08.png
-|   |       |-- 09.png
-|   |       |-- 10.png
-|   |       |-- default.png
-|   |       `-- images.png
-|   `-- js
-|       |-- main.js
-|       `-- react.js
-|-- templates
-|   |-- auth
-|   |   |-- _formhelpers.j2
-|   |   |-- edit.j2
-|   |   |-- login.j2
-|   |   `-- register.j2
-|   |-- base.j2
-|   |-- errors
-|   |   `-- 404.j2
-|   |-- fixed
-|   |   |-- base.j2
-|   |   |-- copyright.j2
-|   |   |-- crud.j2
-|   |   |-- deploy.j2
-|   |   |-- disclaimer.j2
-|   |   |-- drop.j2
-|   |   |-- help.j2
-|   |   |-- htmx.j2
-|   |   |-- i18n.j2
-|   |   |-- jwt.j2
-|   |   |-- legal.j2
-|   |   |-- oauth.j2
-|   |   |-- paging.j2
-|   |   |-- policy.j2
-|   |   |-- refactor.j2
-|   |   |-- stripe.j2
-|   |   |-- terms.j2
-|   |   |-- twofactor.j2
-|   |   `-- upload.j2
-|   |-- layout
-|   |   |-- footer.j2
-|   |   |-- globalnav.j2
-|   |   |-- head.j2
-|   |   |-- mode.j2
-|   |   `-- sidemenu.j2
-|   |-- memo
-|   |   |-- _categories.j2
-|   |   |-- _formhelpers.j2
-|   |   |-- base.j2
-|   |   |-- create.j2
-|   |   |-- index.j2
-|   |   `-- update.j2
-|   `-- public
-|       |-- aside.j2
-|       |-- detail.j2
-|       `-- index.j2
-|-- tree.txt
-`-- utils
-    |-- __pycache__
-    |   `-- upload.cpython-312.pyc
-    `-- upload.py
-
-44 directories, 199 files
+[ Memo ]
+├─ CLAUDE.md
+├─ README.md
+├─ admin/
+│  ├─ __init__.py
+│  ├─ views.py
+│  └─ webhook.py
+├─ app.py
+├─ auth/
+│  ├─ __init__.py
+│  └─ views.py
+├─ config.py
+├─ data/
+│  └─ sample_articles/
+│     ├─ api_001.md
+│     ├─ api_002.md
+│     ├─ auth_001.md
+│     ├─ basic_001.md
+│     ├─ basic_002.md
+│     ├─ crud_001.md
+│     ├─ crud_002.md
+│     ├─ package_001.md
+│     ├─ ui_001.md
+│     └─ ui_002.md
+├─ docs/
+│  ├─ __init__.py
+│  └─ views.py
+├─ errors/
+│  ├─ __init__.py
+│  └─ views.py
+├─ factories/
+│  ├─ __init__.py
+│  ├─ body_factory.py
+│  ├─ category_factory.py
+│  └─ user_factory.py
+├─ favorite/
+│  ├─ __init__.py
+│  └─ views.py
+├─ fixed/
+│  ├─ __init__.py
+│  └─ views.py
+├─ forms.py
+├─ libraries.txt
+├─ memo/
+│  ├─ __init__.py
+│  └─ views.py
+├─ models.py
+├─ os.py
+├─ public/
+│  ├─ __init__.py
+│  └─ views.py
+├─ seed.py
+├─ static/
+│  ├─ css/
+│  │  └─ style.css
+│  ├─ docs/
+│  │  ├─ CLAUDE.translate.md
+│  │  ├─ CODING_STANDARDS.md
+│  │  ├─ GLOSSARY.md
+│  │  ├─ api_spec.csv
+│  │  ├─ architecture.png
+│  │  ├─ classes_Memo.svg
+│  │  ├─ db.csv
+│  │  ├─ er.svg
+│  │  ├─ function_definition.csv
+│  │  ├─ function_spec.csv
+│  │  ├─ git_progress.csv
+│  │  ├─ packages_Memo.svg
+│  │  ├─ page_flow.png
+│  │  ├─ route_list.csv
+│  │  ├─ table_spec.csv
+│  │  └─ tree.txt
+│  ├─ images/
+│  │  ├─ cards/
+│  │  │  ├─ 01.png
+│  │  │  ├─ 02.png
+│  │  │  ├─ 03.png
+│  │  │  ├─ 04.png
+│  │  │  ├─ 05.png
+│  │  │  └─ 06.png
+│  │  ├─ fixed/
+│  │  │  ├─ copyright.jpg
+│  │  │  ├─ crud.jpg
+│  │  │  ├─ deploy.jpg
+│  │  │  ├─ disclaimer.jpg
+│  │  │  ├─ drop.jpg
+│  │  │  ├─ help.jpg
+│  │  │  ├─ htmx.jpg
+│  │  │  ├─ i18n.jpg
+│  │  │  ├─ jwt.jpg
+│  │  │  ├─ keyvisual.jpg
+│  │  │  ├─ legal.jpg
+│  │  │  ├─ oauth.jpg
+│  │  │  ├─ paging.jpg
+│  │  │  ├─ policy.jpg
+│  │  │  ├─ refactor/
+│  │  │  │  ├─ dl.png
+│  │  │  │  └─ miniconda_thumb.jpg
+│  │  │  ├─ refactor.jpg
+│  │  │  ├─ search.jpg
+│  │  │  ├─ sort.jpg
+│  │  │  ├─ stripe.jpg
+│  │  │  ├─ stripe_mypage.png
+│  │  │  ├─ terms.jpg
+│  │  │  ├─ twofactor.jpg
+│  │  │  └─ upload.jpg
+│  │  ├─ memo/
+│  │  │  ├─ 01.jpg
+│  │  │  ├─ 02.jpg
+│  │  │  ├─ 03.jpg
+│  │  │  ├─ 04.jpg
+│  │  │  ├─ 05.jpg
+│  │  │  ├─ 06.jpg
+│  │  │  ├─ 07.jpg
+│  │  │  ├─ 08.jpg
+│  │  │  ├─ 09.jpg
+│  │  │  ├─ 10.jpg
+│  │  │  ├─ 11.jpg
+│  │  │  ├─ 12.jpg
+│  │  │  ├─ 13.jpg
+│  │  │  ├─ 14.jpg
+│  │  │  ├─ 15.jpg
+│  │  │  ├─ 16.jpg
+│  │  │  ├─ 17.jpg
+│  │  │  ├─ 18.jpg
+│  │  │  ├─ 19.jpg
+│  │  │  ├─ 20.jpg
+│  │  │  ├─ 21.jpg
+│  │  │  └─ nofile.jpg
+│  │  ├─ nouse/
+│  │  │  ├─ 01.png
+│  │  │  ├─ 02.png
+│  │  │  ├─ 03.png
+│  │  │  ├─ 04.png
+│  │  │  ├─ 05.png
+│  │  │  ├─ 06.png
+│  │  │  ├─ 07.png
+│  │  │  ├─ 08.png
+│  │  │  ├─ 09.png
+│  │  │  ├─ 10.png
+│  │  │  ├─ 11.png
+│  │  │  ├─ 12.png
+│  │  │  ├─ 13.png
+│  │  │  ├─ 14.png
+│  │  │  ├─ 15.png
+│  │  │  ├─ barChart.png
+│  │  │  ├─ c448d3591c184bcb8cedba25135f9c2a.png
+│  │  │  ├─ nofile.jpg
+│  │  │  ├─ stepbar.png
+│  │  │  └─ wallpaper.jpg
+│  │  ├─ other/
+│  │  │  ├─ 404.png
+│  │  │  ├─ admin.png
+│  │  │  ├─ capture.png
+│  │  │  ├─ favicon.ico
+│  │  │  ├─ icon.png
+│  │  │  ├─ logo_dark.png
+│  │  │  ├─ logo_light.png
+│  │  │  └─ logomark.png
+│  │  └─ user/
+│  │     ├─ 001.png
+│  │     ├─ 002.png
+│  │     ├─ 003.png
+│  │     ├─ 004.png
+│  │     ├─ 005.png
+│  │     ├─ 006.png
+│  │     ├─ 007.png
+│  │     ├─ 008.png
+│  │     ├─ 009.png
+│  │     ├─ 010.png
+│  │     ├─ default.png
+│  │     └─ images.png
+│  └─ js/
+│     ├─ main.js
+│     ├─ payment_card.js
+│     └─ react.js
+├─ templates/
+│  ├─ admin/
+│  │  ├─ base.j2
+│  │  ├─ category.j2
+│  │  ├─ fixed.j2
+│  │  ├─ index.j2
+│  │  ├─ login.j2
+│  │  ├─ marketing.j2
+│  │  ├─ payment.j2
+│  │  ├─ sidemenu.j2
+│  │  ├─ sidemenu_modals.j2
+│  │  └─ user_thumb.j2
+│  ├─ auth/
+│  │  ├─ _formhelpers.j2
+│  │  ├─ edit.j2
+│  │  ├─ login.j2
+│  │  └─ register.j2
+│  ├─ base.j2
+│  ├─ errors/
+│  │  └─ 404.j2
+│  ├─ fixed/
+│  │  ├─ base.j2
+│  │  ├─ copyright.j2
+│  │  ├─ crud.j2
+│  │  ├─ deploy.j2
+│  │  ├─ disclaimer.j2
+│  │  ├─ drop.j2
+│  │  ├─ help.j2
+│  │  ├─ htmx.j2
+│  │  ├─ i18n.j2
+│  │  ├─ jwt.j2
+│  │  ├─ legal.j2
+│  │  ├─ oauth.j2
+│  │  ├─ paging.j2
+│  │  ├─ policy.j2
+│  │  ├─ refactor.j2
+│  │  ├─ stripe.j2
+│  │  ├─ terms.j2
+│  │  ├─ testing_automation.j2
+│  │  ├─ twofactor.j2
+│  │  └─ upload.j2
+│  ├─ layout/
+│  │  ├─ footer.j2
+│  │  ├─ globalnav.j2
+│  │  ├─ head.j2
+│  │  ├─ mode.j2
+│  │  └─ sidemenu.j2
+│  ├─ mail/
+│  │  ├─ admin_apply.j2
+│  │  ├─ admin_approve.j2
+│  │  ├─ admin_token.j2
+│  │  └─ base.j2
+│  ├─ memo/
+│  │  ├─ _categories.j2
+│  │  ├─ _formhelpers.j2
+│  │  ├─ base.j2
+│  │  ├─ create.j2
+│  │  ├─ index.j2
+│  │  └─ update.j2
+│  └─ public/
+│     ├─ aside.j2
+│     ├─ detail.j2
+│     └─ index.j2
+└─ utils/
+   ├─ ai_fixed_generate.py
+   ├─ ai_score.py
+   ├─ ai_translate.py
+   ├─ ai_translate_score.py
+   └─ upload.py

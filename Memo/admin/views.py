@@ -1,7 +1,7 @@
 import math
 import os
 import re
-from datetime import datetime, timezone
+from datetime import datetime, timezone, date
 from functools import wraps
 from flask import Blueprint, render_template, redirect, url_for, flash, session, current_app, request
 from flask_login import login_required, current_user
@@ -16,6 +16,24 @@ import json
 from pathlib import Path
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
+
+
+def _check_ai_rate_limit(key, limit=5):
+    """セッションベースの1日あたりAI機能使用回数チェック。
+    本日の使用回数が limit 以内であれば True（カウントアップ）、超過なら False を返す。
+    """
+    today = date.today().isoformat()
+    session_key = f'ai_rate_{key}'
+    entry = session.get(session_key, {'date': '', 'count': 0})
+    if entry['date'] != today:
+        entry = {'date': today, 'count': 0}
+    if entry['count'] >= limit:
+        return False
+    entry['count'] += 1
+    session[session_key] = entry
+    session.modified = True
+    return True
+
 
 def admin_required(f):
     """管理者セッション認証デコレータ"""
@@ -67,6 +85,15 @@ def get_coding_standards():
     return get_markdown_content("static/docs/CODING_STANDARDS.md")
 
 
+@admin_bp.context_processor
+def inject_admin_docs():
+    """全管理テンプレートにサイドバーモーダル用のMarkdown変数を注入"""
+    return {
+        'requirements_definition': get_requirements_definition(),
+        'coding_standards': get_coding_standards(),
+    }
+
+
 @admin_bp.route('/login', methods=['GET', 'POST'])
 @login_required
 def login():
@@ -105,8 +132,6 @@ def index():
     offset = (page - 1) * per_page
     is_paginate = pages > 1
     users = User.query.order_by(User.id).limit(per_page).offset(offset).all()
-    requirements_definition = get_requirements_definition()
-    coding_standards = get_coding_standards()
     form = FlaskForm()
     super_admin_email = current_app.config.get('MAIL_USERNAME')
 
@@ -155,8 +180,6 @@ def index():
     return render_template('admin/index.j2',
         users=users,
         form=form,
-        requirements_definition=requirements_definition,
-        coding_standards=coding_standards,
         is_paginate=is_paginate,
         page=page,
         pages=pages,
@@ -479,23 +502,37 @@ def thumbnail_visibility_update():
 @admin_bp.route('/analyze', methods=['POST'])
 @admin_required
 def analyze():
-    """最新5件の記事をGemini AIでスコアリングし、結果をDBに保存してJSONで返す"""
-    from utils.ai_score import analyze_memo_quality
+    """最新5件の記事を Gemini AI で翻訳価値スコアリングし、結果をDBに保存してJSONで返す"""
+    from utils.ai_translate_score import score_translate_value
     from flask import jsonify
+
+    if not _check_ai_rate_limit('analyze', limit=5):
+        return jsonify(status='error', message='本日のAI解析の利用上限（5回）に達しました。明日以降にお試しください'), 429
 
     latest_memos = Memo.query.order_by(Memo.created_at.desc()).limit(5).all()
     results = []
     has_error = False
 
     for memo in latest_memos:
-        if memo.ai_score:
+        # 旧形式（information/writing/readability）は再解析させる
+        if memo.ai_score and 'translate_score' in memo.ai_score:
             scores = memo.ai_score
         else:
-            scores = analyze_memo_quality(memo.title, memo.content)
+            like_count_val = Favorite.query.filter_by(memo_id=memo.id).count()
+            scores = score_translate_value(
+                memo.title, memo.content,
+                like_count=like_count_val,
+                view_count=memo.view_count or 0,
+            )
             if scores:
                 memo.ai_score = scores
             else:
-                scores = {"information": 0, "writing": 0, "readability": 0}
+                scores = {
+                    "seo": 0, "tech": 0, "structure": 0, "spread": 0,
+                    "translate_score": 0, "translate_verdict": "エラー",
+                    "seo_title": "", "keywords": [], "inflow": "低",
+                    "translate_reason": "AI解析に失敗しました",
+                }
                 has_error = True
 
         like_count = Favorite.query.filter_by(memo_id=memo.id).count()
@@ -509,6 +546,55 @@ def analyze():
 
     db.session.commit()
     return jsonify(status='ok', data=results)
+
+
+@admin_bp.route('/marketing')
+@admin_required
+def marketing():
+    """マーケティング戦略ページ：翻訳スコア済み記事一覧"""
+    memos = Memo.query.filter(Memo.ai_score.isnot(None)).all()
+    # translate_score キーを持つ記事のみ・降順ソート
+    scored = [m for m in memos if m.ai_score and 'translate_score' in m.ai_score]
+    scored.sort(key=lambda m: m.ai_score['translate_score'], reverse=True)
+    # いいね数を付与
+    for m in scored:
+        m.like_count = Favorite.query.filter_by(memo_id=m.id).count()
+    form = FlaskForm()
+    return render_template('admin/marketing.j2', memos=scored, form=form)
+
+
+@admin_bp.route('/translate/<int:memo_id>', methods=['POST'])
+@admin_required
+def translate(memo_id):
+    """AJAX: Gemini AI による記事英語翻訳（80点以上のみ）"""
+    from utils.ai_translate import translate_memo_to_english
+    from flask import jsonify
+
+    if not _check_ai_rate_limit('translate', limit=5):
+        return jsonify(status='error', message='本日のAI翻訳の利用上限（5回）に達しました。明日以降にお試しください'), 429
+
+    memo = Memo.query.get_or_404(memo_id)
+
+    # サーバー側でもスコア検証
+    if not memo.ai_score or memo.ai_score.get('translate_score', 0) < 80:
+        return jsonify(status='error', message='翻訳スコアが80点未満のため翻訳できません'), 400
+
+    result = translate_memo_to_english(memo.title, memo.content)
+    if not result:
+        return jsonify(status='error', message='AI翻訳に失敗しました。APIキーと利用制限を確認してください'), 500
+
+    # 翻訳結果を ai_score に追記して保存
+    updated = dict(memo.ai_score)
+    updated['translated_title'] = result['translated_title']
+    updated['translated_body']  = result['translated_body']
+    memo.ai_score = updated
+    db.session.commit()
+
+    return jsonify(
+        status='ok',
+        translated_title=result['translated_title'],
+        translated_body=result['translated_body'],
+    )
 
 
 @admin_bp.route('/fixed')
@@ -619,6 +705,9 @@ def fixed_generate():
     """AJAX: Gemini AI による固定ページコンテンツ生成"""
     from flask import jsonify
     from utils.ai_fixed_generate import generate_fixed_page
+
+    if not _check_ai_rate_limit('fixed_generate', limit=5):
+        return jsonify(status='error', message='本日のAI生成の利用上限（5回）に達しました。明日以降にお試しください'), 429
 
     data = request.get_json(silent=True) or {}
     title = data.get('title', '').strip()

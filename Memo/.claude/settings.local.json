@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd \"C:/Users/arihi/Dropbox/DevOps/Flask/Percial2/Memo\" && C:/Users/arihi/miniconda3/envs/flask2_env/python.exe -c \"\nimport py_compile, sys\nfiles = ['admin/views.py', 'utils/ai_translate_score.py', 'utils/ai_translate.py']\nfor f in files:\n    try:\n        py_compile.compile\\(f, doraise=True\\)\n        print\\(f'OK: {f}'\\)\n    except py_compile.PyCompileError as e:\n        print\\(f'NG: {f} -> {e}'\\)\n\" 2>&1)",
+      "Bash(cd \"C:/Users/arihi/Dropbox/DevOps/Flask/Percial2/Memo\" && C:/Users/arihi/miniconda3/envs/flask2_env/python.exe -c \"\nfrom dotenv import load_dotenv\nload_dotenv\\(\\)\nimport os\nos.environ.setdefault\\('FLASK_DEBUG', '0'\\)\n\n# Flaskアプリ生成テスト\nfrom app import create_app\napp = create_app\\(\\)\n\n# テンプレートの構文チェック（jinja2でパース）\nfrom jinja2 import Environment, FileSystemLoader\nenv = Environment\\(loader=FileSystemLoader\\('templates'\\)\\)\n\nfiles = ['admin/marketing.j2', 'admin/sidemenu.j2']\nfor f in files:\n    try:\n        env.get_template\\(f\\)\n        print\\(f'OK: {f}'\\)\n    except Exception as e:\n        print\\(f'NG: {f} -> {e}'\\)\n\" 2>&1)",
+      "Bash(cd \"C:/Users/arihi/Dropbox/DevOps/Flask/Percial2/Memo\" && C:/Users/arihi/miniconda3/envs/flask2_env/python.exe -c \"\nfrom jinja2 import Environment, FileSystemLoader\nenv = Environment\\(loader=FileSystemLoader\\('templates'\\)\\)\nfiles = ['admin/marketing.j2', 'admin/sidemenu.j2']\nfor f in files:\n    try:\n        env.get_template\\(f\\)\n        print\\(f'OK: {f}'\\)\n    except Exception as e:\n        print\\(f'NG: {f} -> {e}'\\)\n\" 2>&1)"
+    ]
+  }
+}

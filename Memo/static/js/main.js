@@ -451,11 +451,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ---- 円グラフ1: カテゴリー分布 ----
     // 2秒遅延でフェードイン完了後にアニメーション開始
+    let pieCatInstance = null;
     const pieCatCanvas = document.getElementById("pieCategory");
     if (pieCatCanvas && chartData.pieCategory.length > 0) {
         setTimeout(() => {
             const t = theme();
-            new Chart(pieCatCanvas, {
+            pieCatInstance = new Chart(pieCatCanvas, {
                 type: "doughnut",
                 data: {
                     labels: chartData.pieCategory.map((d) => d.name),
@@ -490,11 +491,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ---- 円グラフ2: ユーザー投稿数 TOP5 ----
     // 2秒遅延でフェードイン完了後にアニメーション開始
+    let pieUserInstance = null;
     const pieUserCanvas = document.getElementById("pieUser");
     if (pieUserCanvas && chartData.pieUser.length > 0) {
         setTimeout(() => {
             const t = theme();
-            new Chart(pieUserCanvas, {
+            pieUserInstance = new Chart(pieUserCanvas, {
                 type: "doughnut",
                 data: {
                     labels: chartData.pieUser.map((d) => d.name),
@@ -528,7 +530,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 2000);
     }
 
-    // ---- 棒グラフ: 記事品質スコア ----
+    // ---- 棒グラフ: 翻訳価値スコア（SEO評価・技術性・構造品質・拡散適性・総合点） ----
     let barChartInstance = null;
 
     const renderBarChart = (data) => {
@@ -536,23 +538,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const t = theme();
 
-        // X軸 = 記事グループ(5件)、データセット = 指標(5種) + 平均値ライン
+        // X軸 = 記事グループ(5件)、データセット = 翻訳評価5指標 + 平均値ライン
         const labels = data.map((d) => d.title);
-        const normLikes = normalize(data.map((d) => d.like_count));
-        const normViews = normalize(data.map((d) => d.view_count));
 
-        const infoScores  = data.map((d) => (d.ai_score ? d.ai_score.information  : 0));
-        const writeScores = data.map((d) => (d.ai_score ? d.ai_score.writing       : 0));
-        const readScores  = data.map((d) => (d.ai_score ? d.ai_score.readability   : 0));
+        // 各指標を0-100スケールに正規化
+        const seoScores       = data.map((d) => d.ai_score ? Math.round((d.ai_score.seo       || 0) / 40 * 100) : 0);
+        const techScores      = data.map((d) => d.ai_score ? Math.round((d.ai_score.tech      || 0) / 25 * 100) : 0);
+        const structureScores = data.map((d) => d.ai_score ? Math.round((d.ai_score.structure || 0) / 20 * 100) : 0);
+        const spreadScores    = data.map((d) => d.ai_score ? Math.round((d.ai_score.spread    || 0) / 15 * 100) : 0);
+        const totalScores     = data.map((d) => d.ai_score ? (d.ai_score.translate_score || 0) : 0);
 
-        // 5指標の平均値（記事ごと）
-        const avgScores = data.map((d, i) => {
-            const vals = [infoScores[i], writeScores[i], readScores[i], normLikes[i], normViews[i]];
+        // 5指標の正規化値の平均（記事ごと）
+        const avgScores = data.map((_, i) => {
+            const vals = [seoScores[i], techScores[i], structureScores[i], spreadScores[i], totalScores[i]];
             return Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
         });
 
-        // 指標名（バー下縦書きラベル用）
-        const metricNames = ["情報量", "文章力", "可読性", "いいね数", "閲覧数"];
+        // 指標名（バー下縦書きラベル用）3〜5文字
+        const metricNames = ["SEO評価", "技術性", "構造品質", "拡散適性", "総合点"];
 
         // カスタムプラグイン: 各バー(25個)の直下に1文字ずつ縦積みで指標名を描画
         const barMetricLabelPlugin = {
@@ -587,32 +590,32 @@ document.addEventListener("DOMContentLoaded", () => {
                 labels,
                 datasets: [
                     {
-                        label: "情報量",
-                        data: infoScores,
+                        label: "SEO評価",
+                        data: seoScores,
                         backgroundColor: t.barColors[0],
                         pointStyle: "rect",
                     },
                     {
-                        label: "文章力",
-                        data: writeScores,
+                        label: "技術性",
+                        data: techScores,
                         backgroundColor: t.barColors[1],
                         pointStyle: "rect",
                     },
                     {
-                        label: "可読性",
-                        data: readScores,
+                        label: "構造品質",
+                        data: structureScores,
                         backgroundColor: t.barColors[2],
                         pointStyle: "rect",
                     },
                     {
-                        label: "いいね数",
-                        data: normLikes,
+                        label: "拡散適性",
+                        data: spreadScores,
                         backgroundColor: t.barColors[3],
                         pointStyle: "rect",
                     },
                     {
-                        label: "閲覧数",
-                        data: normViews,
+                        label: "総合点",
+                        data: totalScores,
                         backgroundColor: t.barColors[4],
                         pointStyle: "rect",
                     },
@@ -635,7 +638,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 responsive: true,
                 maintainAspectRatio: false,
                 layout: {
-                    padding: { bottom: 55 }, // 「いいね数」4文字分の縦積み余白
+                    padding: { bottom: 55 }, // 「構造品質」4文字分の縦積み余白
                 },
                 scales: {
                     y: {
@@ -674,6 +677,41 @@ document.addEventListener("DOMContentLoaded", () => {
     // 初期描画（アニメーション付き）
     renderBarChart(chartData.bar);
 
+    // ---- テーマ切替時に全チャートのカラーを即時更新 ----
+    const updateChartsOnThemeChange = () => {
+        const t = theme();
+
+        if (pieCatInstance) {
+            pieCatInstance.data.datasets[0].borderColor = t.borderPie;
+            pieCatInstance.data.datasets[0].backgroundColor = chartData.pieCategory.map(
+                (d) => lightenHex(d.color, t.pieCatLighten) + t.pieCatAlpha,
+            );
+            pieCatInstance.options.plugins.legend.labels.color = t.text;
+            pieCatInstance.options.plugins.legend.labels.boxBorderColor = t.legendBoxBorder;
+            pieCatInstance.update("none"); // アニメーションなしで即時反映
+        }
+
+        if (pieUserInstance) {
+            pieUserInstance.data.datasets[0].borderColor = t.borderPie;
+            pieUserInstance.data.datasets[0].backgroundColor = t.pieUserColors.slice(
+                0,
+                chartData.pieUser.length,
+            );
+            pieUserInstance.options.plugins.legend.labels.color = t.text;
+            pieUserInstance.options.plugins.legend.labels.boxBorderColor = t.legendBoxBorder;
+            pieUserInstance.update("none");
+        }
+
+        if (barChartInstance) {
+            renderBarChart(chartData.bar);
+        }
+    };
+
+    // data-bs-theme 属性の変更を監視して即時反映
+    new MutationObserver(() => {
+        updateChartsOnThemeChange();
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-bs-theme"] });
+
     // ---- 解析ボタン ----
     const analyzeBtn = document.getElementById("analyzeBtn");
     const analyzeLoading = document.getElementById("analyzeLoading");
@@ -681,6 +719,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (analyzeBtn) {
         analyzeBtn.addEventListener("click", async () => {
+            // AI有料機能の確認
+            if (!confirm("この操作はGemini AI（有料）を使用します。\n実行しますか？")) return;
+
             analyzeBtn.disabled = true;
             analyzeLoading.classList.remove("d-none");
             analyzeError.classList.add("d-none");
@@ -775,6 +816,9 @@ document.addEventListener("click", (e) => {
             alert("タイトルを入力してください");
             return;
         }
+
+        // AI有料機能の確認
+        if (!confirm("この操作はGemini AI（有料）を使用します。\n実行しますか？")) return;
 
         document.getElementById("fixed-gen-loading").classList.remove("d-none");
         document.getElementById("fixed-gen-preview").classList.add("d-none");
@@ -891,4 +935,65 @@ document.addEventListener("click", (e) => {
     initFixedPageSortable('sortable-global-mobile', 'reorder-toast-global');
     initFixedPageSortable('sortable-footer-mobile', 'reorder-toast-footer');
 
+})();
+
+/* =========================
+   マーケティング戦略ページ: AI翻訳ボタン
+========================== */
+(function () {
+    document.querySelectorAll(".translate-btn").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+            // AI有料機能の確認
+            if (!confirm("この操作はGemini AI（有料）を使用します。\n実行しますか？")) return;
+
+            const memoId = btn.dataset.memoId;
+            const row = btn.closest("[data-memo-id]");
+            const resultArea = document.getElementById("translate-result-" + memoId);
+            const errorArea  = document.getElementById("translate-error-" + memoId);
+
+            btn.disabled = true;
+            btn.textContent = "翻訳中...";
+            if (errorArea) errorArea.classList.add("d-none");
+
+            const csrfToken = document.querySelector('input[name="csrf_token"]')?.value || "";
+
+            try {
+                const res = await fetch("/admin/translate/" + memoId, {
+                    method: "POST",
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest",
+                        "X-CSRFToken": csrfToken,
+                    },
+                });
+
+                const json = await res.json();
+
+                if (!res.ok || json.status !== "ok") {
+                    throw new Error(json.message || `HTTP ${res.status}`);
+                }
+
+                // 翻訳結果を表示（アコーディオン展開）
+                if (resultArea) {
+                    const titleEl = resultArea.querySelector(".translate-title");
+                    const bodyEl  = resultArea.querySelector(".translate-body");
+                    if (titleEl) titleEl.textContent = json.translated_title;
+                    if (bodyEl)  bodyEl.textContent  = json.translated_body;
+                    resultArea.classList.remove("d-none");
+                }
+
+                // ボタンを「翻訳済み」表示に変更
+                btn.textContent = "翻訳済み";
+                btn.classList.add("opacity-75");
+
+            } catch (err) {
+                console.error("######## AI翻訳エラー ########", err);
+                if (errorArea) {
+                    errorArea.textContent = err.message || "翻訳に失敗しました";
+                    errorArea.classList.remove("d-none");
+                }
+                btn.disabled = false;
+                btn.innerHTML = 'AI翻訳 <small class="ms-1 opacity-75" style="font-size:0.68em;font-weight:normal">有料</small>';
+            }
+        });
+    });
 })();
