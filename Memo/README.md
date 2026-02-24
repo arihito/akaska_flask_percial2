@@ -344,6 +344,7 @@ WTForms            3.2.1
   </li>
   <li>管理機能
     <ul>
+      <li>スーパーアドミンの<code>承認機能付きユーザー一時停止</code>機能</li>
       <li>固定ページの表示順序<code>非同期で入れ替え</code></li>
       <li>カテゴリー管理</li>
       <li>サムネイルアイコン管理</li>
@@ -351,13 +352,13 @@ WTForms            3.2.1
   </li>
     <li>AI機能
       <ul>
+          <li>乱発防止のため管理者のみと<code>1日の使用回数を制限</code>し確認通知</li>
           <li>拡散しやすい技術記事か、<code>複数の指標から品質を定量化</code>しグラフ生成する(アニメーションビルド)</li>
-          <li>特定の<code>評価スコアに達した記事</code>のみ英語に翻訳可能</li>
+          <li>特定の<code>評価スコアに達した記事</code>のみ<code>英語に翻訳</code>可能</li>
           <li>タイトル入力で固定<code>記事1000字ほどを自動生成</code></li>
           <li>記事本文の<code>要約を自動生成</code>し一覧解説に掲載</li>
-          <li>乱発防止のため管理者のみと<code>1日の使用回数を制限</code>し確認通知</li>
-          <li><del>NGワード内包記事判定による自動バン</del></li>
-          <li><del>投稿記事からカテゴリーの自動選択</del></li>
+          <li>ユーザーアイコンサムネイルの自動生成</li>
+          <li>トレンドカテゴリーの自動生成</li>
       </ul>
   </li>
 </ul>
@@ -372,18 +373,9 @@ WTForms            3.2.1
 <details>
 <summary>実装中機能一覧</summary>
 <ul>
-    <li>翻訳機能</li>
-</ul>
-</details>
-
-<hr width="800">
-
-> [!CAUTION]
-> **未追加機能**：時間内の対応が難しかった今後の追加予定機能
-
-<details>
-<summary>未機能一覧</summary>
-<ul>
+  <li>決済価格480円/24h＋24ptで各AIのトークン消費量に応じてpt減少(ログインに解説付与)</li>
+  <li>学校のPCでも実行可能か検証</li>
+  <li>MCP(context7 or serie)追加確認</li>
   <li>例外処理
     <ul>
       <li>エラーレベルに応じたログ生成</li>
@@ -404,4 +396,14 @@ WTForms            3.2.1
       </ul>
   </li>
 </ul>
+</details>
+
+<hr width="800">
+
+> [!CAUTION]
+> **未追加機能**：時間内の対応が難しかった今後の追加予定機能
+
+<details>
+<summary>未機能一覧</summary>
+
 </details>

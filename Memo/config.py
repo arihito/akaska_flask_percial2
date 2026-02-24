@@ -51,8 +51,9 @@ class Config(object):
     # Stripe決済
     STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', '')
     STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET', '')
-    ADMIN_PLAN_PRICE = 5000      # 管理者プラン料金（円）
-    ADMIN_PLAN_DAYS = 10         # 管理者プラン有効日数
+    ADMIN_PLAN_PRICE = 480       # 管理者プラン料金（円）
+    ADMIN_PLAN_HOURS = 24        # 管理者プラン有効時間
+    ADMIN_PLAN_POINTS = 24       # 決済ごとに付与するポイント数
 
     # サイト名
     SITE_NAME = os.getenv('SITE_NAME', 'Flask tech blog')

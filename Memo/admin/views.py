@@ -35,6 +35,26 @@ def _check_ai_rate_limit(key, limit=5):
     return True
 
 
+def _is_super_admin():
+    """スーパーアドミン判定（ポイント・時間制限なし）。"""
+    return current_user.email == current_app.config.get('MAIL_USERNAME')
+
+
+def _check_ai_points(cost: int):
+    """AIポイント残量チェック。スーパーアドミンは常にTrue。不足時は False を返す（消費はしない）。"""
+    if _is_super_admin():
+        return True
+    return (current_user.admin_points or 0) >= cost
+
+
+def _consume_ai_points(cost: int):
+    """AIポイントを消費してDBに保存する。スーパーアドミンは消費しない。"""
+    if _is_super_admin():
+        return
+    current_user.admin_points = max(0, (current_user.admin_points or 0) - cost)
+    db.session.commit()
+
+
 def admin_required(f):
     """管理者セッション認証デコレータ"""
     @wraps(f)
@@ -87,11 +107,131 @@ def get_coding_standards():
 
 @admin_bp.context_processor
 def inject_admin_docs():
-    """全管理テンプレートにサイドバーモーダル用のMarkdown変数を注入"""
+    """全管理テンプレートにサイドバーモーダル用のMarkdown変数・pt/残時間を注入"""
+    from flask_login import current_user as cu
+    admin_points = 0
+    remaining_seconds = None
+    remaining_h = 0
+    remaining_m = 0
+    is_expiring_soon = False
+    is_points_low = False
+
+    is_super_admin = False
+    if cu.is_authenticated and cu.is_admin:
+        super_admin_email = current_app.config.get('MAIL_USERNAME')
+        is_super_admin = (cu.email == super_admin_email)
+
+    if is_super_admin:
+        # スーパーアドミンは無制限（∞表示用に特別値をセット）
+        return {
+            'requirements_definition': get_requirements_definition(),
+            'coding_standards': get_coding_standards(),
+            'admin_points': None,   # None = 無制限
+            'remaining_h': None,    # None = 無制限
+            'remaining_m': 0,
+            'is_expiring_soon': False,
+            'is_points_low': False,
+            'is_super_admin': True,
+        }
+
+    if cu.is_authenticated and cu.is_admin:
+        admin_points = cu.admin_points or 0
+        expires = cu.subscription_expires_at
+        if expires:
+            # SQLiteはnaive datetimeで返すことがあるため、aware化して統一
+            if expires.tzinfo is None:
+                expires = expires.replace(tzinfo=timezone.utc)
+            now = datetime.now(timezone.utc)
+            diff = (expires - now).total_seconds()
+            if diff > 0:
+                remaining_h = int(diff // 3600)
+                remaining_m = int((diff % 3600) // 60)
+                is_expiring_soon = diff <= 3 * 3600
+        is_points_low = admin_points <= 5
+
     return {
         'requirements_definition': get_requirements_definition(),
         'coding_standards': get_coding_standards(),
+        'admin_points': admin_points,
+        'remaining_h': remaining_h,
+        'remaining_m': remaining_m,
+        'is_expiring_soon': is_expiring_soon,
+        'is_points_low': is_points_low,
+        'is_super_admin': False,
     }
+
+
+@admin_bp.before_request
+def _warn_subscription_low():
+    """管理画面の全リクエストで残pt/残時間が僅かなら flash 警告を出す。"""
+    # 認証済みページのみ対象（ログイン・支払いページは除外）
+    exempt = {'admin.login', 'admin.apply', 'admin.payment',
+              'admin.create_checkout_session', 'admin.payment_success',
+              'admin.payment_cancel', 'admin.logout'}
+    if request.endpoint in exempt:
+        return
+
+    if not session.get('is_admin_authenticated'):
+        return
+
+    # スーパーアドミンは制限なし
+    super_admin_email = current_app.config.get('MAIL_USERNAME')
+    if current_user.email == super_admin_email:
+        return
+
+    now = datetime.now(timezone.utc)
+    expires = current_user.subscription_expires_at
+    # SQLiteはnaive datetimeで返すことがあるため、aware化して統一
+    if expires and expires.tzinfo is None:
+        expires = expires.replace(tzinfo=timezone.utc)
+    points = current_user.admin_points or 0
+
+    # 期限切れチェック（admin_required より先に走るケースに備えてここでも検出）
+    if expires and expires <= now:
+        return  # admin_required 側でリダイレクトされるので警告不要
+
+    warn_msgs = []
+
+    # ── 残り時間警告（前回警告した残り時間帯と変わった場合のみ） ──
+    if expires:
+        remaining_seconds = (expires - now).total_seconds()
+        if remaining_seconds <= 3 * 3600:
+            remaining_h = int(remaining_seconds // 3600)
+            remaining_m = int((remaining_seconds % 3600) // 60)
+            # 1分単位で前回と同じなら再表示しない
+            time_key = remaining_h * 60 + remaining_m
+            if session.get('_admin_warn_time_key') != time_key:
+                session['_admin_warn_time_key'] = time_key
+                warn_msgs.append(
+                    f'管理者アクセスの残り時間が僅かです（残 {remaining_h}時間{remaining_m}分）。'
+                    f'必要であれば追加決済で延長できます。'
+                )
+
+    # ── ポイント警告（前回警告したpt数と変わった場合のみ） ──
+    if points <= 5:
+        last_warned_pt = session.get('_admin_warn_pt')
+        if last_warned_pt != points:
+            session['_admin_warn_pt'] = points
+            if points == 0:
+                warn_msgs.append(
+                    'AIポイントが無くなったため、AI機能は完全に使用できなくなりました。'
+                    '必要があれば、改めて決済することで新たに24ptが加算されます。'
+                )
+            else:
+                warn_msgs.append(
+                    f'AIポイントが残り僅かです（残 {points}pt）。'
+                    f'ポイントが不足するとAI機能は使用できなくなります。'
+                )
+    else:
+        # 5pt超に回復したらフラグをリセット（次に5pt以下になったら再度警告）
+        session.pop('_admin_warn_pt', None)
+
+    if warn_msgs:
+        # セッションに溜まった同種の警告（warning カテゴリ）を一旦クリアして重複を防ぐ
+        flashes = session.get('_flashes', [])
+        session['_flashes'] = [(cat, m) for cat, m in flashes if cat != 'warning']
+        for msg in warn_msgs:
+            flash(msg, 'warning')
 
 
 @admin_bp.route('/login', methods=['GET', 'POST'])
@@ -249,7 +389,11 @@ def apply():
 @admin_bp.route('/approve/<int:user_id>', methods=['POST'])
 @admin_required
 def approve(user_id):
-    """管理者承認：is_admin を切り替え、承認時に通知メール送信"""
+    """管理者承認：is_admin を切り替え、承認時に通知メール送信（スーパーアドミン専用）"""
+    super_admin_email = current_app.config.get('MAIL_USERNAME')
+    if current_user.email != super_admin_email:
+        flash('この操作はスーパーアドミン専用です', 'secondary')
+        return redirect(url_for('admin.index'))
     from app import mail
     user = User.query.get_or_404(user_id)
     user.is_admin = not user.is_admin
@@ -467,6 +611,74 @@ def category_delete(cat_id):
     return redirect(url_for('admin.category'))
 
 
+@admin_bp.route('/category/ai_suggest', methods=['POST'])
+@admin_required
+def category_ai_suggest():
+    """AJAX: Gemini AI による Flask トレンドカテゴリー名＋配色提案"""
+    from flask import jsonify
+
+    if not _check_ai_rate_limit('category_suggest', limit=5):
+        return jsonify(status='error', message='本日のAI生成の利用上限（5回）に達しました。明日以降にお試しください'), 429
+
+    _AI_COST_CATEGORY = 2
+    if not _check_ai_points(_AI_COST_CATEGORY):
+        return jsonify(status='error', message=f'AIポイントが不足しています（必要: {_AI_COST_CATEGORY}pt / 残: {current_user.admin_points or 0}pt）'), 429
+
+    api_key = current_app.config.get('GOOGLE_API_KEY', '')
+    if not api_key:
+        return jsonify(status='error', message='GOOGLE_API_KEY が未設定です'), 500
+
+    existing = Category.query.all()
+    existing_names  = [c.name  for c in existing]
+    existing_colors = [c.color for c in existing]
+
+    try:
+        from google import genai
+        from google.genai.types import GenerateContentConfig
+        import json as json_lib
+
+        client = genai.Client(api_key=api_key)
+
+        names_str  = ', '.join(existing_names)  if existing_names  else 'なし'
+        colors_str = ', '.join(existing_colors) if existing_colors else 'なし'
+
+        prompt = (
+            f"あなたはFlask技術ブログのカテゴリー設計者です。\n"
+            f"以下の条件でカテゴリー名と配色を1件提案してください。\n\n"
+            f"【条件】\n"
+            f"- カテゴリー名: Flaskやバックエンド開発に関連するトレンド技術名（英数字・ハイフン・アンダースコアのみ・12文字以内）\n"
+            f"- 既存カテゴリー名（重複不可）: {names_str}\n"
+            f"- カラー: HEX形式・#666より暗い色（明度低め）\n"
+            f"- 既存カラー（{colors_str}）と視覚的に区別できる配色を選ぶこと\n\n"
+            f"【出力形式】\n"
+            f'必ず以下のJSONのみを返してください（説明不要）:\n{{"name": "カテゴリー名", "color": "#xxxxxx"}}'
+        )
+
+        response = client.models.generate_content(
+            model='gemini-2.5-flash-lite',
+            contents=prompt,
+            config=GenerateContentConfig(max_output_tokens=128, temperature=0.9),
+        )
+
+        text = response.text.strip()
+        json_match = re.search(r'\{[^}]+\}', text)
+        if not json_match:
+            return jsonify(status='error', message='AI応答の解析に失敗しました'), 500
+
+        data  = json_lib.loads(json_match.group())
+        name  = re.sub(r'[^A-Za-z0-9\-_]', '', data.get('name', ''))[:12]
+        color = data.get('color', '#234466').strip()
+        if not re.match(r'^#[0-9a-fA-F]{6}$', color):
+            color = '#234466'
+
+        _consume_ai_points(_AI_COST_CATEGORY)
+        return jsonify(status='ok', name=name, color=color, remaining_points=current_user.admin_points)
+
+    except Exception as e:
+        print(f"######## カテゴリーAI提案失敗: {e} ########")
+        return jsonify(status='error', message='AI提案に失敗しました'), 500
+
+
 @admin_bp.route('/user_thumb')
 @admin_required
 def user_thumb():
@@ -579,6 +791,60 @@ def thumbnail_visibility_update():
     return redirect(url_for('admin.user_thumb'))
 
 
+@admin_bp.route('/user_thumb/ai_generate', methods=['POST'])
+@admin_required
+def user_thumb_ai_generate():
+    """AJAX: Imagen API によるユーザーサムネイル画像生成（スーパーアドミン専用・有料）"""
+    from flask import jsonify
+    from utils.ai_thumb_generate import generate_thumb_image
+
+    if not _check_ai_rate_limit('thumb_generate', limit=5):
+        return jsonify(status='error', message='本日のAI生成の利用上限（5回）に達しました。明日以降にお試しください'), 429
+
+    _AI_COST_THUMB = 2
+    if not _check_ai_points(_AI_COST_THUMB):
+        return jsonify(status='error', message=f'AIポイントが不足しています（必要: {_AI_COST_THUMB}pt / 残: {current_user.admin_points or 0}pt）'), 429
+
+    data = request.get_json(silent=True) or {}
+    user_id = data.get('user_id')
+
+    image_bytes = generate_thumb_image()
+    if not image_bytes:
+        return jsonify(status='error', message='AI画像生成に失敗しました。APIキーまたはモデルの設定を確認してください'), 500
+
+    # 3桁連番ファイル名を生成
+    user_img_dir = os.path.join(current_app.root_path, 'static', 'images', 'user')
+    pattern = re.compile(r'^(\d{3})\.')
+    max_num = max(
+        (int(m.group(1)) for f in os.listdir(user_img_dir) if (m := pattern.match(f))),
+        default=0
+    )
+    filename = f"{max_num + 1:03d}.png"
+    file_path = os.path.join(user_img_dir, filename)
+    with open(file_path, 'wb') as fp:
+        fp.write(image_bytes)
+
+    # ThumbnailConfig に追加（visible=True）
+    if not ThumbnailConfig.query.filter_by(filename=filename).first():
+        db.session.add(ThumbnailConfig(filename=filename, visible=True))
+
+    # ユーザーへの割付
+    if user_id:
+        user = User.query.get(user_id)
+        if user:
+            user.thumbnail = filename
+
+    db.session.commit()
+
+    _consume_ai_points(_AI_COST_THUMB)
+    return jsonify(
+        status='ok',
+        filename=filename,
+        url=url_for('static', filename=f'images/user/{filename}'),
+        remaining_points=current_user.admin_points,
+    )
+
+
 @admin_bp.route('/analyze', methods=['POST'])
 @admin_required
 def analyze():
@@ -588,6 +854,10 @@ def analyze():
 
     if not _check_ai_rate_limit('analyze', limit=5):
         return jsonify(status='error', message='本日のAI解析の利用上限（5回）に達しました。明日以降にお試しください'), 429
+
+    _AI_COST_ANALYZE = 6
+    if not _check_ai_points(_AI_COST_ANALYZE):
+        return jsonify(status='error', message=f'AIポイントが不足しています（必要: {_AI_COST_ANALYZE}pt / 残: {current_user.admin_points or 0}pt）'), 429
 
     latest_memos = Memo.query.order_by(Memo.created_at.desc()).limit(5).all()
     results = []
@@ -624,8 +894,8 @@ def analyze():
             'ai_score': scores,
         })
 
-    db.session.commit()
-    return jsonify(status='ok', data=results)
+    _consume_ai_points(_AI_COST_ANALYZE)
+    return jsonify(status='ok', data=results, remaining_points=current_user.admin_points)
 
 
 @admin_bp.route('/marketing')
@@ -653,6 +923,10 @@ def translate(memo_id):
     if not _check_ai_rate_limit('translate', limit=5):
         return jsonify(status='error', message='本日のAI翻訳の利用上限（5回）に達しました。明日以降にお試しください'), 429
 
+    _AI_COST_TRANSLATE = 4
+    if not _check_ai_points(_AI_COST_TRANSLATE):
+        return jsonify(status='error', message=f'AIポイントが不足しています（必要: {_AI_COST_TRANSLATE}pt / 残: {current_user.admin_points or 0}pt）'), 429
+
     memo = Memo.query.get_or_404(memo_id)
 
     # サーバー側でもスコア検証
@@ -670,10 +944,12 @@ def translate(memo_id):
     memo.ai_score = updated
     db.session.commit()
 
+    _consume_ai_points(_AI_COST_TRANSLATE)
     return jsonify(
         status='ok',
         translated_title=result['translated_title'],
         translated_body=result['translated_body'],
+        remaining_points=current_user.admin_points,
     )
 
 
@@ -789,6 +1065,10 @@ def fixed_generate():
     if not _check_ai_rate_limit('fixed_generate', limit=5):
         return jsonify(status='error', message='本日のAI生成の利用上限（5回）に達しました。明日以降にお試しください'), 429
 
+    _AI_COST_FIXED = 2
+    if not _check_ai_points(_AI_COST_FIXED):
+        return jsonify(status='error', message=f'AIポイントが不足しています（必要: {_AI_COST_FIXED}pt / 残: {current_user.admin_points or 0}pt）'), 429
+
     data = request.get_json(silent=True) or {}
     title = data.get('title', '').strip()
     if not title:
@@ -810,7 +1090,8 @@ def fixed_generate():
     import random
     selected_image = random.choice(images) if images else 'refactor.jpg'
 
-    return jsonify(status='ok', **result, image=selected_image)
+    _consume_ai_points(_AI_COST_FIXED)
+    return jsonify(status='ok', **result, image=selected_image, remaining_points=current_user.admin_points)
 
 
 @admin_bp.route('/fixed/random-image')

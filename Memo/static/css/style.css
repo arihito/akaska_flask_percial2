@@ -56,7 +56,7 @@
 /* サムネイル表示設定チェックボックス（admin/user_thumb） */
 /* 削除ゴミ箱ボタン・✖オーバーレイ（admin/user_thumb） */
 /* 管理画面背景 */
-/* 管理サイドバー 閃光エフェクト */
+/* 管理サイドバー 閃光エフェクト（管理者ページ専用） */
 /* ステップツールチップ */
 /* 一時停止希望 吹き出しフォーム（admin/index） */
 /* ============== JS連携 =============== */
@@ -744,6 +744,20 @@ pre.file-tag[data-tag]::before {
     100% { background-position: 0%   50%; }
 }
 
+/* スーパーアドミン ヘッダーアイコン：フル充電パルスアニメーション */
+
+.super-admin-icon {
+    display: inline-block;
+    animation: superAdminPulse 2.4s ease-in-out infinite;
+    transform-origin: center;
+}
+
+@keyframes superAdminPulse {
+    0%   { transform: scale(1);    opacity: .5;}
+    50%  { transform: scale(1.1); opacity: 1; color:#ccc;}
+    100% { transform: scale(1);    opacity: .5;   color:}
+}
+
 /* 管理者ログイン ステップバー */
 
 .step-row {
@@ -1323,7 +1337,7 @@ pre.file-tag[data-tag]::before {
     background-color: var(--bs-secondary-bg);
 }
 
-/* 管理サイドバー 閃光エフェクト（管理者ページ専用: .sidebarMenu クラスを持つ要素のみ） */
+/* 管理サイドバー 閃光エフェクト（管理者ページ専用） */
 
 .sidebarMenu {
     position: relative;
@@ -1365,7 +1379,7 @@ pre.file-tag[data-tag]::before {
     background: linear-gradient(
         to bottom,
         transparent 0%,
-        rgba(75, 76, 151, 0.9) 50%,
+        rgba(96, 98, 188, 0.9) 50%,
         transparent 100%
     );
     filter: blur(1px);
@@ -1390,7 +1404,7 @@ pre.file-tag[data-tag]::before {
     50% {
         box-shadow: inset -4px 0 18px rgba(58, 104, 136, 0.45),
                     4px 0 22px rgba(58, 104, 136, 0.30);
-        border-right-color: rgba(78, 98, 155, 0.75);
+        border-right-color: rgba(91, 114, 177, 0.75);
     }
 }
 

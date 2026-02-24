@@ -1,6 +1,6 @@
 import os
 import random
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 # seed用にFlaskアプリを1つ生成しconfigを読み込みdb/login_manager/Blueprintを初期化する
 from app import app, db
@@ -134,6 +134,8 @@ def seed_data():
             email=os.getenv('MAIL_USERNAME', 'admin@example.com'),
             is_admin=True,
             is_paid=True,
+            admin_points=24,
+            subscription_expires_at=datetime.now(timezone.utc) + timedelta(hours=24),
             created_at=random_date(user_start_date, end_date),
         )
         admin_user.set_password("admin1234%")

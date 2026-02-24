@@ -90,6 +90,7 @@ class User(UserMixin, db.Model):
     paid_at = db.Column(db.DateTime(timezone=True), nullable=True)
     admin_password = db.Column(db.String(120), nullable=True)
     subscription_expires_at = db.Column(db.DateTime(timezone=True), nullable=True)
+    admin_points = db.Column(db.Integer, nullable=False, default=0)
     memos = relationship('Memo', back_populates='user')
     favorites = relationship('Favorite', back_populates='user', cascade="all, delete-orphan")
     @property

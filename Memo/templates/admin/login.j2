@@ -89,13 +89,54 @@
                     {% endif %}
                 {% endwith %}
                 <div class="auth-process fade-in fade-delay-2">
-                    <h5 class="fs-5"><i class="fa fa-info-circle me-2"></i>管理者アクセスについて</h5>
-                    <ul class="mb-0">
-                        <li><span class="order-num">①</span>最初に運営者へ<strong>管理者申請</strong>を行い、承認を受ける必要があります。</li>
-                        <li><span class="order-num">②</span>承認後に<strong>5,000円の決済</strong>が可能になり、<strong>10日間</strong>限定で管理画面へのアクセスが有効になります。</li>
-                        <li><span class="order-num">③</span>ログインする際は、決済完了後に登録したメール先に送られてくる<strong>トークンパスワード</strong>を入力してください。</li>
-                        <li><span class="order-num">④</span>トークンパスワードは利用期間内は同じものを使用します。</li>
-                    </ul>
+                    <h5 class="fs-5 mb-2"><i class="fa fa-info-circle me-2"></i>管理者アクセスについて</h5>
+                    <div class="row g-0">
+                        {# 左：scrollspy ナビ #}
+                        <div class="col-4">
+                            <div id="admin-guide-nav" class="list-group list-group-flush" style="font-size:0.8rem;">
+                                <a class="list-group-item list-group-item-action py-1 px-2" href="#guide-access">① アクセス方法</a>
+                                <a class="list-group-item list-group-item-action py-1 px-2" href="#guide-price">② 料金・有効期間</a>
+                                <a class="list-group-item list-group-item-action py-1 px-2" href="#guide-points">③ AIポイント制</a>
+                                <a class="list-group-item list-group-item-action py-1 px-2" href="#guide-notes">④ 注意事項</a>
+                            </div>
+                        </div>
+                        {# 右：スクロール可能コンテンツ #}
+                        <div class="col-8"
+                             data-bs-spy="scroll"
+                             data-bs-target="#admin-guide-nav"
+                             data-bs-smooth-scroll="true"
+                             data-bs-offset="10"
+                             tabindex="0"
+                             style="height:160px; overflow-y:auto; font-size:0.82rem;">
+                            <h6 id="guide-access" class="fw-bold mb-1 mt-1" style="font-size:0.82rem;"><i class="fa fa-paper-plane me-1"></i>アクセス方法</h6>
+                            <ol class="ps-3 mb-2">
+                                <li>運営者へ<strong>管理者申請</strong>を送信する。</li>
+                                <li>承認後、<strong>決済ページ</strong>から480円を支払う。</li>
+                                <li>決済完了メールに記載の<strong>トークンパスワード</strong>でログイン。</li>
+                            </ol>
+                            <h6 id="guide-price" class="fw-bold mb-1" style="font-size:0.82rem;"><i class="fa fa-credit-card me-1"></i>料金・有効期間</h6>
+                            <ul class="ps-3 mb-2">
+                                <li>1回の決済：<strong>480円 / +24時間延長 / +24pt累積</strong></li>
+                                <li>有効期限内であれば追加決済で<strong>時間とポイントを上積み</strong>できます。</li>
+                                <li>期限切れ後の操作は<strong>ログイン画面にリダイレクト</strong>されます。</li>
+                            </ul>
+                            <h6 id="guide-points" class="fw-bold mb-1" style="font-size:0.82rem;"><i class="fa fa-bolt me-1"></i>AIポイント制</h6>
+                            <p class="mb-1">AI機能を使用するたびにポイントを消費します。ポイントが不足するとそのAI機能は使用できなくなります（追加決済で補充可）。</p>
+                            <table class="table table-sm table-borderless mb-2" style="font-size:0.8rem;">
+                                <tbody>
+                                    <tr><td>記事解析スコアリング</td><td class="text-end fw-bold">6pt</td></tr>
+                                    <tr><td>記事英語翻訳</td><td class="text-end fw-bold">4pt</td></tr>
+                                    <tr><td>固定ページ生成 / カテゴリーAI提案 / サムネイル生成</td><td class="text-end fw-bold">各2pt</td></tr>
+                                </tbody>
+                            </table>
+                            <h6 id="guide-notes" class="fw-bold mb-1" style="font-size:0.82rem;"><i class="fa fa-exclamation-triangle me-1"></i>注意事項</h6>
+                            <ul class="ps-3 mb-1">
+                                <li>残り<strong>5pt以下</strong>または<strong>3時間以下</strong>になるとページ上部に警告が表示されます。</li>
+                                <li>ポイントが<strong>0</strong>になっても有効期限内であれば強制ログアウトされません。</li>
+                                <li>トークンパスワードは利用期間中は同じものを使用します。</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
                 {{ render_floating_field(form.admin_password, "Token Password", wrapper_class="fade-in fade-delay-4", autofocus=True) }}
                 <nav class="navbar bg-body-secondary my-3 rounded-3 fade-in fade-delay-6">

@@ -45,17 +45,21 @@
                         <h5 class="card-title"><i class="fa fa-shield me-2"></i>管理者アクセスプラン</h5>
                         <p class="card-text text-body-secondary">管理者権限で全機能にアクセスできます。</p>
                         {# 解説リスト：下部フェードアウト #}
-                        <ul class="list-unstyled mb-3 payment-feature-list">
+                        <ul class="list-unstyled mb-2 payment-feature-list">
                             <li class="mb-2"><i class="fa fa-check text-success me-2"></i>投稿記事評価グラフ閲覧</li>
-                            <li class="mb-2"><i class="fa fa-check text-success me-2"></i>固定ページ管理</li>
-                            <li class="mb-2"><i class="fa fa-check text-success me-2"></i>カテゴリー管理</li>
-                            <li class="mb-2"><i class="fa fa-check text-success me-2"></i>ユーザーサムネイル管理</li>
+                            <li class="mb-2"><i class="fa fa-check text-success me-2"></i>固定ページ・カテゴリー・サムネイル管理</li>
                             <li class="mb-2"><i class="fa fa-check text-success me-2"></i>ユーザー利用管理</li>
+                            <li class="mb-2"><i class="fa fa-bolt text-warning me-2"></i><strong>24pt付与</strong>（AI機能に使用）</li>
                         </ul>
+                        <div class="rounded p-2 mb-2" style="font-size:0.78rem; background:rgba(128,128,128,0.1);">
+                            <strong>AI消費ポイント：</strong>
+                            記事解析 6pt ／ 翻訳 4pt ／ その他 各2pt<br>
+                            ポイントは累積加算・時間は延長されます。
+                        </div>
                         <hr>
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span class="fs-4 fw-bold">&#165;5,000</span>
-                            <span class="badge bg-secondary fs-6">10日間</span>
+                            <span class="fs-4 fw-bold">&#165;480</span>
+                            <span class="badge bg-secondary fs-6">+24時間 / +24pt</span>
                         </div>
                         <form action="{{ url_for('admin.create_checkout_session') }}" method="post">
                             {{ form.hidden_tag() }}

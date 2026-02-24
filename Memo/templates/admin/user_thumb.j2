@@ -10,7 +10,7 @@
         <div class="row g-4 align-items-stretch mb-5 fade-in fade-delay-4">
 
             {# 左：アップロードフォーム #}
-            <div class="col-12 col-md-6">
+            <div class="col-12 col-md-4">
                 <div class="p-4 border rounded h-100 d-flex flex-column">
                     <h5 class="fw-bold mb-3"><i class="fa fa-upload me-2"></i>サムネイルアップロード</h5>
                     <form action="{{ url_for('admin.user_thumb_upload') }}" method="POST" enctype="multipart/form-data" class="d-flex flex-column flex-grow-1">
@@ -41,6 +41,45 @@
                 </div>
             </div>
 
+            {# 中：AI生成 #}
+            <div class="col-12 col-md-2">
+                <div class="p-4 border rounded h-100 d-flex flex-column">
+                    <h5 class="fw-bold mb-3"><i class="fa fa-connectdevelop me-2"></i>AI生成</h5>
+                    {# CSRFトークン取得用（非表示） #}
+                    <div class="d-none">{{ form.hidden_tag() }}</div>
+                    <div class="border-bottom pb-4 mb-3">
+                        <label for="thumb-ai-user-select" class="form-label fw-bold">
+                            <i class="fa fa-user-circle me-1"></i>割り当て先を選択
+                        </label>
+                        <select id="thumb-ai-user-select" class="form-select fs-5 py-2">
+                            <option value="">-- 追加のみ（ユーザーへの割付なし） --</option>
+                            {% for user in users %}
+                            <option value="{{ user.id }}">{{ user.username }}（{{ user.email }}）</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3 d-flex flex-column justify-content-center align-items-center gap-2">
+                        <img id="thumbAiPreview"
+                            src="{{ url_for('static', filename='images/user/default.png') }}"
+                            alt="AI生成プレビュー"
+                            style="width:120px;height:120px;object-fit:cover;border-radius:50%;transition:all .3s ease;"
+                            width=""
+                            height="">
+                        <div id="thumbAiLoading" class="d-none text-body-secondary small">
+                            <i class="fa fa-spinner fa-spin me-1"></i>生成中...
+                        </div>
+                        <div id="thumbAiError" class="d-none text-body-secondary small"></div>
+                    </div>
+                    <div class="mt-auto">
+                        <button id="thumbAiGenBtn" type="button" class="btn btn-secondary btn-lg w-100"
+                            {% if admin_points is not none and admin_points < 2 %}disabled title="AIポイント不足（必要: 2pt / 残: {{ admin_points }}pt）"{% endif %}>
+                            <i class="fa fa-magic me-1"></i>AI生成
+                            <small class="ms-1 opacity-75 badge rounded-pill text-bg-dark" style="font-size:0.5em;font-weight:normal">有料機能</small>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             {# 右：サムネイル表示設定 #}
             <div class="col-12 col-md-6">
                 <div class="p-4 border rounded h-100 d-flex flex-column">
@@ -55,15 +94,18 @@
                                 <input type="hidden" name="delete_thumbs" value="{{ tc.filename }}" class="thumb-delete-input" disabled>
                                 {# 表示ON/OFFチェックボックス #}
                                 <input type="checkbox"
-                                       name="visible_thumbs"
-                                       id="tc-{{ loop.index }}"
-                                       value="{{ tc.filename }}"
-                                       class="d-none"
-                                       {% if tc.visible %}checked{% endif %}>
+                                        name="visible_thumbs"
+                                        id="tc-{{ loop.index }}"
+                                        value="{{ tc.filename }}"
+                                        class="d-none"
+                                        {% if tc.visible %}checked{% endif %}>
                                 <label for="tc-{{ loop.index }}" class="thumb-label position-relative d-block">
                                     <img src="{{ url_for('static', filename='images/user/' ~ tc.filename) }}"
-                                         alt="{{ tc.filename }}"
-                                         class="thumb-img">
+                                        alt="{{ tc.filename }}"
+                                        class="thumb-img"
+                                        alt="user thumbnail"
+                                        width=""
+                                        height="">
                                     {# 削除プレビュー：✖オーバーレイ #}
                                     <div class="thumb-delete-overlay">
                                         <i class="fa fa-times"></i>

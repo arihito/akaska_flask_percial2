@@ -261,7 +261,8 @@
                                     <i class="fa fa-check me-1"></i>翻訳済み
                                 </button>
                             {% elif is_translatable %}
-                                <button class="btn btn-secondary btn-sm translate-btn" data-memo-id="{{ memo.id }}">
+                                <button class="btn btn-secondary btn-sm translate-btn" data-memo-id="{{ memo.id }}"
+                                    {% if admin_points is not none and admin_points < 4 %}disabled title="AIポイント不足（必要: 4pt / 残: {{ admin_points }}pt）"{% endif %}>
                                     <i class="fa fa-recycle me-1"></i>AI翻訳
                                     <small class="ms-1 opacity-75 badge rounded-pill text-bg-dark" style="font-size:0.5em;font-weight:normal">有料機能</small>
                                 </button>
@@ -374,7 +375,8 @@
                                 <i class="fa fa-check me-1"></i>翻訳済み
                             </button>
                         {% elif is_translatable %}
-                            <button class="btn btn-secondary btn-sm translate-btn" data-memo-id="{{ memo.id }}">
+                            <button class="btn btn-secondary btn-sm translate-btn" data-memo-id="{{ memo.id }}"
+                                {% if admin_points is not none and admin_points < 4 %}disabled title="AIポイント不足（必要: 4pt / 残: {{ admin_points }}pt）"{% endif %}>
                                 <i class="fa fa-recycle me-1"></i>AI翻訳
                                 <small class="ms-1 opacity-75" style="font-size:0.68em;font-weight:normal">有料</small>
                             </button>

@@ -223,7 +223,8 @@
                         placeholder="例: Flaskでのテスト自動化入門">
                 </div>
                 <div class="col-12 col-md-4 d-flex align-items-end">
-                    <button type="button" id="fixed-gen-btn" class="btn btn-secondary w-100">
+                    <button type="button" id="fixed-gen-btn" class="btn btn-secondary w-100"
+                        {% if admin_points is not none and admin_points < 2 %}disabled title="AIポイント不足（必要: 2pt / 残: {{ admin_points }}pt）"{% endif %}>
                         <i class="fa fa-magic me-1"></i>このタイトルで記事を作成
                         <small class="ms-1 opacity-75 badge rounded-pill text-bg-dark" style="font-size:0.5em;font-weight:normal">有料機能</small>
                     </button>

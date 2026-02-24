@@ -36,8 +36,10 @@ def send_admin_token_mail(user, raw_password, expires_at):
         f"━━━━━━━━━━━━━━━━━━━━\n"
         f"トークンパスワード: {raw_password}\n"
         f"有効期限: {expires_str} (JST)\n"
+        f"付与ポイント: +24pt（累積）\n"
         f"━━━━━━━━━━━━━━━━━━━━\n\n"
-        f"※ このパスワードはサブスク期間中は同じものを使用します。\n"
+        f"※ AI機能はポイントを消費します（解析6pt・翻訳4pt・その他2pt）。\n"
+        f"※ ポイント不足時は追加決済で24ptを加算できます。\n"
         f"※ 期限切れ後は再度決済が必要です。\n"
     )
     msg.html = render_template(
@@ -100,12 +102,23 @@ def stripe_webhook():
         if user_id:
             user = User.query.get(int(user_id))
             if user:
-                # 決済フラグと期限を設定
-                days = current_app.config['ADMIN_PLAN_DAYS']
+                # 決済フラグとポイント・期限を設定（累積加算・期限延長）
+                hours = current_app.config['ADMIN_PLAN_HOURS']
+                points = current_app.config['ADMIN_PLAN_POINTS']
                 user.is_paid = True
                 user.paid_at = datetime.now(timezone.utc)
-                expires_at = datetime.now(timezone.utc) + timedelta(days=days)
+                # 期限：残時間があれば延長、切れていれば現在時刻から24h
+                now = datetime.now(timezone.utc)
+                current_expires = user.subscription_expires_at
+                if current_expires and current_expires.tzinfo is None:
+                    current_expires = current_expires.replace(tzinfo=timezone.utc)
+                if current_expires and current_expires > now:
+                    expires_at = current_expires + timedelta(hours=hours)
+                else:
+                    expires_at = now + timedelta(hours=hours)
                 user.subscription_expires_at = expires_at
+                # ポイント：累積加算
+                user.admin_points = (user.admin_points or 0) + points
 
                 # トークンパスワード生成・保存
                 raw_password = generate_token_password()

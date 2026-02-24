@@ -1,0 +1,98 @@
+{% extends "fixed/base.j2" %}
+{% block article_body %}
+<h1>Flaskでうんこぷりぷり</h1>
+
+<p>本記事では、Flaskフレームワークを使用して、ユーザーの入力に基づいて「うんこ」を生成し、それを画面に表示する、というユニークなアプリケーションの作成方法を解説します。この例は、Webアプリケーションの基本的な流れと、HTML、Python、そしてFlaskの連携を理解するための入門として役立ちます。</p>
+
+<h2>1. プロジェクトのセットアップ</h2>
+
+<p>まず、Flaskプロジェクトの基本的な構造を作成します。仮想環境を作成し、Flaskをインストールします。</p>
+
+<pre><code>python -m venv venv
+source venv/bin/activate  # Windowsの場合は venv\Scripts\activate
+pip install Flask
+</code></pre>
+
+<p>次に、アプリケーションのエントリーポイントとなるPythonファイル（例: <code>app.py</code>）を作成します。</p>
+
+<h2>2. Flaskアプリケーションの基本構造</h2>
+
+<p><code>app.py</code>に、Flaskアプリケーションのインスタンスを作成し、ルートを定義します。</p>
+
+<pre><code>from flask import Flask, render_template, request
+
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+if __name__ == '__main__':
+    app.run(debug=True)
+</code></pre>
+
+<p>このコードは、ルートURL（<code>/</code>）にアクセスがあった際に、<code>templates</code>フォルダ内の<code>index.html</code>を表示するように設定しています。<code>debug=True</code>は開発中に便利ですが、本番環境では<code>False</code>に設定してください。</p>
+
+<h2>3. HTMLテンプレートの作成</h2>
+
+<p><code>templates</code>フォルダを作成し、その中に<code>index.html</code>ファイルを作成します。このHTMLファイルには、ユーザーからの入力を受け取るフォームと、結果を表示するエリアを設けます。</p>
+
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;うんこぷりぷりジェネレーター&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;うんこぷりぷりジェネレーター&lt;/h1&gt;
+    &lt;form action="/generate" method="post"&gt;
+        &lt;label for="count"&gt;生成するうんこの数:&lt;/label&gt;
+        &lt;input type="number" id="count" name="count" min="1" max="10" value="1"&gt;
+        &lt;button type="submit"&gt;生成！&lt;/button&gt;
+    &lt;/form&gt;
+
+    &lt;div id="result"&gt;
+        {{ result | safe }}
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+<p><strong>注意:</strong> 上記HTMLでは<code>{{ result | safe }}</code>というJinja2タグを使用していますが、記事の仕様上、Jinja2タグは含めないことになっています。実際には、この部分はPython側で生成したHTML文字列を渡すことで動的に表示されることを想定しています。</p>
+
+<h2>4. うんこ生成ロジックの実装</h2>
+
+<p><code>app.py</code>に、フォームからのPOSTリクエストを処理する新しいルートを追加します。</p>
+
+<pre><code>@app.route('/generate', methods=['POST'])
+def generate_unko():
+    try:
+        count = int(request.form['count'])
+        if not (1 &lt;= count &lt;= 10):
+            raise ValueError("1から10の間の数値を入力してください")
+
+        unko_html = ""
+        for _ in range(count):
+            unko_html += "&lt;p&gt;💩&lt;/p&gt;"
+
+        return render_template('index.html', result=unko_html)
+
+    except (ValueError, KeyError) as e:
+        return f"エラー: {e}"
+</code></pre>
+
+<p>このルートでは、フォームから送信された<code>count</code>の値を取得し、バリデーションを行います。指定された数だけ「💩」のHTML要素を生成し、それを<code>result</code>として<code>index.html</code>に渡します。<code>render_template</code>関数は、Jinja2テンプレートエンジンを使用してHTMLをレンダリングしますが、ここでは<code>result</code>変数に直接HTML文字列を渡しています。</p>
+
+<h2>5. 実行と確認</h2>
+
+<p>ターミナルで以下のコマンドを実行し、Flask開発サーバーを起動します。</p>
+
+<pre><code>python app.py
+</code></pre>
+
+<p>ブラウザで<code>http://127.0.0.1:5000/</code>にアクセスし、生成するうんこの数を入力して「生成！」ボタンをクリックすると、指定した数のうんこが表示されることを確認できます。この例を通して、Flaskでのルーティング、リクエスト処理、テンプレートへのデータ渡しといった基本的なWebアプリケーション開発の流れを体験できます。</p>
+
+<h3>まとめ</h3>
+
+<p>Flaskを使用すると、このような遊び心のあるアプリケーションも比較的簡単に作成できます。重要なのは、HTTPリクエストとレスポンスのサイクル、そしてサーバーサイドのロジックとクライアントサイドの表示をどう連携させるか、という点です。この「うんこぷりぷり」ジェネレーターを足がかりに、より複雑なWebアプリケーション開発へとステップアップしていきましょう。</p>
+{% endblock article_body %}

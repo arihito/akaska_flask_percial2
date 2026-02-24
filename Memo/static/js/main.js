@@ -259,6 +259,41 @@
 })();
 
 /* =========================
+    管理画面ヘッダー：AIポイント即時反映
+========================== */
+/**
+ * AI操作成功後にヘッダーの残ポイント表示をリアルタイム更新する。
+ * サーバーレスポンスの remaining_points が null/undefined の場合（スーパーアドミン）は何もしない。
+ * @param {number|null} remaining - サーバーから返却された残ポイント数
+ */
+function getBatteryLevel(points) {
+    if (points >= 19) return 4;
+    if (points >= 13) return 3;
+    if (points >= 7)  return 2;
+    if (points >= 1)  return 1;
+    return 0;
+}
+
+function updateAdminPoints(remaining) {
+    if (remaining === null || remaining === undefined) return;
+    // ヘッダー内の残ポイント表示要素（battery アイコン直後の strong）を特定
+    const ptEl = document.querySelector(".admin-navbar .border strong:first-of-type");
+    if (!ptEl) return;
+    ptEl.textContent = remaining;
+    // 残5pt以下なら赤文字に切り替え
+    if (remaining <= 5) {
+        ptEl.classList.add("text-danger");
+    }
+    // バッテリーアイコンをポイント段階に応じて更新
+    const icon = ptEl.previousElementSibling;
+    if (icon && icon.classList.contains("fa")) {
+        const level = getBatteryLevel(remaining);
+        icon.className = icon.className.replace(/fa-battery-\d/, `fa-battery-${level}`);
+        icon.style.color = level === 0 ? "#900" : "";
+    }
+}
+
+/* =========================
     グローバルクリック一元管理
 ========================== */
 
@@ -335,6 +370,162 @@ const ACTIONS = {
             ` <span class="like-count text-body-secondary">${data.like_count}いいね</span>`;
     },
 };
+
+/* =========================
+    AI生成ボタン（admin/category）
+========================== */
+document.addEventListener("DOMContentLoaded", () => {
+    const catAiGenBtn = document.getElementById("catAiGenBtn");
+    if (!catAiGenBtn) return;
+
+    catAiGenBtn.addEventListener("click", async () => {
+        if (!confirm("この操作はGemini AI（有料）を使用します。\n実行しますか？")) return;
+
+        const nameInput  = document.getElementById("cat-name");
+        const colorInput = document.getElementById("cat-color");
+        const icon       = document.getElementById("catAiGenBtnIcon");
+        const loading    = document.getElementById("catAiGenLoading");
+        const errorEl    = document.getElementById("catAiGenError");
+        const csrfToken  = document.querySelector('input[name="csrf_token"]')?.value || "";
+
+        catAiGenBtn.disabled = true;
+        icon?.classList.add("d-none");
+        loading?.classList.remove("d-none");
+        errorEl?.classList.add("d-none");
+
+        try {
+            const res = await fetch("/admin/category/ai_suggest", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRFToken": csrfToken,
+                },
+                body: JSON.stringify({}),
+            });
+
+            const json = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(json.message || `HTTP ${res.status}`);
+
+            if (json.status === "ok") {
+                if (nameInput)  nameInput.value  = json.name;
+                if (colorInput) colorInput.value = json.color;
+                updateAdminPoints(json.remaining_points);
+            } else {
+                throw new Error(json.message || "AI生成エラー");
+            }
+        } catch (e) {
+            console.error("######## カテゴリーAI生成エラー ########", e);
+            if (errorEl) {
+                errorEl.textContent = e.message || "エラーが発生しました";
+                errorEl.classList.remove("d-none");
+            }
+        } finally {
+            catAiGenBtn.disabled = false;
+            icon?.classList.remove("d-none");
+            loading?.classList.add("d-none");
+        }
+    });
+});
+
+/* =========================
+    AI生成ボタン（admin/user_thumb）
+========================== */
+document.addEventListener("DOMContentLoaded", () => {
+    const thumbAiGenBtn = document.getElementById("thumbAiGenBtn");
+    if (!thumbAiGenBtn) return;
+
+    thumbAiGenBtn.addEventListener("click", async () => {
+        if (!confirm("この操作はGemini AI（有料）を使用します。\n実行しますか？")) return;
+
+        const preview  = document.getElementById("thumbAiPreview");
+        const loading  = document.getElementById("thumbAiLoading");
+        const errorEl  = document.getElementById("thumbAiError");
+        const userSel  = document.getElementById("thumb-ai-user-select");
+        const csrfToken = document.querySelector('input[name="csrf_token"]')?.value || "";
+
+        thumbAiGenBtn.disabled = true;
+        loading?.classList.remove("d-none");
+        errorEl?.classList.add("d-none");
+
+        try {
+            const res = await fetch("/admin/user_thumb/ai_generate", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRFToken": csrfToken,
+                },
+                body: JSON.stringify({
+                    user_id: userSel?.value ? parseInt(userSel.value) : null,
+                }),
+            });
+
+            const json = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(json.message || `HTTP ${res.status}`);
+
+            if (json.status === "ok") {
+                updateAdminPoints(json.remaining_points);
+                // プレビューをデフォルトアイコンから生成画像に差し替えて拡大表示
+                if (preview) {
+                    preview.src = json.url + "?t=" + Date.now();
+                    preview.style.width  = "160px";
+                    preview.style.height = "160px";
+                    preview.style.borderRadius = "12px";
+                }
+
+                // サムネイル表示設定グリッドに動的追加
+                const container = document.querySelector(".thumbnail-select");
+                if (container) {
+                    const uid  = "tc-ai-" + Date.now();
+                    const item = document.createElement("div");
+                    item.className = "thumb-item";
+                    item.dataset.filename = json.filename;
+                    item.innerHTML = `
+                        <input type="hidden" name="delete_thumbs" value="${json.filename}" class="thumb-delete-input" disabled>
+                        <input type="checkbox" name="visible_thumbs" id="${uid}" value="${json.filename}" class="d-none" checked>
+                        <label for="${uid}" class="thumb-label position-relative d-block">
+                            <img src="${json.url}?t=${Date.now()}" alt="${json.filename}" class="thumb-img" width="" height="">
+                            <div class="thumb-delete-overlay"><i class="fa fa-times"></i></div>
+                        </label>
+                        <button type="button" class="thumb-delete-btn" title="削除"><i class="fa fa-trash-o"></i></button>
+                        <div class="text-body-secondary text-center mt-1" style="font-size:0.65rem; word-break:break-all; width:80px;">${json.filename}</div>
+                    `;
+                    // 削除ボタンにイベントリスナーを付与（既存ロジックと同じ）
+                    const delBtn = item.querySelector(".thumb-delete-btn");
+                    delBtn.addEventListener("click", () => {
+                        const overlay   = item.querySelector(".thumb-delete-overlay");
+                        const hidden    = item.querySelector(".thumb-delete-input");
+                        const isPending = overlay.classList.contains("is-visible");
+                        if (isPending) {
+                            overlay.classList.remove("is-visible");
+                            hidden.disabled = true;
+                            delBtn.innerHTML = '<i class="fa fa-trash-o"></i>';
+                            delBtn.title = "削除";
+                        } else {
+                            overlay.classList.add("is-visible");
+                            hidden.disabled = false;
+                            delBtn.innerHTML = '<i class="fa fa-undo"></i>';
+                            delBtn.title = "取り消し";
+                        }
+                    });
+                    container.appendChild(item);
+                }
+            } else {
+                throw new Error(json.message || "AI生成エラー");
+            }
+        } catch (e) {
+            console.error("######## AI サムネイル生成エラー ########", e);
+            if (errorEl) {
+                errorEl.textContent = e.message || "エラーが発生しました";
+                errorEl.classList.remove("d-none");
+            }
+        } finally {
+            thumbAiGenBtn.disabled = false;
+            loading?.classList.add("d-none");
+        }
+    });
+});
 
 /* =========================
     サムネイル削除ボタン（admin/user_thumb）
@@ -672,10 +863,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 },
             },
         });
+        // インスタンス生成後の次フレームで表示（正しいサイズで初期化済みの状態から見せる）
+        requestAnimationFrame(() => {
+            barCanvas.style.visibility = "visible";
+        });
     };
 
-    // 初期描画（アニメーション付き）
-    renderBarChart(chartData.bar);
+    // 初期描画: canvas を非表示にしてから描画開始（visibility はレイアウトに影響しない）
+    // → Chart.js が正しいサイズで初期化してから表示されるため小→大の一瞬フラッシュを防ぐ
+    barCanvas.style.visibility = "hidden";
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            renderBarChart(chartData.bar);
+        });
+    });
 
     // ---- テーマ切替時に全チャートのカラーを即時更新 ----
     const updateChartsOnThemeChange = () => {
@@ -743,6 +944,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (json.status === "ok") {
                     renderBarChart(json.data);
+                    updateAdminPoints(json.remaining_points);
                 } else {
                     throw new Error("API error");
                 }
@@ -855,6 +1057,7 @@ document.addEventListener("click", (e) => {
             setGenImage(data.image);
 
             document.getElementById("fixed-gen-preview").classList.remove("d-none");
+            updateAdminPoints(data.remaining_points);
         } catch (err) {
             const errEl = document.getElementById("fixed-gen-error");
             errEl.textContent = "通信エラーが発生しました";
@@ -984,6 +1187,7 @@ document.addEventListener("click", (e) => {
                 // ボタンを「翻訳済み」表示に変更
                 btn.textContent = "翻訳済み";
                 btn.classList.add("opacity-75");
+                updateAdminPoints(json.remaining_points);
 
             } catch (err) {
                 console.error("######## AI翻訳エラー ########", err);

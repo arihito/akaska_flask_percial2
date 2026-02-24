@@ -8,6 +8,21 @@
             <a class="navbar-brand px-md-3 fade-in fade-in-delay-4" href="{{ url_for('admin.index') }}"><i class="fa fa-shield me-2"></i>管理者専用</a>
             <!-- 右：ユーザー情報＋ログアウト -->
             <div class="d-flex align-items-center">
+                <div class="border rounded px-2 me-3">
+                    {% if admin_points is none %}
+                        {# スーパーアドミン：無制限表示 #}
+                        <i class="fa fa-battery-4 super-admin-icon"></i><span class="super-admin-icon ms-1">無限</span>
+                        <small class="opacity-50">pt<span class="px-2">|</span></small>
+                        <i class="fa fa-clock-o super-admin-icon"></i><span class="super-admin-icon ms-1">永遠</span>
+                        <small class="opacity-50">h</small>
+                    {% else %}
+                        {% if admin_points >= 19 %}{% set bat = '4' %}{% elif admin_points >= 13 %}{% set bat = '3' %}{% elif admin_points >= 7 %}{% set bat = '2' %}{% elif admin_points >= 1 %}{% set bat = '1' %}{% else %}{% set bat = '0' %}{% endif %}
+                        <i class="fa fa-battery-{{ bat }}"{% if bat == '0' %} style="color:#900"{% endif %}></i>
+                        <strong class="me-1 {% if is_points_low %}text-danger{% endif %}" style="font-size:1.2rem">{{ admin_points }}</strong><small class="opacity-50">/24pt<span class="px-2">|</span></small>
+                        <i class="fa fa-clock-o"></i>
+                        <strong class="ms-1 {% if is_expiring_soon %}text-danger{% endif %}" style="font-size:1.2rem">{{ remaining_h }}</strong><small class="opacity-50">h{{ remaining_m }}m</small>
+                    {% endif %}
+                </div>
                 <a class="d-flex align-items-center text-decoration-none me-3" href="{{ url_for('memo.index') }}">
                     <img src="{{ url_for('static', filename='images/user/' ~ current_user.thumbnail) }}" alt="{{ current_user.username }}" class="user-icon me-2 fade-in fade-in-delay-8 rounded-circle" width="" height="">
                     <span class="user-name fade-in fade-in-delay-16 text-body-secondary"><strong>{{ current_user.username }}</strong> さん</span>

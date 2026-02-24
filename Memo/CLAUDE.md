@@ -118,11 +118,11 @@ Percial2/                    # 親ディレクトリ（絶対パス: C:/Users/ar
 - 閃光ボタン：@intaraction/grinty.html
 - 管理画面用棒グラフ：@intaraction/barChart.html
 - 棒グラフのイメージ図：@static/images/nouse/barChart.png
-- -----上記は検証または実装済み-----
 - 多言語セレクトメニュー：@intaraction/i18n_ui/index.html
+- -----上記は検証または実装済み-----
+- スクロールメニュー：@intaraction/scrollspy.html
 - ボックス交換UI：@intaraction/switch.html
 - スライドカード：@intaraction/SwiperCard/swiper_add.html
-- スクロールメニュー：@intaraction/scrollspy.html
 
 
 ## 要件定義
@@ -259,7 +259,11 @@ AI（Gemini等）を呼び出すボタンには必ず以下の3点をセット�
    <small class="ms-1 opacity-75" style="font-size:0.68em;font-weight:normal">有料</small>
    ```
 
-3. **サーバー側レートリミット**（`admin/views.py`のAIルート先頭）
+3. **ユーザーサムネイルの画像生成**
+   - 画像生成はgemini-flash-lightは使用できないため、gemini-2.0-flash-exp-image-generationに切り替える。
+   - このモデルは無料で使用可能だが、同じGOOGEL_API_KEYを使用する。
+
+4. **サーバー側レートリミット**（`admin/views.py`のAIルート先頭）
    - `_check_ai_rate_limit(key, limit=5)` ヘルパーを使い、1日5回を上限とする
    - 超過時は HTTP 429 + JSONエラーを返す
    - `key` は機能名（例: `'analyze'`, `'fixed_generate'`）で区別する

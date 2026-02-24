@@ -14,7 +14,8 @@
                 <div class="card border-secondary chart-card w-100 d-flex flex-column">
                     <div class="card-header chart-card-header d-flex justify-content-between align-items-center">
                         <span><i class="fa fa-signal me-2"></i>記事品質スコア（最新5件）</span>
-                        <button id="analyzeBtn" class="btn btn-outline-secondary btn-lg">
+                        <button id="analyzeBtn" class="btn btn-outline-secondary btn-lg"
+                            {% if admin_points is not none and admin_points < 6 %}disabled title="AIポイント不足（必要: 6pt / 残: {{ admin_points }}pt）"{% endif %}>
                             <i class="fa fa-cogs me-1"></i>AI解析
                             <small class="ms-1 opacity-75 badge rounded-pill text-bg-secondary" style="font-size:0.5em;font-weight:normal">有料機能</small>
                         </button>
@@ -140,6 +141,7 @@
                             {% endif %}
                         </td>
                         <td class="text-nowrap">
+                            {% if is_super_admin %}
                             <form action="{{ url_for('admin.approve', user_id=user.id) }}" method="post" class="d-inline">
                                 {{ form.hidden_tag() }}
                                 {% if user.is_admin %}
@@ -148,6 +150,7 @@
                                     <button type="submit" class="btn btn-secondary btn-sm">承認する</button>
                                 {% endif %}
                             </form>
+                            {% endif %}
                             {% if user.email != super_admin_email %}
                             <span class="d-inline-block ms-1 position-relative">
                                 {% if user.is_banned %}
@@ -276,6 +279,7 @@
                     </div>
                     <!-- 5段目：操作ボタン -->
                     <div style="grid-column: 1 / -1;" class="d-flex gap-2">
+                        {% if is_super_admin %}
                         <form action="{{ url_for('admin.approve', user_id=user.id) }}" method="post" class="flex-fill">
                             {{ form.hidden_tag() }}
                             {% if user.is_admin %}
@@ -284,6 +288,7 @@
                                 <button type="submit" class="btn btn-secondary btn-sm w-100">承認する</button>
                             {% endif %}
                         </form>
+                        {% endif %}
                         {% if user.email != super_admin_email %}
                         <div class="flex-fill position-relative">
                             {% if user.is_banned %}

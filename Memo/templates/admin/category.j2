@@ -71,15 +71,24 @@
                         <form id="category-add-form" method="POST" action="{{ url_for('admin.category') }}" novalidate>
                             {{ form.hidden_tag() }}
                             <div class="row">
-                                <div class="col-12 col-md-8 mb-1 fade-in fade-delay-16">
+                                <div class="col-12 col-md-6 mb-1 fade-in fade-delay-16">
                                     <label for="cat-name" class="form-label small text-body-secondary">カテゴリー名　<span class="text-body-tertiary">英数字のみ・12文字以内</span></label>
                                     <input type="text" id="cat-name" name="name" class="form-control" placeholder="例: Python" maxlength="12" autocomplete="off">
                                     <div id="cat-name-error" class="form-text text-danger d-none small mt-1"></div>
                                 </div>
-                                <div class="col-12 col-md-4 mb-1 fade-in fade-delay-18">
-                                    <label for="cat-color" class="form-label small text-body-secondary">カラー　<span class="text-body-tertiary">#666より暗い色</span></label>
-                                    <input type="color" id="cat-color" name="color" class="form-control form-control-color" value="#234466">
-                                    <div id="cat-color-error" class="form-text text-danger d-none small mt-1"></div>
+                                <div class="col-12 col-md-6 mb-1 fade-in fade-delay-18 row">
+                                    <label for="cat-color" class="col-12 form-label small text-body-secondary">カラー　<span class="text-body-tertiary">#666より暗い色</span></label>
+                                    <div class="d-flex justify-content-between px-0 gap-2">
+                                      <input type="color" id="cat-color" name="color" class="form-control form-control-color" value="#234466">
+                                      <button id="catAiGenBtn" type="button" class="btn btn-secondary d-flex flex-nowrap justify-content-center align-items-center"
+                                          {% if admin_points is not none and admin_points < 2 %}disabled title="AIポイント不足（必要: 2pt / 残: {{ admin_points }}pt）"{% endif %}>
+                                          <span id="catAiGenBtnIcon"><i class="fa fa-magic me-1"></i>AI生成</span>
+                                          <span id="catAiGenLoading" class="d-none"><i class="fa fa-spinner fa-spin me-1"></i>生成中</span>
+                                          <small class="opacity-75 badge rounded-pill text-bg-dark ms-2 mt-1" style="font-size:0.5em;font-weight:normal">有料機能</small>
+                                      </button>
+                                    </div>
+                                    <div id="cat-color-error" class="col-12 form-text text-danger d-none small mt-1"></div>
+                                    <div id="catAiGenError" class="col-12 form-text text-danger d-none small mt-1"></div>
                                 </div>
                             </div>
                             <div class="d-flex g-2 mt-4">
