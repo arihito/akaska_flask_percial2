@@ -1,0 +1,54 @@
+{% extends "mail/base.j2" %}
+
+{% block title %}
+    <h1 style="color:#ffffff;margin:0;font-size:20px;font-weight:600;letter-spacing:.2em;">
+        一時停止希望通知
+    </h1>
+{% endblock %}
+
+{% block content %}
+    <p style="margin-top:0;"><span style="margin-right:5px;font-size:1.6rem;">■</span>一時停止希望が届きました。
+    </p>
+
+    <!-- 情報ボックス -->
+    <table width="100%" cellpadding="0" cellspacing="0"
+           style="background:#f9f9f9;border:1px solid #ccc;border-radius:6px;">
+        <tr>
+            <td style="padding:5px 20px 10px;box-shadow:0 0 10px #cde;">
+                <p style="margin:0 0 8px 0;padding:5px 0;border-bottom: dotted 1px #abc">
+                    <strong style="display:inline-block;width:130px;background-color:#dde;color:#234;font-weight:bold;padding:5px 10px;border-radius:3px;margin-right:20px;">対象ユーザー</strong><span style="font-size:1rem;color:#888;margin-right:6px;">[{{ target_user.id }}]:</span><span style="font-size:1.6rem;">{{ target_user.username }}</span>
+                </p>
+                <p style="margin:0 0 8px 0;padding:5px 0;border-bottom: dotted 1px #abc">
+                    <strong style="display:inline-block;width:130px;background-color:#dde;color:#234;font-weight:bold;padding:5px 10px;border-radius:3px;margin-right:20px;">依頼者</strong><span style="font-size:1rem;color:#888;margin-right:6px;">[{{ requester.id }}]:</span><span style="font-size:1.6rem;">{{ requester.username }}</span>
+                </p>
+                <p style="margin:0;padding:5px 0;">
+                    <strong style="display:inline-block;width:130px;background-color:#dde;color:#234;font-weight:bold;padding:5px 10px;border-radius:3px;margin-right:20px;vertical-align:top;">停止理由</strong><span style="font-size:1rem;line-height:1.8;">{{ reason }}</span>
+                </p>
+            </td>
+        </tr>
+    </table>
+
+    <p style="margin-top:20px;font-size:13px;color:#666;">
+        管理画面でユーザー一覧を確認し、「一時停止希望」ボタンから承認してください。
+    </p>
+
+    <!-- ボタン -->
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:10px;">
+        <tr>
+            <td align="center">
+                <a href="{{ admin_url }}"
+                   style="display:inline-block;
+                          margin:10px;
+                          padding:12px 24px;
+                          background:#234;
+                          color:#ffffff;
+                          text-decoration:none;
+                          border-radius:4px;
+                          font-weight:600;
+                          letter-spacing:0.5px;">
+                    管理画面を開く
+                </a>
+            </td>
+        </tr>
+    </table>
+{% endblock %}

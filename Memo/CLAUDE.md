@@ -144,6 +144,7 @@ Percial2/                    # 親ディレクトリ（絶対パス: C:/Users/ar
 - [アプリ構成図](static/docs/architecture.png)
 - [アプリ樹形図](static/docs/tree.txt)
 - [機能定義書](static/docs/function_definition.csv)
+- [開発環境スペック](static/docs/dev_print.py)
 
 ## ER図作成
 ```

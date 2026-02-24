@@ -177,6 +177,8 @@ def index():
         for name, count in user_dist
     ]
 
+    is_super_admin = current_user.email == super_admin_email
+
     return render_template('admin/index.j2',
         users=users,
         form=form,
@@ -185,6 +187,7 @@ def index():
         pages=pages,
         total=total,
         super_admin_email=super_admin_email,
+        is_super_admin=is_super_admin,
         bar_chart_data=json.dumps(bar_chart_data, ensure_ascii=False),
         pie_category_data=json.dumps(pie_category_data, ensure_ascii=False),
         pie_user_data=json.dumps(pie_user_data, ensure_ascii=False),
@@ -333,6 +336,35 @@ def payment_cancel():
     return redirect(url_for('admin.payment'))
 
 
+def _send_suspend_request_mail(target_user, requester, reason):
+    """スーパーadminに一時停止希望メールを送信"""
+    from app import mail
+    super_admin_email = current_app.config.get('MAIL_USERNAME')
+    admin_url = url_for('admin.index', _external=True)
+    msg = Message(
+        subject=f'【メモアプリ】一時停止希望：{target_user.username}',
+        recipients=[super_admin_email],
+    )
+    msg.html = render_template(
+        'mail/admin_suspend_request.j2',
+        target_user=target_user,
+        requester=requester,
+        reason=reason,
+        admin_url=admin_url,
+    )
+    msg.body = (
+        f"一時停止希望が届きました。\n\n"
+        f"対象ユーザー: {target_user.username}（{target_user.email}）\n"
+        f"依頼者: {requester.username}\n"
+        f"理由: {reason}\n\n"
+        f"管理画面: {admin_url}"
+    )
+    try:
+        mail.send(msg)
+    except Exception as e:
+        print(f"######## 一時停止希望メール送信失敗: {e} ########")
+
+
 @admin_bp.route('/ban/<int:user_id>', methods=['POST'])
 @admin_required
 def ban(user_id):
@@ -342,14 +374,62 @@ def ban(user_id):
     if user.email == super_admin_email:
         flash('スーパーアドミンは停止できません', 'secondary')
         return redirect(url_for('admin.index'))
-    user.is_banned = not user.is_banned
-    db.session.commit()
 
-    if user.is_banned:
-        flash(f'{user.username} を一時停止しました', 'secondary')
+    is_super_admin = current_user.email == super_admin_email
+
+    if is_super_admin:
+        # スーパーadmin: 即トグル
+        user.is_banned = not user.is_banned
+        if not user.is_banned:
+            user.suspend_requested = False
+            user.suspend_reason = None
+        db.session.commit()
+        if user.is_banned:
+            flash(f'{user.username} を一時停止しました', 'secondary')
+        else:
+            flash(f'{user.username} の一時停止を解除しました', 'secondary')
     else:
-        flash(f'{user.username} の一時停止を解除しました', 'secondary')
+        if user.is_banned:
+            # 停止解除（通常adminも即時可）
+            user.is_banned = False
+            user.suspend_requested = False
+            user.suspend_reason = None
+            db.session.commit()
+            flash(f'{user.username} の一時停止を解除しました', 'secondary')
+        elif user.suspend_requested:
+            flash(f'{user.username} は既に一時停止希望済みです。スーパーアドミンの承認をお待ちください', 'secondary')
+        else:
+            # 一時停止希望：理由を保存してメール通知
+            reason = request.form.get('suspend_reason', '').strip()
+            if not reason:
+                flash('停止理由を入力してください', 'secondary')
+                return redirect(url_for('admin.index'))
+            user.suspend_requested = True
+            user.suspend_reason = reason
+            db.session.commit()
+            _send_suspend_request_mail(user, current_user, reason)
+            flash(f'{user.username} への一時停止希望をスーパーアドミンに通知しました', 'secondary')
 
+    return redirect(url_for('admin.index'))
+
+
+@admin_bp.route('/ban/approve/<int:user_id>', methods=['POST'])
+@admin_required
+def ban_approve(user_id):
+    """スーパーadmin: 一時停止希望を承認して実行"""
+    super_admin_email = current_app.config.get('MAIL_USERNAME')
+    if current_user.email != super_admin_email:
+        flash('この操作はスーパーアドミンのみ可能です', 'secondary')
+        return redirect(url_for('admin.index'))
+    user = User.query.get_or_404(user_id)
+    if not user.suspend_requested:
+        flash('一時停止希望が見つかりません', 'secondary')
+        return redirect(url_for('admin.index'))
+    user.is_banned = True
+    user.suspend_requested = False
+    user.suspend_reason = None
+    db.session.commit()
+    flash(f'{user.username} を一時停止しました（承認実行）', 'secondary')
     return redirect(url_for('admin.index'))
 
 

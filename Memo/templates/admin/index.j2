@@ -149,14 +149,57 @@
                                 {% endif %}
                             </form>
                             {% if user.email != super_admin_email %}
-                            <form action="{{ url_for('admin.ban', user_id=user.id) }}" method="post" class="d-inline ms-1">
-                                {{ form.hidden_tag() }}
+                            <span class="d-inline-block ms-1 position-relative">
                                 {% if user.is_banned %}
-                                    <button type="submit" class="btn btn-secondary btn-sm">停止解除</button>
+                                    {# 停止中：誰でも解除可 #}
+                                    <form action="{{ url_for('admin.ban', user_id=user.id) }}" method="post" class="d-inline">
+                                        {{ form.hidden_tag() }}
+                                        <button type="submit" class="btn btn-secondary btn-sm">停止解除</button>
+                                    </form>
+                                {% elif is_super_admin %}
+                                    {% if user.suspend_requested %}
+                                        {# スーパーadmin: 承認ボタン（理由ツールチップ付き） #}
+                                        <form action="{{ url_for('admin.ban_approve', user_id=user.id) }}" method="post" class="d-inline">
+                                            {{ form.hidden_tag() }}
+                                            <button type="submit" class="btn btn-outline-secondary btn-sm"
+                                                    data-bs-toggle="tooltip" data-bs-placement="top"
+                                                    title="理由: {{ user.suspend_reason }}">
+                                                一時停止希望
+                                            </button>
+                                        </form>
+                                    {% else %}
+                                        {# スーパーadmin: 即時停止 #}
+                                        <form action="{{ url_for('admin.ban', user_id=user.id) }}" method="post" class="d-inline">
+                                            {{ form.hidden_tag() }}
+                                            <button type="submit" class="btn btn-outline-secondary btn-sm">一時停止</button>
+                                        </form>
+                                    {% endif %}
                                 {% else %}
-                                    <button type="submit" class="btn btn-outline-secondary btn-sm">一時停止</button>
+                                    {% if user.suspend_requested %}
+                                        {# 通常admin: 希望済みバッジ #}
+                                        <span class="badge bg-secondary" style="cursor:default;border:1px solid #777;border-radius:12px;">希望済</span>
+                                    {% else %}
+                                        {# 通常admin: 吹き出しフォーム #}
+                                        <button type="button" class="btn btn-outline-secondary btn-sm js-suspend-btn"
+                                                data-user-id="{{ user.id }}">
+                                            一時停止希望
+                                        </button>
+                                        <div class="suspend-popover d-none" id="suspend-popover-{{ user.id }}">
+                                            <div class="suspend-popover-arrow"></div>
+                                            <form action="{{ url_for('admin.ban', user_id=user.id) }}" method="post">
+                                                {{ form.hidden_tag() }}
+                                                <p class="small mb-1 fw-bold text-body-secondary">停止理由</p>
+                                                <textarea name="suspend_reason" class="form-control form-control-sm mb-2"
+                                                    rows="3" maxlength="500" placeholder="理由を入力してください..." required></textarea>
+                                                <div class="d-flex gap-1">
+                                                    <button type="submit" class="btn btn-secondary btn-sm flex-fill">通知する</button>
+                                                    <button type="button" class="btn btn-outline-secondary btn-sm js-suspend-cancel">×</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    {% endif %}
                                 {% endif %}
-                            </form>
+                            </span>
                             {% endif %}
                         </td>
                     </tr>
@@ -242,14 +285,52 @@
                             {% endif %}
                         </form>
                         {% if user.email != super_admin_email %}
-                        <form action="{{ url_for('admin.ban', user_id=user.id) }}" method="post" class="flex-fill">
-                            {{ form.hidden_tag() }}
+                        <div class="flex-fill position-relative">
                             {% if user.is_banned %}
-                                <button type="submit" class="btn btn-secondary btn-sm w-100">停止解除</button>
+                                <form action="{{ url_for('admin.ban', user_id=user.id) }}" method="post">
+                                    {{ form.hidden_tag() }}
+                                    <button type="submit" class="btn btn-secondary btn-sm w-100">停止解除</button>
+                                </form>
+                            {% elif is_super_admin %}
+                                {% if user.suspend_requested %}
+                                    <form action="{{ url_for('admin.ban_approve', user_id=user.id) }}" method="post">
+                                        {{ form.hidden_tag() }}
+                                        <button type="submit" class="btn btn-outline-secondary btn-sm w-100"
+                                                data-bs-toggle="tooltip" data-bs-placement="top"
+                                                title="理由: {{ user.suspend_reason }}">
+                                            一時停止希望
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <form action="{{ url_for('admin.ban', user_id=user.id) }}" method="post">
+                                        {{ form.hidden_tag() }}
+                                        <button type="submit" class="btn btn-outline-secondary btn-sm w-100">一時停止</button>
+                                    </form>
+                                {% endif %}
                             {% else %}
-                                <button type="submit" class="btn btn-outline-secondary btn-sm w-100">一時停止</button>
+                                {% if user.suspend_requested %}
+                                    <span class="badge bg-secondary" style="cursor:default;border:1px solid #777;border-radius:12px;">希望済</span>
+                                {% else %}
+                                    <button type="button" class="btn btn-outline-secondary btn-sm w-100 js-suspend-btn"
+                                            data-user-id="{{ user.id }}-sp">
+                                        一時停止希望
+                                    </button>
+                                    <div class="suspend-popover d-none" id="suspend-popover-{{ user.id }}-sp">
+                                        <div class="suspend-popover-arrow"></div>
+                                        <form action="{{ url_for('admin.ban', user_id=user.id) }}" method="post">
+                                            {{ form.hidden_tag() }}
+                                            <p class="small mb-1 fw-bold text-body-secondary">停止理由</p>
+                                            <textarea name="suspend_reason" class="form-control form-control-sm mb-2"
+                                                rows="3" maxlength="500" placeholder="理由を入力してください..." required></textarea>
+                                            <div class="d-flex gap-1">
+                                                <button type="submit" class="btn btn-secondary btn-sm flex-fill">通知する</button>
+                                                <button type="button" class="btn btn-outline-secondary btn-sm js-suspend-cancel">×</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                {% endif %}
                             {% endif %}
-                        </form>
+                        </div>
                         {% endif %}
                     </div>
                 </div>

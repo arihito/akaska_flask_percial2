@@ -83,6 +83,8 @@ class User(UserMixin, db.Model):
     is_applied = db.Column(db.Boolean, nullable=False, default=False)
     is_paid = db.Column(db.Boolean, nullable=False, default=False)
     is_banned = db.Column(db.Boolean, nullable=False, default=False)
+    suspend_requested = db.Column(db.Boolean, nullable=False, default=False)
+    suspend_reason = db.Column(db.String(500), nullable=True)
     applied_at = db.Column(db.DateTime(timezone=True), nullable=True)
     approved_at = db.Column(db.DateTime(timezone=True), nullable=True)
     paid_at = db.Column(db.DateTime(timezone=True), nullable=True)

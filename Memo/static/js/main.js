@@ -997,3 +997,48 @@ document.addEventListener("click", (e) => {
         });
     });
 })();
+
+/* =========================
+    一時停止希望 吹き出しフォーム（admin/index）
+    テーブルのclip/z-index問題を回避するため、
+    表示時に body 直下へ移動して position:fixed で配置する
+========================== */
+document.addEventListener("click", (e) => {
+    // 「一時停止希望」ボタン：対応する吹き出しをトグル
+    const triggerBtn = e.target.closest(".js-suspend-btn");
+    if (triggerBtn) {
+        e.stopPropagation();
+        const userId = triggerBtn.dataset.userId;
+        const popover = document.getElementById("suspend-popover-" + userId);
+        if (!popover) return;
+
+        // 他の吹き出しを全て閉じる
+        document.querySelectorAll(".suspend-popover:not(.d-none)").forEach((p) => {
+            if (p !== popover) p.classList.add("d-none");
+        });
+
+        if (popover.classList.contains("d-none")) {
+            // ボタンの位置を取得して fixed 座標を算出
+            const rect = triggerBtn.getBoundingClientRect();
+            const left = Math.max(8, rect.right - 220);
+            popover.style.top  = (rect.bottom + 8) + "px";
+            popover.style.left = left + "px";
+            // body 直下に移動してテーブルのスタッキングコンテキストから脱出
+            document.body.appendChild(popover);
+            popover.classList.remove("d-none");
+        } else {
+            popover.classList.add("d-none");
+        }
+        return;
+    }
+    // 「×（キャンセル）」ボタン
+    const cancelBtn = e.target.closest(".js-suspend-cancel");
+    if (cancelBtn) {
+        cancelBtn.closest(".suspend-popover")?.classList.add("d-none");
+        return;
+    }
+    // 吹き出し内クリックは伝播させない
+    if (e.target.closest(".suspend-popover")) return;
+    // 外クリックで全て閉じる
+    document.querySelectorAll(".suspend-popover").forEach((p) => p.classList.add("d-none"));
+});
