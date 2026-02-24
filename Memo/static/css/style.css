@@ -447,10 +447,17 @@ mark {
 /* サイドメニューのホバー演出 */
 #sidebarMenu .nav-link {
     border-radius: 0.5rem;
-    margin: 0.15rem 0.75rem;
+    margin: 0.5rem 0.75rem;
+    padding: 0.65rem 1rem;
+    font-size: 1.15rem;
     transition:
         background-color 0.15s ease,
         color 0.15s ease;
+}
+
+/* サイドメニューのアコーディオンボタン文字サイズ */
+#sidebarMenu .accordion-button {
+    font-size: 1.1rem;
 }
 
 /* メニューホバー時 */
@@ -753,9 +760,19 @@ pre.file-tag[data-tag]::before {
 }
 
 @keyframes superAdminPulse {
-    0%   { transform: scale(1);    opacity: .5;}
-    50%  { transform: scale(1.1); opacity: 1; color:#ccc;}
-    100% { transform: scale(1);    opacity: .5;   color:}
+    0%   { transform: scale(1);   opacity: .5; }
+    50%  { transform: scale(1.1); opacity: 1;  color: #ccc; }
+    100% { transform: scale(1);   opacity: .5; }
+}
+
+[data-bs-theme="light"] .super-admin-icon {
+    animation-name: superAdminPulseLight;
+}
+
+@keyframes superAdminPulseLight {
+    0%   { transform: scale(1);   opacity: .5; }
+    50%  { transform: scale(1.1); opacity: 1;  color: #234; }
+    100% { transform: scale(1);   opacity: .5; }
 }
 
 /* 管理者ログイン ステップバー */
@@ -1169,6 +1186,14 @@ pre.file-tag[data-tag]::before {
     background-color: #f8f9fa;
 }
 
+/* scrollspy アクティブ状態 */
+#admin-guide-nav .list-group-item.active {
+    background-color: #ccc;
+    border-color: #ccc;
+    color: #234;
+    font-weight: bold;
+}
+
 .order-num {
   font-size: 1.2rem;
   font-weight: bold;
@@ -1420,6 +1445,35 @@ pre.file-tag[data-tag]::before {
 @keyframes sidebarGlowLine {
     0%   { top: -60%; }
     100% { top: 130%; }
+}
+
+/* ライトモード：ボーダーグロー & 縦走り光筋を明るい輝きに上書き */
+[data-bs-theme="light"] .sidebarMenu {
+    border-right-color: rgba(100, 140, 220, 0.3);
+    animation-name: sidebarElectricPulseLight;
+}
+
+[data-bs-theme="light"] .sidebarMenu::after {
+    background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgb(170, 172, 181) 50%,
+        transparent 100%
+    );
+    filter: blur(2px);
+}
+
+@keyframes sidebarElectricPulseLight {
+    0%, 100% {
+        box-shadow: inset -2px 0 8px rgba(100, 140, 220, 0.15),
+                    2px 0 10px rgba(100, 140, 220, 0.12);
+        border-right-color: rgba(100, 140, 220, 0.30);
+    }
+    50% {
+        box-shadow: inset -4px 0 20px rgba(100, 160, 255, 0.45),
+                    4px 0 26px rgba(100, 160, 255, 0.35);
+        border-right-color: rgba(120, 170, 255, 0.85);
+    }
 }
 
 /* 一時停止希望 吹き出しフォーム（admin/index） */

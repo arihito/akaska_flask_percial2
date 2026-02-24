@@ -164,6 +164,9 @@ http://127.0.0.1:5000/diagram
 tree > static/docs/tree.txt
 ```
 
+## アプリ操作解説の流れ
+@docs/operation_flow.md
+
 ## gitコマンドを実行する階層
 @Percial2
 
