@@ -18,10 +18,40 @@ from pathlib import Path
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
 
+def _build_attr_dist(column, labels_order=None):
+    """指定カラムの値ごとのユーザー数（NULL/空文字除外）を返す。"""
+    rows = db.session.query(column, func.count(User.id))\
+        .filter(column.isnot(None))\
+        .filter(column != '')\
+        .group_by(column)\
+        .all()
+    total = sum(c for _, c in rows)
+    if total == 0:
+        return []
+    data_map = {v: c for v, c in rows}
+    result = []
+    seen = set()
+    if labels_order:
+        for label in labels_order:
+            c = data_map.get(label, 0)
+            if c > 0:
+                result.append({'label': label, 'count': c, 'pct': round(c / total * 100, 1)})
+                seen.add(label)
+        for v, c in rows:
+            if v not in seen and c > 0:
+                result.append({'label': v, 'count': c, 'pct': round(c / total * 100, 1)})
+    else:
+        result = [{'label': v, 'count': c, 'pct': round(c / total * 100, 1)} for v, c in rows]
+    return result
+
+
 def _check_ai_rate_limit(key, limit=5):
     """セッションベースの1日あたりAI機能使用回数チェック。
     本日の使用回数が limit 以内であれば True（カウントアップ）、超過なら False を返す。
+    スーパーアドミンは制限なし。
     """
+    if _is_super_admin():
+        return True
     today = date.today().isoformat()
     session_key = f'ai_rate_{key}'
     entry = session.get(session_key, {'date': '', 'count': 0})
@@ -317,6 +347,14 @@ def index():
         for name, count in user_dist
     ]
 
+    # 帯グラフ: ユーザー属性分布
+    attr_dist_data = [
+        {'key': '性別',    'segs': _build_attr_dist(User.gender,     ['男性', '女性', 'その他'])},
+        {'key': '年代',    'segs': _build_attr_dist(User.age_range,  ['0〜10', '10〜20', '20〜30', '30〜40', '40〜50', '50〜60', '60以上'])},
+        {'key': '居住地域', 'segs': _build_attr_dist(User.address,   ['東京都', '神奈川県', '埼玉県', '千葉県', 'その他'])},
+        {'key': 'ご職業',  'segs': _build_attr_dist(User.occupation, ['学生', '会社員', '自営業', '主婦・主夫', 'その他'])},
+    ]
+
     is_super_admin = current_user.email == super_admin_email
 
     return render_template('admin/index.j2',
@@ -331,6 +369,7 @@ def index():
         bar_chart_data=json.dumps(bar_chart_data, ensure_ascii=False),
         pie_category_data=json.dumps(pie_category_data, ensure_ascii=False),
         pie_user_data=json.dumps(pie_user_data, ensure_ascii=False),
+        attr_dist_data=attr_dist_data,
     )
 
 
@@ -693,12 +732,15 @@ def user_thumb():
         if os.path.isfile(os.path.join(user_img_dir, f)) and f not in EXCLUDE
     ])
 
-    # DB と自動同期（新ファイルは visible=True で追加、削除済みは除去）
+    # DB と自動同期（新ファイルは 001〜010 のみ visible=True で追加、削除済みは除去）
     existing = {tc.filename: tc for tc in ThumbnailConfig.query.all()}
     file_set = set(all_files)
     for filename in all_files:
         if filename not in existing:
-            db.session.add(ThumbnailConfig(filename=filename, visible=True))
+            m = re.match(r'^(\d+)\.', filename)
+            num = int(m.group(1)) if m else None
+            is_default_visible = (num is not None and 1 <= num <= 10)
+            db.session.add(ThumbnailConfig(filename=filename, visible=is_default_visible))
     for filename, tc in existing.items():
         if filename not in file_set:
             db.session.delete(tc)
@@ -894,6 +936,7 @@ def analyze():
             'ai_score': scores,
         })
 
+    db.session.commit()  # ai_score の更新を確実にDBへ保存（_consume_ai_points がスーパーアドミンで早期returnする場合でも保証）
     _consume_ai_points(_AI_COST_ANALYZE)
     return jsonify(status='ok', data=results, remaining_points=current_user.admin_points)
 
@@ -1126,6 +1169,7 @@ def fixed_create():
     content = request.form.get('content', '').strip()
     image = request.form.get('image', '').strip() or None
     visible = request.form.get('visible') == 'on'
+    redirect_to_memo = request.form.get('redirect_to_memo') == '1'
 
     if not key or not title or not content:
         flash('必須項目が不足しています', 'secondary')
@@ -1136,12 +1180,25 @@ def fixed_create():
         return redirect(url_for('admin.fixed'))
 
     # .j2 テンプレートファイルを書き出し
+    # Markdown内のJinja2メタ文字をエスケープ（コードブロック内の {{ }} {%  %} を安全にする）
+    safe_content = (
+        content
+        .replace('{{', "{{ '{{' }}")
+        .replace('}}', "{{ '}}' }}")
+        .replace('{%', "{{ '{%' }}")
+        .replace('%}', "{{ '%}' }}")
+        .replace('{#', "{{ '{#' }}")
+        .replace('#}', "{{ '#}' }}")
+    )
     template_dir = os.path.join(current_app.root_path, 'templates', 'fixed')
     template_path = os.path.join(template_dir, f'{key}.j2')
     j2_content = (
         '{% extends "fixed/base.j2" %}\n'
         '{% block article_body %}\n'
-        + content + '\n'
+        '{% set md %}\n'
+        + safe_content + '\n'
+        '{% endset %}'
+        '{{ md | markdown | safe }}\n'
         '{% endblock article_body %}\n'
     )
     try:
@@ -1165,6 +1222,10 @@ def fixed_create():
     db.session.commit()
 
     flash(f'固定ページ「{title}」を作成しました（/fixed/{key}）', 'secondary')
+    if redirect_to_memo:
+        from urllib.parse import urlencode
+        params = urlencode({'title': title, 'body': content, 'summary': summary or ''})
+        return redirect(url_for('memo.create') + '?' + params)
     return redirect(url_for('admin.fixed'))
 
 

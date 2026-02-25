@@ -1,3 +1,16 @@
+{% macro render_select_field(field, wrapper_class="") %}
+    <div class="mb-2 {{ wrapper_class }}">
+        <label for="{{ field.id }}" class="form-label text-body-secondary">{{ field.label.text }}</label>
+        {{ field(class="form-select p-3") }}
+        {% if field.errors %}
+            <div class="text-danger small mt-1">
+                <i class="fa fa-exclamation-triangle"></i>
+                {% for error in field.errors %}{{ error }}{% endfor %}
+            </div>
+        {% endif %}
+    </div>
+{% endmacro %}
+
 {% macro render_floating_field(field, placeholder="", wrapper_class="", input_class="", autofocus=False) %}
     <div class="form-floating mb-3 {{ wrapper_class }}">
         {{ field(

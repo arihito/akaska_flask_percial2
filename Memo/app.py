@@ -25,6 +25,18 @@ app = Flask(__name__)
 app.config.from_object('config.Config')
 stripe.api_key = app.config['STRIPE_SECRET_KEY']
 db.init_app(app)
+
+# SQLite の FOREIGN KEY 制約を有効化（デフォルトで無効のため CASCADE DELETE が機能しない）
+from sqlalchemy import event
+from sqlalchemy.engine import Engine
+import sqlite3
+
+@event.listens_for(Engine, "connect")
+def set_sqlite_pragma(dbapi_connection, connection_record):
+    if isinstance(dbapi_connection, sqlite3.Connection):
+        cursor = dbapi_connection.cursor()
+        cursor.execute("PRAGMA foreign_keys=ON")
+        cursor.close()
 mail = Mail(app)
 toolbar = DebugToolbarExtension(app)
 migrate = Migrate(app, db)

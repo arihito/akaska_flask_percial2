@@ -42,16 +42,18 @@ def generate_fixed_page(title: str, existing_keys: list) -> dict | None:
    - 既存キー一覧: {existing_keys_str}
    - 例: flask_crud, user_auth, api_design
 
-2. content: 約1000文字の技術解説HTML（<h2>, <h3>, <p>, <ul>, <li>等のHTMLタグを使用）
+2. content: 約1000文字の技術解説（Markdown形式で記述）
+   - 見出しは ## または ### を使用
+   - コードブロックは ``` または ```python のようにフェンスで囲む
+   - リストは - または 1. を使用
+   - 表など純粋なMarkdownで表現が難しい場合のみHTMLタグを含めても良い
    - Jinja2タグ（{{% %}}, {{{{ }}}}）は絶対に含めない
-   - コードブロックは <pre><code>...</code></pre> で囲む
-   - &amp;, &lt;, &gt; 等HTMLエンティティを適切に使う
 
 3. summary: 約200文字の日本語要約文（ページの内容を端的に説明）
 
 【出力形式】
 必ず以下のJSONのみを出力してください（説明文は不要）:
-{{"key": "スラッグ", "content": "HTML本文", "summary": "要約文"}}"""
+{{"key": "スラッグ", "content": "Markdown本文", "summary": "要約文"}}"""
 
         response = client.models.generate_content(
             model=MODEL_NAME,

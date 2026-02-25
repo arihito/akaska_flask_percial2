@@ -45,3 +45,23 @@ class UserFactory(SQLAlchemyModelFactory):
         "random_element",
         elements=[f"{i:03}.png" for i in range(1, 11)]
     )
+
+    gender = factory.Faker(
+        "random_element",
+        elements=["男性", "女性"]
+    )
+
+    age_range = factory.Faker(
+        "random_element",
+        elements=["0〜10", "10〜20", "20〜30", "30〜40", "40〜50", "50〜60", "60以上"]
+    )
+
+    address = factory.Faker(
+        "random_element",
+        elements=["東京都", "神奈川県", "埼玉県", "千葉県", "その他"]
+    )
+
+    occupation = factory.Faker(
+        "random_element",
+        elements=["学生", "会社員", "自営業", "主婦・主夫", "その他"]
+    )

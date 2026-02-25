@@ -124,3 +124,58 @@ class Article(db.Model):
 ## まとめ
 
 Flask-SQLAlchemyを使うことで、SQL文を直接書くことなくデータベース操作が可能になります。セッション管理とトランザクション処理を適切に行うことで、データの整合性を保ちながら安全にCRUD操作を実装できます。
+
+## バルク操作でパフォーマンスを向上させる
+
+大量データを個別にINSERTするとパフォーマンスが低下します。SQLAlchemyのバルク操作を活用しましょう。
+
+```python
+# バルクINSERT（推奨）
+from sqlalchemy import insert
+
+db.session.execute(
+    insert(Article),
+    [{'title': f'記事{i}', 'content': f'内容{i}', 'user_id': 1} for i in range(1000)]
+)
+db.session.commit()
+```
+
+SQLAlchemy 2.0では `session.execute(insert(...))` 形式が推奨されており、従来の `bulk_insert_mappings` より効率的です。1000件のINSERTでも1回のトランザクションで完了するため、ループで1件ずつ追加するより大幅に高速です。
+
+## トランザクション管理の実践
+
+複数テーブルへの書き込みが絡む処理では、トランザクションの扱いを明示的に意識します。
+
+```python
+def transfer_article(article_id, new_user_id):
+    try:
+        article = db.session.get(Article, article_id)
+        article.user_id = new_user_id
+        db.session.add(ActivityLog(action='transfer', article_id=article_id))
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        raise e
+```
+
+`try / except` でロールバックを明示することで、部分的な書き込みによるデータ不整合を防ぎます。`with db.session.begin():` を使うコンテキストマネージャ形式では自動コミット・ロールバックが行われます。
+
+## クエリの最適化
+
+N+1問題はFlaskアプリのパフォーマンスボトルネックになりやすい問題です。`joinedload` や `selectinload` で対策します。
+
+```python
+from sqlalchemy.orm import joinedload, selectinload
+
+# N+1問題が発生するクエリ（悪い例）
+articles = Article.query.all()
+for article in articles:
+    print(article.author.username)  # ← 記事ごとにSQLが発行される
+
+# joinedload で解決（良い例）
+articles = Article.query.options(joinedload(Article.author)).all()
+for article in articles:
+    print(article.author.username)  # ← JOINで一括取得済み
+```
+
+`SQLALCHEMY_ECHO = True` を設定すると発行されるSQLがコンソールに出力されるため、N+1問題の検出に役立ちます。

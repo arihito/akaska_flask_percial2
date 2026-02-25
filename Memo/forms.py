@@ -9,6 +9,7 @@ from wtforms import (
     FileField,
     BooleanField,
     RadioField,
+    SelectField,
 )
 from flask_wtf.file import FileAllowed
 from flask_login import current_user
@@ -53,6 +54,13 @@ class MemoForm(FlaskForm):
         validators=[
             DataRequired("タイトルは必須入力です"),
             Length(max=30, message="30文字以下で入力してください"),
+        ],
+    )
+    summary = TextAreaField(
+        "要約文（省略可・一覧表示に優先使用）：",
+        validators=[
+            Optional(),
+            Length(max=300, message="300文字以下で入力してください"),
         ],
     )
     content = TextAreaField(
@@ -122,6 +130,61 @@ class SignUpForm(LoginForm):  # ログイン処理と同じなため機能を継
     password = PasswordField(
         "パスワード：",
         validators=[Length(8, 12, "パスワードの長さは8文字以上12文字以内です")],
+    )
+    confirm_password = PasswordField(
+        "パスワード（確認）：",
+        validators=[
+            DataRequired(message="確認用パスワードを入力してください"),
+            EqualTo("password", message="パスワードが一致しません"),
+        ],
+    )
+    gender = SelectField(
+        "",
+        choices=[
+            ("", "「性別」 を選択してください"),
+            ("男性", "男性"),
+            ("女性", "女性"),
+            ("その他", "その他"),
+        ],
+        validators=[DataRequired(message="性別を選択してください")],
+    )
+    age_range = SelectField(
+        "",
+        choices=[
+            ("", "「年代」 を選択してください"),
+            ("0〜10", "0〜10歳"),
+            ("10〜20", "10〜20歳"),
+            ("20〜30", "20〜30歳"),
+            ("30〜40", "30〜40歳"),
+            ("40〜50", "40〜50歳"),
+            ("50〜60", "50〜60歳"),
+            ("60以上", "60歳以上"),
+        ],
+        validators=[DataRequired(message="年代を選択してください")],
+    )
+    address = SelectField(
+        "",
+        choices=[
+            ("", "「居住地域」 を選択してください"),
+            ("東京都", "東京都"),
+            ("神奈川県", "神奈川県"),
+            ("埼玉県", "埼玉県"),
+            ("千葉県", "千葉県"),
+            ("その他", "その他の地域"),
+        ],
+        validators=[DataRequired(message="居住地域を選択してください")],
+    )
+    occupation = SelectField(
+        "",
+        choices=[
+            ("", "「ご職業」 を選択してください"),
+            ("学生", "学生"),
+            ("会社員", "会社員"),
+            ("自営業", "自営業"),
+            ("主婦・主夫", "主婦・主夫"),
+            ("その他", "その他"),
+        ],
+        validators=[DataRequired(message="ご職業を選択してください")],
     )
     submit = SubmitField("登録")  # ボタンラベルをオーバーライド
 

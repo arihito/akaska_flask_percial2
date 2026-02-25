@@ -126,3 +126,49 @@ flask db revision -m "Custom migration"
 ## まとめ
 
 Flask-Migrateを使うことで、データベーススキーマの変更を安全かつ追跡可能な形で管理できます。特に本番環境では、マイグレーション前に必ずバックアップを取り、段階的に変更を適用することが重要です。
+
+## マイグレーションファイルの手動編集
+
+自動生成されたマイグレーションファイルは完全ではない場合があります。特にデータ変換が必要なケースでは手動で編集します。
+
+```python
+# migrations/versions/xxxx_add_display_name.py
+def upgrade():
+    op.add_column('users', sa.Column('display_name', sa.String(50), nullable=True))
+    # 既存データへの初期値設定
+    op.execute("UPDATE users SET display_name = username WHERE display_name IS NULL")
+    op.alter_column('users', 'display_name', nullable=False)
+
+def downgrade():
+    op.drop_column('users', 'display_name')
+```
+
+`nullable=True` で追加 → データ埋め → `nullable=False` に変更という3ステップが、既存データを持つテーブルへの安全なNOT NULL制約追加のパターンです。
+
+## 本番環境のマイグレーション運用
+
+本番では `flask db upgrade` を実行前に必ずバックアップを取得します。また、長時間ロックが発生するマイグレーション（大テーブルへのインデックス追加など）はメンテナンス時間帯に実施します。
+
+```bash
+# SQLiteの場合：バックアップ後にアップグレード
+cp instance/memodb.sqlite instance/memodb_backup_$(date +%Y%m%d).sqlite
+flask db upgrade
+```
+
+複数サーバー構成では1台だけでマイグレーションを実行し、他のサーバーはアプリ再起動のみ行います。マイグレーション失敗時のロールバック手順も事前に確認しておくことが重要です。
+
+## よくあるトラブルと対処法
+
+### 「Target database is not up to date」エラー
+
+チームで開発している場合、他のメンバーが作ったマイグレーションと競合することがあります。
+
+```bash
+# 複数のhead（最新マイグレーション）が存在する場合のマージ
+flask db merge heads -m "merge migrations"
+flask db upgrade
+```
+
+### 自動検出されない変更
+
+テーブル名の変更やカラムの型変更は自動検出されないケースがあります。その場合は `flask db revision` で空のマイグレーションファイルを作成し、手動で `op.rename_table()` や `op.alter_column()` を記述します。

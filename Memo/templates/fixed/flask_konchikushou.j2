@@ -1,0 +1,60 @@
+{% extends "fixed/base.j2" %}
+{% block article_body %}
+<h2>Flaskのこんちくしょう！ ～あの時、なぜ動かなかったのか～</h2>
+
+<p>Webフレームワーク「Flask」を使っていると、時折「なんでだ！？」と頭を抱えたくなるような挙動に遭遇することがあります。今回は、そんなFlaskの「こんちくしょう！」と思わず叫んでしまうような、しかし解決すれば「なるほど！」と膝を打つような、よくある落とし穴とその対策について解説します。</p>
+
+<h3>1. ルーティングの優先順位でハマる</h3>
+<p>Flaskのルーティングは、定義された順序で評価されます。そのため、より具体的なパスよりも汎用的なパスを先に定義してしまうと、意図しないルートにルーティングされてしまうことがあります。</p>
+
+<ul>
+  <li><strong>例：</strong></li>
+  <li><code>@app.route('/users/')</code> を先に定義し、その後に <code>@app.route('/users/<int:user_id>/')</code> を定義した場合、<code>/users/123/</code> へのアクセスも <code>/users/</code> にルーティングされてしまう。</li>
+</ul>
+
+<p><strong>解決策：</strong>より具体的なパスを先に定義するようにしましょう。これは、Webフレームワーク全般に言える基本的な注意点ですが、Flaskでも頻繁に起こり得ます。</p>
+
+<pre><code>@app.route('/users/&lt;int:user_id&gt;/')
+def show_user_profile(user_id):
+    # ...
+
+@app.route('/users/')
+def list_users():
+    # ...</code></pre>
+
+<h3>2. リクエストコンテキストの誤解</h3>
+<p>Flaskはリクエストごとにコンテキストを生成します。<code>request</code> オブジェクトや <code>g</code> オブジェクトなどは、このリクエストコンテキスト内に存在します。これらのオブジェクトは、リクエストをまたいで共有されるものではありません。</p>
+
+<ul>
+  <li><strong>よくある間違い：</strong></li>
+  <li>リクエスト間で <code>g.user</code> の値を保持しようとする。</li>
+  <li>グローバル変数のように <code>request.form</code> を別のリクエストで参照しようとする。</li>
+</ul>
+
+<p><strong>解決策：</strong>セッションやデータベースなどを活用して、リクエストをまたいでデータを永続化・共有する必要があります。<code>g</code> オブジェクトは、単一リクエスト内での一時的なデータ保持に限定して使用しましょう。</p>
+
+<h3>3. テンプレートレンダリング時のパス問題</h3>
+<p>Jinja2テンプレートの <code>render_template</code> 関数で指定するテンプレートファイルのパスは、通常 <code>templates</code> ディレクトリからの相対パスになります。しかし、プロジェクトの構造によっては、このパス指定が混乱を招くことがあります。</p>
+
+<ul>
+  <li><strong>例：</strong></li>
+  <li><code>templates/users/profile.html</code> をレンダリングしたいのに、<code>render_template('profile.html')</code> と書いてしまう。</li>
+</ul>
+
+<p><strong>解決策：</strong><code>templates</code> ディレクトリからの相対パスを正確に指定しましょう。サブディレクトリがある場合は、<code>render_template('users/profile.html')</code> のように記述します。</p>
+
+<h3>4. フォーム処理におけるCSRF対策の忘れ</h3>
+<p>Webアプリケーションにおいて、クロスサイトリクエストフォージェリ（CSRF）は深刻なセキュリティリスクです。Flask単体ではCSRF対策が組み込まれていないため、手動での実装または拡張機能の利用が必要です。</p>
+
+<p><strong>解決策：</strong>Flask-WTF などの拡張機能を利用して、簡単にCSRF対策を導入しましょう。これにより、フォーム送信時に秘密のトークンを検証し、不正なリクエストを防ぐことができます。</p>
+
+<pre><code>from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField
+from wtforms.validators import DataRequired
+
+class MyForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired()])
+    submit = SubmitField('Submit')</code></pre>
+
+<p>これらの「こんちくしょう！」な瞬間も、原因を理解し、適切な対策を講じることで、より堅牢で安全なFlaskアプリケーションを開発するための糧となります。Flaskの奥深さを楽しみながら、開発を進めていきましょう。</p>
+{% endblock article_body %}

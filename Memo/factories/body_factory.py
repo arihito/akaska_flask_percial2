@@ -17,6 +17,11 @@ class BodyFactory:
         "auth": ["auth_001.md"],
         "package": ["package_001.md"],
         "api": ["api_001.md", "api_002.md"],
+        "testing": ["testing_001.md"],
+        "deploy": ["deploy_001.md"],
+        "celery": ["celery_001.md"],
+        "docker": ["docker_001.md"],
+        "logging": ["logging_001.md"],
     }
 
     @classmethod

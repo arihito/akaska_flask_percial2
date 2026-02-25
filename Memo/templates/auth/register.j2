@@ -1,7 +1,7 @@
 {% extends "base.j2" %}
 {% block page_title %}アカウント登録 | {{ SITE_NAME }}{% endblock %}
 {% block content %}
-    {% from 'auth/_formhelpers.j2' import render_field, render_floating_field %}
+    {% from 'auth/_formhelpers.j2' import render_field, render_floating_field, render_select_field %}
     <div class="d-flex align-items-center py-md-4 m-md-5 mb-3">
         <div class="col-12 col-md-6 form-signin p-md-5 mx-md-auto">
             <h1 class="h3 mb-3 fw-normal fade-in fade-delay-1"><i class="fa fa-user-plus me-2"></i>新規登録</h1>
@@ -13,10 +13,17 @@
                 </div>
                 {{ render_floating_field(form.email, "Email address", wrapper_class="fade-in fade-delay-4") }}
                 {{ render_floating_field(form.password, "Password", wrapper_class="fade-in fade-delay-6") }}
-                <nav class="navbar bg-body-secondary my-3 rounded-3 fade-in fade-delay-8">
+                {{ render_floating_field(form.confirm_password, "Confirm Password", wrapper_class="fade-in fade-delay-7") }}
+                <hr class="my-4 fade-in fade-delay-8" style="opacity:.3;">
+                <h4 class="text-body-secondary mb-2 fade-in fade-delay-7"><i class="fa fa-id-card me-2"></i>プロフィール情報</h4>
+                {{ render_select_field(form.gender, wrapper_class="fade-in fade-delay-9") }}
+                {{ render_select_field(form.age_range, wrapper_class="fade-in fade-delay-11") }}
+                {{ render_select_field(form.address, wrapper_class="fade-in fade-delay-13") }}
+                {{ render_select_field(form.occupation, wrapper_class="fade-in fade-delay-15") }}
+                <nav class="navbar bg-body-secondary my-4 rounded-3 fade-in fade-delay-17">
                     <div class="container-fluid justify-content-start my-2 mx-2">
-                        <button type="submit" class="btn btn-secondary btn-lg me-2 text-dark flex-fill fade-in fade-delay-10"><i class="fa fa-user-plus me-2"></i>{{ form.submit.label.text }}</button>
-                        <a class="btn btn-outline-secondary btn-lg me-2 fade-in fade-delay-12" href="#" id="backBtn"><i class="fa fa-arrow-left"></i> 直前のページに戻る</a>
+                        <button type="submit" class="btn btn-secondary btn-lg me-2 text-dark flex-fill fade-in fade-delay-18"><i class="fa fa-user-plus me-2"></i>{{ form.submit.label.text }}</button>
+                        <a class="btn btn-outline-secondary btn-lg me-2 fade-in fade-delay-20" href="#" id="backBtn"><i class="fa fa-arrow-left"></i> 直前のページに戻る</a>
                     </div>
                 </nav>
                 <p class="my-4 fade-in fade-delay-14"><i class="fa fa-sign-in me-2"></i>すでにアカウントをお持ちの場合は「<a class="mt-5 mb-3 text-body-secondary" href="{{ url_for('auth.login') }}"><strong>こちら</strong></a>」からログインしてください。</p>

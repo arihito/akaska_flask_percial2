@@ -109,7 +109,7 @@
                                     <h6 class="font-bold fs-4">{{ memo.marked_title | safe }}</h6>
                                 </div>
                             </td>
-                            <td class="w-25" style="text-align:left;line-height:1.4;font-size:1.1rem;">{{ memo.content | truncate(120, False, '...') }}</td>
+                            <td class="w-25" style="text-align:left;line-height:1.4;font-size:1.1rem;">{{ memo.summary if memo.summary else (memo.content | truncate(120, False, '...')) }}</td>
                             <td>
                                 <small><i class="fa fa-gratipay me-2" style="color:#603"></i>{{ like_count }}いいね</small>
                             </td>
@@ -163,7 +163,7 @@
                               2段目：本文
                         ========================== -->
                         <div style="grid-column: 1 / -1;" class="mb-2">
-                            {{ memo.marked_content | truncate(120, False, '...') }}
+                            {{ memo.summary if memo.summary else (memo.marked_content | truncate(120, False, '...')) }}
                         </div>
                         <!-- =========================
                               3段目：画像 + 右側情報

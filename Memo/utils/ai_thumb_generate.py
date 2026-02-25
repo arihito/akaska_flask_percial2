@@ -57,12 +57,13 @@ def generate_thumb_image() -> bytes | None:
 
         prompt = (
             "Flat vector illustration profile icon. "
-            "A young IT student developer with glasses sitting at a laptop computer and coding. "
+            "A young IT student developer sitting at a laptop computer and coding. "
             "Circular composition with a vibrant solid colored background circle. "
             "Flat design style, clean and minimal. "
             "Similar to app avatar icons from Flaticon. "
             "No text, no shadows, no gradients. "
             "Square canvas, icon suitable for a profile picture."
+            "Python and Flask code is written in various places in the background as decoration."
         )
 
         response = client.models.generate_content(

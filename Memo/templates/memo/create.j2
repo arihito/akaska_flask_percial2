@@ -8,10 +8,27 @@
             <form action="{{ url_for('memo.create') }}" method="post" enctype="multipart/form-data" novalidate>
                 {{ form.hidden_tag() }}
                 {{ render_field(form.title, wrapper_class="fade-in fade-delay-3") }}
+                <div class="form-check my-3 text-start ps-0 fade-in fade-delay-4">
+                    <div class="pretty p-switch p-fill">
+                        <input type="checkbox" id="summaryCheck">
+                        <div class="state">
+                            <label for="summaryCheck" class="form-check-label">要約文を入力する (任意)</label>
+                        </div>
+                    </div>
+                </div>
+                <div id="summary-area" class="summary-area mb-3">
+                    {{ form.summary(class="form-control form-control-sm", rows="2", placeholder="一覧・カードに表示される短い説明文（最大300文字）") }}
+                    {% if form.summary.errors %}
+                        <div class="alert alert-danger small mt-1">
+                            {% for error in form.summary.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                    <div class="form-text text-body-tertiary">未入力の場合は本文の冒頭が自動表示されます</div>
+                </div>
                 <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
                 <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
                 <div class="mb-3 fade-in fade-delay-6">
-                    {{ form.content(id="content", class="form-control") }}
+                    {{ form.content(id="content", class="form-control", **{"data-init-body": init_body}) }}
                     {% if form.content.errors %}
                         <div class="alert alert-danger small mt-1">
                             <i class="fa fa-exclamation-triangle"></i>

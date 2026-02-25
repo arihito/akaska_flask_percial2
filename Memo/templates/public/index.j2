@@ -24,7 +24,7 @@
                                 <p class="mb-2 text-body-secondary">
                                     <i class="fa fa-calendar-o"></i> {{ rand1.memo.created_at.strftime("%Y年%m月%d日") }} by {{ rand1.memo.user.username }}<i class="fa fa-gratipay ms-3" style="color:#603"></i>{{ rand1.like_count }}いいね
                                 </p>
-                                <p class="card-text">{{ rand1.memo.content | truncate(200, False, '...') }}</p>
+                                <p class="card-text">{{ rand1.memo.summary if rand1.memo.summary else (rand1.memo.content | truncate(190, False, '...')) }}</p>
                             </div>
                         </div>
                         <div class="col-md-4 d-none d-md-block recommend-img">
@@ -75,7 +75,7 @@
                                         <a class="text-body-secondary ms-2" href="{{ url_for('auth.login') }}"><i class="fa fa-heart" style="color:#603"></i>{{ like_count }}いいね (まずはログイン!)</a>
                                     {% endif %}
                                 </div>
-                                <p class="card-text mb-auto">{{ memo.content | truncate(150, False, '...') }}</p>
+                                <p class="card-text mb-auto">{{ memo.summary if memo.summary else (memo.content | truncate(90, False, '...')) }}</p>
                             </div>
                         </div>
                     </div>

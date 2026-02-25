@@ -70,6 +70,26 @@ CATEGORY_SEED = [
 
 IMAGE_POOL = [f"{i:02}.jpg" for i in range(1, 22)]
 
+# BodyFactory.get_all_bodies() の返却順と対応した要約文
+# 順序: basic_001, basic_002, crud_001, crud_002, ui_001, ui_002, auth_001, package_001, api_001, api_002
+BODY_SUMMARY_LIST = [
+    "Flaskアプリの大規模化に対応するBlueprintの設計手法を解説。機能ごとのモジュール分割によって保守性と可読性を高める実践的な構成例を紹介します。",
+    "Application FactoryパターンでFlaskアプリを関数内で生成する設計を解説。テスト・本番など環境ごとに柔軟な設定を切り替える構成方法を紹介します。",
+    "Flask-SQLAlchemyを使ったCRUD操作の実装を解説。モデル定義からCreate・Read・Update・Delete処理まで、ORMを活用した実践的な手順を紹介します。",
+    "Flask-MigrateとAlembicを使ったDBマイグレーション管理を解説。スキーマ変更の履歴管理・安全なアップグレード・ロールバック手順を丁寧に紹介します。",
+    "HTMXを活用してJavaScript不要でFlaskアプリに非同期UIを実装する手法を解説。属性ベースのリクエスト送受信でシンプルなコードによる動的なUXを実現します。",
+    "Jinja2のテンプレート継承とマクロを使ったコンポーネント化を解説。DRY原則に基づいた再利用性の高いテンプレート設計で保守コストを大幅に削減できます。",
+    "Flask-Loginによるユーザー認証・セッション管理の実装を解説。ログイン・ログアウト・ログイン状態維持・アクセス制御を簡潔なコードで実現する手順を紹介します。",
+    "FlaskのExtensionsエコシステムを解説。主要な拡張機能の役割と導入方法を紹介し、プロジェクトの規模や要件に適した組み合わせの選び方を示します。",
+    "Flask-RESTfulを使ったREST API構築を解説。リソース指向の設計・エンドポイント定義・HTTPメソッドごとの処理実装など、実践的なAPI開発の手順を紹介します。",
+    "PyJWTを使ったトークンベース認証の実装を解説。アクセストークンの発行・検証・有効期限管理・リフレッシュトークン設計まで、ステートレスなAPI認証の全体像を示します。",
+    "Pytestを使ったFlaskアプリのテスト自動化を解説。conftest.pyのfixture設計・DBトランザクション分離・モック活用・カバレッジ計測まで、実践的なテスト手法を紹介します。",
+    "GunicornとNginxを使ったFlaskアプリの本番デプロイを解説。systemdによるサービス管理・SSL設定・GitHub Actionsによる自動デプロイまで、一連の本番環境構築手順を紹介します。",
+    "CeleryとRedisを使ったFlaskアプリの非同期タスク処理を解説。メール送信や重い処理のバックグラウンド実行・定期実行タスク・タスク状態監視まで実践的に紹介します。",
+    "DockerとDocker ComposeによるFlaskアプリのコンテナ化を解説。Dockerfile作成・マルチサービス構成・開発環境と本番環境の分離・GitHub Actionsとの連携手順を紹介します。",
+    "Python標準loggingモジュールを使ったFlaskアプリのロギング設計を解説。ファイルへのローテーティング出力・エラー時のメール通知・構造化ログの導入手順を紹介します。",
+]
+
 # 固定ページ初期データ（STATIC_PAGES から移行）
 FIXED_PAGES_SEED = [
     # (key, title, order, image, nav_type, summary)
@@ -137,6 +157,10 @@ def seed_data():
             admin_points=24,
             subscription_expires_at=datetime.now(timezone.utc) + timedelta(hours=24),
             created_at=random_date(user_start_date, end_date),
+            gender="男性",
+            age_range="30〜40",
+            address="東京都",
+            occupation="会社員",
         )
         admin_user.set_password("admin1234%")
         admin_user.set_admin_password("admin1234%")
@@ -148,6 +172,10 @@ def seed_data():
             username="田中太郎",
             email=os.getenv('MAIL_SUBUSER', 'subuser@example.com'),
             created_at=random_date(user_start_date, end_date),
+            gender="男性",
+            age_range="20〜30",
+            address="神奈川県",
+            occupation="学生",
         )
         subuser.set_password("pass1234%")
         db.session.add(subuser)
@@ -189,10 +217,12 @@ def seed_data():
                 # 本文はBodyFactoryから取得（インデックスでループ）
                 body_index = (len(memos) + i) % len(all_bodies)
                 body_content = all_bodies[body_index]
+                body_summary = BODY_SUMMARY_LIST[body_index]
 
                 memo = Memo(
                     title=title,
                     content=body_content,  # ← Markdown形式の本文
+                    summary=body_summary,
                     user_id=user.id,
                     image_filename=random.choice(IMAGE_POOL),
                     created_at=random_date(start_date, end_date),
@@ -201,15 +231,12 @@ def seed_data():
                 db.session.add(memo)
                 memos.append(memo)
 
-                # --- Memo にタグ付与 ---
-                memos = Memo.query.all()
-                for memo in memos:
-                    memo.categories.clear()
-                    memo.categories.extend(
-                        random.sample(categories, k=random.randint(1, 3))
-                    )
-
         print(f"メモ作成完了: {len(memos)}件")
+
+        # --- Memo にカテゴリー付与（全メモ追加後にまとめて処理）---
+        db.session.flush()  # memo.id を確定させる
+        for memo in memos:
+            memo.categories = random.sample(categories, k=random.randint(1, 3))
 
         print("お気に入り作成...")
         for memo in memos:

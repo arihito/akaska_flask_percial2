@@ -134,14 +134,35 @@
 
         toggleVisible("changePasswordCheck", "password-area");
         toggleVisible("deleteUserCheck", "delete-area");
+        toggleVisible("summaryCheck", "summary-area");
 
-        // EasyMDEマークダウンエディタ
+        // 要約文フィールドに初期値がある場合（固定ページからのリダイレクト等）はスイッチを自動ON
+        const summaryCheck = document.getElementById("summaryCheck");
+        const summaryField = document.getElementById("summary");
+        if (summaryCheck && summaryField && summaryField.value.trim() !== "") {
+            summaryCheck.checked = true;
+            summaryCheck.dispatchEvent(new Event("change"));
+        }
+
+        // EasyMDEマークダウンエディタ（固定ページ生成からの引き継ぎ初期値対応）
         if (typeof EasyMDE !== "undefined" && document.getElementById("content")) {
+            const contentEl = document.getElementById("content");
+            const initBody = contentEl.dataset.initBody || "";
             new EasyMDE({
-                element: document.getElementById("content"),
+                element: contentEl,
                 spellChecker: false,
                 autofocus: true,
                 placeholder: "Markdownで本文を入力してください",
+                initialValue: initBody || undefined,
+            });
+        }
+
+        // 固定ページ生成: 「保存後に投稿作成ページへ移動する」チェックボックスとhidden inputの同期
+        const redirectMemoCheck = document.getElementById("fc-redirect-memo-check");
+        const redirectMemoHidden = document.getElementById("fc-redirect-to-memo");
+        if (redirectMemoCheck && redirectMemoHidden) {
+            redirectMemoCheck.addEventListener("change", function () {
+                redirectMemoHidden.value = this.checked ? "1" : "";
             });
         }
 
@@ -1246,3 +1267,31 @@ document.addEventListener("click", (e) => {
     // 外クリックで全て閉じる
     document.querySelectorAll(".suspend-popover").forEach((p) => p.classList.add("d-none"));
 });
+
+// ユーザー属性帯グラフ: 左からバーが伸びるアニメーション
+(function () {
+    const firstTrack = document.querySelector(".attr-band-track");
+    if (!firstTrack) return;
+
+    const fills = document.querySelectorAll(".attr-band-fill");
+
+    const animate = () => {
+        fills.forEach((fill, i) => {
+            const pct = fill.dataset.pct;
+            fill.style.setProperty("--attr-target-pct", pct + "%");
+            // 各セグメントをわずかに遅延させてリレー感を出す
+            setTimeout(() => fill.classList.add("attr-animated"), i * 40);
+        });
+    };
+
+    const observer = new IntersectionObserver(
+        (entries) => {
+            if (entries[0].isIntersecting) {
+                animate();
+                observer.disconnect();
+            }
+        },
+        { threshold: 0.3 }
+    );
+    observer.observe(firstTrack);
+})();

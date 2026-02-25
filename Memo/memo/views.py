@@ -107,6 +107,16 @@ def index():
 def create():
     form = MemoForm()
     categories = Category.query.order_by(Category.name).all()
+    if request.method == 'GET':
+        init_title = request.args.get('title', '')
+        init_body = request.args.get('body', '')
+        init_summary = request.args.get('summary', '')
+        if init_title:
+            form.title.data = init_title
+        if init_body:
+            form.content.data = init_body
+        if init_summary:
+            form.summary.data = init_summary
     if form.validate_on_submit():
         # ファイルアップロード
         image_file = form.image.data
@@ -123,11 +133,12 @@ def create():
         memo = Memo(
             title=form.title.data,
             content=form.content.data,
+            summary=form.summary.data or None,
             user_id=current_user.id,
             image_filename=filename
         )
-        # カテゴリー取得
-        selected_ids = request.form.getlist("categories")
+        # カテゴリー取得（重複排除）
+        selected_ids = list(dict.fromkeys(request.form.getlist("categories")))
         if len(selected_ids) > 3:
             abort(400)
         memo.categories = Category.query.filter(Category.id.in_(selected_ids)).all()
@@ -135,7 +146,8 @@ def create():
         db.session.commit()
         flash('登録しました', 'secondary')
         return redirect(url_for('memo.index'))
-    return render_template('memo/create.j2', categories=categories, form=form)
+    init_body = form.content.data or ''
+    return render_template('memo/create.j2', categories=categories, form=form, init_body=init_body)
 
 @memo_bp.route('/update/<int:memo_id>', methods=['GET', 'POST'])
 @login_required
@@ -147,14 +159,15 @@ def update(memo_id):
     if form.validate_on_submit():
         memo.title = request.form['title']
         memo.content = request.form['content']
+        memo.summary = request.form.get('summary') or None
         image_file = form.image.data
         # ファイル更新
         if image_file and allowed_file(image_file.filename):
             original = secure_filename(image_file.filename)
             filename = save_upload(original, 'memo')
             memo.image_filename = filename
-        # カテゴリー更新
-        selected_ids = request.form.getlist("categories")
+        # カテゴリー更新（重複排除）
+        selected_ids = list(dict.fromkeys(request.form.getlist("categories")))
         if len(selected_ids) > 3:
             abort(400)
         memo.categories = Category.query.filter(Category.id.in_(selected_ids)).all()

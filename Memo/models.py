@@ -18,6 +18,7 @@ class Memo(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(50), nullable=False)
     content = db.Column(db.Text, nullable=False)
+    summary = db.Column(db.Text, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', name='fk_memos_users'), nullable=False)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
     image_filename = db.Column(db.String(255), nullable=False, default="nofile.jpg")
@@ -91,6 +92,11 @@ class User(UserMixin, db.Model):
     admin_password = db.Column(db.String(120), nullable=True)
     subscription_expires_at = db.Column(db.DateTime(timezone=True), nullable=True)
     admin_points = db.Column(db.Integer, nullable=False, default=0)
+    # プロフィール属性
+    gender = db.Column(db.String(10), nullable=True)
+    age_range = db.Column(db.String(20), nullable=True)
+    address = db.Column(db.String(20), nullable=True)
+    occupation = db.Column(db.String(20), nullable=True)
     memos = relationship('Memo', back_populates='user')
     favorites = relationship('Favorite', back_populates='user', cascade="all, delete-orphan")
     @property

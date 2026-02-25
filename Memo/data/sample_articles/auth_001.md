@@ -213,3 +213,71 @@ class Config:
 ## まとめ
 
 Flask-Loginを使うことで、複雑な認証ロジックを簡潔に実装できます。UserMixinの継承、user_loaderの設定、@login_requiredデコレータの3つのポイントを押さえれば、堅牢な認証システムを構築できます。セキュリティ面では、パスワードのハッシュ化とHTTPS通信が必須です。
+
+## Remember Me機能の実装
+
+Flask-Loginは「ログイン状態の保持」をCookieで実現します。`login_user()` の `remember=True` で永続クッキーが発行されます。
+
+```python
+from datetime import timedelta
+
+@auth_bp.route('/login', methods=['POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and user.check_password(form.password.data):
+            login_user(user, remember=form.remember.data,
+                       duration=timedelta(days=7))
+            return redirect(url_for('memo.index'))
+```
+
+クッキーの有効期限は `REMEMBER_COOKIE_DURATION` でも設定できます。セキュリティ上、`REMEMBER_COOKIE_SECURE = True`（HTTPS限定）と `REMEMBER_COOKIE_HTTPONLY = True` を本番環境で有効にします。
+
+## ロールベースアクセス制御（RBAC）
+
+`login_required` だけでなく、ユーザーの役割に応じたアクセス制御が必要な場合は独自デコレータを実装します。
+
+```python
+from functools import wraps
+from flask import abort
+from flask_login import current_user
+
+def admin_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not current_user.is_authenticated or not current_user.is_admin:
+            abort(403)
+        return f(*args, **kwargs)
+    return decorated
+
+@app.route('/admin')
+@login_required
+@admin_required
+def admin_panel():
+    return render_template('admin/index.html')
+```
+
+デコレータを重ねることで `login_required` → `admin_required` の順にチェックされます。Flask-Principalなどの拡張機能を使うと、より複雑な権限管理も実現できます。
+
+## パスワードリセット機能
+
+安全なパスワードリセットには itsdangerous の `URLSafeTimedSerializer` を使ってトークンを発行します。
+
+```python
+from itsdangerous import URLSafeTimedSerializer
+
+def generate_reset_token(email):
+    s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    return s.dumps(email, salt='password-reset-salt')
+
+def verify_reset_token(token, expiration=3600):
+    s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    try:
+        email = s.loads(token, salt='password-reset-salt', max_age=expiration)
+    except Exception:
+        return None
+    return email
+```
+
+有効期限付きのトークンをメールで送信し、リンクアクセス時に検証することで安全なパスワードリセットフローを実現できます。

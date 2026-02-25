@@ -9,9 +9,11 @@
         </h2>
 
         <div class="row mb-5">
-            {# 左カラム: 棒グラフ (col-8) - d-flex で右カラムと高さを揃える #}
-            <div class="col-md-8 d-flex fade-in fade-delay-4">
-                <div class="card border-secondary chart-card w-100 d-flex flex-column">
+            {# 左カラム: 棒グラフ + 帯グラフ (col-8) - flex-column で縦積み #}
+            {% set band_colors = ['rgba(96,118,133,0.5)', 'rgba(133,96,117,0.5)', 'rgba(117,133,96,0.5)', 'rgba(133,117,96,0.5)', 'rgba(96,117,133,0.5)', 'rgba(117,96,133,0.5)', 'rgba(133,103,96,0.5)'] %}
+            <div class="col-md-8 d-flex flex-column gap-3 fade-in fade-delay-4">
+                {# 棒グラフカード #}
+                <div class="card border-secondary chart-card d-flex flex-column flex-grow-1">
                     <div class="card-header chart-card-header d-flex justify-content-between align-items-center">
                         <span><i class="fa fa-signal me-2"></i>記事品質スコア（最新5件）</span>
                         <button id="analyzeBtn" class="btn btn-outline-secondary btn-lg"
@@ -33,6 +35,30 @@
                                 <i class="fa fa-exclamation-triangle me-1"></i>解析に失敗しました
                             </small>
                         </div>
+                    </div>
+                </div>
+                {# 帯グラフカード: ユーザー属性分布 #}
+                <div class="card border-secondary chart-card">
+                    <div class="card-header chart-card-header">
+                        <i class="fa fa-users me-2"></i>ユーザー属性分布
+                    </div>
+                    <div class="card-body chart-card-body d-flex flex-column justify-content-evenly py-3 px-3">
+                        {% for row in attr_dist_data %}
+                        <div class="attr-band-row d-flex align-items-center">
+                            <div class="attr-band-label text-body-secondary small text-end pe-3">{{ row.key }}</div>
+                            <div class="attr-band-track flex-grow-1">
+                                {% for seg in row.segs %}
+                                <div class="attr-band-fill"
+                                     data-pct="{{ seg.pct }}"
+                                     style="background-color: {{ band_colors[loop.index0 % 7] }}">
+                                    {% if seg.pct > 7 %}
+                                    <span class="attr-band-text">{{ seg.label }} {{ seg.pct }}%</span>
+                                    {% endif %}
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>

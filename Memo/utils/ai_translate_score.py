@@ -116,7 +116,7 @@ def score_translate_value(
 
         scores = json.loads(json_match.group())
 
-        # スコア範囲バリデーション（Python側で合算・クランプ）
+        # スコア範囲バリデーション（Python側で合算・クランプ:固定）
         seo       = max(0, min(40, int(scores.get('seo', 0))))
         tech      = max(0, min(25, int(scores.get('tech', 0))))
         structure = max(0, min(20, int(scores.get('structure', 0))))

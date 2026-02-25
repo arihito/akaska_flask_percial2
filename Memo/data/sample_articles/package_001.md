@@ -223,3 +223,56 @@ toolbar = DebugToolbarExtension(app)
 ## まとめ
 
 Flaskの拡張機能エコシステムは非常に豊富で、ほとんどの一般的な要件に対応する拡張が存在します。Application Factoryパターンを使って拡張機能を初期化することで、テスタビリティと保守性を高めることができます。プロジェクトの要件に応じて適切な拡張を選択し、組み合わせることが成功の鍵です。
+
+## 拡張機能のバージョン管理と互換性
+
+Flaskと拡張機能のバージョン組み合わせは互換性に影響します。`requirements.txt` でバージョンを固定することが重要です。
+
+```text
+Flask==2.3.3
+Flask-SQLAlchemy==3.1.1
+Flask-Login==0.6.3
+Flask-WTF==1.2.2
+Flask-Migrate==4.1.0
+```
+
+`pip install -r requirements.txt` でチーム全員が同一環境を再現できます。バージョン固定は本番環境の予期せぬ動作変化を防ぐため必須です。`pip freeze > requirements.txt` で現在の環境をスナップショットとして保存できます。
+
+## カスタム拡張機能の作成
+
+独自の拡張機能を作成することで、Application Factoryパターンに対応したモジュールを再利用できます。
+
+```python
+class MyExtension:
+    def __init__(self, app=None):
+        self.app = app
+        if app is not None:
+            self.init_app(app)
+
+    def init_app(self, app):
+        app.config.setdefault('MY_SETTING', 'default')
+        app.extensions['my_ext'] = self
+
+my_ext = MyExtension()
+# app.py で: my_ext.init_app(app)
+```
+
+`init_app()` パターンに従うことで、Application Factoryとの互換性を保ちつつ再利用可能なモジュールを作れます。
+
+## 拡張機能のテスト時の注意点
+
+テスト時に拡張機能が正しく初期化されているか確認することが重要です。特にDBセッションはテストごとにロールバックすることで、テスト間のデータ汚染を防げます。
+
+```python
+@pytest.fixture(autouse=True)
+def db_transaction(app):
+    with app.app_context():
+        connection = db.engine.connect()
+        transaction = connection.begin()
+        db.session.bind = connection
+        yield
+        transaction.rollback()
+        connection.close()
+```
+
+各テスト後に自動でロールバックされるため、テストDBのデータがテスト間で影響しません。

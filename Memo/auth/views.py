@@ -61,7 +61,11 @@ def register():
     user =  User(
       username=username,
       email=email,
-      password=generate_password_hash(form.password.data)
+      password=generate_password_hash(form.password.data),
+      gender=form.gender.data,
+      age_range=form.age_range.data,
+      address=form.address.data,
+      occupation=form.occupation.data,
     )
     user.set_password(password)
     db.session.add(user)
