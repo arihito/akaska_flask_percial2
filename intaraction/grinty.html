@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>shiny grinty</title>
+        <style>
+            body {
+                width: 100vw;
+                height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-family: "Roboto";
+                background-image: linear-gradient(to bottom right, #e6ebff, #d7e1f5);
+            }
+
+            div.shiny-button {
+                width: fit-content;
+                position: relative;
+                margin: 2rem;
+                padding: 1rem 1.5rem;
+                color: #cff8ff;
+                border: 3px solid transparent;
+                border-radius: 60px;
+                background-color: #064549;
+                background-image: linear-gradient(to bottom right, #0a6b73, #020a0e), linear-gradient(125deg, rgba(255, 255, 255, 0) 45%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0) 53%);
+                background-origin: border-box;
+                background-clip: padding-box, border-box;
+                background-size: 100%, 200%;
+                background-position: 0px, -250px;
+                animation: 4s border-glint linear backwards infinite;
+                animation-delay: 1s;
+                box-shadow: rgba(0, 0, 0, 0.6) 8px 8px 8px;
+                text-shadow: 0px 0px 4px rgba(255, 255, 255, 0.1);
+                transition: box-shadow 0.25s, text-shaddw 0.25s;
+                overflow: hidden;
+            }
+
+            div.shiny-button:hover {
+                cursor: pointer;
+                background-image: linear-gradient(to bottom right, #121859, #121859), linear-gradient(125deg, rgba(255, 255, 255, 0) 45%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0) 53%);
+                color: #fafaff;
+                box-shadow: rgba(0, 0, 0, 0.7) 5px 5px 5px;
+                text-shadow: 0px 0px 3px rgba(255, 255, 255, 0.7);
+                transition: box-shadow 0.25s, text-shaddw 0.25s;
+            }
+
+            div.shiny-button::after {
+                content: ' ';
+                position: absolute;
+                top: -50%;
+                left: -120%;
+                width: 200%;
+                height: 200%;
+                background-image: linear-gradient(125deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0) 52%);
+                animation: 4s glint linear backwards infinite;
+                animation-delay: -3s;
+            }
+
+            @keyframes glint {
+                0% {
+                    left: -120%;
+                }
+
+                8% {
+                    left: 50%;
+                }
+
+                100% {
+                    left: 50%;
+                }
+            }
+
+            @keyframes border-glint {
+                0% {
+                    background-position: 0px, -250px;
+                }
+
+                25% {
+                    background-position: 0px, -200px;
+                }
+
+                75% {
+                    background-position: 0px, 50px;
+                }
+
+                100% {
+                    background-position: 0px, 50px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="shiny-button"> Shiny, Glinty Button </div>
+    </body>
+</html>

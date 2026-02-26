@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Charging</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <style>
+            @import url('https://fonts.googleapis.com/css?family=Lato');
+
+            #div1 {
+                font-size: 100px;
+                color: #f3f3f3;
+                margin-left: 46%;
+                margin-top: 50vh;
+            }
+
+            body {
+                background: linear-gradient(to right, #FC466B, #3F5EFB);
+            }
+
+            p {
+                font-family: 'Lato', sans-serif;
+                font-size: 25px;
+                text-align: center;
+                color: #fff;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="div1" class="fa"></div>
+        <p>Charging your Life<p>
+  <script>
+    function chargebattery() {
+        var a;
+        a = document.getElementById("div1");
+        a.innerHTML = "&#xf244;";
+        setTimeout(function () {
+            a.innerHTML = "&#xf243;";
+        }, 1000);
+        setTimeout(function () {
+            a.innerHTML = "&#xf242;";
+        }, 2000);
+        setTimeout(function () {
+            a.innerHTML = "&#xf241;";
+        }, 3000);
+        setTimeout(function () {
+            a.innerHTML = "&#xf240;";
+        }, 4000);
+    }
+    chargebattery();
+    setInterval(chargebattery, 5000);
+</script>
+</body>
+</html>

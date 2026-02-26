@@ -884,10 +884,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 },
             },
         });
-        // インスタンス生成後の次フレームで表示（正しいサイズで初期化済みの状態から見せる）
-        requestAnimationFrame(() => {
-            barCanvas.style.visibility = "visible";
-        });
     };
 
     // 初期描画: canvas を非表示にしてから描画開始（visibility はレイアウトに影響しない）
@@ -896,6 +892,9 @@ document.addEventListener("DOMContentLoaded", () => {
     requestAnimationFrame(() => {
         requestAnimationFrame(() => {
             renderBarChart(chartData.bar);
+            requestAnimationFrame(() => {
+                barCanvas.style.visibility = "visible";
+            });
         });
     });
 
