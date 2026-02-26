@@ -5,16 +5,22 @@ from flask import Blueprint, current_app, Response
 from sqlalchemy import inspect
 from collections import defaultdict
 from datetime import datetime
-from diagrams import Diagram, Cluster
-from diagrams.programming.framework import Flask as FlaskNode
-from diagrams.programming.language import Python
-from diagrams.onprem.client import Users
+try:
+    from diagrams import Diagram, Cluster
+    from diagrams.programming.framework import Flask as FlaskNode
+    from diagrams.programming.language import Python
+    from diagrams.onprem.client import Users
+    DIAGRAMS_AVAILABLE = True
+except ImportError:
+    DIAGRAMS_AVAILABLE = False
 
 docs_bp = Blueprint("docs", __name__)
 
 
 @docs_bp.route("/diagram")
 def diagram():
+    if not DIAGRAMS_AVAILABLE:
+        return Response(status=204)
 
     project_root = current_app.root_path
     output_dir = os.path.join(project_root, "static", "docs")
