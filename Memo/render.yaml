@@ -2,7 +2,7 @@ services:
   - type: web
     name: flask-tech-blog
     env: python
-    buildCommand: pip install -r requirements.txt && flask db upgrade
+    buildCommand: pip install -r requirements.txt && FLASK_APP=app.py flask db upgrade
     startCommand: gunicorn app:app
     envVars:
       - key: FLASK_DEBUG
