@@ -1,35 +1,222 @@
 {% extends "fixed/base.j2" %}
 
 {% block article_body %}
-<h2><i class="fa fa-cubes"></i>環境変数</h2>
-<code>SECRET_KEY</code>が含まれたファイルはGithubに上げようとした時点で<code>Secret Scanning</code>がセキュリティの観点上エラーとするため、自動でアップロードしないように.gitignoreで除外しておく必要がある。
-<pre class="file-tag" data-tag="console"><code>mkdir -p dot_env &amp;&amp; 
-t dot_env/.env dot_env/.gitignore dot_env/app.py dot_env/extensions.py &amp;&amp; \
-cd dot_env &amp;&amp; pi python-dotenv
 
-[ dot_env ]
-   ├─ 📄.env          # 環境変数
-   ├─ 📄.gitignore    # gitの除外ファイル
-   ├─ 📄app.py
-   └─ 📄extensions.py # 環境変数を読み込む</code></pre>
-<code>**/**/</code>は子孫階層にあるファイルも全て適用する。
-<pre class="file-tag" data-tag=".gitignore"><code>**/**/__pycache__
-**/**/instance
-**/**/.env</code></pre>
-<pre class="file-tag" data-tag=".env"><code>FLASK_ENV=development # 開発環境
-FLASK_DEBUG=1 # デバッグ
-SECRET_KEY=dev-secret-key # セッションなどのシークレットキー
-STRIPE_SECRET_KEY=sk_test_... # ストライプのシークレットキー
-STRIPE_WEBHOOK_SECRET=whsec_.. # Webhookのシークレットキー</code></pre>
-<pre class="file-tag" data-tag="app.py"><code>from flask import Flask
-from dotenv import load_dotenv
-import os
+{# ===== デプロイ全体フロー ===== #}
+<h2><i class="fa fa-rocket"></i> デプロイ全体フロー</h2>
+<p>このアプリは <strong>GitHub</strong> → <strong>Render</strong> の自動デプロイ構成。<code>main</code> ブランチにプッシュするだけで本番反映される。</p>
 
-load_dotenv()
+<pre class="file-tag" data-tag="flow"><code>[ ローカル開発 ]
+    git commit → git push
+         ↓
+[ GitHub (main ブランチ) ]
+    onCommit 検知
+         ↓
+[ Render: ビルド ]
+    pip install -r requirements.txt
+    FLASK_APP=app.py flask db upgrade
+         ↓
+[ Render: デプロイ ]
+    gunicorn app:app --bind 0.0.0.0:$PORT
+         ↓
+[ 本番環境: https://akaska-flask-percial2.onrender.com ]</code></pre>
 
-def create_app():
-    app = Flask(__name__)
-    app.config[&quot;SECRET_KEY&quot;] = os.environ[&quot;SECRET_KEY&quot;]
-    app.config[&quot;STRIPE_SECRET_KEY&quot;] = os.environ[&quot;STRIPE_SECRET_KEY&quot;]
-    return app</code></pre>
-{% endblock %}
+{# ===== 初回セットアップ ===== #}
+<h2 class="mt-5"><i class="fa fa-wrench"></i> 初回セットアップ</h2>
+
+<h3 class="display-6 mt-4 mb-2">① 必要ファイルの準備</h3>
+<table class="table table-dark table-striped align-middle">
+  <thead>
+    <tr><th>ファイル</th><th>役割</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>requirements.txt</code></td><td>Render が依存パッケージをインストールするために必要</td></tr>
+    <tr><td><code>Procfile</code></td><td>起動コマンドの定義（gunicorn）</td></tr>
+    <tr><td><code>render.yaml</code></td><td>ビルドコマンド・環境変数・DB設定</td></tr>
+    <tr><td><code>.gitignore</code></td><td><code>.env</code> を Git 管理対象から除外</td></tr>
+  </tbody>
+</table>
+
+<details class="mb-3">
+  <summary class="btn btn-outline-secondary btn-sm mb-2">requirements.txt の生成方法</summary>
+  <div class="mt-2">
+    <pre class="file-tag" data-tag="console"><code># conda 仮想環境から自動生成
+conda run -n flask2_env pip freeze > requirements.txt
+
+# graphviz 系など本番不要パッケージは手動削除
+# 削除対象例: pygraphviz, eralchemy2, diagrams, graphviz</code></pre>
+  </div>
+</details>
+
+<details class="mb-3">
+  <summary class="btn btn-outline-secondary btn-sm mb-2">Procfile / render.yaml の内容</summary>
+  <div class="mt-2">
+    <pre class="file-tag" data-tag="Procfile"><code>web: gunicorn app:app --bind 0.0.0.0:$PORT</code></pre>
+    <pre class="file-tag" data-tag="render.yaml"><code>services:
+  - type: web
+    name: flask-tech-blog
+    env: python
+    buildCommand: pip install -r requirements.txt && FLASK_APP=app.py flask db upgrade
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
+
+databases:
+  - name: flask-tech-blog-db
+    plan: free</code></pre>
+  </div>
+</details>
+
+<h3 class="display-6 mt-4 mb-2">② Render サービス作成</h3>
+<ol class="list-group list-group-numbered mb-3">
+  <li class="list-group-item">Render ダッシュボード → <strong>New + → Web Service</strong></li>
+  <li class="list-group-item">GitHub リポジトリを連携して対象リポジトリを選択</li>
+  <li class="list-group-item"><strong>Root Directory</strong> に <code>Memo</code> を指定（重要）</li>
+  <li class="list-group-item">Plan: <strong>Free</strong> を選択</li>
+  <li class="list-group-item">Build Command / Start Command を設定して <strong>Create Web Service</strong></li>
+</ol>
+
+<details class="mb-3">
+  <summary class="btn btn-outline-secondary btn-sm mb-2">Build / Start Command の設定値</summary>
+  <div class="mt-2">
+    <table class="table table-dark table-striped align-middle">
+      <tbody>
+        <tr><td><strong>Build Command</strong></td><td><code>pip install -r requirements.txt && FLASK_APP=app.py flask db upgrade</code></td></tr>
+        <tr><td><strong>Start Command</strong></td><td><code>gunicorn app:app --bind 0.0.0.0:$PORT</code></td></tr>
+        <tr><td><strong>Auto-Deploy</strong></td><td><code>onCommit</code>（push 時に自動デプロイ）</td></tr>
+      </tbody>
+    </table>
+  </div>
+</details>
+
+<h3 class="display-6 mt-4 mb-2">③ PostgreSQL DB の作成</h3>
+<ol class="list-group list-group-numbered mb-3">
+  <li class="list-group-item">Render → <strong>New + → PostgreSQL</strong></li>
+  <li class="list-group-item">Name: <code>flask-tech-blog-db</code> / Plan: <strong>Free</strong></li>
+  <li class="list-group-item"><strong>Internal Database URL</strong> をコピー</li>
+  <li class="list-group-item">Web Service の <strong>Environment</strong> タブ → <code>DATABASE_URL</code> に貼り付け</li>
+</ol>
+
+<details class="mb-3">
+  <summary class="btn btn-outline-secondary btn-sm mb-2">PostgreSQL スキーマ権限エラーの対処</summary>
+  <div class="mt-2">
+    <p>PostgreSQL 15以降はデフォルトで <code>public</code> スキーマへの CREATE 権限がないため以下が必要。</p>
+    <pre class="file-tag" data-tag="psql"><code>GRANT ALL ON SCHEMA public TO ユーザー名;</code></pre>
+  </div>
+</details>
+
+<h3 class="display-6 mt-4 mb-2">④ 環境変数の登録</h3>
+<p>Render の <strong>Environment タブ</strong> で <code>.env</code> の内容を手動登録する（<code>.env</code> は Git に含まれないため）。</p>
+
+<details class="mb-3">
+  <summary class="btn btn-outline-secondary btn-sm mb-2">登録が必要な環境変数一覧</summary>
+  <div class="mt-2">
+    <table class="table table-dark table-striped align-middle">
+      <thead><tr><th>キー</th><th>備考</th></tr></thead>
+      <tbody>
+        <tr><td><code>SECRET_KEY</code></td><td>セッション・CSRF用。本番は長いランダム文字列を設定</td></tr>
+        <tr><td><code>DATABASE_URL</code></td><td>Render の Internal Database URL</td></tr>
+        <tr><td><code>FLASK_DEBUG</code></td><td><code>0</code> に設定（本番はデバッグ無効）</td></tr>
+        <tr><td><code>GOOGLE_CLIENT_ID</code></td><td>Google OAuth 用</td></tr>
+        <tr><td><code>GOOGLE_CLIENT_SECRET</code></td><td>Google OAuth 用</td></tr>
+        <tr><td><code>GOOGLE_API_KEY</code></td><td>Gemini AI 用</td></tr>
+        <tr><td><code>MAIL_USERNAME</code></td><td>Flask-Mail 用 Gmail アドレス</td></tr>
+        <tr><td><code>MAIL_SUBUSER</code></td><td>サブユーザーメール</td></tr>
+        <tr><td><code>MAIL_PASSWORD</code></td><td>Gmail アプリパスワード</td></tr>
+        <tr><td><code>STRIPE_SECRET_KEY</code></td><td>Stripe 決済用</td></tr>
+        <tr><td><code>STRIPE_WEBHOOK_SECRET</code></td><td>Stripe Webhook 用</td></tr>
+        <tr><td><code>SITE_NAME</code></td><td><code>Flask tech blog</code></td></tr>
+        <tr><td><code>MAX_CONTENT_LENGTH</code></td><td><code>5242880</code></td></tr>
+        <tr><td><code>REMEMBER_DAYS</code></td><td><code>30</code></td></tr>
+        <tr><td><code>SQLALCHEMY_ECHO</code></td><td><code>0</code>（本番はログ抑制）</td></tr>
+      </tbody>
+    </table>
+  </div>
+</details>
+
+<h3 class="display-6 mt-4 mb-2">⑤ 初期データの投入</h3>
+<p>Render の Shell は有料のため、<strong>ローカルから External Database URL 経由</strong>で実行する。</p>
+<pre class="file-tag" data-tag="console"><code># .env の DATABASE_URL を一時的に Render の External URL に変更
+DATABASE_URL=postgresql://（Render の External Database URL）
+
+# seed.py 実行
+conda run -n flask2_env python seed.py
+
+# 完了後、.env を元のローカル URL に戻す
+DATABASE_URL=postgresql://memouser:xxxx@localhost:5432/memodb</code></pre>
+
+<details class="mb-3">
+  <summary class="btn btn-outline-secondary btn-sm mb-2">seed.py の注意点（PostgreSQL 対応）</summary>
+  <div class="mt-2">
+    <p>PostgreSQL は FK 制約を厳密に適用するため、<code>query.delete()</code> ではカスケード削除されない。<code>TRUNCATE CASCADE</code> を使用している。</p>
+    <pre class="file-tag" data-tag="seed.py"><code># 削除処理（seed.py 内）
+db.session.execute(text(
+    "TRUNCATE TABLE favorites, memo_categories, memos, users RESTART IDENTITY CASCADE"
+))
+db.session.commit()</code></pre>
+  </div>
+</details>
+
+<h3 class="display-6 mt-4 mb-2">⑥ Google OAuth コールバック URL の追加</h3>
+<p>Google Cloud Console → 認証情報 → OAuth 2.0 クライアント → <strong>承認済みリダイレクト URI</strong> に以下を追加。</p>
+<pre class="file-tag" data-tag="Google Console"><code>https://akaska-flask-percial2.onrender.com/auth/google/callback</code></pre>
+
+{# ===== 日常のデプロイフロー ===== #}
+<h2 class="mt-5"><i class="fa fa-refresh"></i> 日常のデプロイフロー</h2>
+<pre class="file-tag" data-tag="console"><code>cd C:/Users/arihi/Dropbox/DevOps/Flask/Percial2
+
+git add .
+git commit -m "変更内容"
+git push origin main
+# → Render が自動検知 → ビルド（約3〜5分）→ デプロイ完了</code></pre>
+
+<table class="table table-dark table-striped align-middle mt-3">
+  <thead>
+    <tr><th>操作</th><th>Render の反応</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>git commit</code>（ローカルのみ）</td><td>反応しない</td></tr>
+    <tr><td><code>git push origin main</code></td><td>自動ビルド＆デプロイ開始</td></tr>
+    <tr><td>手動デプロイ</td><td>ダッシュボード → <strong>Manual Deploy → Deploy latest commit</strong></td></tr>
+  </tbody>
+</table>
+
+{# ===== Render 無料プランの制限 ===== #}
+<h2 class="mt-5"><i class="fa fa-exclamation-triangle"></i> Render 無料プランの制限</h2>
+<table class="table table-dark table-striped align-middle">
+  <thead>
+    <tr><th>項目</th><th>内容</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>スリープ</td><td>15分間アクセスがないとスリープ。次回アクセス時に <strong>30秒〜2分</strong> の起動待ちが発生</td></tr>
+    <tr><td>Web サービス稼働時間</td><td>月 <strong>750時間</strong> まで無料（1サービスなら実質無制限）</td></tr>
+    <tr><td>PostgreSQL データ保持</td><td><strong>90日間</strong> アクセスがないとデータ削除の可能性あり</td></tr>
+    <tr><td>Shell</td><td>有料プランのみ（ローカルから External URL 経由で代替）</td></tr>
+    <tr><td>自動削除</td><td>長期放置でも自動削除はされない</td></tr>
+  </tbody>
+</table>
+
+{# ===== DB マイグレーション ===== #}
+<h2 class="mt-5"><i class="fa fa-database"></i> DB マイグレーション</h2>
+<p>モデル変更時はローカルでマイグレーションファイルを生成し、プッシュすると <strong>Render のビルドコマンドで自動適用</strong> される。</p>
+<pre class="file-tag" data-tag="console"><code># ローカルで実行
+conda run -n flask2_env flask db migrate -m "変更内容"
+conda run -n flask2_env flask db upgrade  # ローカル DB に適用
+
+# GitHub にプッシュ → Render が flask db upgrade を自動実行</code></pre>
+
+{# ===== 環境変数（既存） ===== #}
+<h2 class="mt-5"><i class="fa fa-key"></i> 環境変数の管理</h2>
+<p><code>SECRET_KEY</code> などが含まれる <code>.env</code> は <strong>Git 管理対象外</strong>（<code>.gitignore</code> で除外）。本番環境は Render ダッシュボードで直接登録する。</p>
+<pre class="file-tag" data-tag=".gitignore"><code>**/**/.env</code></pre>
+<pre class="file-tag" data-tag=".env（ローカル開発用）"><code>FLASK_DEBUG=1
+SECRET_KEY=your-secret-key
+DATABASE_URL=postgresql://memouser:xxxx@localhost:5432/memodb
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+GOOGLE_API_KEY=...
+MAIL_USERNAME=...
+MAIL_SUBUSER=...
+MAIL_PASSWORD=...
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...</code></pre>
+
+{% endblock article_body %}
