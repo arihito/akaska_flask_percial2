@@ -5,6 +5,9 @@ from flask_login import LoginManager
 from flask_debugtoolbar import DebugToolbarExtension
 from werkzeug.exceptions import NotFound
 from errors.views import show_404_page
+from sqlalchemy import event
+from sqlalchemy.engine import Engine
+import sqlite3
 
 from public.views import public_bp
 from auth.views import auth_bp
@@ -21,6 +24,15 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+# SQLite の FOREIGN KEY 制約を有効化（モジュールレベルで一度だけ登録）
+@event.listens_for(Engine, "connect")
+def set_sqlite_pragma(dbapi_connection, connection_record):
+    if isinstance(dbapi_connection, sqlite3.Connection):
+        cursor = dbapi_connection.cursor()
+        cursor.execute("PRAGMA foreign_keys=ON")
+        cursor.close()
+
+
 def create_app(config_override=None):
     """アプリケーションファクトリ。config_override でテスト用設定を上書き可能。"""
     app = Flask(__name__)
@@ -31,17 +43,6 @@ def create_app(config_override=None):
 
     stripe.api_key = app.config['STRIPE_SECRET_KEY']
     db.init_app(app)
-
-    from sqlalchemy import event
-    from sqlalchemy.engine import Engine
-    import sqlite3
-
-    @event.listens_for(Engine, "connect")
-    def set_sqlite_pragma(dbapi_connection, connection_record):
-        if isinstance(dbapi_connection, sqlite3.Connection):
-            cursor = dbapi_connection.cursor()
-            cursor.execute("PRAGMA foreign_keys=ON")
-            cursor.close()
 
     Mail(app)
     if not app.testing:
@@ -80,7 +81,7 @@ def create_app(config_override=None):
 
     @login_manager.user_loader
     def load_user(user_id):
-        return User.query.get(int(user_id))
+        return db.session.get(User, int(user_id))
 
     return app
 
