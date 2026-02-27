@@ -4,6 +4,7 @@ from datetime import datetime, timedelta, timezone
 
 # seed用にFlaskアプリを1つ生成しconfigを読み込みdb/login_manager/Blueprintを初期化する
 from app import app, db
+from sqlalchemy import text
 from models import User, Memo, Favorite, Category, FixedPage
 from factories.user_factory import UserFactory
 from factories.body_factory import BodyFactory
@@ -133,10 +134,8 @@ user_start_date = datetime.now() - timedelta(days=365)
 def seed_data():
     with app.app_context():
         print("データ初期化中...")
-        # 削除順は必ず子→親
-        Favorite.query.delete()
-        Memo.query.delete()
-        User.query.delete()
+        # PostgreSQL対応: CASCADE付きTRUNCATEで関連テーブルを一括クリア
+        db.session.execute(text("TRUNCATE TABLE favorites, memo_categories, memos, users RESTART IDENTITY CASCADE"))
         db.session.commit()
 
         print("固定ページシード...")
