@@ -1359,34 +1359,49 @@ document.addEventListener("click", (e) => {
             funcBadge.textContent    = cov.functions.length;
             classBadge.textContent   = cov.classes.length;
 
-            // ファイルテーブル再描画
-            tableBody.innerHTML = cov.files.map(f => `
-                <tr>
-                    <td class="ps-3 font-monospace small">${f.name}</td>
-                    <td class="text-end small">${f.stmts}</td>
-                    <td class="text-end small text-body-secondary">${f.missing}</td>
-                    <td>${pctCell(f.pct)}</td>
-                </tr>`).join('');
+            // グリッドヘッダー生成
+            const filesHdr = `<div class="cov-row cov-hdr">
+                <span class="cov-col-name">ファイル</span>
+                <span class="cov-col-stmts">Stmts</span>
+                <span class="cov-col-miss">Miss</span>
+                <span class="cov-col-bar">カバレッジ</span>
+            </div>`;
+            const itemsHdr = (col1) => `<div class="cov-row cov-hdr">
+                <span class="cov-col-name">${col1}</span>
+                <span class="cov-col-file">ファイル</span>
+                <span class="cov-col-stmts">Stmts</span>
+                <span class="cov-col-miss">Miss</span>
+                <span class="cov-col-bar">カバレッジ</span>
+            </div>`;
 
-            // 関数テーブル再描画
-            funcTableBody.innerHTML = cov.functions.map(f => `
-                <tr>
-                    <td class="ps-3 font-monospace small fw-semibold">${f.name}</td>
-                    <td class="small text-body-secondary font-monospace">${f.file}:${f.line}</td>
-                    <td class="text-end small">${f.stmts}</td>
-                    <td class="text-end small text-body-secondary">${f.missing}</td>
-                    <td>${pctCell(f.pct)}</td>
-                </tr>`).join('');
+            // ファイルグリッド再描画
+            tableBody.innerHTML = filesHdr + cov.files.map(f => `
+                <div class="cov-row">
+                    <span class="cov-col-name font-monospace">${f.name}</span>
+                    <span class="cov-col-stmts">${f.stmts}</span>
+                    <span class="cov-col-miss text-body-secondary">${f.missing}</span>
+                    <span class="cov-col-bar">${pctCell(f.pct)}</span>
+                </div>`).join('');
 
-            // クラステーブル再描画
-            classTableBody.innerHTML = cov.classes.map(c => `
-                <tr>
-                    <td class="ps-3 font-monospace small fw-semibold">${c.name}</td>
-                    <td class="small text-body-secondary font-monospace">${c.file}:${c.line}</td>
-                    <td class="text-end small">${c.stmts}</td>
-                    <td class="text-end small text-body-secondary">${c.missing}</td>
-                    <td>${pctCell(c.pct)}</td>
-                </tr>`).join('');
+            // 関数グリッド再描画
+            funcTableBody.innerHTML = itemsHdr('関数 / メソッド') + cov.functions.map(f => `
+                <div class="cov-row">
+                    <span class="cov-col-name font-monospace fw-semibold">${f.name}</span>
+                    <span class="cov-col-file text-body-secondary font-monospace">${f.file}:${f.line}</span>
+                    <span class="cov-col-stmts">${f.stmts}</span>
+                    <span class="cov-col-miss text-body-secondary">${f.missing}</span>
+                    <span class="cov-col-bar">${pctCell(f.pct)}</span>
+                </div>`).join('');
+
+            // クラスグリッド再描画
+            classTableBody.innerHTML = itemsHdr('クラス') + cov.classes.map(c => `
+                <div class="cov-row">
+                    <span class="cov-col-name font-monospace fw-semibold">${c.name}</span>
+                    <span class="cov-col-file text-body-secondary font-monospace">${c.file}:${c.line}</span>
+                    <span class="cov-col-stmts">${c.stmts}</span>
+                    <span class="cov-col-miss text-body-secondary">${c.missing}</span>
+                    <span class="cov-col-bar">${pctCell(c.pct)}</span>
+                </div>`).join('');
 
             // 結果表示
             emptyMsg.classList.add('d-none');

@@ -43,7 +43,7 @@
 
         {# 合計カバレッジ + 最終実行日時 #}
         <div class="row mb-4">
-            <div class="col-md-4 fade-in fade-delay-4">
+            <div class="col-md-3 fade-in fade-delay-4">
                 <div class="card border-secondary text-center py-4">
                     <div class="card-body">
                         <div id="totalPct" class="display-3 fw-bold text-body-secondary" style="color:#234;">
@@ -57,7 +57,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-8 d-flex align-items-center fade-in fade-delay-6">
+            <div class="col-md-9 d-flex align-items-center fade-in fade-delay-6">
                 <div class="w-100">
                     <div class="d-flex justify-content-between mb-1">
                         <small class="text-body-secondary">カバレッジ進捗</small>
@@ -106,27 +106,21 @@
             {# ----- ファイルタブ ----- #}
             <div class="tab-pane fade show active" id="tab-files" role="tabpanel">
                 <div class="card border-secondary border-top-0 rounded-top-0">
-                    <div class="card-body p-0">
-                        <table class="table table-hover mb-0 align-middle">
-                            <thead class="bg-body-secondary">
-                                <tr>
-                                    <th class="ps-3 py-3">ファイル</th>
-                                    <th class="text-end py-3" style="width:80px;">Stmts</th>
-                                    <th class="text-end py-3" style="width:80px;">Miss</th>
-                                    <th class="py-3" style="width:220px;">カバレッジ</th>
-                                </tr>
-                            </thead>
-                            <tbody id="coverageTableBody">
-                                {% if coverage %}{% for f in coverage.files %}
-                                <tr>
-                                    <td class="ps-3 font-monospace">{{ f.name }}</td>
-                                    <td class="text-end">{{ f.stmts }}</td>
-                                    <td class="text-end text-body-secondary">{{ f.missing }}</td>
-                                    <td>{{ pct_bar(f.pct) }}</td>
-                                </tr>
-                                {% endfor %}{% endif %}
-                            </tbody>
-                        </table>
+                    <div class="cov-grid-files" id="coverageTableBody">
+                        <div class="cov-row cov-hdr">
+                            <span class="cov-col-name">ファイル</span>
+                            <span class="cov-col-stmts">Stmts</span>
+                            <span class="cov-col-miss">Miss</span>
+                            <span class="cov-col-bar">カバレッジ</span>
+                        </div>
+                        {% if coverage %}{% for f in coverage.files %}
+                        <div class="cov-row">
+                            <span class="cov-col-name font-monospace">{{ f.name }}</span>
+                            <span class="cov-col-stmts">{{ f.stmts }}</span>
+                            <span class="cov-col-miss text-body-secondary">{{ f.missing }}</span>
+                            <span class="cov-col-bar">{{ pct_bar(f.pct) }}</span>
+                        </div>
+                        {% endfor %}{% endif %}
                     </div>
                 </div>
             </div>
@@ -134,29 +128,23 @@
             {# ----- 関数タブ ----- #}
             <div class="tab-pane fade" id="tab-functions" role="tabpanel">
                 <div class="card border-secondary border-top-0 rounded-top-0">
-                    <div class="card-body p-0">
-                        <table class="table table-hover mb-0 align-middle">
-                            <thead class="bg-body-secondary">
-                                <tr>
-                                    <th class="ps-3 py-3">関数 / メソッド</th>
-                                    <th class="py-3">ファイル</th>
-                                    <th class="text-end py-3" style="width:80px;">Stmts</th>
-                                    <th class="text-end py-3" style="width:80px;">Miss</th>
-                                    <th class="py-3" style="width:220px;">カバレッジ</th>
-                                </tr>
-                            </thead>
-                            <tbody id="coverageFuncTableBody">
-                                {% if coverage %}{% for f in coverage.functions %}
-                                <tr>
-                                    <td class="ps-3 font-monospace fw-semibold">{{ f.name }}</td>
-                                    <td class="text-body-secondary font-monospace">{{ f.file }}:{{ f.line }}</td>
-                                    <td class="text-end">{{ f.stmts }}</td>
-                                    <td class="text-end text-body-secondary">{{ f.missing }}</td>
-                                    <td>{{ pct_bar(f.pct) }}</td>
-                                </tr>
-                                {% endfor %}{% endif %}
-                            </tbody>
-                        </table>
+                    <div class="cov-grid-items" id="coverageFuncTableBody">
+                        <div class="cov-row cov-hdr">
+                            <span class="cov-col-name">関数 / メソッド</span>
+                            <span class="cov-col-file">ファイル</span>
+                            <span class="cov-col-stmts">Stmts</span>
+                            <span class="cov-col-miss">Miss</span>
+                            <span class="cov-col-bar">カバレッジ</span>
+                        </div>
+                        {% if coverage %}{% for f in coverage.functions %}
+                        <div class="cov-row">
+                            <span class="cov-col-name font-monospace fw-semibold">{{ f.name }}</span>
+                            <span class="cov-col-file text-body-secondary font-monospace">{{ f.file }}:{{ f.line }}</span>
+                            <span class="cov-col-stmts">{{ f.stmts }}</span>
+                            <span class="cov-col-miss text-body-secondary">{{ f.missing }}</span>
+                            <span class="cov-col-bar">{{ pct_bar(f.pct) }}</span>
+                        </div>
+                        {% endfor %}{% endif %}
                     </div>
                 </div>
             </div>
@@ -164,29 +152,23 @@
             {# ----- クラスタブ ----- #}
             <div class="tab-pane fade" id="tab-classes" role="tabpanel">
                 <div class="card border-secondary border-top-0 rounded-top-0">
-                    <div class="card-body p-0">
-                        <table class="table table-hover mb-0 align-middle">
-                            <thead class="bg-body-secondary">
-                                <tr>
-                                    <th class="ps-3 py-3">クラス</th>
-                                    <th class="py-3">ファイル</th>
-                                    <th class="text-end py-3" style="width:80px;">Stmts</th>
-                                    <th class="text-end py-3" style="width:80px;">Miss</th>
-                                    <th class="py-3" style="width:220px;">カバレッジ</th>
-                                </tr>
-                            </thead>
-                            <tbody id="coverageClassTableBody">
-                                {% if coverage %}{% for c in coverage.classes %}
-                                <tr>
-                                    <td class="ps-3 font-monospace fw-semibold">{{ c.name }}</td>
-                                    <td class="text-body-secondary font-monospace">{{ c.file }}:{{ c.line }}</td>
-                                    <td class="text-end">{{ c.stmts }}</td>
-                                    <td class="text-end text-body-secondary">{{ c.missing }}</td>
-                                    <td>{{ pct_bar(c.pct) }}</td>
-                                </tr>
-                                {% endfor %}{% endif %}
-                            </tbody>
-                        </table>
+                    <div class="cov-grid-items" id="coverageClassTableBody">
+                        <div class="cov-row cov-hdr">
+                            <span class="cov-col-name">クラス</span>
+                            <span class="cov-col-file">ファイル</span>
+                            <span class="cov-col-stmts">Stmts</span>
+                            <span class="cov-col-miss">Miss</span>
+                            <span class="cov-col-bar">カバレッジ</span>
+                        </div>
+                        {% if coverage %}{% for c in coverage.classes %}
+                        <div class="cov-row">
+                            <span class="cov-col-name font-monospace fw-semibold">{{ c.name }}</span>
+                            <span class="cov-col-file text-body-secondary font-monospace">{{ c.file }}:{{ c.line }}</span>
+                            <span class="cov-col-stmts">{{ c.stmts }}</span>
+                            <span class="cov-col-miss text-body-secondary">{{ c.missing }}</span>
+                            <span class="cov-col-bar">{{ pct_bar(c.pct) }}</span>
+                        </div>
+                        {% endfor %}{% endif %}
                     </div>
                 </div>
             </div>
