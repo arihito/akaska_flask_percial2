@@ -1536,6 +1536,20 @@ pre.file-tag[data-tag]::before {
     }
 }
 
+/* モバイル用 固定メニューボタン（三本線、カラーモードボタンの上） */
+.admin-hamburger-btn {
+    bottom: 4rem;
+    right: 1rem;
+    z-index: 1500;
+}
+
+/* ナビバー ポイント+時間 スマホ縮小 */
+@media (max-width: 767.98px) {
+    .admin-points strong {
+        font-size: 1rem !important;
+    }
+}
+
 /* モバイル用オフキャンバスメニュー */
 #adminOffcanvas .offcanvas-body {
     background: linear-gradient(to top, rgb(43 48 53), #343A40);
