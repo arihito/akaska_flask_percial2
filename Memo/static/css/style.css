@@ -1335,16 +1335,14 @@ pre.file-tag[data-tag]::before {
   background-color: #1a1d21;
   padding: 1rem;
 }
-/* 棒グラフカード: カードbodyをflexにして残り高さをcanvasに渡す */
+/* 棒グラフカード: card-body はシンプルなブロックにして wrapper の固定高さを確実に反映させる */
+/* flex+flex-basis:0 の組み合わせだと親に固定高さがない場合に wrapper が圧縮されるため */
 .bar-chart-body {
-  flex: 1 1 0;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
+  display: block;
 }
 .bar-chart-wrapper {
   position: relative;
-  height: 280px; /* モバイル: 固定高さで Chart.js が確実にサイズ取得できるよう保証 */
+  height: 280px; /* モバイル */
 }
 @media (min-width: 768px) {
   .bar-chart-wrapper {
