@@ -15,7 +15,7 @@
 <div class="py-4">
 
     {# ===== ヘッダー ===== #}
-    <div class="d-flex align-items-center justify-content-between mb-4 fade-in">
+    <div class="d-flex align-items-center justify-content-between mb-4 fade-in fade-delay-2">
         <h2 class="mb-0"><i class="fa fa-check-square-o me-2"></i>テスト網羅率状況</h2>
         <button id="coverageRunBtn" class="btn btn-outline-secondary btn-lg">
             <i class="fa fa-play me-1"></i>テスト実行
@@ -30,7 +30,7 @@
 
     {# ===== 未実行メッセージ ===== #}
     <div id="coverageEmpty" class="{% if coverage %}d-none{% endif %}">
-        <div class="card border-secondary fade-in">
+        <div class="card border-secondary">
             <div class="card-body text-center py-5">
                 <i class="fa fa-inbox fa-3x text-body-secondary mb-3"></i>
                 <p class="text-body-secondary mb-0">まだテストが実行されていません。<br>「テスト実行」ボタンを押して最新データを取得してください。</p>
@@ -42,8 +42,8 @@
     <div id="coverageResult" class="{% if not coverage %}d-none{% endif %}">
 
         {# 合計カバレッジ + 最終実行日時 #}
-        <div class="row mb-4 fade-in">
-            <div class="col-md-4">
+        <div class="row mb-4">
+            <div class="col-md-4 fade-in fade-delay-4">
                 <div class="card border-secondary text-center py-4">
                     <div class="card-body">
                         <div id="totalPct" class="display-3 fw-bold" style="color:#234;">
@@ -57,7 +57,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-8 d-flex align-items-center">
+            <div class="col-md-8 d-flex align-items-center fade-in fade-delay-6">
                 <div class="w-100">
                     <div class="d-flex justify-content-between mb-1">
                         <small class="text-body-secondary">カバレッジ進捗</small>
@@ -81,19 +81,19 @@
 
         {# ===== タブナビ ===== #}
         <ul class="nav nav-tabs mb-0" id="coverageTabs" role="tablist">
-            <li class="nav-item" role="presentation">
+            <li class="nav-item fade-in fade-delay-8" role="presentation">
                 <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-files" type="button" role="tab">
                     <i class="fa fa-file-code-o me-1"></i>ファイル
                     <span class="badge bg-secondary ms-1" id="filesBadge">{{ coverage.files|length if coverage else 0 }}</span>
                 </button>
             </li>
-            <li class="nav-item" role="presentation">
+            <li class="nav-item fade-in fade-delay-10" role="presentation">
                 <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-functions" type="button" role="tab">
                     <i class="fa fa-code me-1"></i>関数
                     <span class="badge bg-secondary ms-1" id="funcBadge">{{ coverage.functions|length if coverage else 0 }}</span>
                 </button>
             </li>
-            <li class="nav-item" role="presentation">
+            <li class="nav-item fade-in fade-delay-12" role="presentation">
                 <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-classes" type="button" role="tab">
                     <i class="fa fa-cube me-1"></i>クラス
                     <span class="badge bg-secondary ms-1" id="classBadge">{{ coverage.classes|length if coverage else 0 }}</span>
@@ -101,14 +101,14 @@
             </li>
         </ul>
 
-        <div class="tab-content">
+        <div class="tab-content fade-in fade-delay-16">
 
             {# ----- ファイルタブ ----- #}
             <div class="tab-pane fade show active" id="tab-files" role="tabpanel">
                 <div class="card border-secondary border-top-0 rounded-top-0">
                     <div class="card-body p-0">
                         <table class="table table-hover mb-0 align-middle">
-                            <thead class="table-light">
+                            <thead class="bg-body-secondary">
                                 <tr>
                                     <th class="ps-3 py-3">ファイル</th>
                                     <th class="text-end py-3" style="width:80px;">Stmts</th>
@@ -136,7 +136,7 @@
                 <div class="card border-secondary border-top-0 rounded-top-0">
                     <div class="card-body p-0">
                         <table class="table table-hover mb-0 align-middle">
-                            <thead class="table-light">
+                            <thead class="bg-body-secondary">
                                 <tr>
                                     <th class="ps-3 py-3">関数 / メソッド</th>
                                     <th class="py-3">ファイル</th>
@@ -166,7 +166,7 @@
                 <div class="card border-secondary border-top-0 rounded-top-0">
                     <div class="card-body p-0">
                         <table class="table table-hover mb-0 align-middle">
-                            <thead class="table-light">
+                            <thead class="bg-body-secondary">
                                 <tr>
                                     <th class="ps-3 py-3">クラス</th>
                                     <th class="py-3">ファイル</th>
