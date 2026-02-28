@@ -16,7 +16,6 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-          cache: 'pip'
 
       - name: Install dependencies
         run: pip install -r Memo/requirements.txt
@@ -24,10 +23,10 @@ jobs:
       - name: Run tests with coverage
         working-directory: Memo
         env:
-          SECRET_KEY: test-secret-key-for-ci
-          DATABASE_URL: sqlite:///:memory:
-          GOOGLE_CLIENT_ID: dummy
-          GOOGLE_CLIENT_SECRET: dummy
+          SECRET_KEY: "test-secret-key-for-ci"
+          DATABASE_URL: "sqlite:///:memory:"
+          GOOGLE_CLIENT_ID: "dummy"
+          GOOGLE_CLIENT_SECRET: "dummy"
           STRIPE_SECRET_KEY: ""
           STRIPE_WEBHOOK_SECRET: ""
           MAIL_USERNAME: ""
