@@ -1536,6 +1536,22 @@ pre.file-tag[data-tag]::before {
     }
 }
 
+/* モバイル用オフキャンバスメニュー */
+#adminOffcanvas .offcanvas-body {
+    background: linear-gradient(to top, rgb(43 48 53), #343A40);
+}
+#adminOffcanvas .offcanvas-header {
+    background: #343A40;
+    color: #ccc;
+}
+[data-bs-theme="light"] #adminOffcanvas .offcanvas-body {
+    background: linear-gradient(to top, #dedadc, #fefafe);
+}
+[data-bs-theme="light"] #adminOffcanvas .offcanvas-header {
+    background: #fefafe;
+    color: #212529;
+}
+
 /* 一時停止希望 吹き出しフォーム（admin/index） */
 /* body直下にfixed配置してテーブルのclip/z-indexを回避 */
 .suspend-popover {
