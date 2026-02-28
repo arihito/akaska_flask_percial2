@@ -3,11 +3,11 @@
 
 {% macro pct_bar(pct) %}
 <div class="d-flex align-items-center gap-2">
-    <div class="progress flex-grow-1" style="height:8px;">
+    <div class="progress flex-grow-1" style="height:14px;">
         <div class="progress-bar {% if pct >= 70 %}bg-secondary{% elif pct >= 40 %}bg-secondary opacity-75{% else %}bg-secondary opacity-50{% endif %}"
              style="width:{{ pct }}%;"></div>
     </div>
-    <small style="width:36px;text-align:right;">{{ pct }}%</small>
+    <span style="width:42px;text-align:right;">{{ pct }}%</span>
 </div>
 {% endmacro %}
 
@@ -46,7 +46,7 @@
             <div class="col-md-4 fade-in fade-delay-4">
                 <div class="card border-secondary text-center py-4">
                     <div class="card-body">
-                        <div id="totalPct" class="display-3 fw-bold" style="color:#234;">
+                        <div id="totalPct" class="display-3 fw-bold text-body-secondary" style="color:#234;">
                             {{ coverage.total_pct if coverage else 0 }}%
                         </div>
                         <p class="text-body-secondary mb-1">総カバレッジ</p>

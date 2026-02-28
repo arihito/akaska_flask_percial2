@@ -1320,10 +1320,10 @@ document.addEventListener("click", (e) => {
     function pctCell(pct) {
         const opacity = pct < 40 ? ' opacity-50' : pct < 70 ? ' opacity-75' : '';
         return `<div class="d-flex align-items-center gap-2">
-            <div class="progress flex-grow-1" style="height:8px;">
+            <div class="progress flex-grow-1" style="height:14px;">
                 <div class="progress-bar bg-secondary${opacity}" style="width:${pct}%;"></div>
             </div>
-            <small style="width:36px;text-align:right;">${pct}%</small>
+            <span style="width:42px;text-align:right;">${pct}%</span>
         </div>`;
     }
 
