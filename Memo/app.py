@@ -5,6 +5,7 @@ from flask_login import LoginManager
 from flask_debugtoolbar import DebugToolbarExtension
 from werkzeug.exceptions import NotFound
 from errors.views import show_404_page
+from utils.logger import init_logger
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 import sqlite3
@@ -48,6 +49,7 @@ def create_app(config_override=None):
     if not app.testing:
         DebugToolbarExtension(app)
     Migrate(app, db)
+    init_logger(app)
 
     login_manager = LoginManager()
     login_manager.init_app(app)
@@ -55,6 +57,16 @@ def create_app(config_override=None):
     login_manager.login_view = 'auth.login'
 
     app.register_error_handler(NotFound, show_404_page)
+
+    from werkzeug.exceptions import InternalServerError
+
+    @app.errorhandler(InternalServerError)
+    def show_500_page(error):
+        app.logger.error(
+            'Internal Server Error: %s', str(error), exc_info=True
+        )
+        return '500 Internal Server Error', 500
+
     app.register_blueprint(public_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(memo_bp)
