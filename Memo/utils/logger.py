@@ -39,18 +39,19 @@ def init_logger(app):
     app.logger.setLevel(log_level)
 
     # SMTPハンドラー（本番環境かつテストでない場合のみ）
-    if not app.debug and not app.testing:
+    mail_user = app.config.get('MAIL_USERNAME', '')
+    mail_pass = app.config.get('MAIL_PASSWORD', '')
+    if not app.debug and not app.testing and mail_user and mail_pass:
         mail_host = (app.config['MAIL_SERVER'], app.config['MAIL_PORT'])
-        credentials = (app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD'])
-        admin_email = app.config['MAIL_USERNAME']
+        credentials = (mail_user, mail_pass)
 
         mail_handler = SMTPHandler(
             mailhost=mail_host,
             fromaddr=app.config['MAIL_DEFAULT_SENDER'],
-            toaddrs=[admin_email],
+            toaddrs=[mail_user],
             subject='[Flask tech blog] サーバーエラーが発生しました',
             credentials=credentials,
-            secure=(),  # TLS使用
+            secure=(),  # STARTTLS使用（587番ポート）
         )
         mail_handler.setFormatter(formatter)
         mail_handler.setLevel(logging.ERROR)
