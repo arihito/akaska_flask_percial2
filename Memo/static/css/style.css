@@ -1344,8 +1344,12 @@ pre.file-tag[data-tag]::before {
 }
 .bar-chart-wrapper {
   position: relative;
-  flex: 1 1 0;
-  min-height: 350px; /* flex-column レイアウトでもcanvasが高さを確保できるよう保証 */
+  height: 280px; /* モバイル: 固定高さで Chart.js が確実にサイズ取得できるよう保証 */
+}
+@media (min-width: 768px) {
+  .bar-chart-wrapper {
+    height: 380px;
+  }
 }
 #analyzeBtn:disabled {
   opacity: 0.5;

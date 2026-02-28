@@ -886,16 +886,15 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     };
 
-    // 初期描画: canvas を非表示にしてから描画開始（visibility はレイアウトに影響しない）
-    // → Chart.js が正しいサイズで初期化してから表示されるため小→大の一瞬フラッシュを防ぐ
+    // 初期描画: canvas を非表示にしてから描画（visibility はレイアウトに影響しない）
+    // try/finally で必ず visible に戻す（モバイルでのエラー時に非表示固定になるのを防止）
     barCanvas.style.visibility = "hidden";
     requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
+        try {
             renderBarChart(chartData.bar);
-            requestAnimationFrame(() => {
-                barCanvas.style.visibility = "visible";
-            });
-        });
+        } finally {
+            barCanvas.style.visibility = "visible";
+        }
     });
 
     // ---- テーマ切替時に全チャートのカラーを即時更新 ----
