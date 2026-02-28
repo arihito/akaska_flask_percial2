@@ -1302,14 +1302,30 @@ document.addEventListener("click", (e) => {
     const runBtn = document.getElementById('coverageRunBtn');
     if (!runBtn) return;
 
-    const loading   = document.getElementById('coverageLoading');
-    const emptyMsg  = document.getElementById('coverageEmpty');
-    const result    = document.getElementById('coverageResult');
-    const totalPct  = document.getElementById('totalPct');
-    const covStmts  = document.getElementById('covStmts');
-    const lastRun   = document.getElementById('lastRun');
-    const totalBar  = document.getElementById('totalBar');
-    const tableBody = document.getElementById('coverageTableBody');
+    const loading        = document.getElementById('coverageLoading');
+    const emptyMsg       = document.getElementById('coverageEmpty');
+    const result         = document.getElementById('coverageResult');
+    const totalPct       = document.getElementById('totalPct');
+    const covStmts       = document.getElementById('covStmts');
+    const lastRun        = document.getElementById('lastRun');
+    const totalBar       = document.getElementById('totalBar');
+    const filesBadge     = document.getElementById('filesBadge');
+    const funcBadge      = document.getElementById('funcBadge');
+    const classBadge     = document.getElementById('classBadge');
+    const tableBody      = document.getElementById('coverageTableBody');
+    const funcTableBody  = document.getElementById('coverageFuncTableBody');
+    const classTableBody = document.getElementById('coverageClassTableBody');
+
+    // プログレスバー付きセルを生成する共通関数
+    function pctCell(pct) {
+        const opacity = pct < 40 ? ' opacity-50' : pct < 70 ? ' opacity-75' : '';
+        return `<div class="d-flex align-items-center gap-2">
+            <div class="progress flex-grow-1" style="height:8px;">
+                <div class="progress-bar bg-secondary${opacity}" style="width:${pct}%;"></div>
+            </div>
+            <small style="width:36px;text-align:right;">${pct}%</small>
+        </div>`;
+    }
 
     runBtn.addEventListener('click', async () => {
         if (!confirm('pytest を実行します。数秒〜数十秒かかります。よろしいですか？')) return;
@@ -1335,28 +1351,42 @@ document.addEventListener("click", (e) => {
             const cov = data.coverage;
 
             // 合計カバレッジ更新
-            totalPct.textContent = cov.total_pct + '%';
-            covStmts.textContent = cov.total_covered + ' / ' + cov.total_stmts + ' ステートメント';
-            lastRun.textContent  = '最終実行: ' + cov.last_run;
-            totalBar.style.width = cov.total_pct + '%';
+            totalPct.textContent     = cov.total_pct + '%';
+            covStmts.textContent     = cov.total_covered + ' / ' + cov.total_stmts + ' ステートメント';
+            lastRun.textContent      = '最終実行: ' + cov.last_run;
+            totalBar.style.width     = cov.total_pct + '%';
+            filesBadge.textContent   = cov.files.length;
+            funcBadge.textContent    = cov.functions.length;
+            classBadge.textContent   = cov.classes.length;
 
-            // テーブル再描画
+            // ファイルテーブル再描画
             tableBody.innerHTML = cov.files.map(f => `
                 <tr>
                     <td class="ps-3 font-monospace small">${f.name}</td>
                     <td class="text-end small">${f.stmts}</td>
                     <td class="text-end small text-body-secondary">${f.missing}</td>
-                    <td>
-                        <div class="d-flex align-items-center gap-2">
-                            <div class="progress flex-grow-1" style="height:8px;">
-                                <div class="progress-bar bg-secondary${f.pct < 40 ? ' opacity-50' : f.pct < 70 ? ' opacity-75' : ''}"
-                                     style="width:${f.pct}%;"></div>
-                            </div>
-                            <small style="width:36px;text-align:right;">${f.pct}%</small>
-                        </div>
-                    </td>
-                </tr>
-            `).join('');
+                    <td>${pctCell(f.pct)}</td>
+                </tr>`).join('');
+
+            // 関数テーブル再描画
+            funcTableBody.innerHTML = cov.functions.map(f => `
+                <tr>
+                    <td class="ps-3 font-monospace small fw-semibold">${f.name}</td>
+                    <td class="small text-body-secondary font-monospace">${f.file}:${f.line}</td>
+                    <td class="text-end small">${f.stmts}</td>
+                    <td class="text-end small text-body-secondary">${f.missing}</td>
+                    <td>${pctCell(f.pct)}</td>
+                </tr>`).join('');
+
+            // クラステーブル再描画
+            classTableBody.innerHTML = cov.classes.map(c => `
+                <tr>
+                    <td class="ps-3 font-monospace small fw-semibold">${c.name}</td>
+                    <td class="small text-body-secondary font-monospace">${c.file}:${c.line}</td>
+                    <td class="text-end small">${c.stmts}</td>
+                    <td class="text-end small text-body-secondary">${c.missing}</td>
+                    <td>${pctCell(c.pct)}</td>
+                </tr>`).join('');
 
             // 結果表示
             emptyMsg.classList.add('d-none');

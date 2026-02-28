@@ -1269,6 +1269,52 @@ def mail_approve():
 # テスト網羅率ページ
 # ===================================================
 
+def _get_ast_coverage_items(filepath, executed_set, missing_set, display_name):
+    """AST解析でファイル内のトップレベル関数・メソッド・クラスのカバレッジを取得する。"""
+    import ast as _ast
+    try:
+        source = filepath.read_text(encoding='utf-8')
+        tree = _ast.parse(source)
+    except (SyntaxError, OSError, UnicodeDecodeError):
+        return [], []
+
+    stmt_lines = executed_set | missing_set
+
+    def _calc(node):
+        node_lines = stmt_lines & set(range(node.lineno, node.end_lineno + 1))
+        cov = node_lines & executed_set
+        miss = node_lines & missing_set
+        total = len(node_lines)
+        pct = int(len(cov) / total * 100) if total else 0
+        return {'stmts': total, 'covered': len(cov), 'missing': len(miss), 'pct': pct}
+
+    functions = []
+    classes = []
+    for node in tree.body:
+        if isinstance(node, (_ast.FunctionDef, _ast.AsyncFunctionDef)):
+            m = _calc(node)
+            if m['stmts'] == 0:
+                continue
+            functions.append({'name': node.name, 'file': display_name, 'line': node.lineno, **m})
+        elif isinstance(node, _ast.ClassDef):
+            m = _calc(node)
+            if m['stmts'] == 0:
+                continue
+            classes.append({'name': node.name, 'file': display_name, 'line': node.lineno, **m})
+            for child in node.body:
+                if isinstance(child, (_ast.FunctionDef, _ast.AsyncFunctionDef)):
+                    cm = _calc(child)
+                    if cm['stmts'] == 0:
+                        continue
+                    functions.append({
+                        'name': f"{node.name}.{child.name}",
+                        'file': display_name,
+                        'line': child.lineno,
+                        **cm,
+                    })
+    return functions, classes
+
+
 def _parse_coverage_json(coverage_json_path):
     """coverage.json を読み込んでテンプレート用データに変換する。"""
     import json as _json
@@ -1280,9 +1326,12 @@ def _parse_coverage_json(coverage_json_path):
 
     # 除外するファイルパターン（ノイズになるファイル）
     EXCLUDE_PATTERNS = ['__init__', 'seed.py', 'dev_print.py', 'factories/']
+    project_root = coverage_json_path.parent
 
     totals = data['totals']
     files = []
+    all_functions = []
+    all_classes = []
     for name, info in sorted(data['files'].items(), key=lambda x: x[0]):
         if any(p in name for p in EXCLUDE_PATTERNS):
             continue
@@ -1290,13 +1339,21 @@ def _parse_coverage_json(coverage_json_path):
         stmts = info['summary']['num_statements']
         covered = info['summary']['covered_lines']
         missing = info['summary']['missing_lines']
+        display_name = name.replace('\\', '/')
         files.append({
-            'name': name.replace('\\', '/'),
+            'name': display_name,
             'pct': int(pct),
             'stmts': stmts,
             'covered': covered,
             'missing': missing,
         })
+        # AST解析でfunction/class coverage取得
+        filepath = project_root / name
+        executed_set = set(info.get('executed_lines', []))
+        missing_set = set(info.get('missing_lines', []))
+        funcs, classes = _get_ast_coverage_items(filepath, executed_set, missing_set, display_name)
+        all_functions.extend(funcs)
+        all_classes.extend(classes)
 
     mtime = coverage_json_path.stat().st_mtime
     last_run = datetime.fromtimestamp(mtime).strftime('%Y-%m-%d %H:%M:%S')
@@ -1307,6 +1364,8 @@ def _parse_coverage_json(coverage_json_path):
         'total_covered': totals['covered_lines'],
         'total_missing': totals['missing_lines'],
         'files': files,
+        'functions': sorted(all_functions, key=lambda x: x['name']),
+        'classes': sorted(all_classes, key=lambda x: x['name']),
         'last_run': last_run,
     }
 

@@ -1,6 +1,16 @@
 {% extends "admin/base.j2" %}
 {% block page_title %}テスト網羅率 | {{ SITE_NAME }}{% endblock %}
 
+{% macro pct_bar(pct) %}
+<div class="d-flex align-items-center gap-2">
+    <div class="progress flex-grow-1" style="height:8px;">
+        <div class="progress-bar {% if pct >= 70 %}bg-secondary{% elif pct >= 40 %}bg-secondary opacity-75{% else %}bg-secondary opacity-50{% endif %}"
+             style="width:{{ pct }}%;"></div>
+    </div>
+    <small style="width:36px;text-align:right;">{{ pct }}%</small>
+</div>
+{% endmacro %}
+
 {% block content %}
 <div class="py-4">
 
@@ -69,44 +79,119 @@
             </div>
         </div>
 
-        {# ファイル別テーブル #}
-        <div class="card border-secondary fade-in">
-            <div class="card-header">
-                <i class="fa fa-table me-2"></i>ファイル別カバレッジ
+        {# ===== タブナビ ===== #}
+        <ul class="nav nav-tabs mb-0" id="coverageTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-files" type="button" role="tab">
+                    <i class="fa fa-file-code-o me-1"></i>ファイル
+                    <span class="badge bg-secondary ms-1" id="filesBadge">{{ coverage.files|length if coverage else 0 }}</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-functions" type="button" role="tab">
+                    <i class="fa fa-code me-1"></i>関数
+                    <span class="badge bg-secondary ms-1" id="funcBadge">{{ coverage.functions|length if coverage else 0 }}</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-classes" type="button" role="tab">
+                    <i class="fa fa-cube me-1"></i>クラス
+                    <span class="badge bg-secondary ms-1" id="classBadge">{{ coverage.classes|length if coverage else 0 }}</span>
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+
+            {# ----- ファイルタブ ----- #}
+            <div class="tab-pane fade show active" id="tab-files" role="tabpanel">
+                <div class="card border-secondary border-top-0 rounded-top-0">
+                    <div class="card-body p-0">
+                        <table class="table table-sm table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-3">ファイル</th>
+                                    <th class="text-end" style="width:80px;">Stmts</th>
+                                    <th class="text-end" style="width:80px;">Miss</th>
+                                    <th style="width:220px;">カバレッジ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="coverageTableBody">
+                                {% if coverage %}{% for f in coverage.files %}
+                                <tr>
+                                    <td class="ps-3 font-monospace small">{{ f.name }}</td>
+                                    <td class="text-end small">{{ f.stmts }}</td>
+                                    <td class="text-end small text-body-secondary">{{ f.missing }}</td>
+                                    <td>{{ pct_bar(f.pct) }}</td>
+                                </tr>
+                                {% endfor %}{% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-            <div class="card-body p-0">
-                <table class="table table-sm table-hover mb-0" id="coverageTable">
-                    <thead class="table-light">
-                        <tr>
-                            <th class="ps-3">ファイル</th>
-                            <th class="text-end" style="width:80px;">Stmts</th>
-                            <th class="text-end" style="width:80px;">Miss</th>
-                            <th style="width:200px;">カバレッジ</th>
-                        </tr>
-                    </thead>
-                    <tbody id="coverageTableBody">
-                        {% if coverage %}
-                        {% for f in coverage.files %}
-                        <tr>
-                            <td class="ps-3 font-monospace small">{{ f.name }}</td>
-                            <td class="text-end small">{{ f.stmts }}</td>
-                            <td class="text-end small text-body-secondary">{{ f.missing }}</td>
-                            <td>
-                                <div class="d-flex align-items-center gap-2">
-                                    <div class="progress flex-grow-1" style="height:8px;">
-                                        <div class="progress-bar {% if f.pct >= 70 %}bg-secondary{% elif f.pct >= 40 %}bg-secondary opacity-75{% else %}bg-secondary opacity-50{% endif %}"
-                                             style="width:{{ f.pct }}%;"></div>
-                                    </div>
-                                    <small style="width:36px;text-align:right;">{{ f.pct }}%</small>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                        {% endif %}
-                    </tbody>
-                </table>
+
+            {# ----- 関数タブ ----- #}
+            <div class="tab-pane fade" id="tab-functions" role="tabpanel">
+                <div class="card border-secondary border-top-0 rounded-top-0">
+                    <div class="card-body p-0">
+                        <table class="table table-sm table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-3">関数 / メソッド</th>
+                                    <th>ファイル</th>
+                                    <th class="text-end" style="width:80px;">Stmts</th>
+                                    <th class="text-end" style="width:80px;">Miss</th>
+                                    <th style="width:220px;">カバレッジ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="coverageFuncTableBody">
+                                {% if coverage %}{% for f in coverage.functions %}
+                                <tr>
+                                    <td class="ps-3 font-monospace small fw-semibold">{{ f.name }}</td>
+                                    <td class="small text-body-secondary font-monospace">{{ f.file }}:{{ f.line }}</td>
+                                    <td class="text-end small">{{ f.stmts }}</td>
+                                    <td class="text-end small text-body-secondary">{{ f.missing }}</td>
+                                    <td>{{ pct_bar(f.pct) }}</td>
+                                </tr>
+                                {% endfor %}{% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-        </div>
+
+            {# ----- クラスタブ ----- #}
+            <div class="tab-pane fade" id="tab-classes" role="tabpanel">
+                <div class="card border-secondary border-top-0 rounded-top-0">
+                    <div class="card-body p-0">
+                        <table class="table table-sm table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-3">クラス</th>
+                                    <th>ファイル</th>
+                                    <th class="text-end" style="width:80px;">Stmts</th>
+                                    <th class="text-end" style="width:80px;">Miss</th>
+                                    <th style="width:220px;">カバレッジ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="coverageClassTableBody">
+                                {% if coverage %}{% for c in coverage.classes %}
+                                <tr>
+                                    <td class="ps-3 font-monospace small fw-semibold">{{ c.name }}</td>
+                                    <td class="small text-body-secondary font-monospace">{{ c.file }}:{{ c.line }}</td>
+                                    <td class="text-end small">{{ c.stmts }}</td>
+                                    <td class="text-end small text-body-secondary">{{ c.missing }}</td>
+                                    <td>{{ pct_bar(c.pct) }}</td>
+                                </tr>
+                                {% endfor %}{% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>{# /tab-content #}
 
     </div>{# /coverageResult #}
 
