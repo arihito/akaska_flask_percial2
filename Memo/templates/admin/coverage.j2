@@ -107,21 +107,21 @@
             <div class="tab-pane fade show active" id="tab-files" role="tabpanel">
                 <div class="card border-secondary border-top-0 rounded-top-0">
                     <div class="card-body p-0">
-                        <table class="table table-sm table-hover mb-0">
+                        <table class="table table-hover mb-0 align-middle">
                             <thead class="table-light">
                                 <tr>
-                                    <th class="ps-3">ファイル</th>
-                                    <th class="text-end" style="width:80px;">Stmts</th>
-                                    <th class="text-end" style="width:80px;">Miss</th>
-                                    <th style="width:220px;">カバレッジ</th>
+                                    <th class="ps-3 py-3">ファイル</th>
+                                    <th class="text-end py-3" style="width:80px;">Stmts</th>
+                                    <th class="text-end py-3" style="width:80px;">Miss</th>
+                                    <th class="py-3" style="width:220px;">カバレッジ</th>
                                 </tr>
                             </thead>
                             <tbody id="coverageTableBody">
                                 {% if coverage %}{% for f in coverage.files %}
                                 <tr>
-                                    <td class="ps-3 font-monospace small">{{ f.name }}</td>
-                                    <td class="text-end small">{{ f.stmts }}</td>
-                                    <td class="text-end small text-body-secondary">{{ f.missing }}</td>
+                                    <td class="ps-3 font-monospace">{{ f.name }}</td>
+                                    <td class="text-end">{{ f.stmts }}</td>
+                                    <td class="text-end text-body-secondary">{{ f.missing }}</td>
                                     <td>{{ pct_bar(f.pct) }}</td>
                                 </tr>
                                 {% endfor %}{% endif %}
@@ -135,23 +135,23 @@
             <div class="tab-pane fade" id="tab-functions" role="tabpanel">
                 <div class="card border-secondary border-top-0 rounded-top-0">
                     <div class="card-body p-0">
-                        <table class="table table-sm table-hover mb-0">
+                        <table class="table table-hover mb-0 align-middle">
                             <thead class="table-light">
                                 <tr>
-                                    <th class="ps-3">関数 / メソッド</th>
-                                    <th>ファイル</th>
-                                    <th class="text-end" style="width:80px;">Stmts</th>
-                                    <th class="text-end" style="width:80px;">Miss</th>
-                                    <th style="width:220px;">カバレッジ</th>
+                                    <th class="ps-3 py-3">関数 / メソッド</th>
+                                    <th class="py-3">ファイル</th>
+                                    <th class="text-end py-3" style="width:80px;">Stmts</th>
+                                    <th class="text-end py-3" style="width:80px;">Miss</th>
+                                    <th class="py-3" style="width:220px;">カバレッジ</th>
                                 </tr>
                             </thead>
                             <tbody id="coverageFuncTableBody">
                                 {% if coverage %}{% for f in coverage.functions %}
                                 <tr>
-                                    <td class="ps-3 font-monospace small fw-semibold">{{ f.name }}</td>
-                                    <td class="small text-body-secondary font-monospace">{{ f.file }}:{{ f.line }}</td>
-                                    <td class="text-end small">{{ f.stmts }}</td>
-                                    <td class="text-end small text-body-secondary">{{ f.missing }}</td>
+                                    <td class="ps-3 font-monospace fw-semibold">{{ f.name }}</td>
+                                    <td class="text-body-secondary font-monospace">{{ f.file }}:{{ f.line }}</td>
+                                    <td class="text-end">{{ f.stmts }}</td>
+                                    <td class="text-end text-body-secondary">{{ f.missing }}</td>
                                     <td>{{ pct_bar(f.pct) }}</td>
                                 </tr>
                                 {% endfor %}{% endif %}
@@ -165,23 +165,23 @@
             <div class="tab-pane fade" id="tab-classes" role="tabpanel">
                 <div class="card border-secondary border-top-0 rounded-top-0">
                     <div class="card-body p-0">
-                        <table class="table table-sm table-hover mb-0">
+                        <table class="table table-hover mb-0 align-middle">
                             <thead class="table-light">
                                 <tr>
-                                    <th class="ps-3">クラス</th>
-                                    <th>ファイル</th>
-                                    <th class="text-end" style="width:80px;">Stmts</th>
-                                    <th class="text-end" style="width:80px;">Miss</th>
-                                    <th style="width:220px;">カバレッジ</th>
+                                    <th class="ps-3 py-3">クラス</th>
+                                    <th class="py-3">ファイル</th>
+                                    <th class="text-end py-3" style="width:80px;">Stmts</th>
+                                    <th class="text-end py-3" style="width:80px;">Miss</th>
+                                    <th class="py-3" style="width:220px;">カバレッジ</th>
                                 </tr>
                             </thead>
                             <tbody id="coverageClassTableBody">
                                 {% if coverage %}{% for c in coverage.classes %}
                                 <tr>
-                                    <td class="ps-3 font-monospace small fw-semibold">{{ c.name }}</td>
-                                    <td class="small text-body-secondary font-monospace">{{ c.file }}:{{ c.line }}</td>
-                                    <td class="text-end small">{{ c.stmts }}</td>
-                                    <td class="text-end small text-body-secondary">{{ c.missing }}</td>
+                                    <td class="ps-3 font-monospace fw-semibold">{{ c.name }}</td>
+                                    <td class="text-body-secondary font-monospace">{{ c.file }}:{{ c.line }}</td>
+                                    <td class="text-end">{{ c.stmts }}</td>
+                                    <td class="text-end text-body-secondary">{{ c.missing }}</td>
                                     <td>{{ pct_bar(c.pct) }}</td>
                                 </tr>
                                 {% endfor %}{% endif %}
