@@ -1753,13 +1753,13 @@ pre.file-tag[data-tag]::before {
     .cov-hdr { display: none; }
 
     .cov-grid-files .cov-row {
-        grid-template-columns: 1fr 48px 48px;
+        grid-template-columns: 1fr 58px 58px;
         grid-template-areas:
             "name  name  name"
             "bar   stmts miss";
     }
     .cov-grid-items .cov-row {
-        grid-template-columns: 1fr 48px 48px;
+        grid-template-columns: 1fr 58px 58px;
         grid-template-areas:
             "name  name  name"
             "file  file  file"
@@ -1767,8 +1767,18 @@ pre.file-tag[data-tag]::before {
     }
     .cov-col-name  { padding-bottom: 0.15rem; }
     .cov-col-file  { padding-top: 0.1rem; padding-bottom: 0.15rem; }
-    .cov-col-stmts { text-align: center; }
-    .cov-col-miss  { text-align: center; }
-    .cov-col-stmts::before { content: "S "; font-size: 0.65em; opacity: 0.6; }
-    .cov-col-miss::before  { content: "M "; font-size: 0.65em; opacity: 0.6; }
+    /* S/M ラベルを数値の左に固定: nowrap で折り返し防止 */
+    .cov-col-stmts,
+    .cov-col-miss  { text-align: left; white-space: nowrap; }
+    .cov-col-stmts::before { content: "S "; font-size: 0.7em; opacity: 0.6; vertical-align: middle; }
+    .cov-col-miss::before  { content: "M "; font-size: 0.7em; opacity: 0.6; vertical-align: middle; }
+
+    /* タブを横1行に収める */
+    #coverageTabs { flex-wrap: nowrap; }
+    #coverageTabs .nav-link {
+        padding: 0.4rem 0.55rem;
+        font-size: 0.8rem;
+        white-space: nowrap;
+    }
+    #coverageTabs .nav-link .badge { display: none; }
 }
