@@ -1294,3 +1294,79 @@ document.addEventListener("click", (e) => {
     );
     observer.observe(firstTrack);
 })();
+
+/* =========================
+  テスト網羅率 実行ボタン
+========================== */
+(() => {
+    const runBtn = document.getElementById('coverageRunBtn');
+    if (!runBtn) return;
+
+    const loading   = document.getElementById('coverageLoading');
+    const emptyMsg  = document.getElementById('coverageEmpty');
+    const result    = document.getElementById('coverageResult');
+    const totalPct  = document.getElementById('totalPct');
+    const covStmts  = document.getElementById('covStmts');
+    const lastRun   = document.getElementById('lastRun');
+    const totalBar  = document.getElementById('totalBar');
+    const tableBody = document.getElementById('coverageTableBody');
+
+    runBtn.addEventListener('click', async () => {
+        if (!confirm('pytest を実行します。数秒〜数十秒かかります。よろしいですか？')) return;
+
+        // ローディング表示
+        runBtn.disabled = true;
+        loading.classList.remove('d-none');
+        emptyMsg.classList.add('d-none');
+        result.classList.add('d-none');
+
+        try {
+            const res = await fetch('/admin/coverage/run', {
+                method: 'POST',
+                headers: { 'X-CSRFToken': document.querySelector('meta[name=csrf-token]')?.content || '' },
+            });
+            const data = await res.json();
+
+            if (!data.ok) {
+                alert('エラー: ' + (data.error || '不明なエラー'));
+                return;
+            }
+
+            const cov = data.coverage;
+
+            // 合計カバレッジ更新
+            totalPct.textContent = cov.total_pct + '%';
+            covStmts.textContent = cov.total_covered + ' / ' + cov.total_stmts + ' ステートメント';
+            lastRun.textContent  = '最終実行: ' + cov.last_run;
+            totalBar.style.width = cov.total_pct + '%';
+
+            // テーブル再描画
+            tableBody.innerHTML = cov.files.map(f => `
+                <tr>
+                    <td class="ps-3 font-monospace small">${f.name}</td>
+                    <td class="text-end small">${f.stmts}</td>
+                    <td class="text-end small text-body-secondary">${f.missing}</td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="progress flex-grow-1" style="height:8px;">
+                                <div class="progress-bar bg-secondary${f.pct < 40 ? ' opacity-50' : f.pct < 70 ? ' opacity-75' : ''}"
+                                     style="width:${f.pct}%;"></div>
+                            </div>
+                            <small style="width:36px;text-align:right;">${f.pct}%</small>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+
+            // 結果表示
+            emptyMsg.classList.add('d-none');
+            result.classList.remove('d-none');
+
+        } catch (e) {
+            alert('通信エラー: ' + e.message);
+        } finally {
+            loading.classList.add('d-none');
+            runBtn.disabled = false;
+        }
+    });
+})();

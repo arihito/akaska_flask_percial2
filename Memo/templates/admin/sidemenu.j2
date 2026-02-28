@@ -13,6 +13,8 @@
         <li class="nav-item fade-in fade-in-delay-10"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'admin.user_thumb' %}active{% endif %}" href="{{ url_for('admin.user_thumb') }}"><i class="fa fa-user-circle me-2"></i>ユーザーサムネイル</a></li>
         <hr>
         <li class="nav-item fade-in fade-in-delay-11"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'admin.category' %}active{% endif %}" href="{{ url_for('admin.category') }}"><i class="fa fa-tags me-2"></i>カテゴリー管理</a></li>
+        <hr>
+        <li class="nav-item fade-in fade-in-delay-11"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'admin.coverage' %}active{% endif %}" href="{{ url_for('admin.coverage') }}"><i class="fa fa-table me-2"></i>テスト網羅率状況</a></li>
     </ul>
     <hr>
     <h6 class="text-body-secondary fs-5 ms-4 ps-2 mt-4 pt-2 mb-3 font-bold"><i class="fa fa-file-code-o me-2"></i> 開発関連資料</h6>

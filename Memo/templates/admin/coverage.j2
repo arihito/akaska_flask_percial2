@@ -1,0 +1,114 @@
+{% extends "admin/base.j2" %}
+{% block page_title %}テスト網羅率 | {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="py-4">
+
+    {# ===== ヘッダー ===== #}
+    <div class="d-flex align-items-center justify-content-between mb-4 fade-in">
+        <h2 class="mb-0"><i class="fa fa-check-square-o me-2"></i>テスト網羅率状況</h2>
+        <button id="coverageRunBtn" class="btn btn-outline-secondary btn-lg">
+            <i class="fa fa-play me-1"></i>テスト実行
+        </button>
+    </div>
+
+    {# ===== ローディング ===== #}
+    <div id="coverageLoading" class="text-center py-5 d-none">
+        <div class="spinner-border text-secondary" role="status" style="width:3rem;height:3rem;"></div>
+        <p class="mt-3 text-body-secondary">pytest を実行中です。しばらくお待ちください…</p>
+    </div>
+
+    {# ===== 未実行メッセージ ===== #}
+    <div id="coverageEmpty" class="{% if coverage %}d-none{% endif %}">
+        <div class="card border-secondary fade-in">
+            <div class="card-body text-center py-5">
+                <i class="fa fa-inbox fa-3x text-body-secondary mb-3"></i>
+                <p class="text-body-secondary mb-0">まだテストが実行されていません。<br>「テスト実行」ボタンを押して最新データを取得してください。</p>
+            </div>
+        </div>
+    </div>
+
+    {# ===== 結果パネル ===== #}
+    <div id="coverageResult" class="{% if not coverage %}d-none{% endif %}">
+
+        {# 合計カバレッジ + 最終実行日時 #}
+        <div class="row mb-4 fade-in">
+            <div class="col-md-4">
+                <div class="card border-secondary text-center py-4">
+                    <div class="card-body">
+                        <div id="totalPct" class="display-3 fw-bold" style="color:#234;">
+                            {{ coverage.total_pct if coverage else 0 }}%
+                        </div>
+                        <p class="text-body-secondary mb-1">総カバレッジ</p>
+                        <small id="covStmts" class="text-body-secondary">
+                            {{ coverage.total_covered if coverage else 0 }} /
+                            {{ coverage.total_stmts if coverage else 0 }} ステートメント
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8 d-flex align-items-center">
+                <div class="w-100">
+                    <div class="d-flex justify-content-between mb-1">
+                        <small class="text-body-secondary">カバレッジ進捗</small>
+                        <small id="lastRun" class="text-body-secondary">
+                            最終実行: {{ coverage.last_run if coverage else '' }}
+                        </small>
+                    </div>
+                    <div class="progress" style="height:20px;">
+                        <div id="totalBar" class="progress-bar bg-secondary"
+                             style="width:{{ coverage.total_pct if coverage else 0 }}%;">
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-2">
+                        <small class="text-body-secondary">0%</small>
+                        <small class="text-body-secondary">目標: 50%</small>
+                        <small class="text-body-secondary">100%</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# ファイル別テーブル #}
+        <div class="card border-secondary fade-in">
+            <div class="card-header">
+                <i class="fa fa-table me-2"></i>ファイル別カバレッジ
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-sm table-hover mb-0" id="coverageTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3">ファイル</th>
+                            <th class="text-end" style="width:80px;">Stmts</th>
+                            <th class="text-end" style="width:80px;">Miss</th>
+                            <th style="width:200px;">カバレッジ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="coverageTableBody">
+                        {% if coverage %}
+                        {% for f in coverage.files %}
+                        <tr>
+                            <td class="ps-3 font-monospace small">{{ f.name }}</td>
+                            <td class="text-end small">{{ f.stmts }}</td>
+                            <td class="text-end small text-body-secondary">{{ f.missing }}</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="progress flex-grow-1" style="height:8px;">
+                                        <div class="progress-bar {% if f.pct >= 70 %}bg-secondary{% elif f.pct >= 40 %}bg-secondary opacity-75{% else %}bg-secondary opacity-50{% endif %}"
+                                             style="width:{{ f.pct }}%;"></div>
+                                    </div>
+                                    <small style="width:36px;text-align:right;">{{ f.pct }}%</small>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>{# /coverageResult #}
+
+</div>
+{% endblock %}

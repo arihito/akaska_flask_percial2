@@ -1263,3 +1263,88 @@ def mail_approve():
         user=current_user,
         payment_url=payment_url
     )
+
+
+# ===================================================
+# テスト網羅率ページ
+# ===================================================
+
+def _parse_coverage_json(coverage_json_path):
+    """coverage.json を読み込んでテンプレート用データに変換する。"""
+    import json as _json
+    from datetime import datetime
+    if not coverage_json_path.exists():
+        return None
+    with open(coverage_json_path, encoding='utf-8') as f:
+        data = _json.load(f)
+
+    # 除外するファイルパターン（ノイズになるファイル）
+    EXCLUDE_PATTERNS = ['__init__', 'seed.py', 'dev_print.py', 'factories/']
+
+    totals = data['totals']
+    files = []
+    for name, info in sorted(data['files'].items(), key=lambda x: x[0]):
+        if any(p in name for p in EXCLUDE_PATTERNS):
+            continue
+        pct = info['summary']['percent_covered_display']
+        stmts = info['summary']['num_statements']
+        covered = info['summary']['covered_lines']
+        missing = info['summary']['missing_lines']
+        files.append({
+            'name': name.replace('\\', '/'),
+            'pct': int(pct),
+            'stmts': stmts,
+            'covered': covered,
+            'missing': missing,
+        })
+
+    mtime = coverage_json_path.stat().st_mtime
+    last_run = datetime.fromtimestamp(mtime).strftime('%Y-%m-%d %H:%M:%S')
+
+    return {
+        'total_pct': int(totals['percent_covered_display']),
+        'total_stmts': totals['num_statements'],
+        'total_covered': totals['covered_lines'],
+        'total_missing': totals['missing_lines'],
+        'files': files,
+        'last_run': last_run,
+    }
+
+
+@admin_bp.route('/coverage')
+@login_required
+def coverage():
+    coverage_json_path = Path(current_app.root_path) / 'coverage.json'
+    coverage_data = _parse_coverage_json(coverage_json_path)
+    return render_template('admin/coverage.j2', coverage=coverage_data)
+
+
+@admin_bp.route('/coverage/run', methods=['POST'])
+@login_required
+def coverage_run():
+    """pytest を実行して coverage.json を生成し、結果を JSON で返す。"""
+    import subprocess, sys
+    python = sys.executable
+    project_root = Path(current_app.root_path)
+    try:
+        result = subprocess.run(
+            [python, '-m', 'pytest', '--cov=.', '--cov-report=json', '-q', '--tb=no'],
+            cwd=str(project_root),
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
+        coverage_json_path = project_root / 'coverage.json'
+        coverage_data = _parse_coverage_json(coverage_json_path)
+        if coverage_data is None:
+            return {'ok': False, 'error': 'coverage.json が生成されませんでした'}, 500
+        passed = result.returncode == 0
+        return {
+            'ok': True,
+            'passed': passed,
+            'coverage': coverage_data,
+        }
+    except subprocess.TimeoutExpired:
+        return {'ok': False, 'error': 'タイムアウト（120秒）'}, 500
+    except Exception as e:
+        return {'ok': False, 'error': str(e)}, 500
