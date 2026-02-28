@@ -25,7 +25,7 @@
                 </div>
                 <a class="d-flex align-items-center text-decoration-none me-3" href="{{ url_for('memo.index') }}">
                     <img src="{{ url_for('static', filename='images/user/' ~ current_user.thumbnail) }}" alt="{{ current_user.username }}" class="user-icon me-2 fade-in fade-in-delay-8 rounded-circle" width="" height="">
-                    <span class="user-name fade-in fade-in-delay-16 text-body-secondary d-none d-md-inline"><strong>{{ current_user.username }}</strong> さん</span>
+                    <span class="user-name fade-in fade-in-delay-16 text-body-secondary d-md-inline"><strong>{{ current_user.username }}</strong> さん</span>
                 </a>
                 <a class="btn btn-outline-secondary me-2 fade-in fade-in-delay-20 d-none d-md-flex" href="{{ url_for('memo.index') }}"><i class="fa fa-arrow-left me-1"></i>マイページ</a>
                 <a class="btn btn-outline-secondary fade-in fade-in-delay-20 d-none d-md-flex" href="{{ url_for('admin.logout') }}"><i class="fa fa-sign-out me-1"></i>管理者ログアウト</a>
@@ -76,6 +76,7 @@
                 aria-controls="adminOffcanvas"
                 aria-label="メニューを開く">
             <i class="fa fa-bars fa-lg my-1"></i>
+            <span class="ms-1" style="font-size:0.4rem">▶</span>
         </button>
     </div>
 {% endblock container %}

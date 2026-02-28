@@ -334,6 +334,7 @@ WTForms            3.2.1
         <li>管理者承認待ちボタン(既存の管理者による承認)</li>
         <li>管理者へのFlask-mailによる<code>承認依頼のメール送信</code></li>
         <li>承認後の<code>カード決済処理</code></li>
+        <li>決済価格480円/24h＋24ptで各AIのトークン消費量に応じてpt減少</li>
         <li>決済後の<code>トークンパスワード生成と登録</code>後にユーザーへのメール送信</li>
         <li>プログレスバーによる進捗アニメーション</li>
         <li>スーパーユーザーモード認証後の<code>エレクトロニックフレーム</code>発動</li>
@@ -350,7 +351,7 @@ WTForms            3.2.1
       <li>サムネイルアイコン管理</li>
     </ul>
   </li>
-    <li>AI機能
+  <li>AI機能
       <ul>
           <li>乱発防止のため管理者のみと<code>1日の使用回数を制限</code>し確認通知</li>
           <li>拡散しやすい技術記事か、<code>複数の指標から品質を定量化</code>しグラフ生成する(アニメーションビルド)</li>
@@ -359,6 +360,15 @@ WTForms            3.2.1
           <li>記事本文の<code>要約を自動生成</code>し一覧解説に掲載</li>
           <li>ユーザーアイコンサムネイルの自動生成</li>
           <li>トレンドカテゴリーの自動生成</li>
+      </ul>
+  </li>
+    <li>運用
+      <ul>
+          <li>Rendarへのデプロイ</li>
+          <li>単体テストと結合テスト</li>
+          <li>ロギング</li>
+          <li>コアエラーは管理者にメール送信</li>
+          <li>GitHub ActionによるCI/CD</li>
       </ul>
   </li>
 </ul>
@@ -373,27 +383,14 @@ WTForms            3.2.1
 <details>
 <summary>実装中機能一覧</summary>
 <ul>
-  <li>決済価格480円/24h＋24ptで各AIのトークン消費量に応じてpt減少(ログインに解説付与)</li>
-  <li>学校のPCでも実行可能か検証</li>
-  <li>MCP(context7 or serie)追加確認</li>
+  <li>スライド1ページ目にbitlyとQRを添付</li>
+  <li>リモート上の決済処理確認</li>
+  <li>機能紹介動画作成</li>
   <li>例外処理
     <ul>
       <li>エラーレベルに応じたログ生成</li>
       <li>コアエラーは管理者にメール送信</li>
     </ul>
-  </li>
-  <li>テスト
-    <ul>
-      <li><a href="https://flask-web-academy.com/article/flask-unittest/">単体</a>テスト</li>
-      <li><a href="https://developer.jamstack-media.com/docs/flask/9.-%E3%83%86%E3%82%B9%E3%83%88/9.1-%E3%83%A6%E3%83%8B%E3%83%83%E3%83%88%E3%83%86%E3%82%B9%E3%83%88%E3%81%A8%E7%B5%B1%E5%90%88%E3%83%86%E3%82%B9%E3%83%88%E3%81%AE%E4%BD%9C%E6%88%90/">結合</a>テスト</li>
-    </ul>
-  </li>
-  <li>デプロイ
-      <ul>
-          <li>Rendarの利用確認</li>
-          <li>GitHub Actionの追加</li>
-          <li>自動テストによるCI/CD</li>
-      </ul>
   </li>
 </ul>
 </details>
@@ -401,9 +398,28 @@ WTForms            3.2.1
 <hr width="800">
 
 > [!CAUTION]
-> **未追加機能**：時間内の対応が難しかった今後の追加予定機能
+> **未追加機能**：今回の作業での印象に残ったこと
 
 <details>
-<summary>未機能一覧</summary>
-
+<summary>振り返り</summary>
+<ul>
+      <li>コーディングフロー
+          <ul>
+              <li>CRUDやログインなど基本的ベース構築や単発機能のデバッグはChatGTPとGeminiのVibeCoding</li>
+              <li>過去の錆び付いたスキル：Figma / React / HTMX / Filmora / Rendar / Bootstrapの再確認</li>
+              <li>複数の機能やページを跨いだ設計・開発・デバッグはVibeCodingでは限界があり非効率なので、スペック駆動開発に移行</li>
+              <li>Claude Codeで実務操作の学習
+                  <ul>
+                      <li>Skills：カスタムアクション(反復・定型作業の登録)</li>
+                      <li>Plugin：拡張機能(痴呆回避・デザイン作成)</li>
+                      <li>MCP：他サービスとの連携(Github・Notion・Slackからの操作)</li>
+                      <li>hooks：特定のタイミングで実行(バッチや初期化)</li>
+                      <li>SubAgent：影分身(自己問答)</li>
+                      <li>Remote：ブラウザ指示(移動中の開発)</li>
+                      <li>Cowork：ファイルやブラウザ操作の自動化(Gmail・フォルダ整理)</li>
+                  </ul>
+              </li>
+          </ul>
+      </li>
+</ul>
 </details>

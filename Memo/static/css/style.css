@@ -24,6 +24,7 @@
 /* キービジュアル */
 /* 一覧の画像の隙間調整 */
 /* カテゴリーオススメ一覧 */
+/* 機能紹介バナー */
 /* ============== マイページ =============== */
 /* サイドメニューのホバー演出 */
 /* メニューホバー時 */
@@ -440,6 +441,23 @@ mark {
     font-size: var(--fs-badge);
     font-weight: bold;
     z-index: 2;
+}
+
+/* 機能紹介バナー */
+
+.ban-operation {
+    background-color: #212529;
+    display: block;
+  }
+.ban-operation img {
+    filter: grayscale(100%);
+    mix-blend-mode: screen;
+}
+[data-bs-theme="dark"] .ban-operation {
+  background-color: #234;
+}
+[data-bs-theme="dark"] .ban-operation img {
+  mix-blend-mode: screen;
 }
 
 /* ============== マイページ =============== */
