@@ -3,7 +3,7 @@ from flask_migrate import Migrate
 from models import db, User, FixedPage
 from flask_login import LoginManager
 from flask_debugtoolbar import DebugToolbarExtension
-from werkzeug.exceptions import NotFound
+from werkzeug.exceptions import NotFound, InternalServerError
 from errors.views import show_404_page
 from utils.logger import init_logger
 from sqlalchemy import event
@@ -57,8 +57,6 @@ def create_app(config_override=None):
     login_manager.login_view = 'auth.login'
 
     app.register_error_handler(NotFound, show_404_page)
-
-    from werkzeug.exceptions import InternalServerError
 
     @app.errorhandler(InternalServerError)
     def show_500_page(error):
