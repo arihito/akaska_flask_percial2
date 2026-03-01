@@ -26,7 +26,7 @@ def init_logger(app):
         encoding='utf-8',
     )
     file_handler.setFormatter(formatter)
-    file_handler.setLevel(logging.WARNING)
+    file_handler.setLevel(logging.INFO)
 
     # コンソールハンドラー（DEBUGモード時のみ）
     if app.debug:
