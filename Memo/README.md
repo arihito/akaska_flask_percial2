@@ -382,13 +382,7 @@ WTForms            3.2.1
 <details>
 <summary>実装中機能一覧</summary>
 <ul>
-  <li>最終的なデプロイURLをbit.lyに変換し、QRと共に公表資料に添付</li>
-  <li>事前に今回の全ての操作説明を動画で録画しYoutubeアドレスをトップページにバナーとして公開する</li>
-  <li>リモート上の決済処理確認：一般ユーザーで管理画面のログインページにアクセスした際に以下のエラー(スーパーユーザでのアクセスは問題無し)
-  Internal Server Error
-The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
-  </li>
-  <li>Factoryを「テスト対象外」にする。今回はサービス層・ビュー関数・ビジネスロジック・バリデーションで90%以上を目標とする。</li>
+  <li>事前に今回の全ての操作説明を動画で録画する</li>
 </ul>
 </details>
 

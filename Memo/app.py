@@ -24,6 +24,8 @@ from flask_mail import Mail
 from dotenv import load_dotenv
 load_dotenv()
 
+mail = Mail()
+
 
 # SQLite の FOREIGN KEY 制約を有効化（モジュールレベルで一度だけ登録）
 @event.listens_for(Engine, "connect")
@@ -45,7 +47,7 @@ def create_app(config_override=None):
     stripe.api_key = app.config['STRIPE_SECRET_KEY']
     db.init_app(app)
 
-    Mail(app)
+    mail.init_app(app)
     if not app.testing:
         DebugToolbarExtension(app)
     Migrate(app, db)
