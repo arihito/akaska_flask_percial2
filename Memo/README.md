@@ -364,10 +364,9 @@ WTForms            3.2.1
   </li>
     <li>運用
       <ul>
-          <li>Rendarへのデプロイ</li>
-          <li>単体テストと結合テスト</li>
-          <li>ロギング</li>
-          <li>コアエラーは管理者にメール送信</li>
+          <li>Rendarへのデプロイ(データ更新2分/サーバビルド1分)</li>
+          <li>単体テストと結合テストを行いカバレッジレポートの共有</li>
+          <li>ロギング時のコアエラーは管理者にメール送信</li>
           <li>GitHub ActionによるCI/CD</li>
       </ul>
   </li>
@@ -383,15 +382,13 @@ WTForms            3.2.1
 <details>
 <summary>実装中機能一覧</summary>
 <ul>
-  <li>スライド1ページ目にbitlyとQRを添付</li>
-  <li>リモート上の決済処理確認</li>
-  <li>機能紹介動画作成</li>
-  <li>例外処理
-    <ul>
-      <li>エラーレベルに応じたログ生成</li>
-      <li>コアエラーは管理者にメール送信</li>
-    </ul>
+  <li>最終的なデプロイURLをbit.lyに変換し、QRと共に公表資料に添付</li>
+  <li>事前に今回の全ての操作説明を動画で録画しYoutubeアドレスをトップページにバナーとして公開する</li>
+  <li>リモート上の決済処理確認：一般ユーザーで管理画面のログインページにアクセスした際に以下のエラー(スーパーユーザでのアクセスは問題無し)
+  Internal Server Error
+The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
   </li>
+  <li>Factoryを「テスト対象外」にする。今回はサービス層・ビュー関数・ビジネスロジック・バリデーションで90%以上を目標とする。</li>
 </ul>
 </details>
 
