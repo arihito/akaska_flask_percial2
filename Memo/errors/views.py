@@ -1,4 +1,4 @@
-from flask import render_template
+from flask import render_template, request, current_app
 from werkzeug.exceptions import NotFound
 from models import db, Memo, Favorite
 from sqlalchemy import func
@@ -17,6 +17,7 @@ def show_404_page(error):
     ]
 
     msg = error.description if hasattr(error, "description") else "ページが見つかりません"
+    current_app.logger.warning('404 Not Found: %s %s', request.method, request.path)
 
     return render_template(
         "errors/404.j2",
