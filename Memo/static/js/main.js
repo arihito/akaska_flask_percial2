@@ -1314,6 +1314,56 @@ document.addEventListener("click", (e) => {
     const tableBody      = document.getElementById('coverageTableBody');
     const funcTableBody  = document.getElementById('coverageFuncTableBody');
     const classTableBody = document.getElementById('coverageClassTableBody');
+    const coverageSummary     = document.getElementById('coverageSummary');
+    const coverageImprovement = document.getElementById('coverageImprovement');
+
+    // 総合評価・改善ポイントのHTMLを生成する
+    function buildEvaluation(cov) {
+        const pct = cov.total_pct;
+
+        // 総合評価
+        let label, desc;
+        if (pct >= 70) {
+            label = '優良';
+            desc  = 'カバレッジが目標(50%)を大幅に超えています。高い品質を維持できています。';
+        } else if (pct >= 50) {
+            label = '目標達成';
+            desc  = 'カバレッジが目標(50%)を達成しています。引き続きテストを充実させましょう。';
+        } else if (pct >= 40) {
+            label = '普通';
+            desc  = '目標の50%まであと一歩です。重要なモジュールから優先的にテストを追加しましょう。';
+        } else {
+            label = '要改善';
+            desc  = 'カバレッジが目標(50%)を下回っています。未テストのファイルへの対応を優先してください。';
+        }
+        const summaryHtml = `<p class="fw-bold pt-2 me-2 badge rounded-pill text-bg-secondary" style="font-size:1.25rem;">${label}</p>
+            <p class="text-body-secondary mb-0" style="font-size:1.2rem;">${desc}</p>`;
+
+        // 改善ポイント
+        const zeroFiles = cov.files.filter(f => f.pct === 0);
+        const missFiles = cov.files.filter(f => f.missing > 0).sort((a, b) => b.missing - a.missing);
+        let improvHtml = '';
+        if (zeroFiles.length > 0) {
+            const items = zeroFiles.slice(0, 3).map(f =>
+                `<li class="font-monospace text-body-secondary" style="font-size:0.78rem;">${f.name}</li>`
+            ).join('');
+            const more  = zeroFiles.length > 3
+                ? `<li class="text-body-secondary" style="font-size:0.78rem;">… 他 ${zeroFiles.length - 3} 件</li>` : '';
+            improvHtml += `<p class="fw-semibold mb-1" style="font-size:1.2rem;"><i class="fa fa-circle-o me-1"></i>未テストファイル（${zeroFiles.length}件）</p>
+                <ul class="list-unstyled mb-2 ps-2">${items}${more}</ul>`;
+        }
+        if (missFiles.length > 0) {
+            const items = missFiles.slice(0, 3).map(f =>
+                `<li class="font-monospace text-body-secondary" style="font-size:0.78rem;">${f.name}<span class="ms-1 fw-bold">${f.missing}</span><span class="ms-1 opacity-75" style="font-size:0.7rem;">行未カバー</span></li>`
+            ).join('');
+            improvHtml += `<p class="fw-semibold mb-1" style="font-size:1.2rem;"><i class="fa fa-exclamation-circle me-1"></i>未カバー行が多いファイル（上位3件）</p>
+                <ul class="list-unstyled mb-0 ps-2">${items}</ul>`;
+        }
+        if (!zeroFiles.length && !missFiles.length) {
+            improvHtml = '<p class="text-body-secondary mb-0" style="font-size:1.2rem;"><i class="fa fa-check me-1"></i>すべてのファイルがカバーされています。</p>';
+        }
+        return { summaryHtml, improvHtml };
+    }
 
     // プログレスバー付きセルを生成する共通関数
     function pctCell(pct) {
@@ -1351,9 +1401,15 @@ document.addEventListener("click", (e) => {
 
             // 合計カバレッジ更新
             totalPct.textContent     = cov.total_pct + '%';
-            covStmts.textContent     = cov.total_covered + ' / ' + cov.total_stmts + ' ステートメント';
+            covStmts.innerHTML       = `<span class="fs-5">${cov.total_covered}</span> / ${cov.total_stmts} ステートメント`;
             lastRun.textContent      = '最終実行: ' + cov.last_run;
             totalBar.style.width     = cov.total_pct + '%';
+
+            // 総合評価・改善ポイント更新
+            const { summaryHtml, improvHtml } = buildEvaluation(cov);
+            if (coverageSummary)     coverageSummary.innerHTML     = summaryHtml;
+            if (coverageImprovement) coverageImprovement.innerHTML = improvHtml;
+
             filesBadge.textContent   = cov.files.length;
             funcBadge.textContent    = cov.functions.length;
             classBadge.textContent   = cov.classes.length;
@@ -1413,4 +1469,28 @@ document.addEventListener("click", (e) => {
             runBtn.disabled = false;
         }
     });
+
+    /* =========================
+      ログ可視化 - レベルフィルター
+    ========================== */
+    const logFilterButtons = document.querySelectorAll('[id^="logFilter"]');
+    if (logFilterButtons.length) {
+        logFilterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // アクティブ切り替え
+                logFilterButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const level = btn.dataset.level || null; // ALL の場合は null
+                document.querySelectorAll('#logTable .log-row').forEach(row => {
+                    if (!level || row.dataset.level === level) {
+                        row.classList.remove('d-none');
+                    } else {
+                        row.classList.add('d-none');
+                    }
+                });
+            });
+        });
+    }
+
 })();
