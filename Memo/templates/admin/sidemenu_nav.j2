@@ -14,8 +14,6 @@
         <hr>
         <li class="nav-item fade-in fade-in-delay-11"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'admin.category' %}active{% endif %}" href="{{ url_for('admin.category') }}"><i class="fa fa-tags me-2"></i>カテゴリー管理</a></li>
         <hr>
-        <li class="nav-item fade-in fade-in-delay-11"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'admin.coverage' %}active{% endif %}" href="{{ url_for('admin.coverage') }}"><i class="fa fa-table me-2"></i>テスト網羅率状況</a></li>
-        <hr>
         <li class="nav-item fade-in fade-in-delay-12"><a class="nav-link text-body-secondary fs-5" href="{{ url_for('admin.logout') }}"><i class="fa fa-sign-out me-2"></i>管理者ログアウト</a></li>
     </ul>
     <hr>
@@ -43,6 +41,10 @@
                         <li class="nav-item fade-in fade-in-delay-11"><a class="nav-link text-body-secondary" href="" data-bs-toggle="modal" data-bs-target="#modal_class_depend"><i class="fa fa-sitemap me-2"></i>クラス階層構造図</a></li>
                         <hr>
                         <li class="nav-item fade-in fade-in-delay-11"><a class="nav-link text-body-secondary" href="" data-bs-toggle="modal" data-bs-target="#modal_app"><i class="fa fa-share-alt me-2"></i>アプリ全体構成図</a></li>
+                        <hr>
+                        <li class="nav-item fade-in fade-in-delay-11"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'admin.coverage' %}active{% endif %}" href="{{ url_for('admin.coverage') }}"><i class="fa fa-table me-2"></i>テスト網羅率状況</a></li>
+                        <hr>
+                        <li class="nav-item fade-in fade-in-delay-11"><a class="nav-link text-body-secondary fs-5 {% if request.endpoint == 'admin.logs' %}active{% endif %}" href="{{ url_for('admin.logs') }}"><i class="fa fa-list-alt me-2"></i>ログ可視化</a></li>
                     </ul>
                 </div>
             </div>
