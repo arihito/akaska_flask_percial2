@@ -1,7 +1,7 @@
 import math
 import os
 import re
-from datetime import datetime, timezone, date
+from datetime import datetime, timezone, date, timedelta
 from functools import wraps
 from flask import Blueprint, render_template, redirect, url_for, flash, session, current_app, request
 from flask_login import login_required, current_user
@@ -1407,3 +1407,58 @@ def coverage_run():
         return {'ok': False, 'error': 'タイムアウト（120秒）'}, 500
     except Exception as e:
         return {'ok': False, 'error': str(e)}, 500
+
+
+# ===== ログ可視化 =====
+
+def _parse_log_line(line):
+    """1行のログを辞書にパースする。パース失敗時は None を返す。"""
+    pattern = r'^\[(.+?)\] (\w+) \[(.+?)\] (.+)$'
+    m = re.match(pattern, line.strip())
+    if not m:
+        return None
+    return {
+        'datetime': m.group(1),
+        'level': m.group(2).upper(),
+        'module': m.group(3),
+        'message': m.group(4),
+    }
+
+
+@admin_bp.route('/logs')
+@admin_required
+def logs():
+    days = int(request.args.get('days', 1))
+    if days not in (1, 3, 7):
+        days = 1
+
+    log_path = current_app.root_path + '/logs/app.log'
+    entries = []
+
+    if os.path.exists(log_path):
+        cutoff = datetime.now(timezone.utc) - timedelta(days=days)
+        with open(log_path, encoding='utf-8') as f:
+            for line in f:
+                entry = _parse_log_line(line)
+                if not entry:
+                    continue
+                # 日時パース（フォーマット: 2026-03-02 14:23:10,123）
+                try:
+                    dt = datetime.strptime(entry['datetime'][:19], '%Y-%m-%d %H:%M:%S')
+                    dt = dt.replace(tzinfo=timezone.utc)
+                except ValueError:
+                    continue
+                if dt >= cutoff:
+                    entries.append(entry)
+
+    # 新しい順
+    entries.reverse()
+
+    summary = {
+        'error': sum(1 for e in entries if e['level'] == 'ERROR'),
+        'warning': sum(1 for e in entries if e['level'] == 'WARNING'),
+        'info': sum(1 for e in entries if e['level'] == 'INFO'),
+        'total': len(entries),
+    }
+
+    return render_template('admin/logs.j2', logs=entries, days=days, summary=summary)
