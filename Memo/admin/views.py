@@ -8,7 +8,7 @@ from flask_login import login_required, current_user
 from forms import AdminLoginForm
 from flask_wtf import FlaskForm
 from flask_mail import Message
-from models import db, User, ThumbnailConfig, Memo, Favorite, Category, memo_categories, FixedPage
+from models import db, User, ThumbnailConfig, Memo, Favorite, Category, memo_categories, FixedPage, AppLog
 from werkzeug.utils import secure_filename
 from sqlalchemy import func
 import stripe
@@ -1432,33 +1432,25 @@ def logs():
     if days not in (1, 3, 7):
         days = 1
 
-    log_path = current_app.root_path + '/logs/app.log'
-    entries = []
+    cutoff = datetime.now(timezone.utc) - timedelta(days=days)
+    rows = AppLog.query.filter(AppLog.created_at >= cutoff)\
+        .order_by(AppLog.created_at.desc()).all()
 
-    if os.path.exists(log_path):
-        cutoff = datetime.now(timezone.utc) - timedelta(days=days)
-        with open(log_path, encoding='utf-8') as f:
-            for line in f:
-                entry = _parse_log_line(line)
-                if not entry:
-                    continue
-                # 日時パース（フォーマット: 2026-03-02 14:23:10,123）
-                try:
-                    dt = datetime.strptime(entry['datetime'][:19], '%Y-%m-%d %H:%M:%S')
-                    dt = dt.replace(tzinfo=timezone.utc)
-                except ValueError:
-                    continue
-                if dt >= cutoff:
-                    entries.append(entry)
-
-    # 新しい順
-    entries.reverse()
+    entries = [
+        {
+            'datetime': row.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+            'level': row.level,
+            'module': row.module,
+            'message': row.message,
+        }
+        for row in rows
+    ]
 
     summary = {
-        'error': sum(1 for e in entries if e['level'] == 'ERROR'),
+        'error':   sum(1 for e in entries if e['level'] == 'ERROR'),
         'warning': sum(1 for e in entries if e['level'] == 'WARNING'),
-        'info': sum(1 for e in entries if e['level'] == 'INFO'),
-        'total': len(entries),
+        'info':    sum(1 for e in entries if e['level'] == 'INFO'),
+        'total':   len(entries),
     }
 
     return render_template('admin/logs.j2', logs=entries, days=days, summary=summary)

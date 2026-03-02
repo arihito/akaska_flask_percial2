@@ -1,6 +1,34 @@
 import logging
 import os
 from logging.handlers import RotatingFileHandler, SMTPHandler
+from datetime import datetime, timezone
+
+
+class DBLogHandler(logging.Handler):
+    """ログをDBの app_logs テーブルに書き込むハンドラー。"""
+
+    def emit(self, record):
+        # アプリコンテキスト外（起動時など）では無視
+        try:
+            from flask import current_app
+            if not current_app._get_current_object():
+                return
+        except RuntimeError:
+            return
+
+        try:
+            from models import db, AppLog
+            entry = AppLog(
+                level=record.levelname,
+                module=f'{record.name}:{record.lineno}',
+                message=self.format(record),
+                created_at=datetime.now(timezone.utc),
+            )
+            db.session.add(entry)
+            db.session.commit()
+        except Exception:
+            # DB書き込み失敗時はサイレントに無視（ロギング自体を止めない）
+            pass
 
 
 def init_logger(app):
@@ -36,6 +64,13 @@ def init_logger(app):
         app.logger.addHandler(stream_handler)
 
     app.logger.addHandler(file_handler)
+
+    # DBハンドラー（INFO以上をDBに書き込み）
+    db_handler = DBLogHandler()
+    db_handler.setFormatter(formatter)
+    db_handler.setLevel(logging.INFO)
+    app.logger.addHandler(db_handler)
+
     app.logger.setLevel(log_level)
 
     # SMTPハンドラー（本番環境かつテストでない場合のみ）
