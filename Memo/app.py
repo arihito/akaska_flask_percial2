@@ -94,12 +94,11 @@ def create_app(config_override=None):
     # ResendのSPF通信テスト
     from flask import jsonify
     from services.mail_service import send_test_email # 作成したファイルをインポート
-    app = Flask(__name__)
     # テスト実行用のURL
-    @app.route("/debug/send-mail")
-    def debug_mail_route():
+    @app.route("/debug/resend")
+    def debug_resend_route():
         # ご自身の受信可能なメールアドレスを指定
-        success, result = send_test_email("your-address@example.com")
+        success, result = send_test_email("arihito.m@gmail.com")
         if success:
             return jsonify({"status": "success", "data": result})
         else:
