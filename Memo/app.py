@@ -91,7 +91,19 @@ def create_app(config_override=None):
     def load_user(user_id):
         return db.session.get(User, int(user_id))
 
-    return app
+    # ResendのSPF通信テスト
+    from flask import jsonify
+    from services.mail_service import send_test_email # 作成したファイルをインポート
+    app = Flask(__name__)
+    # テスト実行用のURL
+    @app.route("/debug/send-mail")
+    def debug_mail_route():
+        # ご自身の受信可能なメールアドレスを指定
+        success, result = send_test_email("your-address@example.com")
+        if success:
+            return jsonify({"status": "success", "data": result})
+        else:
+            return jsonify({"status": "error", "message": result}), 500
 
 
 # モジュールレベルの後方互換（gunicorn 等が参照）
