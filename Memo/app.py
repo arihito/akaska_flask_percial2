@@ -93,7 +93,7 @@ def create_app(config_override=None):
 
     # ResendのSPF通信テスト
     from flask import jsonify
-    from services.mail_service import send_test_email # 作成したファイルをインポート
+    from utils.mail import send_test_email
     # テスト実行用のURL
     @app.route("/debug/resend")
     def debug_resend_route():
