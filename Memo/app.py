@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_migrate import Migrate
 from models import db, User, FixedPage
 from flask_login import LoginManager
@@ -62,6 +62,10 @@ def create_app(config_override=None):
             'Internal Server Error: %s', str(error), exc_info=True
         )
         return '500 Internal Server Error', 500
+
+    @app.route('/favicon.ico')
+    def favicon():
+        return send_from_directory(app.static_folder, 'favicon.ico', mimetype='image/x-icon')
 
     app.register_blueprint(public_bp)
     app.register_blueprint(auth_bp)

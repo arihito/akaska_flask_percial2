@@ -1398,7 +1398,7 @@ def _parse_log_line(line):
 @admin_required
 def logs():
     days = int(request.args.get('days', 1))
-    if days not in (1, 3, 7):
+    if days not in (1, 3, 7, 30):
         days = 1
 
     cutoff = datetime.now(timezone.utc) - timedelta(days=days)

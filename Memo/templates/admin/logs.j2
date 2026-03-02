@@ -14,6 +14,8 @@
                class="btn btn-outline-secondary {% if days == 3 %}active{% endif %}">3日</a>
             <a href="{{ url_for('admin.logs', days=7) }}"
                class="btn btn-outline-secondary {% if days == 7 %}active{% endif %}">7日</a>
+            <a href="{{ url_for('admin.logs', days=30) }}"
+               class="btn btn-outline-secondary {% if days == 30 %}active{% endif %}">30日</a>
         </div>
     </div>
 
