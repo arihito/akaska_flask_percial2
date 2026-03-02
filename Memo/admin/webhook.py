@@ -3,8 +3,8 @@ import string
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 from flask import Blueprint, request, abort, current_app, render_template, url_for
-from flask_mail import Message
 from models import db, User
+from utils.mail import send_mail
 import stripe
 
 webhook_bp = Blueprint('webhook', __name__, url_prefix='/webhook')
@@ -18,18 +18,13 @@ def generate_token_password(length=16):
 
 def send_admin_token_mail(user, raw_password, expires_at):
     """管理者トークンパスワードをメールで送信"""
-    from app import mail
     _JST = ZoneInfo('Asia/Tokyo')
     _WEEKDAYS = ['月', '火', '水', '木', '金', '土', '日']
     expires_jst = expires_at.astimezone(_JST)
     wd = _WEEKDAYS[expires_jst.weekday()]
     expires_str = expires_jst.strftime(f'%Y年%m月%d日（{wd}）%H:%M')
     login_url = url_for('admin.login', _external=True)
-    msg = Message(
-        subject='【メモアプリ】管理者トークンパスワードのお知らせ',
-        recipients=[user.email],
-    )
-    msg.body = (
+    text = (
         f"{user.username} 様\n\n"
         f"管理者プランの決済が完了しました。\n"
         f"以下のトークンパスワードで管理者ログインしてください。\n\n"
@@ -42,14 +37,14 @@ def send_admin_token_mail(user, raw_password, expires_at):
         f"※ ポイント不足時は追加決済で24ptを加算できます。\n"
         f"※ 期限切れ後は再度決済が必要です。\n"
     )
-    msg.html = render_template(
+    html = render_template(
         'mail/admin_token.j2',
         user=user,
         raw_password=raw_password,
         expires_str=expires_str,
         login_url=login_url,
     )
-    mail.send(msg)
+    send_mail(user.email, '【メモアプリ】管理者トークンパスワードのお知らせ', html=html, text=text)
 
 
 # ─── 開発用：メール送信テスト ──────────────────────────────

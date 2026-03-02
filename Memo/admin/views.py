@@ -1,17 +1,16 @@
 import math
 import os
 import re
-import threading
 from datetime import datetime, timezone, date, timedelta
 from functools import wraps
 from flask import Blueprint, render_template, redirect, url_for, flash, session, current_app, request
 from flask_login import login_required, current_user
 from forms import AdminLoginForm
 from flask_wtf import FlaskForm
-from flask_mail import Message
 from models import db, User, ThumbnailConfig, Memo, Favorite, Category, memo_categories, FixedPage, AppLog
 from werkzeug.utils import secure_filename
 from sqlalchemy import func
+from utils.mail import send_mail
 import stripe
 import json
 from pathlib import Path
@@ -84,16 +83,6 @@ def _consume_ai_points(cost: int):
         return
     current_user.admin_points = max(0, (current_user.admin_points or 0) - cost)
     db.session.commit()
-
-
-def _send_mail_async(app, msg):
-    """メールをバックグラウンドスレッドで送信する（gunicorn タイムアウト回避）。"""
-    with app.app_context():
-        from app import mail
-        try:
-            mail.send(msg)
-        except Exception as e:
-            app.logger.error('非同期メール送信失敗: %s', str(e), exc_info=True)
 
 
 def admin_required(f):
@@ -395,7 +384,6 @@ def apply():
         flash('すでに申請済みです。承認をお待ちください', 'secondary')
         return redirect(url_for('admin.login'))
 
-    from app import mail
     current_user.is_applied = True
     current_user.applied_at = datetime.now(timezone.utc)
     db.session.commit()
@@ -403,25 +391,15 @@ def apply():
     try:
         admin_email = current_app.config['MAIL_USERNAME']
         admin_url = url_for('admin.index', _external=True)
-        msg = Message(
-            subject='【メモアプリ】管理者申請が届きました',
-            recipients=[admin_email],
-        )
-        msg.html = render_template(
-            "mail/admin_apply.j2",
-            user=current_user,
-            admin_url=admin_url
-        )
-        msg.body = (
+        html = render_template("mail/admin_apply.j2", user=current_user, admin_url=admin_url)
+        text = (
             f"管理者申請が届きました。\n\n"
             f"ユーザー名: {current_user.username}\n"
             f"メール: {current_user.email}\n"
             f"ユーザーID: {current_user.id}\n\n"
             f"管理画面: {admin_url}"
         )
-        t = threading.Thread(target=_send_mail_async, args=(current_app._get_current_object(), msg))
-        t.daemon = True
-        t.start()
+        send_mail(admin_email, '【メモアプリ】管理者申請が届きました', html=html, text=text)
     except Exception as e:
         current_app.logger.error('申請メール送信失敗: %s', str(e), exc_info=True)
 
@@ -438,7 +416,6 @@ def approve(user_id):
     if current_user.email != super_admin_email:
         flash('この操作はスーパーアドミン専用です', 'secondary')
         return redirect(url_for('admin.index'))
-    from app import mail
     user = User.query.get_or_404(user_id)
     user.is_admin = not user.is_admin
     user.approved_at = datetime.now(timezone.utc) if user.is_admin else None
@@ -447,16 +424,8 @@ def approve(user_id):
     if user.is_admin:
         try:
             payment_url = url_for('admin.payment', _external=True)
-            msg = Message(
-                subject='【メモアプリ】管理者申請が承認されました',
-                recipients=[user.email],
-            )
-            msg.html = render_template(
-                "mail/admin_approve.j2",
-                user=user,
-                payment_url=payment_url,
-            )
-            msg.body = (
+            html = render_template("mail/admin_approve.j2", user=user, payment_url=payment_url)
+            text = (
                 f"{user.username} 様\n\n"
                 f"管理者申請が承認されました。\n"
                 f"以下のページから決済手続きを行い、管理者ログインしてください。\n\n"
@@ -464,9 +433,7 @@ def approve(user_id):
                 f"決済ページ: {payment_url}\n"
                 f"━━━━━━━━━━━━━━━━━━━━\n"
             )
-            t = threading.Thread(target=_send_mail_async, args=(current_app._get_current_object(), msg))
-            t.daemon = True
-            t.start()
+            send_mail(user.email, '【メモアプリ】管理者申請が承認されました', html=html, text=text)
         except Exception as e:
             current_app.logger.error('承認メール送信失敗: %s', str(e), exc_info=True)
         flash(f'{user.username} を承認し、通知メールを送信しました', 'secondary')
@@ -528,21 +495,16 @@ def payment_cancel():
 
 def _send_suspend_request_mail(target_user, requester, reason):
     """スーパーadminに一時停止希望メールを送信"""
-    from app import mail
     super_admin_email = current_app.config.get('MAIL_USERNAME')
     admin_url = url_for('admin.index', _external=True)
-    msg = Message(
-        subject=f'【メモアプリ】一時停止希望：{target_user.username}',
-        recipients=[super_admin_email],
-    )
-    msg.html = render_template(
+    html = render_template(
         'mail/admin_suspend_request.j2',
         target_user=target_user,
         requester=requester,
         reason=reason,
         admin_url=admin_url,
     )
-    msg.body = (
+    text = (
         f"一時停止希望が届きました。\n\n"
         f"対象ユーザー: {target_user.username}（{target_user.email}）\n"
         f"依頼者: {requester.username}\n"
@@ -550,9 +512,9 @@ def _send_suspend_request_mail(target_user, requester, reason):
         f"管理画面: {admin_url}"
     )
     try:
-        mail.send(msg)
+        send_mail(super_admin_email, f'【メモアプリ】一時停止希望：{target_user.username}', html=html, text=text)
     except Exception as e:
-        print(f"######## 一時停止希望メール送信失敗: {e} ########")
+        current_app.logger.error('一時停止希望メール送信失敗: %s', str(e), exc_info=True)
 
 
 @admin_bp.route('/ban/<int:user_id>', methods=['POST'])

@@ -58,13 +58,12 @@ class Config(object):
     # サイト名
     SITE_NAME = os.getenv('SITE_NAME', 'Flask tech blog')
 
-    # メール送信（Gmail SMTP）
-    MAIL_SERVER = 'smtp.gmail.com'
-    MAIL_PORT = 587
-    MAIL_USE_TLS = True
+    # 管理者メールアドレス（送信先の特定に使用）
     MAIL_USERNAME = os.getenv('MAIL_USERNAME', '')
-    MAIL_PASSWORD = os.getenv('MAIL_PASSWORD', '')
-    MAIL_DEFAULT_SENDER = os.getenv('MAIL_USERNAME', '')
+
+    # Resend メール送信
+    RESEND_API_KEY = os.getenv('RESEND_API_KEY', '')
+    RESEND_FROM_EMAIL = os.getenv('RESEND_FROM_EMAIL', '')
 
     # Gemini AI API
     GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY', '')
