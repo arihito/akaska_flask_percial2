@@ -1,6 +1,7 @@
 import math
 import os
 import re
+import threading
 from datetime import datetime, timezone, date, timedelta
 from functools import wraps
 from flask import Blueprint, render_template, redirect, url_for, flash, session, current_app, request
@@ -83,6 +84,16 @@ def _consume_ai_points(cost: int):
         return
     current_user.admin_points = max(0, (current_user.admin_points or 0) - cost)
     db.session.commit()
+
+
+def _send_mail_async(app, msg):
+    """メールをバックグラウンドスレッドで送信する（gunicorn タイムアウト回避）。"""
+    with app.app_context():
+        from app import mail
+        try:
+            mail.send(msg)
+        except Exception as e:
+            app.logger.error('非同期メール送信失敗: %s', str(e), exc_info=True)
 
 
 def admin_required(f):
@@ -408,7 +419,9 @@ def apply():
             f"ユーザーID: {current_user.id}\n\n"
             f"管理画面: {admin_url}"
         )
-        mail.send(msg)
+        t = threading.Thread(target=_send_mail_async, args=(current_app._get_current_object(), msg))
+        t.daemon = True
+        t.start()
     except Exception as e:
         current_app.logger.error('申請メール送信失敗: %s', str(e), exc_info=True)
 
@@ -451,7 +464,9 @@ def approve(user_id):
                 f"決済ページ: {payment_url}\n"
                 f"━━━━━━━━━━━━━━━━━━━━\n"
             )
-            mail.send(msg)
+            t = threading.Thread(target=_send_mail_async, args=(current_app._get_current_object(), msg))
+            t.daemon = True
+            t.start()
         except Exception as e:
             current_app.logger.error('承認メール送信失敗: %s', str(e), exc_info=True)
         flash(f'{user.username} を承認し、通知メールを送信しました', 'secondary')
