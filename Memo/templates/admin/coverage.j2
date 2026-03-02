@@ -44,21 +44,23 @@
         {# 合計カバレッジ + 最終実行日時 #}
         <div class="row mb-4">
             <div class="col-md-3 mb-3 mb-md-0 fade-in fade-delay-4">
-                <div class="card border-secondary text-center py-4">
+                <div class="card border-secondary text-center py-3 h-100">
                     <div class="card-body">
                         <div id="totalPct" class="display-3 fw-bold text-body-secondary" style="color:#234;">
                             {{ coverage.total_pct if coverage else 0 }}%
                         </div>
-                        <p class="text-body-secondary mb-1">総カバレッジ</p>
+                        <p class="text-body-secondary mb-1 mt-3 border-top pt-3">総カバレッジ</p>
                         <small id="covStmts" class="text-body-secondary">
-                            {{ coverage.total_covered if coverage else 0 }} /
+                            <span class="fs-5">{{ coverage.total_covered if coverage else 0 }}</span> /
                             {{ coverage.total_stmts if coverage else 0 }} ステートメント
                         </small>
                     </div>
                 </div>
             </div>
-            <div class="col-md-9 d-flex align-items-center fade-in fade-delay-6">
-                <div class="w-100">
+            <div class="col-md-9 fade-in fade-delay-6">
+
+                {# プログレスバー #}
+                <div class="mb-3">
                     <div class="d-flex justify-content-between mb-1">
                         <small class="text-body-secondary">カバレッジ進捗</small>
                         <small id="lastRun" class="text-body-secondary">
@@ -76,6 +78,77 @@
                         <small class="text-body-secondary">100%</small>
                     </div>
                 </div>
+
+                {# 総合評価 + 改善ポイント #}
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <div class="card border-secondary h-100">
+                            <div class="card-body py-3 px-3">
+                                <p class="fw-bold mb-2" style="font-size:0.8rem;letter-spacing:.05em;text-transform:uppercase;opacity:.6;">
+                                    <i class="fa fa-star-o me-1"></i>総合評価
+                                </p>
+                                <div id="coverageSummary" class="d-flex align-items-center mt-3">{% if coverage %}
+                                    {% set pct = coverage.total_pct %}
+                                    {% if pct >= 70 %}
+                                    <p class="fw-bold pt-2 me-2 badge rounded-pill text-bg-secondary" style="font-size:1.25rem;">優良</p>
+                                    <p class="text-body-secondary mb-0" style="font-size:1.2rem;">カバレッジが目標(50%)を大幅に超えています。高い品質を維持できています。</p>
+                                    {% elif pct >= 50 %}
+                                    <p class="fw-bold pt-2 me-2 badge rounded-pill text-bg-secondary" style="font-size:1.25rem;">目標達成</p>
+                                    <p class="text-body-secondary mb-0" style="font-size:1.2rem;">カバレッジが目標(50%)を達成しています。引き続きテストを充実させましょう。</p>
+                                    {% elif pct >= 40 %}
+                                    <p class="fw-bold pt-2 me-2 badge rounded-pill text-bg-secondary" style="font-size:1.25rem;">普通</p>
+                                    <p class="text-body-secondary mb-0" style="font-size:1.2rem;">目標の50%まであと一歩です。重要なモジュールから優先的にテストを追加しましょう。</p>
+                                    {% else %}
+                                    <p class="fw-bold pt-2 me-2 badge rounded-pill text-bg-secondary" style="font-size:1.25rem;">要改善</p>
+                                    <p class="text-body-secondary mb-0" style="font-size:1.2rem;">カバレッジが目標(50%)を下回っています。未テストのファイルへの対応を優先してください。</p>
+                                    {% endif %}
+                                {% else %}
+                                    <p class="text-body-secondary mb-0" style="font-size:1.2rem;">テスト実行後に評価が表示されます。</p>
+                                {% endif %}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="card border-secondary h-100">
+                            <div class="card-body py-3 px-3">
+                                <p class="fw-bold mb-2" style="font-size:0.8rem;letter-spacing:.05em;text-transform:uppercase;opacity:.6;">
+                                    <i class="fa fa-lightbulb-o me-1"></i>改善ポイント
+                                </p>
+                                <div id="coverageImprovement">{% if coverage %}
+                                    {% set zero_files = coverage.files | selectattr('pct', 'equalto', 0) | list %}
+                                    {% set miss_files = coverage.files | sort(attribute='missing', reverse=True) | selectattr('missing', 'gt', 0) | list %}
+                                    {% if zero_files %}
+                                    <p class="fw-semibold mb-1" style="font-size:1.2rem;"><i class="fa fa-circle-o me-1"></i>未テストファイル（{{ zero_files | length }}件）</p>
+                                    <ul class="list-unstyled mb-2 ps-2">
+                                        {% for f in zero_files[:3] %}
+                                        <li class="font-monospace text-body-secondary" style="font-size:0.78rem;">{{ f.name }}</li>
+                                        {% endfor %}
+                                        {% if zero_files | length > 3 %}
+                                        <li class="text-body-secondary" style="font-size:0.78rem;">… 他 {{ zero_files | length - 3 }} 件</li>
+                                        {% endif %}
+                                    </ul>
+                                    {% endif %}
+                                    {% if miss_files %}
+                                    <p class="fw-semibold mb-1" style="font-size:1.2rem;"><i class="fa fa-exclamation-circle me-1"></i>未カバー行が多いファイル（上位3件）</p>
+                                    <ul class="list-unstyled mb-0 ps-2">
+                                        {% for f in miss_files[:3] %}
+                                        <li class="font-monospace text-body-secondary" style="font-size:0.78rem;">
+                                            {{ f.name }}<span class="ms-1 fw-bold">{{ f.missing }}</span><span class="ms-1 opacity-75" style="font-size:0.7rem;">行未カバー</span>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                    {% endif %}
+                                    {% if not zero_files and not miss_files %}
+                                    <p class="text-body-secondary mb-0" style="font-size:1.2rem;"><i class="fa fa-check me-1"></i>すべてのファイルがカバーされています。</p>
+                                    {% endif %}
+                                {% else %}
+                                    <p class="text-body-secondary mb-0" style="font-size:1.2rem;">テスト実行後に改善ポイントが表示されます。</p>
+                                {% endif %}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
 

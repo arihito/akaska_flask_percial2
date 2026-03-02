@@ -25,7 +25,9 @@
       "mcp__chrome-devtools__take_snapshot",
       "mcp__chrome-devtools__emulate",
       "mcp__chrome-devtools__evaluate_script",
-      "mcp__chrome-devtools__take_screenshot"
+      "mcp__chrome-devtools__take_screenshot",
+      "Bash(C:/Users/arihi/miniconda3/envs/flask2_env/python.exe:*)",
+      "Bash(xargs grep:*)"
     ]
   }
 }

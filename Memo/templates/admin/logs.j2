@@ -74,33 +74,33 @@
         <div class="table-responsive">
             <table class="table table-sm table-hover align-middle mb-0" id="logTable">
                 <thead>
-                    <tr class="text-body-secondary" style="font-size:0.78rem;letter-spacing:.04em;text-transform:uppercase;">
-                        <th style="width:160px;">日時</th>
-                        <th style="width:90px;">レベル</th>
-                        <th style="width:160px;">モジュール</th>
-                        <th>メッセージ</th>
+                    <tr class="text-body-secondary" style="font-size:1.2rem;letter-spacing:.04em;text-transform:uppercase;">
+                        <th class="p-3" style="width:160px;">日時</th>
+                        <th class="p-3" style="width:90px;">レベル</th>
+                        <th class="p-3" style="width:160px;">モジュール</th>
+                        <th class="p-3">メッセージ</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for entry in logs %}
                     <tr class="log-row {% if entry.level == 'ERROR' %}table-secondary fw-semibold{% endif %}"
                         data-level="{{ entry.level }}">
-                        <td class="font-monospace" style="font-size:0.8rem;white-space:nowrap;">
+                        <td class="font-monospace p-3" style="font-size:1.2rem;white-space:nowrap;">
                             {{ entry.datetime[:19] }}
                         </td>
-                        <td>
+                        <td class="fs-5">
                             {% if entry.level == 'ERROR' %}
-                            <span class="badge bg-secondary">{{ entry.level }}</span>
+                            <span class="badge bg-secondary" style="background-color: #622!important">{{ entry.level }}</span>
                             {% elif entry.level == 'WARNING' %}
-                            <span class="badge bg-secondary opacity-75">{{ entry.level }}</span>
+                            <span class="badge bg-secondary opacity-75" style="background-color: #542!important">{{ entry.level }}</span>
                             {% else %}
                             <span class="badge bg-secondary opacity-50">{{ entry.level }}</span>
                             {% endif %}
                         </td>
-                        <td class="font-monospace text-body-secondary" style="font-size:0.78rem;">
+                        <td class="font-monospace text-body-secondary text-center" style="font-size:1.2rem;">
                             {{ entry.module }}
                         </td>
-                        <td style="font-size:0.85rem;word-break:break-all;">
+                        <td style="font-size:1.2rem;word-break:break-all;">
                             {{ entry.message }}
                         </td>
                     </tr>
