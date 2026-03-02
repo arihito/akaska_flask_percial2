@@ -104,6 +104,8 @@ def create_app(config_override=None):
         else:
             return jsonify({"status": "error", "message": result}), 500
 
+    return app
+
 
 # モジュールレベルの後方互換（gunicorn 等が参照）
 app = create_app()
