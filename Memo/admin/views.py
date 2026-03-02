@@ -389,36 +389,28 @@ def apply():
     current_user.applied_at = datetime.now(timezone.utc)
     db.session.commit()
 
-    admin_email = current_app.config['MAIL_USERNAME']
-    msg = Message(
-        subject='【メモアプリ】管理者申請が届きました',
-        recipients=[admin_email],
-    )
-
-    admin_url=url_for('admin.index', _external=True)
-    # HTMLテンプレート
-    msg.html = render_template(
-        "mail/admin_apply.j2",
-        user=current_user,
-        admin_url=admin_url
-    )
-
-    # スパム対応プレーンテキスト
-    msg.body = f"""
-    管理者申請が届きました。
-
-    ユーザー名: {current_user.username}
-    メール: {current_user.email}
-    ユーザーID: {current_user.id}
-
-    管理画面:
-    {admin_url}
-    """
-
     try:
+        admin_email = current_app.config['MAIL_USERNAME']
+        admin_url = url_for('admin.index', _external=True)
+        msg = Message(
+            subject='【メモアプリ】管理者申請が届きました',
+            recipients=[admin_email],
+        )
+        msg.html = render_template(
+            "mail/admin_apply.j2",
+            user=current_user,
+            admin_url=admin_url
+        )
+        msg.body = (
+            f"管理者申請が届きました。\n\n"
+            f"ユーザー名: {current_user.username}\n"
+            f"メール: {current_user.email}\n"
+            f"ユーザーID: {current_user.id}\n\n"
+            f"管理画面: {admin_url}"
+        )
         mail.send(msg)
     except Exception as e:
-        print(f"######## 申請メール送信失敗: {e} ########")
+        current_app.logger.error('申請メール送信失敗: %s', str(e), exc_info=True)
 
     flash('管理者申請を送信しました。運営者の承認をお待ちください。', 'secondary')
     return redirect(url_for('admin.login'))
@@ -440,28 +432,28 @@ def approve(user_id):
     db.session.commit()
 
     if user.is_admin:
-        payment_url = url_for('admin.payment', _external=True)
-        msg = Message(
-            subject='【メモアプリ】管理者申請が承認されました',
-            recipients=[user.email],
-        )
-        msg.html = render_template(
-            "mail/admin_approve.j2",
-            user=user,
-            payment_url=payment_url,
-        )
-        msg.body = (
-            f"{user.username} 様\n\n"
-            f"管理者申請が承認されました。\n"
-            f"以下のページから決済手続きを行い、管理者ログインしてください。\n\n"
-            f"━━━━━━━━━━━━━━━━━━━━\n"
-            f"決済ページ: {payment_url}\n"
-            f"━━━━━━━━━━━━━━━━━━━━\n"
-        )
         try:
+            payment_url = url_for('admin.payment', _external=True)
+            msg = Message(
+                subject='【メモアプリ】管理者申請が承認されました',
+                recipients=[user.email],
+            )
+            msg.html = render_template(
+                "mail/admin_approve.j2",
+                user=user,
+                payment_url=payment_url,
+            )
+            msg.body = (
+                f"{user.username} 様\n\n"
+                f"管理者申請が承認されました。\n"
+                f"以下のページから決済手続きを行い、管理者ログインしてください。\n\n"
+                f"━━━━━━━━━━━━━━━━━━━━\n"
+                f"決済ページ: {payment_url}\n"
+                f"━━━━━━━━━━━━━━━━━━━━\n"
+            )
             mail.send(msg)
         except Exception as e:
-            print(f"######## 承認通知メール送信失敗: {e} ########")
+            current_app.logger.error('承認メール送信失敗: %s', str(e), exc_info=True)
         flash(f'{user.username} を承認し、通知メールを送信しました', 'secondary')
     else:
         flash(f'{user.username} の管理者権限を取り消しました', 'secondary')
