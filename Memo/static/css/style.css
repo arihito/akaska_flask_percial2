@@ -463,11 +463,15 @@ mark {
 
 /* ログインボタン */
 
-[data-bs-theme="dark"] .login-btn:focus,
-[data-bs-theme="dark"] .login-btn:hover {
-    border: solid 3px #525252;
+.login-btn:focus,
+.login-btn:hover {
     color: #fff!important;
     font-weight: bold;
+    box-shadow: inset 0 0 6px rgba(0,0,0, .3);
+  }
+  [data-bs-theme="dark"] .login-btn:focus,
+  [data-bs-theme="dark"] .login-btn:hover {
+    border: solid 3px #525252;
     box-shadow: 0 0 6px rgba(0,0,0, .5);
 }
 
@@ -1041,7 +1045,7 @@ pre.file-tag[data-tag]::before {
     height: 100%;
     z-index: -1;
     pointer-events: none;
-    background: #212529;
+    background: var(--bs-body-bg);
 }
 
 /* カードギミック表示エリア（全幅絶対配置・背景） */
@@ -1057,15 +1061,15 @@ pre.file-tag[data-tag]::before {
   -webkit-mask-image: linear-gradient(
     to right,
     transparent 0%,
-    #212529 20%,
-    #212529 90%,
+    black 20%,
+    black 90%,
     transparent 100%
   );
   mask-image: linear-gradient(
     to right,
     transparent 0%,
-    #212529 20%,
-    #212529 90%,
+    black 20%,
+    black 90%,
     transparent 100%
   );
 }

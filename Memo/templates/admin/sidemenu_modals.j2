@@ -49,7 +49,28 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
-        <img class="img-fluid" style="filter:invert(1)" src="{{ url_for('static', filename='docs/page_flow_admin.png')}}" width="" height="" alt="画面遷移図">
+        <ul class="nav nav-tabs mb-3" id="flowTab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="flow-top-tab" data-bs-toggle="tab" data-bs-target="#flow-top" type="button" role="tab">トップページ</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="flow-mypage-tab" data-bs-toggle="tab" data-bs-target="#flow-mypage" type="button" role="tab">マイページ</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="flow-admin-tab" data-bs-toggle="tab" data-bs-target="#flow-admin" type="button" role="tab">管理画面</button>
+          </li>
+        </ul>
+        <div class="tab-content" id="flowTabContent">
+          <div class="tab-pane fade show active" id="flow-top" role="tabpanel">
+            <img class="img-fluid" style="filter:invert(1)" src="{{ url_for('static', filename='docs/page_flow_toppage.png')}}" alt="トップページ 画面遷移図">
+          </div>
+          <div class="tab-pane fade" id="flow-mypage" role="tabpanel">
+            <img class="img-fluid" style="filter:invert(1)" src="{{ url_for('static', filename='docs/page_flow_mypage.png')}}" alt="マイページ 画面遷移図">
+          </div>
+          <div class="tab-pane fade" id="flow-admin" role="tabpanel">
+            <img class="img-fluid" style="filter:invert(1)" src="{{ url_for('static', filename='docs/page_flow_admin.png')}}" alt="管理画面 画面遷移図">
+          </div>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary btn-lg w-100" data-bs-dismiss="modal"><i class="fa fa-times me-2"></i>閉じる</button>
