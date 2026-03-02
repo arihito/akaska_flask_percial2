@@ -5,27 +5,31 @@ from datetime import datetime, timezone
 
 
 class DBLogHandler(logging.Handler):
-    """ログをDBの app_logs テーブルに書き込むハンドラー。"""
+    """ログをDBの app_logs テーブルに書き込むハンドラー。
+    リクエストのスコープセッションを汚染しないよう独立セッションを使用する。
+    """
 
     def emit(self, record):
         # アプリコンテキスト外（起動時など）では無視
         try:
             from flask import current_app
-            if not current_app._get_current_object():
-                return
+            current_app._get_current_object()
         except RuntimeError:
             return
 
         try:
+            from sqlalchemy.orm import Session
             from models import db, AppLog
-            entry = AppLog(
-                level=record.levelname,
-                module=f'{record.name}:{record.lineno}',
-                message=self.format(record),
-                created_at=datetime.now(timezone.utc),
-            )
-            db.session.add(entry)
-            db.session.commit()
+            # db.session（スコープセッション）とは独立した新規セッションで書き込む
+            with Session(db.engine) as session:
+                entry = AppLog(
+                    level=record.levelname,
+                    module=f'{record.name}:{record.lineno}',
+                    message=self.format(record),
+                    created_at=datetime.now(timezone.utc),
+                )
+                session.add(entry)
+                session.commit()
         except Exception:
             # DB書き込み失敗時はサイレントに無視（ロギング自体を止めない）
             pass

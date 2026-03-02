@@ -1428,9 +1428,15 @@ def logs():
     rows = AppLog.query.filter(AppLog.created_at >= cutoff)\
         .order_by(AppLog.created_at.desc()).all()
 
+    JST = timezone(timedelta(hours=9))
+    def _to_jst(dt):
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return dt.astimezone(JST).strftime('%Y-%m-%d %H:%M:%S')
+
     entries = [
         {
-            'datetime': row.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+            'datetime': _to_jst(row.created_at),
             'level': row.level,
             'module': row.module,
             'message': row.message,
