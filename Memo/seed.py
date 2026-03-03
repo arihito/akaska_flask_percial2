@@ -98,7 +98,7 @@ FIXED_PAGES_SEED = [
     ('crud',       'CRUD',                       1,  'crud.jpg',       'global', 'FlaskとSQLAlchemyを使った基本的なCRUD実装。Blueprint設計・フォームバリデーション・一覧・詳細・作成・更新・削除の各処理を解説します。'),
     ('paging',     'ページング',                 2,  'paging.jpg',     'global', 'Flask-SQLAlchemyのpaginateを活用したページネーション実装。URLパラメータによるページ管理と表示件数のカスタマイズ方法を解説します。'),
     ('upload',     'ファイルアップロード',        3,  'upload.jpg',     'global', 'Flaskでの画像ファイルアップロード実装。拡張子・サイズバリデーション・保存先管理・セキュリティ対策を含む実践的な手順を解説します。'),
-    ('drop',       'ドラッグ&ドロップ',          4,  'drop.jpg',       'global', 'DropzoneやSortable.jsを使ったドラッグ&ドロップUI実装。ファイルD&Dアップロードとリスト並び替えUIの構築手順を解説します。'),
+    ('drop',       'DnD',                       4,  'drop.jpg',       'global', 'DropzoneやSortable.jsを使ったドラッグ&ドロップUI実装。ファイルD&Dアップロードとリスト並び替えUIの構築手順を解説します。'),
     ('htmx',       '非同期',                     5,  'htmx.jpg',       'global', 'HTMXを使ったFlaskアプリの非同期UI構築。JavaScriptを最小限に抑えたサーバーサイドレンダリングとAJAX処理の実装方法を解説します。'),
     ('oauth',      'Googleログイン',              6,  'oauth.jpg',      'global', 'AuthlibによるGoogle OAuth2.0の実装手順。コールバック処理・セッション管理・既存ユーザーとの紐付けフローを丁寧に解説します。'),
     ('jwt',        'JWT認証',                    7,  'jwt.jpg',        'global', 'PyJWTを用いたトークンベース認証の実装。アクセストークンの発行・検証・リフレッシュトークンの設計と実践的な運用方法を解説します。'),
