@@ -756,42 +756,79 @@ pre.file-tag[data-tag]::before {
 
 /* ============== 管理画面 =============== */
 
-/* 管理ヘッダー グラデーションアニメーション */
+/* 管理ヘッダー radialGradient + shine アニメーション */
 
 .admin-navbar {
-    background: linear-gradient(
-        130deg,
-        #161819 0%,
-        rgb(43 48 53) 25%,
-        #212529 50%,
-        rgb(43 48 53) 75%,
-        #161819 100%
-    ) !important;
-    background-size: 400% 400% !important;
-    animation: adminHeaderFlow 2s ease-in-out infinite;
+    position: relative;
+    background-color: #0b1e3a;
+    background-image: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.5) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    background-size: 75% 100%;
+    background-repeat: no-repeat;
+    background-position: -300% 0;
+    background-blend-mode: overlay;
+    animation: headerShine 5s ease-out infinite;
+    overflow: hidden;
     border-bottom: 1px solid #313539;
 }
 
+.admin-navbar::before {
+    content: "";
+    position: absolute;
+    inset: -20%;
+    background:
+        radial-gradient(circle at 30% 40%, #212529 0%, transparent 60%),
+        radial-gradient(circle at 70% 60%, #234 0%, transparent 80%),
+        radial-gradient(circle at 50% 80%, #6a747c 0%, transparent 30%);
+    animation: fluidMove 12s ease-in-out infinite alternate;
+    filter: blur(40px) contrast(140%);
+    opacity: 0.8;
+    z-index: 0;
+}
+
+.admin-navbar .container-fluid {
+    position: relative;
+    z-index: 1;
+}
+
 [data-bs-theme="light"] .admin-navbar {
-    background: linear-gradient(
-        130deg,
-        #e3e3e8 0%,
-        #dadcdf 25%,
-        #fef8f5 50%,
-        #dadcdf 75%,
-        #e3e3e8 100%
-    ) !important;
-    background-size: 400% 400% !important;
-    animation: adminHeaderFlow 2s ease-in-out infinite;
+    background-color: #c8cdd2;
+    background-image: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.6) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    background-size: 75% 100%;
+    background-repeat: no-repeat;
+    background-position: -300% 0;
+    background-blend-mode: overlay;
+    animation: headerShine 5s ease-out infinite;
     border-bottom: 1px solid #c1c5c9;
 }
 
-@keyframes adminHeaderFlow {
-    0%   { background-position: 0%   50%; }
-    25%  { background-position: 100%  0%; }
-    50%  { background-position: 100% 100%; }
-    75%  { background-position: 0%  100%; }
-    100% { background-position: 0%   50%; }
+[data-bs-theme="light"] .admin-navbar::before {
+    background:
+        radial-gradient(circle at 30% 40%, #d0d4d8 0%, transparent 60%),
+        radial-gradient(circle at 70% 60%, #bfc4c9 0%, transparent 80%),
+        radial-gradient(circle at 50% 80%, #e0e3e6 0%, transparent 30%);
+    opacity: 0.7;
+}
+
+@keyframes fluidMove {
+    0%   { transform: translate(0%, 0%) scale(1); }
+    50%  { transform: translate(-5%, 3%) scale(3); }
+    100% { transform: translate(40%, -4%) scale(1.05); }
+}
+
+@keyframes headerShine {
+    0%   { background-position: -300% 0; }
+    10%  { background-position: 800% 0; }
+    100% { background-position: 800% 0; }
 }
 
 /* スーパーアドミン ヘッダーアイコン：フル充電パルスアニメーション */
