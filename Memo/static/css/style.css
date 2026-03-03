@@ -1771,8 +1771,7 @@ pre.file-tag[data-tag]::before {
 }
 
 .sidebarMenu .nav-link:hover {
-    color: #b8d0e8 !important;
-    border-left-color: rgba(58, 104, 136, 0.6);
+    color: #e1ebf5 !important;
 }
 
 .sidebarMenu .nav-link:hover::before {
@@ -1781,9 +1780,7 @@ pre.file-tag[data-tag]::before {
 
 /* アクティブリンク：常時点灯 */
 .sidebarMenu .nav-link.active {
-    color: #d0e4f4 !important;
-    border-left-color: #3a6888 !important;
-    border-left-width: 3px;
+    color: #ebf3fa !important;
     text-shadow: 0 0 8px rgba(58, 104, 136, 0.5);
 }
 
