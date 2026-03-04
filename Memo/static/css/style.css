@@ -1313,7 +1313,7 @@ pre.file-tag[data-tag]::before {
     opacity: 1;
     filter: none;
     border-color: #ccc;
-    box-shadow: 0 0 0 6px rgba(13, 110, 253, 0.5);
+    box-shadow: 0 0 0 6px rgba(82, 122, 182, 0.5);
 }
 
 /* 削除ゴミ箱ボタン */
@@ -1803,7 +1803,6 @@ pre.file-tag[data-tag]::before {
 /* ライトテーマ上書き */
 [data-bs-theme="light"] .sidebarMenu .nav-link:hover {
     color: #234 !important;
-    border-left-color: rgba(35, 68, 100, 0.5);
 }
 
 [data-bs-theme="light"] .sidebarMenu .nav-link::before {
@@ -1816,7 +1815,6 @@ pre.file-tag[data-tag]::before {
 
 [data-bs-theme="light"] .sidebarMenu .nav-link.active {
     color: #1a3a5c !important;
-    border-left-color: #3a6888 !important;
     text-shadow: none;
 }
 
