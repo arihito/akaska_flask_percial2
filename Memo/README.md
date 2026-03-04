@@ -14,20 +14,26 @@
 
 <details>
 <summary>樹形図詳細</summary>
-![](https://img.shields.io/badge/TreeGraph_20260223-222243.svg)
+![](https://img.shields.io/badge/TreeGraph_20260304-222243.svg)
 <pre><code>
 [ Memo ]
 ├─ 📄CLAUDE.md
+├─ 📄Procfile
 ├─ 📄README.md
+├─ 📄app.py
+├─ 📄config.py
+├─ 📄forms.py
+├─ 📄libraries.txt
+├─ 📄models.py
+├─ 📄pytest.ini
+├─ 📄render.yaml
+├─ 📄requirements.txt
+├─ 📄seed.py
 ├─ 📁admin
-│   ├─ 📄__init__.py
 │   ├─ 📄views.py
 │   └─ 📄webhook.py
-├─ 📄app.py
 ├─ 📁auth
-│   ├─ 📄__init__.py
 │   └─ 📄views.py
-├─ 📄config.py
 ├─ 📁data
 │   └─ 📁sample_articles
 │       ├─ 📄api_001.md
@@ -35,38 +41,32 @@
 │       ├─ 📄auth_001.md
 │       ├─ 📄basic_001.md
 │       ├─ 📄basic_002.md
+│       ├─ 📄celery_001.md
 │       ├─ 📄crud_001.md
 │       ├─ 📄crud_002.md
+│       ├─ 📄deploy_001.md
+│       ├─ 📄docker_001.md
+│       ├─ 📄logging_001.md
 │       ├─ 📄package_001.md
+│       ├─ 📄testing_001.md
 │       ├─ 📄ui_001.md
 │       └─ 📄ui_002.md
 ├─ 📁docs
-│   ├─ 📄__init__.py
 │   └─ 📄views.py
 ├─ 📁errors
-│   ├─ 📄__init__.py
 │   └─ 📄views.py
 ├─ 📁factories
-│   ├─ 📄__init__.py
 │   ├─ 📄body_factory.py
 │   ├─ 📄category_factory.py
 │   └─ 📄user_factory.py
 ├─ 📁favorite
-│   ├─ 📄__init__.py
 │   └─ 📄views.py
 ├─ 📁fixed
-│   ├─ 📄__init__.py
 │   └─ 📄views.py
-├─ 📄forms.py
-├─ 📄libraries.txt
 ├─ 📁memo
-│   ├─ 📄__init__.py
 │   └─ 📄views.py
-├─ 📄models.py
 ├─ 📁public
-│   ├─ 📄__init__.py
 │   └─ 📄views.py
-├─ 📄seed.py
 ├─ 📁static
 │   ├─ 📁css
 │   │   └─ 📄style.css
@@ -77,8 +77,12 @@
 │   │   ├─ 📄classes_Memo.svg
 │   │   ├─ 📄er.svg
 │   │   ├─ 📄function_definition.csv
+│   │   ├─ 📄operation_flow.md
 │   │   ├─ 📄packages_Memo.svg
-│   │   ├─ 📄page_flow.png
+│   │   ├─ 📄page_flow_admin.png
+│   │   ├─ 📄page_flow_mypage.png
+│   │   ├─ 📄page_flow_toppage.png
+│   │   ├─ 📄service_architecture.drawio
 │   │   └─ 📄tree.txt
 │   ├─ 📁images
 │   │   ├─ 📁fixed
@@ -94,13 +98,16 @@
 │   ├─ 📁admin
 │   │   ├─ 📄base.j2
 │   │   ├─ 📄category.j2
+│   │   ├─ 📄coverage.j2
 │   │   ├─ 📄fixed.j2
 │   │   ├─ 📄index.j2
 │   │   ├─ 📄login.j2
+│   │   ├─ 📄logs.j2
 │   │   ├─ 📄marketing.j2
 │   │   ├─ 📄payment.j2
 │   │   ├─ 📄sidemenu.j2
 │   │   ├─ 📄sidemenu_modals.j2
+│   │   ├─ 📄sidemenu_nav.j2
 │   │   └─ 📄user_thumb.j2
 │   ├─ 📁auth
 │   │   ├─ 📄_formhelpers.j2
@@ -140,6 +147,7 @@
 │   ├─ 📁mail
 │   │   ├─ 📄admin_apply.j2
 │   │   ├─ 📄admin_approve.j2
+│   │   ├─ 📄admin_suspend_request.j2
 │   │   ├─ 📄admin_token.j2
 │   │   └─ 📄base.j2
 │   ├─ 📁memo
@@ -153,11 +161,21 @@
 │       ├─ 📄aside.j2
 │       ├─ 📄detail.j2
 │       └─ 📄index.j2
+├─ 📁tests
+│   ├─ 📄conftest.py
+│   ├─ 📄test_auth.py
+│   ├─ 📄test_logger.py
+│   ├─ 📄test_memo.py
+│   ├─ 📄test_models.py
+│   └─ 📄test_public.py
 └─ 📁utils
     ├─ 📄ai_fixed_generate.py
     ├─ 📄ai_score.py
+    ├─ 📄ai_thumb_generate.py
     ├─ 📄ai_translate.py
     ├─ 📄ai_translate_score.py
+    ├─ 📄logger.py
+    ├─ 📄mail.py
     └─ 📄upload.py
 </code></pre>
 </details>
@@ -169,7 +187,7 @@
 
 <details>
 <summary>ライブラリ一覧</summary>
-![](https://img.shields.io/badge/PackageList_20260209-222243.svg)
+![](https://img.shields.io/badge/PackageList_20260304-222243.svg)
 <pre><code>
 Package                      Version
 ---------------------------- -----------
@@ -181,7 +199,9 @@ cffi               2.0.0
 charset-normalizer 3.4.4
 click              8.3.1
 colorama           0.4.6
+coverage           7.13.4
 cryptography       46.0.4
+diagrams           0.25.1
 dnspython          2.8.0
 email-validator    2.3.0
 factory_boy        3.3.3
@@ -192,6 +212,7 @@ Flask-Login        0.6.3
 Flask-Migrate      4.1.0
 Flask-SQLAlchemy   3.1.1
 Flask-WTF          1.2.2
+google-genai       1.64.0
 greenlet           3.3.1
 idna               3.11
 itsdangerous       2.2.0
@@ -199,13 +220,20 @@ Jinja2             3.1.6
 Mako               1.3.10
 Markdown           3.10.1
 MarkupSafe         3.0.3
+pillow             12.1.1
 pip                25.3
+psycopg2-binary    2.9.11
 pycparser          3.0
+pytest             8.3.5
+pytest-cov         6.1.0
+pytest-flask       1.3.0
 python-dotenv      1.2.1
 pytz               2025.2
 requests           2.32.5
+resend             2.23.0
 setuptools         80.9.0
 SQLAlchemy         2.0.46
+stripe             14.3.0
 tomli              2.4.0
 typing_extensions  4.15.0
 tzdata             2025.3
