@@ -14,7 +14,9 @@
 
 <details>
 <summary>樹形図詳細</summary>
+
 ![](https://img.shields.io/badge/TreeGraph_20260304-222243.svg)
+
 <pre><code>
 [ Memo ]
 ├─ 📄CLAUDE.md
@@ -187,7 +189,9 @@
 
 <details>
 <summary>ライブラリ一覧</summary>
+
 ![](https://img.shields.io/badge/PackageList_20260304-222243.svg)
+
 <pre><code>
 Package                      Version
 ---------------------------- -----------
