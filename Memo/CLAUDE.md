@@ -143,6 +143,7 @@ Percial2/                    # 親ディレクトリ（絶対パス: C:/Users/ar
 - [クラス依存関係図](static/docs/packages_Memo.svg)
 - [アプリ構成図](static/docs/architecture.png)
 - [アプリ樹形図](static/docs/tree.txt)
+- [サービス構成図](static/docs/service_architecure.drawio)
 - [機能定義書](static/docs/function_definition.csv)
 - [開発環境スペック](static/docs/dev_print.py)
 

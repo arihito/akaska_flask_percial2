@@ -129,16 +129,39 @@
     </div>
   </div>
 </div>
-<!-- Modal_app アプリ全体構成図 -->
+<!-- Modal_app アプリ内構成図 -->
 <div class="modal fade" id="modal_app" data-bs-backdrop="static" data-bs-keyboard="false">
   <div class="modal-dialog modal-xl modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="modal_app_Label">アプリ全体構成図</h1>
+        <h1 class="modal-title fs-5" id="modal_app_Label">アプリ内構成図</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
-        <img class="img-fluid" style="filter:invert(1)" src="{{ url_for('static', filename='docs/architecture.png')}}" width="" height="" alt="アプリ全体構成図">
+        <img class="img-fluid" style="filter:invert(1)" src="{{ url_for('static', filename='docs/architecture.png')}}" width="" height="" alt="アプリ内構成図">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-lg w-100" data-bs-dismiss="modal"><i class="fa fa-times me-2"></i>閉じる</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal_service サービス構成図 -->
+<div class="modal fade" id="modal_service" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="modal_service_Label">サービス構成図</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-0" style="background:#000;">
+        <div id="service_drawio_container" style="filter:invert(1) grayscale(1);">
+          <div class="mxgraph"
+               style="width:100%; max-width:100%; overflow:hidden;"
+               data-mxgraph="{{ service_drawio_config | e }}">
+          </div>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary btn-lg w-100" data-bs-dismiss="modal"><i class="fa fa-times me-2"></i>閉じる</button>

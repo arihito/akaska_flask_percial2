@@ -134,6 +134,14 @@ def get_requirements_definition():
 def get_coding_standards():
     return get_markdown_content("static/docs/CODING_STANDARDS.md")
 
+# サービス構成図 mxGraph用設定JSON文字列
+def get_service_drawio_config():
+    drawio_path = BASE_DIR / "static" / "docs" / "service_architecture.drawio"
+    if not drawio_path.exists():
+        return "{}"
+    xml = drawio_path.read_text(encoding="utf-8")
+    return json.dumps({"highlight": "#0000ff", "nav": True, "resize": True, "fit": 1, "lightbox": False, "xml": xml})
+
 
 @admin_bp.context_processor
 def inject_admin_docs():
@@ -156,6 +164,7 @@ def inject_admin_docs():
         return {
             'requirements_definition': get_requirements_definition(),
             'coding_standards': get_coding_standards(),
+            'service_drawio_config': get_service_drawio_config(),
             'admin_points': None,   # None = 無制限
             'remaining_h': None,    # None = 無制限
             'remaining_m': 0,
@@ -182,6 +191,7 @@ def inject_admin_docs():
     return {
         'requirements_definition': get_requirements_definition(),
         'coding_standards': get_coding_standards(),
+        'service_drawio_config': get_service_drawio_config(),
         'admin_points': admin_points,
         'remaining_h': remaining_h,
         'remaining_m': remaining_m,

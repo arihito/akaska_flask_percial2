@@ -1493,4 +1493,34 @@ document.addEventListener("click", (e) => {
         });
     }
 
+    // サービス構成図モーダル：描画後にコンテナ幅へスケール調整
+    const serviceModal = document.getElementById('modal_service');
+    if (serviceModal) {
+        let serviceDrawioInitialized = false;
+
+        function scaleServiceDrawio() {
+            const mxDiv = serviceModal.querySelector('.mxgraph');
+            if (!mxDiv) return;
+            const inner = mxDiv.querySelector(':scope > div');
+            if (!inner) return;
+            const containerW = mxDiv.offsetWidth;
+            const innerW = inner.scrollWidth;
+            if (innerW > 0 && containerW > 0) {
+                const scale = containerW / innerW;
+                inner.style.transformOrigin = 'top left';
+                inner.style.transform = 'scale(' + scale + ')';
+                mxDiv.style.height = Math.round(inner.scrollHeight * scale) + 'px';
+            }
+        }
+
+        serviceModal.addEventListener('shown.bs.modal', function () {
+            if (window.GraphViewer && !serviceDrawioInitialized) {
+                GraphViewer.processElements();
+                serviceDrawioInitialized = true;
+            }
+            // mxGraph描画完了を待ってからスケール適用
+            setTimeout(scaleServiceDrawio, 400);
+        });
+    }
+
 })();
