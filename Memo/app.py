@@ -78,6 +78,7 @@ def create_app(config_override=None):
 
     @app.context_processor
     def inject_static_pages():
+        from flask import request as _req
         try:
             pages = FixedPage.query.filter_by(visible=True).order_by(FixedPage.order).all()
             GLOBAL_NAV_PAGES = {p.key: p.title for p in pages if p.nav_type == 'global'}
@@ -85,10 +86,48 @@ def create_app(config_override=None):
         except Exception:
             GLOBAL_NAV_PAGES = {}
             FOOTER_NAV_PAGES = {}
+
+        # 英語ページ判定
+        is_english = _req.path.startswith('/en')
+
+        # 言語切替URL（/en/detail/1 → /detail/1、/detail/1 → /en/detail/1）
+        path = _req.path
+        if path.startswith('/en'):
+            lang_switch_url = path[3:] or '/'
+        else:
+            lang_switch_url = '/en' + path
+
+        # 英語UI文言辞書
+        EN_LABELS = {
+            'login': 'Sign In',
+            'register': 'Register',
+            'logout': 'Sign Out',
+            'top': 'Top',
+            'today_pick': "Today's Pick",
+            'today_pick_sub': 'Article changes randomly once a day',
+            'recommended': 'Recommended for You',
+            'recommended_sub': 'Articles recommended based on your post categories',
+            'posted_by': 'Posted by:',
+            'posted_on': 'Posted on:',
+            'likes': 'Likes',
+            'back_to_top': 'Back to Top',
+            'back_prev': 'Previous Page',
+            'back_list': 'Back to List',
+            'login_prompt': 'Sign in to like!',
+            'own_article': 'Your article',
+            'footer_desc': (
+                'This Flask tech blog was created for the purpose of learning Flask '
+                'application development as a vocational training assignment.'
+            ),
+        }
+
         return dict(
             GLOBAL_NAV_PAGES=GLOBAL_NAV_PAGES,
             FOOTER_NAV_PAGES=FOOTER_NAV_PAGES,
             SITE_NAME=app.config['SITE_NAME'],
+            is_english=is_english,
+            lang_switch_url=lang_switch_url,
+            EN_LABELS=EN_LABELS,
         )
 
     @login_manager.user_loader
