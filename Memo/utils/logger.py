@@ -1,7 +1,42 @@
 import logging
 import os
-from logging.handlers import RotatingFileHandler, SMTPHandler
+from logging.handlers import RotatingFileHandler
 from datetime import datetime, timezone
+
+
+class ResendErrorHandler(logging.Handler):
+    """ERROR 以上のログを Resend API でメール通知するハンドラー。
+    本番環境（non-debug / non-testing）でのみ登録される。
+    """
+
+    def emit(self, record):
+        try:
+            from flask import current_app
+            app = current_app._get_current_object()
+        except RuntimeError:
+            return
+
+        try:
+            import resend as _resend
+            api_key   = app.config.get('RESEND_API_KEY', '')
+            from_addr = app.config.get('RESEND_FROM_EMAIL', '')
+            to_addr   = app.config.get('MAIL_USERNAME', '')  # 管理者メールアドレス
+
+            if not (api_key and from_addr and to_addr):
+                return
+
+            _resend.api_key = api_key
+            body = self.format(record)
+            _resend.Emails.send({
+                'from': from_addr,
+                'to': [to_addr],
+                'subject': f'[Flask tech blog] {record.levelname}: サーバーエラー発生',
+                'text': body,
+                'html': f'<pre style="font-family:monospace;font-size:13px">{body}</pre>',
+            })
+        except Exception:
+            # 通知失敗はサイレントに無視（ロギング自体を止めない）
+            pass
 
 
 class DBLogHandler(logging.Handler):
@@ -39,7 +74,8 @@ def init_logger(app):
     """アプリケーションロガーを初期化する。
     - RotatingFileHandler: logs/app.log（10MB × 最大5世代）
     - StreamHandler: コンソール（DEBUGモード時のみ）
-    - SMTPHandler: 管理者メール（本番かつERROR以上のみ）
+    - DBLogHandler: app_logs テーブル（INFO以上）
+    - ResendErrorHandler: 管理者メール通知（本番かつERROR以上のみ）
     """
     log_level = logging.DEBUG if app.debug else logging.INFO
     formatter = logging.Formatter(
@@ -77,21 +113,9 @@ def init_logger(app):
 
     app.logger.setLevel(log_level)
 
-    # SMTPハンドラー（本番環境かつテストでない場合のみ）
-    mail_user = app.config.get('MAIL_USERNAME', '')
-    mail_pass = app.config.get('MAIL_PASSWORD', '')
-    if not app.debug and not app.testing and mail_user and mail_pass:
-        mail_host = (app.config['MAIL_SERVER'], app.config['MAIL_PORT'])
-        credentials = (mail_user, mail_pass)
-
-        mail_handler = SMTPHandler(
-            mailhost=mail_host,
-            fromaddr=app.config['MAIL_DEFAULT_SENDER'],
-            toaddrs=[mail_user],
-            subject='[Flask tech blog] サーバーエラーが発生しました',
-            credentials=credentials,
-            secure=(),  # STARTTLS使用（587番ポート）
-        )
-        mail_handler.setFormatter(formatter)
-        mail_handler.setLevel(logging.ERROR)
-        app.logger.addHandler(mail_handler)
+    # Resendエラーハンドラー（本番環境かつテストでない場合のみ）
+    if not app.debug and not app.testing:
+        resend_handler = ResendErrorHandler()
+        resend_handler.setFormatter(formatter)
+        resend_handler.setLevel(logging.ERROR)
+        app.logger.addHandler(resend_handler)
