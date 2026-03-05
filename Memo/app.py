@@ -93,6 +93,8 @@ def create_app(config_override=None):
         'back_list': 'Back to List',
         'login_prompt': 'Sign in to like!',
         'own_article': 'Your article',
+        'ranking_title': 'Top 10 Most Liked',
+        'ranking_sub': 'Top 10 articles ranked by number of likes.',
         'footer_desc': (
             'This Flask tech blog was created for the purpose of learning Flask '
             'application development as a vocational training assignment.'

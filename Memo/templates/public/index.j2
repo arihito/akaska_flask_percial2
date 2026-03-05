@@ -22,7 +22,7 @@
                                 {% endif %}
                                 <h2 class="card-title display-6 link-body-emphasis mb-1"><a class="text-body-secondary text-decoration-none" href="{{ url_for('public.detail_en' if is_english else 'public.detail', memo_id=rand1.memo.id) }}">{{ (rand1.memo.ai_score.translated_title if rand1.memo.ai_score and rand1.memo.ai_score.translated_title else rand1.memo.title) if is_english else rand1.memo.title }}</a></h2>
                                 <p class="mb-2 text-body-secondary">
-                                    <i class="fa fa-calendar-o"></i> {{ rand1.memo.created_at.strftime("%Y年%m月%d日") }} by {{ rand1.memo.user.username }}<i class="fa fa-gratipay ms-3" style="color:#603"></i>{{ rand1.like_count }}{{ EN_LABELS.likes if is_english else 'いいね' }}
+                                    <i class="fa fa-calendar-o"></i> {{ rand1.memo.created_at.strftime("%b %d, %Y") if is_english else rand1.memo.created_at.strftime("%Y年%m月%d日") }} by {{ rand1.memo.user.username }}<i class="fa fa-gratipay ms-3" style="color:#603"></i>{{ rand1.like_count }}{{ EN_LABELS.likes if is_english else 'いいね' }}
                                 </p>
                                 <p class="card-text">
                                 {% if is_english and rand1.memo.ai_score and rand1.memo.ai_score.translated_body %}
@@ -61,7 +61,7 @@
                                 </div>
                                 <h3 class="mb-0"><a class="text-body-secondary text-decoration-none" href="{{ url_for('public.detail_en' if is_english else 'public.detail', memo_id=row.memo.id) }}">{{ (memo.ai_score.translated_title if memo.ai_score and memo.ai_score.translated_title else memo.title) if is_english else memo.title }}</a></h3>
                                 <div class="mb-1 text-body-secondary">
-                                    <i class="fa fa-calendar-o"></i> {{ memo.created_at.strftime("%Y年%m月%d日") }}
+                                    <i class="fa fa-calendar-o"></i> {{ memo.created_at.strftime("%b %d, %Y") if is_english else memo.created_at.strftime("%Y年%m月%d日") }}
                                     by <strong class="d-inline-block mb-2">{{ memo.user.username }}</strong>
                                     {% if current_user.is_authenticated and memo.user_id != current_user.id %}
                                         <span class="like-area" data-memo-id="{{ memo.id }}">
@@ -140,8 +140,8 @@
                                         {% endfor %}
                                     </div>
                                     <h6 class="mb-0" style="line-height:1.2">{{ (memo.ai_score.translated_title if memo.ai_score and memo.ai_score.translated_title else memo.title) if is_english else memo.title }}</h6>
-                                    <small class="text-body-secondary"><i class="fa fa-calendar-o"></i> {{ memo.created_at.strftime("%Y年%m月%d日") }}</small>
-                                    <span class="text-body-secondary" style="font-size:0.8rem"><i class="fa fa-gratipay" style="color:#603"></i>{{ like_count }}いいね</span>
+                                    <small class="text-body-secondary"><i class="fa fa-calendar-o"></i> {{ memo.created_at.strftime("%b %d, %Y") if is_english else memo.created_at.strftime("%Y年%m月%d日") }}</small>
+                                    <span class="text-body-secondary" style="font-size:0.8rem"><i class="fa fa-gratipay" style="color:#603"></i>{{ like_count }} {{ EN_LABELS.likes if is_english else 'いいね' }}</span>
                                 </div>
                             </a>
                         </div>
