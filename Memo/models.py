@@ -61,6 +61,7 @@ class FixedPage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     key = db.Column(db.String(50), unique=True, nullable=False)
     title = db.Column(db.String(100), nullable=False)
+    en_title = db.Column(db.String(100), nullable=True)   # 英語ナビタイトル
     summary = db.Column(db.Text, nullable=True)
     image = db.Column(db.String(255), nullable=True)
     visible = db.Column(db.Boolean, default=True, nullable=False)

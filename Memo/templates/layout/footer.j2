@@ -19,7 +19,8 @@
         {% endif %}
         </p>
         <nav class="mb-4 mb-md-5">
-            {% for key, val in FOOTER_NAV_PAGES.items() %}
+            {% set footer_pages = EN_FOOTER_NAV_PAGES if is_english else FOOTER_NAV_PAGES %}
+            {% for key, val in footer_pages.items() %}
                 {% if not loop.first %}
                     <span class="fade-in fade-delay-{{ loop.index }} d-none d-md-inline">| </span>
                 {% endif %}

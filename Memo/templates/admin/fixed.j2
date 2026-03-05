@@ -320,8 +320,12 @@
                 {{ form.hidden_tag() }}
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label small text-body-secondary">タイトル</label>
+                        <label class="form-label small text-body-secondary">タイトル（日本語）</label>
                         <input type="text" name="title" class="form-control" value="{{ page.title }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small text-body-secondary">🇬🇧 英語タイトル（/en/ ナビ表示用・空欄なら日本語タイトルを使用）</label>
+                        <input type="text" name="en_title" class="form-control" value="{{ page.en_title or '' }}" placeholder="例: CRUD Operations">
                     </div>
                     <div class="mb-3">
                         <label class="form-label small text-body-secondary">要約文</label>

@@ -105,12 +105,14 @@ def create_app(config_override=None):
     def inject_global_context():
         try:
             pages = FixedPage.query.filter_by(visible=True).order_by(FixedPage.order).all()
-            GLOBAL_NAV_PAGES = {p.key: p.title for p in pages if p.nav_type == 'global'}
-            FOOTER_NAV_PAGES = {p.key: p.title for p in pages if p.nav_type == 'footer'}
+            GLOBAL_NAV_PAGES    = {p.key: p.title for p in pages if p.nav_type == 'global'}
+            FOOTER_NAV_PAGES    = {p.key: p.title for p in pages if p.nav_type == 'footer'}
+            EN_GLOBAL_NAV_PAGES = {p.key: (p.en_title or p.title) for p in pages if p.nav_type == 'global'}
+            EN_FOOTER_NAV_PAGES = {p.key: (p.en_title or p.title) for p in pages if p.nav_type == 'footer'}
         except Exception as e:
             app.logger.warning("inject_global_context: DB取得失敗 %s", e)
-            GLOBAL_NAV_PAGES = {}
-            FOOTER_NAV_PAGES = {}
+            GLOBAL_NAV_PAGES = FOOTER_NAV_PAGES = {}
+            EN_GLOBAL_NAV_PAGES = EN_FOOTER_NAV_PAGES = {}
 
         # 英語ページ判定
         is_english = request.path.startswith('/en')
@@ -125,6 +127,8 @@ def create_app(config_override=None):
         return dict(
             GLOBAL_NAV_PAGES=GLOBAL_NAV_PAGES,
             FOOTER_NAV_PAGES=FOOTER_NAV_PAGES,
+            EN_GLOBAL_NAV_PAGES=EN_GLOBAL_NAV_PAGES,
+            EN_FOOTER_NAV_PAGES=EN_FOOTER_NAV_PAGES,
             SITE_NAME=app.config['SITE_NAME'],
             is_english=is_english,
             lang_switch_url=lang_switch_url,
@@ -153,6 +157,42 @@ def create_app(config_override=None):
 
 # モジュールレベルの後方互換（gunicorn 等が参照）
 app = create_app()
+
+
+@app.cli.command('translate-memos')
+def translate_memos_command():
+    """ai_score 付き・未翻訳の Memo を全件 Gemini で英語翻訳して DB に保存する。"""
+    from models import Memo
+    from utils.ai_translate import translate_memo_to_english
+    import time
+
+    targets = [m for m in Memo.query.all()
+               if m.ai_score and not m.ai_score.get('translated_title')]
+
+    if not targets:
+        print('翻訳対象なし（全件翻訳済みか ai_score 未評価）')
+        return
+
+    print(f'翻訳対象: {len(targets)} 件')
+    ok = ng = 0
+    for memo in targets:
+        print(f'  [{memo.id}] {memo.title[:40]} ... ', end='', flush=True)
+        result = translate_memo_to_english(memo.title, memo.content)
+        if result:
+            updated = dict(memo.ai_score)
+            updated['translated_title'] = result['translated_title']
+            updated['translated_body']  = result['translated_body']
+            memo.ai_score = updated
+            db.session.commit()
+            print('OK')
+            ok += 1
+        else:
+            print('FAIL')
+            ng += 1
+        time.sleep(1)  # レートリミット対策
+
+    print(f'\n完了: 成功 {ok} 件 / 失敗 {ng} 件')
+
 
 if __name__ == '__main__':
     app.run()

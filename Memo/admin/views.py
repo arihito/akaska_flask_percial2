@@ -1048,9 +1048,10 @@ def fixed_edit(page_id):
     if not form.validate_on_submit():
         flash('不正なリクエストです', 'secondary')
         return redirect(url_for('admin.fixed'))
-    page.title = request.form.get('title', page.title).strip()
-    page.summary = request.form.get('summary', page.summary or '').strip() or None
-    page.image = request.form.get('image', page.image or '').strip() or None
+    page.title    = request.form.get('title', page.title).strip()
+    page.en_title = request.form.get('en_title', '').strip() or None
+    page.summary  = request.form.get('summary', page.summary or '').strip() or None
+    page.image    = request.form.get('image', page.image or '').strip() or None
     try:
         page.order = int(request.form.get('order', page.order))
     except (ValueError, TypeError):
