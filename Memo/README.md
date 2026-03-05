@@ -355,10 +355,6 @@ WTForms            3.2.1
       <li>ERAlchemy2でER図自動生成</li>
       <li>pylint / pyreverseによるクラス図作成</li>
       <li>Flask-Diagramsで画面遷移の可視化</li>
-      <li><del>△Template Visualizerでテンプレート樹形図化</del></li>
-      <li><del>△FlasggerでAPI一覧を生成(or <a href="https://flask-smorest.readthedocs.io/">flask-smorest</a>)</del></li>
-      <li><del>△Storybook for Jinjaによるコンポーネント可視化(Node.jsによる複雑化)</del></li>
-      <li><del>△Watchdog（Flask-SocketIO）による管理画面の.pyや.htmlを変更検知&自動更新</del></li>
     </ul>
   </li>
   <li>管理者ログイン
@@ -413,9 +409,16 @@ WTForms            3.2.1
 
 <details>
 <summary>実装中機能一覧</summary>
-<ul>
-  <li>事前に今回の全ての操作説明を動画で録画する</li>
-</ul>
+  <li>機能解説バナーの英語版を作成</li>
+  <ul>
+    <li>mdでナレーション作成</li>
+    <li>シーン単位に分割</li>
+    <li>OBSで操作録画</li>
+    <li>Filmoraに動画配置</li>
+    <li>Qwen3音声生成</li>
+    <li>映像に合わせて音声配置</li>
+    <li>最後にSRT生成</li>
+  </ul>
 </details>
 
 <hr width="800">

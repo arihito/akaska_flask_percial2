@@ -28,7 +28,8 @@
       "mcp__chrome-devtools__take_screenshot",
       "Bash(C:/Users/arihi/miniconda3/envs/flask2_env/python.exe:*)",
       "Bash(xargs grep:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(PYTHONIOENCODING=utf-8 :/Users/arihi/miniconda3/envs/flask2_env/python.exe:*)"
     ]
   }
 }

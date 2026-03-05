@@ -4,19 +4,46 @@
 <div class="py-md-4 mx-md-3">
     <h1 class="fade-in fade-in-delay-2 mb-4"><i class="fa fa-file-text-o me-2"></i>固定ページ管理</h1>
 
-    {# ===== グローバルナビ プレビュー ===== #}
-    <div class="card mb-4 fade-in fade-in-delay-4">
+    {# ===== グローバルナビ プレビュー（JP） ===== #}
+    <div class="card mb-3 fade-in fade-in-delay-4">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <span><i class="fa fa-eye me-2"></i>グローバルナビ プレビュー</span>
+            <span><i class="fa fa-eye me-2"></i>グローバルナビ プレビュー <span class="badge bg-secondary ms-1">🇯🇵 JP</span></span>
             <small class="text-body-secondary">表示中 <strong>{{ GLOBAL_NAV_PAGES | length }}</strong> 件 &nbsp;／&nbsp; 全 <strong>{{ pages | length }}</strong> 件</small>
         </div>
         <div class="card-body p-0">
-            <div class="overflow-x-auto border-0 px-2 pt-1 pb-0" style="min-width:320px">
+            <div class="admin-nav-preview">
                 {% include "layout/globalnav.j2" %}
             </div>
         </div>
         <div class="card-footer text-body-secondary" style="font-size:11px">
-            <i class="fa fa-info-circle me-1"></i>下の一覧で「ナビ表示」を切り替えると、このプレビューに即時反映されます。横幅に収まるか確認しながら調整してください。
+            <i class="fa fa-info-circle me-1"></i>下の一覧で「ナビ表示」を切り替えると、このプレビューに即時反映されます。
+        </div>
+    </div>
+
+    {# ===== グローバルナビ プレビュー（EN） ===== #}
+    <div class="card mb-4 fade-in fade-in-delay-5">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span><i class="fa fa-eye me-2"></i>グローバルナビ プレビュー <span class="badge bg-secondary ms-1">🇬🇧 EN</span></span>
+            <small class="text-body-secondary">表示中 <strong>{{ EN_GLOBAL_NAV_PAGES | length }}</strong> 件</small>
+        </div>
+        <div class="card-body p-0 overflow-x-auto">
+            <div class="d-flex flex-nowrap align-items-center gap-0 py-1 px-2" style="min-height:38px">
+                <a class="nav-link link-body-emphasis px-2 fw-semibold text-nowrap" href="#">
+                    <i class="fa fa-home me-1"></i>Top
+                </a>
+                {% if EN_GLOBAL_NAV_PAGES %}
+                    {% for key, val in EN_GLOBAL_NAV_PAGES.items() %}
+                    <a class="nav-link link-body-emphasis px-3 text-nowrap" href="{{ url_for('fixed_static_page_en', page_name=key) }}" target="_blank">
+                        {{ val }}<i class="fa fa-external-link ms-1 small text-body-secondary"></i>
+                    </a>
+                    {% endfor %}
+                {% else %}
+                    <span class="text-body-secondary small"><i class="fa fa-info-circle me-1"></i>EN表示ONのページがありません</span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card-footer text-body-secondary" style="font-size:11px">
+            <i class="fa fa-info-circle me-1"></i>下の一覧で「🇬🇧 ON/OFF」と「英語タイトル（編集モーダル）」を管理できます。リンクをクリックすると英語ページを別タブで確認できます。
         </div>
     </div>
 
@@ -36,6 +63,7 @@
                     <th class="d-none d-lg-table-cell" style="text-indent:10em;">要約</th>
                     <th style="width:56px">画像</th>
                     <th style="width:100px">ナビ表示</th>
+                    <th style="width:90px">EN表示</th>
                     <th style="width:120px">ナビ種別</th>
                     <th class="text-center pe-3" style="width:150px">操作</th>
                 </tr>
@@ -76,6 +104,15 @@
                             <button type="submit" class="btn btn-sm {% if page.visible %}btn-secondary{% else %}btn-outline-secondary{% endif %}">
                                 <i class="fa {% if page.visible %}fa-toggle-on{% else %}fa-toggle-off{% endif %} me-1"></i>
                                 {{ '表示' if page.visible else '非表示' }}
+                            </button>
+                        </form>
+                    </td>
+                    <td>
+                        <form method="POST" action="{{ url_for('admin.fixed_toggle_en', page_id=page.id) }}" class="d-inline">
+                            {{ form.hidden_tag() }}
+                            <button type="submit" class="btn btn-sm {% if page.en_visible %}btn-secondary{% else %}btn-outline-secondary{% endif %}">
+                                <i class="fa {% if page.en_visible %}fa-toggle-on{% else %}fa-toggle-off{% endif %} me-1"></i>
+                                🇬🇧 {{ 'ON' if page.en_visible else 'OFF' }}
                             </button>
                         </form>
                     </td>
@@ -149,6 +186,13 @@
                         <button type="submit" class="btn btn-sm {% if page.visible %}btn-secondary{% else %}btn-outline-secondary{% endif %}">
                             <i class="fa {% if page.visible %}fa-toggle-on{% else %}fa-toggle-off{% endif %} me-1"></i>
                             {{ '表示' if page.visible else '非表示' }}
+                        </button>
+                    </form>
+                    <form method="POST" action="{{ url_for('admin.fixed_toggle_en', page_id=page.id) }}">
+                        {{ form.hidden_tag() }}
+                        <button type="submit" class="btn btn-sm {% if page.en_visible %}btn-secondary{% else %}btn-outline-secondary{% endif %}">
+                            <i class="fa {% if page.en_visible %}fa-toggle-on{% else %}fa-toggle-off{% endif %} me-1"></i>
+                            🇬🇧 {{ 'ON' if page.en_visible else 'OFF' }}
                         </button>
                     </form>
                     <form method="POST" action="{{ url_for('admin.fixed_toggle_nav_type', page_id=page.id) }}">

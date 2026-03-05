@@ -1,7 +1,6 @@
 """
 Gemini AI による記事英語翻訳（SEO最適化翻訳）
 """
-import json
 import re
 from flask import current_app
 
@@ -51,11 +50,11 @@ def translate_memo_to_english(title: str, content: str) -> dict | None:
 {content}
 
 【出力形式】
-必ず以下のJSON形式のみを出力してください。説明文は不要です。
-{{
-    "translated_title": "英語SEOタイトル",
-    "translated_body": "英語Markdown本文（改行は\\nでエスケープ）"
-}}"""
+必ず以下の形式のみで出力してください。説明文・前置き・コードブロック囲みは不要です。
+
+TITLE: （英語SEOタイトルをここに1行で）
+---BODY---
+（英語Markdown本文をここに。Markdownの書式はそのまま維持）"""
 
         response = client.models.generate_content(
             model=MODEL_NAME,
@@ -64,15 +63,17 @@ def translate_memo_to_english(title: str, content: str) -> dict | None:
         )
 
         text = response.text.strip()
-        # 改行ありJSONに対応
-        json_match = re.search(r'\{[\s\S]+\}', text)
-        if not json_match:
-            print(f"######## Gemini翻訳: JSON解析失敗: {text[:200]} ########")
+
+        # TITLE: と ---BODY（末尾の---は省略されることがある）で分割
+        title_match = re.search(r'^TITLE:\s*(.+)$', text, re.MULTILINE)
+        body_match  = re.search(r'---BODY-*\s*([\s\S]+)', text)
+
+        if not title_match or not body_match:
+            print(f"######## Gemini翻訳: パース失敗: {text[:200]} ########")
             return None
 
-        result = json.loads(json_match.group())
-        translated_title = str(result.get('translated_title', '')).strip()
-        translated_body  = str(result.get('translated_body', '')).strip()
+        translated_title = title_match.group(1).strip()
+        translated_body  = body_match.group(1).strip()
 
         if not translated_title or not translated_body:
             print(f"######## Gemini翻訳: 翻訳結果が空です ########")

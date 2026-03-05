@@ -189,17 +189,21 @@ def auth_google():
 
 USERNAME_PATTERN = re.compile(r'^[ぁ-んァ-ヶー一-龯a-zA-Z0-9_\-\.]{3,12}$')
 
-# リアルタイムバリデーション
+# リアルタイムバリデーション（新規登録・編集共用、exclude_id=自分自身を除外）
 @auth_bp.route('/api/check_userid')
 def check_userid():
     value = request.args.get("value", "")
+    exclude_id = request.args.get("exclude_id", type=int)
     # 長さチェック
     if not (3 <= len(value) <= 12):
         return jsonify({"length_error": True})
     # 使用可能文字チェック
     if not USERNAME_PATTERN.match(value):
         return jsonify({"invalid_char": True})
-    exists = User.query.filter_by(username=value).first()
+    query = User.query.filter_by(username=value)
+    if exclude_id:
+        query = query.filter(User.id != exclude_id)
+    exists = query.first()
     return jsonify({
         "available": not exists,
         "exists": bool(exists)

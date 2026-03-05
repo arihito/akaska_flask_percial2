@@ -58,6 +58,7 @@
 /* 管理画面背景 */
 /* 管理サイドバー 閃光エフェクト（管理者ページ専用） */
 /* 管理画面サービス構成図 */
+/* btn-secondary ホバー時テキスト白化 */
 /* ステップツールチップ */
 /* 一時停止希望 吹き出しフォーム（admin/index） */
 /* ============== JS連携 =============== */
@@ -106,6 +107,13 @@ table.table-striped {
 }
 
 /* ============== 共通部品 =============== */
+
+/* btn-secondary ホバー時テキスト白化（text-dark !important を上書き） */
+.btn-secondary:hover:not(:disabled),
+.btn-secondary:focus:not(:disabled),
+.btn-secondary:active:not(:disabled) {
+    color: #fff !important;
+}
 
 /* カラーモードボタン　*/
 .bd-placeholder-img {

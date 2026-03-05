@@ -1,13 +1,40 @@
 {% extends "fixed/base.j2" %}
 
 {% block article_body %}
+{% if is_english %}
+<h2>Specified Commercial Transactions Act</h2>
+<p>
+This page is a <strong>demo display</strong> for the purpose of learning payment feature implementation.
+No actual sales or transactions are conducted.
+</p>
+<table class="table table-dark table-striped align-middle">
+    <tr>
+        <th>Seller</th>
+        <td>Individual developer (for learning purposes)</td>
+    </tr>
+    <tr>
+        <th>Price</th>
+        <td>Displayed prices are for demo use only</td>
+    </tr>
+    <tr>
+        <th>Payment method</th>
+        <td>Credit card (demo)</td>
+    </tr>
+    <tr>
+        <th>Delivery</th>
+        <td>Not applicable</td>
+    </tr>
+    <tr>
+        <th>Returns / Cancellation</th>
+        <td>Not applicable as no actual transactions are conducted</td>
+    </tr>
+</table>
+{% else %}
 <h2>特定商取引法に基づく表記</h2>
-
 <p>
 本ページは、決済機能実装の学習を目的とした<strong>デモ表示</strong>です。
 実際の販売・取引は行っていません。
 </p>
-
 <table class="table table-dark table-striped align-middle">
     <tr>
         <th>販売事業者</th>
@@ -30,4 +57,5 @@
         <td>実取引を行っていないため対象外</td>
     </tr>
 </table>
+{% endif %}
 {% endblock %}

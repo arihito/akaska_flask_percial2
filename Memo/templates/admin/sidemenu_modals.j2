@@ -57,6 +57,9 @@
             <button class="nav-link" id="flow-mypage-tab" data-bs-toggle="tab" data-bs-target="#flow-mypage" type="button" role="tab">マイページ</button>
           </li>
           <li class="nav-item" role="presentation">
+            <button class="nav-link" id="flow-login-tab" data-bs-toggle="tab" data-bs-target="#flow-login" type="button" role="tab">ログイン</button>
+          </li>
+          <li class="nav-item" role="presentation">
             <button class="nav-link" id="flow-admin-tab" data-bs-toggle="tab" data-bs-target="#flow-admin" type="button" role="tab">管理画面</button>
           </li>
         </ul>
@@ -66,6 +69,9 @@
           </div>
           <div class="tab-pane fade" id="flow-mypage" role="tabpanel">
             <img class="img-fluid" style="filter:invert(1)" src="{{ url_for('static', filename='docs/page_flow_mypage.png')}}" alt="マイページ 画面遷移図">
+          </div>
+          <div class="tab-pane fade" id="flow-login" role="tabpanel">
+            <img class="img-fluid" style="filter:invert(1)" src="{{ url_for('static', filename='docs/admin_login.png')}}" alt="ログイン 画面遷移図">
           </div>
           <div class="tab-pane fade" id="flow-admin" role="tabpanel">
             <img class="img-fluid" style="filter:invert(1)" src="{{ url_for('static', filename='docs/page_flow_admin.png')}}" alt="管理画面 画面遷移図">

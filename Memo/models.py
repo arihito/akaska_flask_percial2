@@ -65,6 +65,7 @@ class FixedPage(db.Model):
     summary = db.Column(db.Text, nullable=True)
     image = db.Column(db.String(255), nullable=True)
     visible = db.Column(db.Boolean, default=True, nullable=False)
+    en_visible = db.Column(db.Boolean, default=True, nullable=False)  # 英語ナビ表示フラグ
     nav_type = db.Column(db.String(10), default='global', nullable=False)  # 'global' or 'footer'
     order = db.Column(db.Integer, default=0, nullable=False)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))

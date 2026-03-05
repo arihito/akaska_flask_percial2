@@ -10,6 +10,7 @@
                 {% if not current_user.is_oauth_user %}
                     <p class="text-body-secondary fade-in fade-delay-2"><i class="fa fa-user me-2"></i>ユーザー名の変更が必要であれば以下を編集してください (任意)。</p>
                     {{ render_floating_field(form.username, "ユーザー名", wrapper_class="fade-in fade-delay-3") }}
+                    <div id="username-status" class="mb-3" data-exclude-id="{{ current_user.id }}"></div>
                     <hr class="my-5 opacity-25 fade-in fade-delay-4">
                     <div class="form-check my-3 text-start ps-0 fade-in fade-delay-6">
                         <div class="pretty p-switch p-fill">

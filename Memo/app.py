@@ -107,8 +107,8 @@ def create_app(config_override=None):
             pages = FixedPage.query.filter_by(visible=True).order_by(FixedPage.order).all()
             GLOBAL_NAV_PAGES    = {p.key: p.title for p in pages if p.nav_type == 'global'}
             FOOTER_NAV_PAGES    = {p.key: p.title for p in pages if p.nav_type == 'footer'}
-            EN_GLOBAL_NAV_PAGES = {p.key: (p.en_title or p.title) for p in pages if p.nav_type == 'global'}
-            EN_FOOTER_NAV_PAGES = {p.key: (p.en_title or p.title) for p in pages if p.nav_type == 'footer'}
+            EN_GLOBAL_NAV_PAGES = {p.key: (p.en_title or p.title) for p in pages if p.nav_type == 'global' and p.en_visible}
+            EN_FOOTER_NAV_PAGES = {p.key: (p.en_title or p.title) for p in pages if p.nav_type == 'footer' and p.en_visible}
         except Exception as e:
             app.logger.warning("inject_global_context: DB取得失敗 %s", e)
             GLOBAL_NAV_PAGES = FOOTER_NAV_PAGES = {}
@@ -134,6 +134,12 @@ def create_app(config_override=None):
             lang_switch_url=lang_switch_url,
             EN_LABELS=_EN_LABELS,
         )
+
+    @app.route('/en/fixed/<page_name>')
+    def fixed_static_page_en(page_name):
+        """英語版固定ページ（/en/fixed/<key>）"""
+        from fixed.views import static_page
+        return static_page(page_name)
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -166,11 +172,12 @@ def translate_memos_command():
     from utils.ai_translate import translate_memo_to_english
     import time
 
-    targets = [m for m in Memo.query.all()
-               if m.ai_score and not m.ai_score.get('translated_title')]
+    all_memos = Memo.query.all()
+    targets = [m for m in all_memos
+               if not (m.ai_score and m.ai_score.get('translated_title'))]
 
     if not targets:
-        print('翻訳対象なし（全件翻訳済みか ai_score 未評価）')
+        print('翻訳対象なし（全件翻訳済み）')
         return
 
     print(f'翻訳対象: {len(targets)} 件')
@@ -179,7 +186,7 @@ def translate_memos_command():
         print(f'  [{memo.id}] {memo.title[:40]} ... ', end='', flush=True)
         result = translate_memo_to_english(memo.title, memo.content)
         if result:
-            updated = dict(memo.ai_score)
+            updated = dict(memo.ai_score) if memo.ai_score else {}
             updated['translated_title'] = result['translated_title']
             updated['translated_body']  = result['translated_body']
             memo.ai_score = updated

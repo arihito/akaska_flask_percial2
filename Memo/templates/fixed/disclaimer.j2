@@ -1,16 +1,25 @@
 {% extends "fixed/base.j2" %}
 
 {% block article_body %}
+{% if is_english %}
+<h2>Disclaimer</h2>
+<p>
+The information posted on this site is a summary of the operator's personal learning and verification results.
+</p>
+<ul>
+    <li>The accuracy or safety of the content is not guaranteed.</li>
+    <li>The operator assumes no responsibility for any damages resulting from use of the information on this site.</li>
+    <li>The content of external linked sites is the responsibility of each respective site.</li>
+</ul>
+{% else %}
 <h2>免責事項</h2>
-
 <p>
 本サイトに掲載されている情報は、運営者個人の学習・検証結果をまとめたものです。
 </p>
-
 <ul>
     <li>内容の正確性・安全性を保証するものではありません。</li>
     <li>本サイトの情報を利用したことによる損害について、責任を負いません。</li>
     <li>外部リンク先の内容については、各サイトの責任となります。</li>
 </ul>
-
+{% endif %}
 {% endblock %}

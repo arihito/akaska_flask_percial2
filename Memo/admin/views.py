@@ -1007,6 +1007,22 @@ def fixed_toggle(page_id):
     return redirect(url_for('admin.fixed'))
 
 
+@admin_bp.route('/fixed/toggle-en/<int:page_id>', methods=['POST'])
+@admin_required
+def fixed_toggle_en(page_id):
+    """固定ページの英語ナビ表示を切り替え"""
+    page = FixedPage.query.get_or_404(page_id)
+    form = FlaskForm()
+    if not form.validate_on_submit():
+        flash('不正なリクエストです', 'secondary')
+        return redirect(url_for('admin.fixed'))
+    page.en_visible = not page.en_visible
+    db.session.commit()
+    status = 'EN表示' if page.en_visible else 'EN非表示'
+    flash(f'「{page.title}」を{status}に変更しました', 'secondary')
+    return redirect(url_for('admin.fixed'))
+
+
 @admin_bp.route('/fixed/toggle-nav-type/<int:page_id>', methods=['POST'])
 @admin_required
 def fixed_toggle_nav_type(page_id):

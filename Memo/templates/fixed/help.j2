@@ -1,6 +1,16 @@
 {% extends "fixed/base.j2" %}
 
 {% block article_body %}
+{% if is_english %}
+<p>This is a tech blog created for the purpose of learning Flask application development and technical validation. Please review the basic usage and features below.</p>
+<ul>
+    <li>Reading articles: Available without login.</li>
+    <li>Posting and editing articles: Login required.</li>
+    <li>Image upload: Supported formats and file size are limited.</li>
+    <li>Bugs or display issues: May occur as the site is under development.</li>
+</ul>
+<p>If you have any questions about how to use the site, please contact us via the contact page.</p>
+{% else %}
 <p>本サイトは、Flaskアプリケーション開発の学習および技術検証を目的とした技術ブログです。基本的な操作方法や機能について、以下をご確認ください。</p>
 <ul>
     <li>記事の閲覧：ログインなしで閲覧できます。</li>
@@ -9,4 +19,5 @@
     <li>不具合・表示崩れ：開発中のため発生する可能性があります。</li>
 </ul>
 <p>操作方法や挙動について不明点がある場合は、問い合わせページよりご連絡ください。</p>
+{% endif %}
 {% endblock %}

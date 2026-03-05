@@ -24,7 +24,7 @@
                 {% if not loop.first %}
                     <span class="fade-in fade-delay-{{ loop.index }} d-none d-md-inline">| </span>
                 {% endif %}
-                <span class="fade-in fade-delay-{{ loop.index }} d-inline d-md-none">・</span><a class="text-body-secondary mx-1 fade-in fade-delay-{{ loop.index }}" href="{{ url_for('fixed.static_page', page_name=key) }}">{{ val }}</a><br class="d-block d-md-none">
+                <span class="fade-in fade-delay-{{ loop.index }} d-inline d-md-none">・</span><a class="text-body-secondary mx-1 fade-in fade-delay-{{ loop.index }}" href="{{ url_for('fixed_static_page_en', page_name=key) if is_english else url_for('fixed.static_page', page_name=key) }}">{{ val }}</a><br class="d-block d-md-none">
             {% endfor %}
         </nav>
       </div>

@@ -1,24 +1,36 @@
 {% extends "fixed/base.j2" %}
 
 {% block article_body %}
+{% if is_english %}
+<h2>Privacy Policy</h2>
+<p>
+This site may collect the following information for the purpose of providing services and for learning purposes.
+</p>
+<ul>
+    <li>Input information such as usernames entered at login</li>
+    <li>Access logs (IP address, browser information, etc.)</li>
+</ul>
+<p>
+Collected information will only be used for site operation and feature improvement, and will not be provided to third parties.
+</p>
+<p>
+Please note that this site is for learning purposes and does not retain personal information long-term or use it for commercial purposes.
+</p>
+{% else %}
 <h2>プライバシーポリシー</h2>
-
 <p>
 本サイトでは、サービス提供および学習目的のため、以下の情報を取得する場合があります。
 </p>
-
 <ul>
     <li>ログイン時のユーザー名等の入力情報</li>
     <li>アクセスログ（IPアドレス、ブラウザ情報等）</li>
 </ul>
-
 <p>
 取得した情報は、サイト運営および機能改善の目的にのみ利用し、
 第三者に提供することはありません。
 </p>
-
 <p>
 なお、本サイトは学習用であり、個人情報の長期保存や商用利用は行っていません。
 </p>
-
+{% endif %}
 {% endblock %}

@@ -2,7 +2,7 @@ const { useEffect, useState } = React;
 
 const ALLOWED_CHAR = /^[ぁ-んァ-ヶー一-龯a-zA-Z0-9_\-\.]+$/;
 
-function UsernameStatus() {
+function UsernameStatus({ excludeId }) {
     const [status, setStatus] = useState(null);
     const [message, setMessage] = useState(null);
 
@@ -35,10 +35,9 @@ function UsernameStatus() {
 
             timer = setTimeout(async () => {
                 try {
-                    const res = await fetch(
-                        `/auth/api/check_userid?value=${encodeURIComponent(value)}`,
-                        { credentials: "same-origin" }
-                    );
+                    let url = `/auth/api/check_userid?value=${encodeURIComponent(value)}`;
+                    if (excludeId) url += `&exclude_id=${excludeId}`;
+                    const res = await fetch(url, { credentials: "same-origin" });
                     setStatus(await res.json());
                 } catch {
                     setStatus({ error: true });
@@ -60,6 +59,9 @@ function UsernameStatus() {
         </div>
     );
 }
-ReactDOM.createRoot(
-    document.getElementById("username-status")
-).render(<UsernameStatus />);
+
+const mountPoint = document.getElementById("username-status");
+if (mountPoint) {
+    const excludeId = mountPoint.dataset.excludeId || null;
+    ReactDOM.createRoot(mountPoint).render(<UsernameStatus excludeId={excludeId} />);
+}
