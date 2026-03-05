@@ -9,9 +9,10 @@
                 <!-- 右側（未ログイン） -->
                 {% if not current_user.is_authenticated %}
                   <div class="col-12 col-md-6">
-                      <div class="btn-group d-flex justify-content-center justify-content-md-end">
-                          <a class="btn btn-outline-secondary flex-fill flex-md-grow-0 fade-in fade-in-delay-16 {% if request.endpoint == 'auth.login' %}active{% endif %}" href="{{ url_for('auth.login') }}"><i class="fa fa-sign-in"></i> ログイン</a>
-                          <a class="btn btn-outline-secondary flex-fill flex-md-grow-0 fade-in fade-in-delay-20 {% if request.endpoint == 'auth.register' %}active{% endif %}" href="{{ url_for('auth.register') }}"><i class="fa fa-user-plus"></i> 新規登録</a>
+                      <div class="btn-group d-flex justify-content-center justify-content-md-end gap-2">
+                          <a class="btn btn-outline-secondary flex-fill flex-md-grow-0 fade-in fade-in-delay-16 {% if request.endpoint == 'auth.login' %}active{% endif %}" href="{{ url_for('auth.login') }}"><i class="fa fa-sign-in"></i> {{ EN_LABELS.login if is_english else 'ログイン' }}</a>
+                          <a class="btn btn-outline-secondary flex-fill flex-md-grow-0 fade-in fade-in-delay-20 {% if request.endpoint == 'auth.register' %}active{% endif %}" href="{{ url_for('auth.register') }}"><i class="fa fa-user-plus"></i> {{ EN_LABELS.register if is_english else '新規登録' }}</a>
+                          <a class="btn btn-outline-secondary flex-fill flex-md-grow-0 fade-in fade-in-delay-24" href="{{ lang_switch_url }}" title="{{ 'Switch to Japanese' if is_english else 'Switch to English' }}">{{ '🇯🇵 JP' if is_english else '🇬🇧 EN' }}</a>
                       </div>
                   </div>
                 <!-- 右側（ログイン済） -->
@@ -20,8 +21,9 @@
                       <div class="d-flex align-items-center justify-content-center justify-content-md-end gap-3">
                           <a class="text-body-secondary link-opacity-50-hover d-flex align-items-center" href="{{ url_for('memo.index') }}">
                               <img src="{{ url_for('static', filename='images/user/' ~ current_user.thumbnail) }}" alt="{{ current_user.username }}" class="user-icon me-2 fade-in fade-in-delay-8 rounded-circle" width="32" height="32">
-                              <strong class="fade-in fade-in-delay-16">{{ current_user.username }} さん</strong></a>
-                          <a class="btn btn-outline-secondary fade-in fade-in-delay-20" href="{{ url_for('auth.logout') }}"><i class="fa fa-sign-out"></i> ログアウト</a>
+                              <strong class="fade-in fade-in-delay-16">{{ current_user.username }} {% if not is_english %}さん{% endif %}</strong></a>
+                          <a class="btn btn-outline-secondary fade-in fade-in-delay-20" href="{{ url_for('auth.logout') }}"><i class="fa fa-sign-out"></i> {{ EN_LABELS.logout if is_english else 'ログアウト' }}</a>
+                          <a class="btn btn-outline-secondary fade-in fade-in-delay-24" href="{{ lang_switch_url }}" title="{{ 'Switch to Japanese' if is_english else 'Switch to English' }}">{{ '🇯🇵 JP' if is_english else '🇬🇧 EN' }}</a>
                       </div>
                   </div>
                 {% endif %}
@@ -31,7 +33,7 @@
     <div class="border-bottom mb-3">
         <nav class="navbar navbar-expand-md py-1">
             <!-- 左：トップ（常時表示） -->
-            <a class="nav-link link-body-emphasis px-3 {% if not request.view_args %}active{% endif %}" href="{{ url_for('public.public_index') }}"><i class="fa fa-home"></i> トップ</a>
+            <a class="nav-link link-body-emphasis px-3 {% if not request.view_args %}active{% endif %}" href="{{ url_for('public.public_index') }}"><i class="fa fa-home"></i> {{ EN_LABELS.top if is_english else 'トップ' }}</a>
             <!-- 右：トグルボタン（スマホのみ表示） -->
             <button class="navbar-toggler d-md-none ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#globalNav"><span class="navbar-toggler-icon"></span></button>
             <!-- 折りたたみメニュー -->

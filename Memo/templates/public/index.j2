@@ -10,7 +10,7 @@
                         <div class="col-md-8">
                             <div class="card-body p-4">
                                 <h3 class="pb-4 mb-4 fst-italic border-bottom">
-                                    <i class="fa fa-calendar-o me-2"></i>本日のオススメ記事<span class="ms-3" style="font-size:.8rem">1日1回ランダムに記事が入れ替わります</span>
+                                    <i class="fa fa-calendar-o me-2"></i>{{ EN_LABELS.today_pick if is_english else '本日のオススメ記事' }}<span class="ms-3" style="font-size:.8rem">{{ EN_LABELS.today_pick_sub if is_english else '1日1回ランダムに記事が入れ替わります' }}</span>
                                 </h3>
                                 <div class="category_tag mb-2">
                                     {% for category in rand1.memo.categories %}
@@ -20,16 +20,22 @@
                                 {% if rand1.memo.image_filename %}
                                     <div class="mt-4 mb-3 d-md-none"><img style="height:240px;object-fit:cover;" src="{{ url_for('static', filename='images/memo/' ~ rand1.memo.image_filename) }}" class="img-fluid rounded change-mode" width="" height="" alt="記事画像"></div>
                                 {% endif %}
-                                <h2 class="card-title display-6 link-body-emphasis mb-1"><a class="text-body-secondary text-decoration-none" href="{{ url_for('public.detail', memo_id=rand1.memo.id) }}">{{ rand1.memo.title }}</a></h2>
+                                <h2 class="card-title display-6 link-body-emphasis mb-1"><a class="text-body-secondary text-decoration-none" href="{{ url_for('public.detail_en' if is_english else 'public.detail', memo_id=rand1.memo.id) }}">{{ (rand1.memo.ai_score.translated_title if rand1.memo.ai_score and rand1.memo.ai_score.translated_title else rand1.memo.title) if is_english else rand1.memo.title }}</a></h2>
                                 <p class="mb-2 text-body-secondary">
-                                    <i class="fa fa-calendar-o"></i> {{ rand1.memo.created_at.strftime("%Y年%m月%d日") }} by {{ rand1.memo.user.username }}<i class="fa fa-gratipay ms-3" style="color:#603"></i>{{ rand1.like_count }}いいね
+                                    <i class="fa fa-calendar-o"></i> {{ rand1.memo.created_at.strftime("%Y年%m月%d日") }} by {{ rand1.memo.user.username }}<i class="fa fa-gratipay ms-3" style="color:#603"></i>{{ rand1.like_count }}{{ EN_LABELS.likes if is_english else 'いいね' }}
                                 </p>
-                                <p class="card-text">{{ rand1.memo.summary if rand1.memo.summary else (rand1.memo.content | truncate(190, False, '...')) }}</p>
+                                <p class="card-text">
+                                {% if is_english and rand1.memo.ai_score and rand1.memo.ai_score.translated_body %}
+                                    {{ rand1.memo.ai_score.translated_body | truncate(190, False, '...') }}
+                                {% else %}
+                                    {{ rand1.memo.summary if rand1.memo.summary else (rand1.memo.content | truncate(190, False, '...')) }}
+                                {% endif %}
+                                </p>
                             </div>
                         </div>
                         <div class="col-md-4 d-none d-md-block recommend-img">
                             <div class="h-100">
-                                <a href="{{ url_for('public.detail', memo_id=rand1.memo.id) }}"><img class="w-100 h-100 rounded-end change-mode" src="{{ url_for('static', filename='images/memo/' ~ rand1.memo.image_filename) }}" width="100" height="" alt="記事画像" style="object-fit: cover"></a>
+                                <a href="{{ url_for('public.detail_en' if is_english else 'public.detail', memo_id=rand1.memo.id) }}"><img class="w-100 h-100 rounded-end change-mode" src="{{ url_for('static', filename='images/memo/' ~ rand1.memo.image_filename) }}" width="100" height="" alt="記事画像" style="object-fit: cover"></a>
                             </div>
                         </div>
                     </div>
@@ -42,7 +48,7 @@
                     <div class="col-md-6 d-flex fade-in fade-delay-{{ loop.index }}">
                         <div class="text-body-secondary row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm position-relative h-90 w-100 card-hover-item">
                             <div class="memo-img-wrap">
-                                <a href="{{ url_for('public.detail', memo_id=row.memo.id) }}"
+                                <a href="{{ url_for('public.detail_en' if is_english else 'public.detail', memo_id=row.memo.id) }}"
                                     class="text-decoration-none">
                                     <img class="change-mode" src="{{ url_for('static', filename='images/memo/' ~ memo.image_filename) }}" alt="記事画像" width="" height="">
                                 </a>
@@ -53,7 +59,7 @@
                                         <span class="badge rounded-pill" style="background-color: {{ category.color }}">{{ category.name }}</span>
                                     {% endfor %}
                                 </div>
-                                <h3 class="mb-0"><a class="text-body-secondary text-decoration-none" href="{{ url_for('public.detail', memo_id=row.memo.id) }}">{{ memo.title }}</a></h3>
+                                <h3 class="mb-0"><a class="text-body-secondary text-decoration-none" href="{{ url_for('public.detail_en' if is_english else 'public.detail', memo_id=row.memo.id) }}">{{ (memo.ai_score.translated_title if memo.ai_score and memo.ai_score.translated_title else memo.title) if is_english else memo.title }}</a></h3>
                                 <div class="mb-1 text-body-secondary">
                                     <i class="fa fa-calendar-o"></i> {{ memo.created_at.strftime("%Y年%m月%d日") }}
                                     by <strong class="d-inline-block mb-2">{{ memo.user.username }}</strong>
@@ -61,21 +67,27 @@
                                         <span class="like-area" data-memo-id="{{ memo.id }}">
                                             {% if memo.id in favorite_memo_ids %}
                                                 <button class="btn-like active ms-1" data-action="remove">
-                                                    <i class="fa fa-heart" style="color:#e06"></i><span class="like-count">{{ like_count }}いいね</span>
+                                                    <i class="fa fa-heart" style="color:#e06"></i><span class="like-count">{{ like_count }}{{ EN_LABELS.likes if is_english else 'いいね' }}</span>
                                                 </button>
                                             {% else %}
                                                 <button class="btn-like ms-1" data-action="add">
-                                                    <i class="fa fa-heart-o" style="color:#666"></i><span class="like-count">{{ like_count }}いいね</span>
+                                                    <i class="fa fa-heart-o" style="color:#666"></i><span class="like-count">{{ like_count }}{{ EN_LABELS.likes if is_english else 'いいね' }}</span>
                                                 </button>
                                             {% endif %}
                                         </span>
                                     {% elif current_user.is_authenticated and memo.user_id == current_user.id %}
-                                        <small class="ms-2"><i class="fa fa-heart" style="color:#603"></i>{{ like_count }}いいね (<i class="fa fa-address-card me-1"></i>自身の記事)</small>
+                                        <small class="ms-2"><i class="fa fa-heart" style="color:#603"></i>{{ like_count }}{{ EN_LABELS.likes if is_english else 'いいね' }} (<i class="fa fa-address-card me-1"></i>{{ EN_LABELS.own_article if is_english else '自身の記事' }})</small>
                                     {% else %}
-                                        <a class="text-body-secondary ms-2" href="{{ url_for('auth.login') }}"><i class="fa fa-heart" style="color:#603"></i>{{ like_count }}いいね (まずはログイン!)</a>
+                                        <a class="text-body-secondary ms-2" href="{{ url_for('auth.login') }}"><i class="fa fa-heart" style="color:#603"></i>{{ like_count }}{{ EN_LABELS.likes if is_english else 'いいね' }} ({{ EN_LABELS.login_prompt if is_english else 'まずはログイン!' }})</a>
                                     {% endif %}
                                 </div>
-                                <p class="card-text mb-auto">{{ memo.summary if memo.summary else (memo.content | truncate(90, False, '...')) }}</p>
+                                <p class="card-text mb-auto">
+                                {% if is_english and memo.ai_score and memo.ai_score.translated_body %}
+                                    {{ memo.ai_score.translated_body | truncate(90, False, '...') }}
+                                {% else %}
+                                    {{ memo.summary if memo.summary else (memo.content | truncate(90, False, '...')) }}
+                                {% endif %}
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -110,11 +122,11 @@
             {# カテゴリー一致オススメ #}
             {% if recommended %}
                 <div class="container my-5">
-                    <h4 class="mb-3 fade-in fade-delay-4"><i class="fa fa-share-alt me-2"></i>あなたの興味の近いオススメ記事<span class="ms-3" style="font-size:.8rem">あなたの投稿記事に付与したカテゴリーから、より多く付与された他者の記事を表示します</span></h4>
+                    <h4 class="mb-3 fade-in fade-delay-4"><i class="fa fa-share-alt me-2"></i>{{ EN_LABELS.recommended if is_english else 'あなたの興味の近いオススメ記事' }}<span class="ms-3" style="font-size:.8rem">{{ EN_LABELS.recommended_sub if is_english else 'あなたの投稿記事に付与したカテゴリーから、より多く付与された他者の記事を表示します' }}</span></h4>
                     <div class="row g-3">
                         {% for memo in recommended %}
                         <div class="col-md-4 fade-in fade-delay-{{ loop.index }}">
-                            <a style="" class="card recommend p-2 d-flex flex-md-row align-items-start align-items-center link-body-emphasis text-decoration-none" href="{{ url_for('public.detail', memo_id=memo.id) }}">
+                            <a style="" class="card recommend p-2 d-flex flex-md-row align-items-start align-items-center link-body-emphasis text-decoration-none" href="{{ url_for('public.detail_en' if is_english else 'public.detail', memo_id=memo.id) }}">
                                 <img class="rounded change-mode me-2"
                                     src="{{ url_for('static', filename='images/memo/' ~ memo.image_filename) }}"
                                     width="96"
@@ -127,7 +139,7 @@
                                             <span class="badge rounded-pill" style="background-color: {{ category.color }}">{{ category.name }}</span>
                                         {% endfor %}
                                     </div>
-                                    <h6 class="mb-0" style="line-height:1.2">{{ memo.title }}</h6>
+                                    <h6 class="mb-0" style="line-height:1.2">{{ (memo.ai_score.translated_title if memo.ai_score and memo.ai_score.translated_title else memo.title) if is_english else memo.title }}</h6>
                                     <small class="text-body-secondary"><i class="fa fa-calendar-o"></i> {{ memo.created_at.strftime("%Y年%m月%d日") }}</small>
                                     <span class="text-body-secondary" style="font-size:0.8rem"><i class="fa fa-gratipay" style="color:#603"></i>{{ like_count }}いいね</span>
                                 </div>

@@ -9,9 +9,14 @@
           <a href="https://www.linkedin.com/in/arihito-matsuda-8049596a/" target="_blank" class="text-body-secondary fade-in fade-delay-5"><span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i><i class="fa fa-linkedin fa-stack-1x"></i></span></a>
       </div>
       <div class="col-12 col-md-9">
-        <p class="col-12 col-md-10 fade-in fade-delay-5">このFlask tech blogは、職業訓練校の課題として、Flaskアプリケーションの開発学習を目的に作成しています。<br>
-        投稿記事のダミーテキストの一部は、AIによって生成しています。また、記事内容の正誤については、あくまで自身の理解をまとめたものですので、
-        参考程度にご覧いただけますと幸いです。
+        <p class="col-12 col-md-10 fade-in fade-delay-5">
+        {% if is_english %}
+            {{ EN_LABELS.footer_desc }}
+        {% else %}
+            このFlask tech blogは、職業訓練校の課題として、Flaskアプリケーションの開発学習を目的に作成しています。<br>
+            投稿記事のダミーテキストの一部は、AIによって生成しています。また、記事内容の正誤については、あくまで自身の理解をまとめたものですので、
+            参考程度にご覧いただけますと幸いです。
+        {% endif %}
         </p>
         <nav class="mb-4 mb-md-5">
             {% for key, val in FOOTER_NAV_PAGES.items() %}
