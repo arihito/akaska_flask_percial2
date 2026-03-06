@@ -409,7 +409,6 @@ WTForms            3.2.1
 
 <details>
 <summary>実装中機能一覧</summary>
-  <li>機能解説バナーの英語版を作成</li>
   <ul>
     <li>mdでナレーション作成</li>
     <li>シーン単位に分割</li>
