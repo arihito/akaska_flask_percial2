@@ -1,0 +1,77 @@
+001/ 009
+演習課題プレゼン資料
+STUDENT ID : 1118_aiweb / SINCE DATE: Nov 18 2026
+APPLICATION ARCHITECT & DEVELOPER : Arihito Matsuda
+DEMO APP
+https://bit.ly/4rBDwpB
+
+002/ 009
+制作理由
+REASON FOR DEVELOPMENT
+AS A RESULT, THE CONTENT LEARNED IN THE LECTURES WAS NOT LEFT FRAGMENTED, BUT WAS INTEGRATED INTO A PRACTICAL DEVELOPMENT FLOW.
+講義内でメモ投稿機能とログインを実装する時間がありました。そこで時間的に余裕があったため、検索やお気に入り、並び替え機能などを試しに追加してみました。うまく実装でき愛着が湧いたので、そのまま ブログ投稿アプリ として様々な機能を拡張する場としました。
+
+003/ 009
+使用言語・技術
+BASIC
+PROGRAMMING LANGUAGES AND TECHNOLOGIES USED
+■ Tools
+- Miniconda............. 25.9.1
+- Bash........................... 5.2.15
+- Git............................... 2.40.1
+- Github...................... 3.13.3
+■ Frontend
+- HTML........... Living Standard
+- CSS............... Snapshot 2025
+- Bootstrap................ 5.3.8
+- FontAwesome........ 4.7
+■ Backend
+- Pytion3................. 3.10.19
+- Flask........................... 2.3.3
+- Jinja2.......................... 3.1.6
+- postgreSQL............. 18.2
+
+004/ 009
+使用言語・技術
+THIRD PARTY
+PROGRAMMING LANGUAGES AND TECHNOLOGIES USED
+-  OAuth .. 2.0 (RFC6749)
+-  StripeAPI  .......  2026-01-28
+-  ClaudeCLI................ 2.1.63
+-  RenderCLI................... 2.8.0
+-  ResendSDK................ 2.21.0
+
+005/ 009
+工夫した点苦労した点
+POINTS OF INNOVATION AND CHALLENGES FACED
+- 複合的なモデルのデータフロー管理
+- アプリ全体での5つの操作状態を一律保持
+- Gridを使用したRWD対応
+- 承認・決済・トークン生成ごとのメール通知
+- 管理者のAI使用制限
+
+006/ 009
+これから開発演習をする人へアドバイス
+ADVICE FOR THOSE WHO WILL START DEVELOPMENT PRACTICE
+スタート地点は人それぞれ異なるため、周囲のできる人が気になり落ち込みがちですが、今いる環境が全てではないので、昨日より理解できてる今の自分を楽しみながら、目の前のことに集中することが大切な気がしました。
+
+007/ 009
+感想：授業を終えて
+REFLECTIONS AFTER COMPLETING THE COURSE
+始めて学習する内容が多々ありましたが、自身の学習スタイルを確立していくことで、前向きに疑問を解決していく作業を楽しめるようになりました。
+また探究心が掻き立てられ、タスクをクリアするほどに、次にやりたいことが増え、時間はあっという間に過ぎ、耐えず時間が足りないとすら感じました。
+今回は自身のマイルストーンを置きながら、やりたい作業に集中することができましたが、今後、職場の中でも同様に、そのような探究心を大事にしながら、より良い成果に結びつけられるよう取り組んでいきたいです。
+
+008/ 009
+感想：授業を終えて
+REFLECTIONS AFTER COMPLETING THE COURSE
+以前は「何が分からないか分からない」で放置していましたが、現在ではAIが、その状態を補完してくれるため、自身の興味や疑問を際限なく後押ししてくれました。
+- 身近な不安や疑問を 客観的に意識して気付ける こと。
+- 情報量に振り回されず 文脈を汲み取ることで、試行回数を増やす こと。
+- AIは間違いが当たり前として、 話半分に疑問を持つ こと。
+- 見えない処理に流されず、最後に 自身の言葉で言語化 すること。
+
+009/ 009
+感想：授業を終えて
+REFLECTIONS AFTER COMPLETING THE COURSE
+今回は自身のマイルストーンを置きながら、やりたい作業に集中することができましたが、今後、別の環境下にあっても、耐えず新しい課題にチャレンジし、探究心を大事にしながら、より良い成果に結びつけられるよう取り組んでいければと思います。ご清聴ありがとうございました。

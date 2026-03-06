@@ -6,6 +6,15 @@
 
 Flask製のメモ投稿Webアプリケーション（技術ブログ形式）。Blueprint分割設計、SQLite + SQLAlchemy ORM、Flask-Login認証、Google OAuthを使用。
 
+## データベース構成
+
+- **ローカル開発**：PostgreSQL（`DATABASE_URL=postgresql://memouser:****@localhost:5432/memodb`）
+- **本番（Render）**：PostgreSQL（Neon等）
+- **テスト**：SQLite インメモリ（`sqlite:///:memory:`）— `conftest.py` で使用
+- `instance/memodb.sqlite` ファイルは未使用（アプリは `DATABASE_URL` の PostgreSQL を参照）
+- DB確認ツール：DBeaver（`localhost:5432 / memouser / memodb`）または `psql`
+- `app.py` の SQLite PRAGMA コードと `config.py` のフォールバック記述はテスト用途のため残す
+
 ## 開発コマンド
 
 ```bash

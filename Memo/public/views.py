@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request
 from models import db, Memo, Favorite
 from flask_login import current_user
-from sqlalchemy import func
+from sqlalchemy import func, case, cast, Integer
 from datetime import date
 import markdown
 import random
@@ -16,11 +16,26 @@ def markdown_to_html(text):
         extensions=["fenced_code", "tables"]
     )
 
+def _quality_order_by():
+    """翻訳済み優先→総合スコア高順→新着順 のソートキーを返す"""
+    # PostgreSQL JSON の ->> 演算子（テキスト取得）を op() で明示指定
+    is_translated = case(
+        (Memo.ai_score.op('->>')('translated_title').isnot(None), 1),
+        else_=0
+    )
+    total_score = (
+        func.coalesce(cast(Memo.ai_score.op('->>')('information'), Integer), 0) +
+        func.coalesce(cast(Memo.ai_score.op('->>')('writing'), Integer), 0) +
+        func.coalesce(cast(Memo.ai_score.op('->>')('readability'), Integer), 0)
+    )
+    return [is_translated.desc(), total_score.desc(), Memo.created_at.desc()]
+
+
 @public_bp.route('/')
 def public_index():
     page = request.args.get('page', 1, type=int)
-    # ---- 一覧ページング ----
-    pagination = db.session.query(Memo, func.count(Favorite.id).label('like_count')).outerjoin(Favorite, Memo.id == Favorite.memo_id).group_by(Memo.id).order_by(Memo.created_at.desc()).paginate(page=page, per_page=PER_PAGE)
+    # ---- 一覧ページング（翻訳済み優先→スコア高順→新着順）----
+    pagination = db.session.query(Memo, func.count(Favorite.id).label('like_count')).outerjoin(Favorite, Memo.id == Favorite.memo_id).group_by(Memo.id).order_by(*_quality_order_by()).paginate(page=page, per_page=PER_PAGE)
     raw_memos = pagination.items
     total_pages = pagination.pages
     today_seed = date.today().isoformat()
@@ -82,7 +97,7 @@ def public_index():
 def public_index_en():
     """英語版トップページ（is_english=True はcontext_processorで自動付与）"""
     page = request.args.get('page', 1, type=int)
-    pagination = db.session.query(Memo, func.count(Favorite.id).label('like_count')).outerjoin(Favorite, Memo.id == Favorite.memo_id).group_by(Memo.id).order_by(Memo.created_at.desc()).paginate(page=page, per_page=PER_PAGE)
+    pagination = db.session.query(Memo, func.count(Favorite.id).label('like_count')).outerjoin(Favorite, Memo.id == Favorite.memo_id).group_by(Memo.id).order_by(*_quality_order_by()).paginate(page=page, per_page=PER_PAGE)
     raw_memos = pagination.items
     total_pages = pagination.pages
     today_seed = date.today().isoformat()

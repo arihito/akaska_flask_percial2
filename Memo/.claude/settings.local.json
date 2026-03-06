@@ -29,7 +29,9 @@
       "Bash(C:/Users/arihi/miniconda3/envs/flask2_env/python.exe:*)",
       "Bash(xargs grep:*)",
       "Bash(find:*)",
-      "Bash(PYTHONIOENCODING=utf-8 :/Users/arihi/miniconda3/envs/flask2_env/python.exe:*)"
+      "Bash(PYTHONIOENCODING=utf-8 :/Users/arihi/miniconda3/envs/flask2_env/python.exe:*)",
+      "Bash(sqlite3:*)",
+      "Bash(PGPASSWORD=9248 psql:*)"
     ]
   }
 }
