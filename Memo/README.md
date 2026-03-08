@@ -260,7 +260,7 @@ WTForms            3.2.1
   <li>
     環境構築
     <ul>
-      <li>Flaskデバッガー</li>
+      <li>Flaskデバッガー！</li>
       <li>VSCode：コード整形・スニペット</li>
       <li>bashエイリアス</li>
     </ul>

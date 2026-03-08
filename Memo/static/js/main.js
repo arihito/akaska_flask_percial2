@@ -984,6 +984,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 document.addEventListener("click", (e) => {
+    // btn-like は data-action と競合するため先に処理
+    const likeBtn = e.target.closest(".btn-like");
+    if (likeBtn) {
+        ACTIONS.like(e, likeBtn);
+        return;
+    }
+
     // data-action方式
     const actionEl = e.target.closest("[data-action]");
     if (actionEl) {
@@ -997,12 +1004,6 @@ document.addEventListener("click", (e) => {
     const badge = e.target.closest(".category-badge");
     if (badge) {
         ACTIONS.category(e, badge);
-        return;
-    }
-
-    const likeBtn = e.target.closest(".btn-like");
-    if (likeBtn) {
-        ACTIONS.like(e, likeBtn);
         return;
     }
 });

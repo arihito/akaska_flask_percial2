@@ -31,11 +31,6 @@ def index():
     params = request.args.to_dict()
     # ---- 「base_query」条件の上積み ----
     base_query = (db.session.query(Memo, func.count(Favorite.id).label("like_count")).outerjoin(Favorite, Memo.id == Favorite.memo_id).filter(Memo.user_id == current_user.id))
-    # ---- 総件数（ページ数算出用）----
-    total = base_query.group_by(Memo.id).count()
-    pages = math.ceil(total / per_page)
-    offset = (page - 1) * per_page
-    is_paginate = pages > 1
     # ---- 検索条件 ----
     if q:
         like_expr = f"%{q}%"
@@ -43,6 +38,11 @@ def index():
     # ---- カテゴリー条件 ----
     if category_id:
         base_query = (base_query.join(Memo.categories).filter(Category.id == category_id))
+    # ---- 総件数（フィルター適用後）----
+    total = base_query.group_by(Memo.id).count()
+    pages = math.ceil(total / per_page) if total else 1
+    offset = (page - 1) * per_page
+    is_paginate = total > per_page
 
     order = request.args.get('order', 'desc')   # 日付用
     likes = request.args.get('likes', None)     # いいね用（優先）
@@ -52,15 +52,10 @@ def index():
     elif likes == 'desc':
         order_by_clause = desc(func.count(Favorite.id))
     else:
-        # ---- いいね順がない場合は日付順 ---- 
+        # ---- いいね順がない場合は日付順 ----
         order_by_clause = asc(Memo.created_at) if order == 'asc' else desc(Memo.created_at)
-    #  ---- 「raw_querey」表示用の確定データ取得 ---- 
-    raw_query = (
-    db.session.query(Memo, func.count(Favorite.id).label("like_count")).outerjoin(Favorite, Memo.id == Favorite.memo_id).filter(Memo.user_id == current_user.id))
-    # ---- カテゴリー条件 ----
-    if category_id:
-        raw_query = (raw_query.join(Memo.categories).filter(Category.id == category_id))
-    raw_memos = (raw_query.group_by(Memo.id).order_by(order_by_clause).limit(per_page).offset(offset).all())
+    #  ---- 表示用データ取得（フィルター適用済み base_query を使用）----
+    raw_memos = (base_query.group_by(Memo.id).order_by(order_by_clause).limit(per_page).offset(offset).all())
     memos = []
     for memo, like_count in raw_memos:
         memo.weekday_ja = WEEKDAYS_JA[memo.created_at.weekday()]
@@ -80,9 +75,16 @@ def index():
                 Markup(f"<mark>{safe_q}</mark>")    # マーカ要素を付与したHTMLを挿入
             )
             memo.marked_content = Markup(marked)    # 最終的にMarkup型に変換
+            if memo.summary:
+                safe_summary = escape(memo.summary)
+                marked = safe_summary.replace(safe_q, Markup(f"<mark>{safe_q}</mark>"))
+                memo.marked_summary = Markup(marked)
+            else:
+                memo.marked_summary = None
         else:
             memo.marked_title = memo.title
             memo.marked_content = memo.content
+            memo.marked_summary = memo.summary
 
         memos.append({
             "memo": memo,
@@ -163,8 +165,7 @@ def update(memo_id):
         image_file = form.image.data
         # ファイル更新
         if image_file and allowed_file(image_file.filename):
-            original = secure_filename(image_file.filename)
-            filename = save_upload(original, 'memo')
+            filename = save_upload(image_file, 'memo')
             memo.image_filename = filename
         # カテゴリー更新（重複排除）
         selected_ids = list(dict.fromkeys(request.form.getlist("categories")))

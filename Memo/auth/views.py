@@ -161,7 +161,7 @@ def auth_callback():
 # Googleが返すオブジェクトを基にアクセストークンとユーザー情報を取得
 @auth_bp.route('/google/callback')
 def auth_google():
-    # token = oauth.google.authorize_access_token()
+    token = oauth.google.authorize_access_token()
     user_info = oauth.google.get('userinfo').json()
 
     oauth_sub = user_info['id']
@@ -174,14 +174,21 @@ def auth_google():
     ).first()
 
     if not user:
-        user = User(
-            username=name,
-            email=email,
-            oauth_provider='google',
-            oauth_sub=oauth_sub
-        )
-        db.session.add(user)
-        db.session.commit()
+        # 同メールで通常登録済みのユーザーがいればOAuth情報を紐付け
+        user = User.query.filter_by(email=email).first()
+        if user:
+            user.oauth_provider = 'google'
+            user.oauth_sub = oauth_sub
+            db.session.commit()
+        else:
+            user = User(
+                username=name,
+                email=email,
+                oauth_provider='google',
+                oauth_sub=oauth_sub
+            )
+            db.session.add(user)
+            db.session.commit()
 
     login_user(user)
     flash('Googleログインが成功しました', 'secondary')

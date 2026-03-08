@@ -228,9 +228,8 @@ class EditUserForm(FlaskForm):
             FileAllowed(["jpg", "jpeg", "png"], "画像ファイルのみ"),
         ],
     )
-    preset_thumbnail = RadioField(
+    preset_thumbnail = StringField(
         "既存画像",
-        choices=[(f"{i:02}.png", f"{i:02}.png") for i in range(1, 11)],
         validators=[Optional()],
     )
 

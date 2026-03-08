@@ -93,6 +93,7 @@
                     </div>
                 {% endfor %}
             </div>
+            {% if total_pages > 1 %}
             <nav aria-label="Page navigation" class="mt-3 mb-5 my-md-5 fade-in fade-delay-3">
                 <ul class="pagination justify-content-center pagination-secondary">
                     <li class="page-item {% if page == 1 %}disabled{% endif %}">
@@ -119,6 +120,7 @@
                     </li>
                 </ul>
             </nav>
+            {% endif %}
             {# カテゴリー一致オススメ #}
             {% if recommended %}
                 <div class="container my-5">

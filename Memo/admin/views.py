@@ -288,9 +288,11 @@ def login():
             flash('管理者権限がありません', 'secondary')
         else:
             is_super_admin = current_user.email == current_app.config.get('MAIL_USERNAME')
-            password_ok = current_user.check_admin_password(form.admin_password.data)
+            # コピペ由来の前後スペースを除去（token alphabetにスペースは含まれない）
+            submitted_password = form.admin_password.data.strip()
+            password_ok = current_user.check_admin_password(submitted_password)
             if is_super_admin and not password_ok:
-                password_ok = current_user.check_password(form.admin_password.data)
+                password_ok = current_user.check_password(submitted_password)
 
             if password_ok:
                 session['is_admin_authenticated'] = True
