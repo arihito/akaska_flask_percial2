@@ -28,7 +28,13 @@
                     </a>
                 </li>
             {% endfor %}
-            <li class="mt-3"><a href="https://www.youtube.com/" target="_blank" class="fade-in fade-delay-16 ban-operation"><img class="w-100" src="{{ url_for('static', filename='images/other/banner_en.jpg' if is_english else 'images/other/banner.jpg') }}" alt="機能紹介バナー" width="" height=""></a></li>
+            <li class="mt-3">
+                <a href="#" class="fade-in fade-delay-16 ban-operation"
+                   data-bs-toggle="modal" data-bs-target="#modal_top_video"
+                   title="動画を再生">
+                    <img class="w-100" src="{{ url_for('static', filename='images/other/banner_en.jpg' if is_english else 'images/other/banner.jpg') }}" alt="機能紹介バナー" width="" height="">
+                </a>
+            </li>
         </ul>
     </div>
 </aside>

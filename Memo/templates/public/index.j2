@@ -2,6 +2,33 @@
 {% block page_title %}{{ SITE_NAME }} | Flaskに関する技術記事を登録したユーザーが投稿し情報共有を行うサイトです{% endblock %}
 {% block content %}
     <div class="mb-4 rounded key_visual fade-in fade-delay-2"></div>
+
+<!-- Modal_top_video トップページ動画 -->
+<div class="modal fade" id="modal_top_video" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5">アプリ操作解説</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-0 bg-black">
+        <div class="ratio ratio-16x9">
+          <iframe id="top_video_iframe"
+                  src="https://www.youtube.com/embed/ydXl3v2gKV8?enablejsapi=1"
+                  title="アプリ操作解説"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen></iframe>
+        </div>
+      </div>
+      <div class="modal-footer gap-2">
+        <button type="button" id="btn_speed_normal" class="btn btn-secondary btn-sm active" data-rate="1">通常</button>
+        <button type="button" id="btn_speed_triple" class="btn btn-secondary btn-sm"        data-rate="1.5">1.5倍速</button>
+        <button type="button" id="btn_speed_fast"   class="btn btn-secondary btn-sm"        data-rate="2">倍速</button>
+        <button type="button" class="btn btn-secondary ms-auto" data-bs-dismiss="modal"><i class="fa fa-times me-2"></i>閉じる</button>
+      </div>
+    </div>
+  </div>
+</div>
     <div class="row">
         <div class="col-md-9">
             {% if rand1 %}

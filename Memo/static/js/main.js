@@ -1525,3 +1525,55 @@ document.addEventListener("click", (e) => {
     }
 
 })();
+
+/* =========================
+   トップページ バナー YouTube動画モーダル
+   IIFE 外に配置（coverage IIFE の早期 return を回避）
+========================== */
+{
+    const ytIframe = document.getElementById('top_video_iframe');
+    if (ytIframe) {
+        let ytPlayer = null;
+
+        function initYTPlayer() {
+            ytPlayer = new YT.Player('top_video_iframe', {
+                events: { onReady: function () {} }
+            });
+        }
+
+        if (typeof YT !== 'undefined' && YT.Player) {
+            initYTPlayer();
+        } else {
+            const s = document.createElement('script');
+            s.src = 'https://www.youtube.com/iframe_api';
+            document.head.appendChild(s);
+            window.onYouTubeIframeAPIReady = initYTPlayer;
+        }
+
+        // 速度ボタン（通常 1x / 1.5倍速 / 倍速 2x）
+        document.querySelectorAll('#modal_top_video [data-rate]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                const rate = parseFloat(this.dataset.rate);
+                if (ytPlayer && typeof ytPlayer.setPlaybackRate === 'function') {
+                    ytPlayer.setPlaybackRate(rate);
+                }
+                document.querySelectorAll('#modal_top_video [data-rate]')
+                    .forEach(function (b) { b.classList.remove('active'); });
+                this.classList.add('active');
+            });
+        });
+
+        // 閉じるボタン・× で動画停止
+        document.querySelectorAll('#modal_top_video [data-bs-dismiss="modal"]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                if (ytPlayer && typeof ytPlayer.stopVideo === 'function') {
+                    ytPlayer.stopVideo();
+                }
+                document.querySelectorAll('#modal_top_video [data-rate]')
+                    .forEach(function (b) { b.classList.remove('active'); });
+                const n = document.getElementById('btn_speed_normal');
+                if (n) n.classList.add('active');
+            });
+        });
+    }
+}

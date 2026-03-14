@@ -261,6 +261,13 @@ IMPORTANT:
 - CSSのスタイルはBootstrap5.3を実装し、それで賄えない特殊なスタイルは(static/css/style.css)にページ上部のメニューにコメントを付与して、カテゴリーに応じた個所に追記すること。
 - JSの実装はtemplate内ではなく(static/js/main.js)に追記し、何の機能かコメントを残す。cdnなどのリンクは(templates/layout/head.j2)に追記する。それ以外の場所に記述する際は確認する。
 
+## main.js の構造上の注意点
+- `main.js` には複数の IIFE（即時実行関数）が存在する。
+  - 1つ目（line 1〜）: `DOMContentLoaded` を含む汎用処理
+  - 2つ目（line 1303〜）: coverage 機能専用。**`if (!runBtn) return;` でトップページでは即終了する。**
+- **新しいJS機能をトップページ向けに追加する場合、2つ目の IIFE の内部に書いてはいけない。** トップページには `coverageRunBtn` が存在しないため即 `return` されて実行されない。
+- トップページ向けコードは **IIFE の外側**（`})();` の後）に独立ブロック `{ }` として記述すること。
+
 ## AI機能ボタンの実装ルール（GOOGLE_API_KEY使用機能）
 AI（Gemini等）を呼び出すボタンには必ず以下の3点をセットで実装すること。
 
