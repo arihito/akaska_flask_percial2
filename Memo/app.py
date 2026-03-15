@@ -67,6 +67,61 @@ def create_app(config_override=None):
     def favicon():
         return send_from_directory(app.static_folder, 'favicon.ico', mimetype='image/x-icon')
 
+    @app.route('/sitemap.xml')
+    def sitemap():
+        """URLマップから動的にsitemap.xmlを生成する"""
+        from flask import Response
+        from models import Memo, FixedPage
+        from datetime import datetime
+
+        site_url = app.config['SITE_URL'].rstrip('/')
+        now = datetime.utcnow().strftime('%Y-%m-%d')
+
+        urls = []
+
+        # トップページ
+        urls.append(f'<url><loc>{site_url}/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>')
+
+        # 公開メモ記事
+        memos = Memo.query.order_by(Memo.created_at.desc()).all()
+        for memo in memos:
+            updated = memo.updated_at.strftime('%Y-%m-%d') if memo.updated_at else now
+            urls.append(
+                f'<url><loc>{site_url}/detail/{memo.id}</loc>'
+                f'<lastmod>{updated}</lastmod>'
+                f'<changefreq>weekly</changefreq><priority>0.8</priority></url>'
+            )
+
+        # 固定ページ（表示中のみ）
+        pages = FixedPage.query.filter_by(visible=True).order_by(FixedPage.order).all()
+        for page in pages:
+            urls.append(
+                f'<url><loc>{site_url}/fixed/{page.key}</loc>'
+                f'<changefreq>monthly</changefreq><priority>0.5</priority></url>'
+            )
+
+        xml = (
+            '<?xml version="1.0" encoding="UTF-8"?>\n'
+            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+            + '\n'.join(urls) +
+            '\n</urlset>'
+        )
+        return Response(xml, mimetype='application/xml')
+
+    @app.route('/robots.txt')
+    def robots():
+        """robots.txtを動的生成する"""
+        from flask import Response
+        site_url = app.config['SITE_URL'].rstrip('/')
+        content = (
+            'User-agent: *\n'
+            'Disallow: /admin/\n'
+            'Disallow: /auth/\n'
+            'Disallow: /memo/\n'
+            f'Sitemap: {site_url}/sitemap.xml\n'
+        )
+        return Response(content, mimetype='text/plain')
+
     app.register_blueprint(public_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(memo_bp)

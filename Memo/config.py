@@ -67,3 +67,6 @@ class Config(object):
 
     # Gemini AI API
     GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY', '')
+
+    # サイト公開URL（sitemap.xml / robots.txt 用）
+    SITE_URL = os.getenv('SITE_URL', 'https://akaska-flask-percial2.onrender.com')
