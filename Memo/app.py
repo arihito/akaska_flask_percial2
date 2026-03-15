@@ -85,7 +85,7 @@ def create_app(config_override=None):
         # 公開メモ記事
         memos = Memo.query.order_by(Memo.created_at.desc()).all()
         for memo in memos:
-            updated = memo.updated_at.strftime('%Y-%m-%d') if memo.updated_at else now
+            updated = memo.created_at.strftime('%Y-%m-%d') if memo.created_at else now
             urls.append(
                 f'<url><loc>{site_url}/detail/{memo.id}</loc>'
                 f'<lastmod>{updated}</lastmod>'
