@@ -14,7 +14,7 @@
                           <a class="btn btn-outline-secondary flex-fill flex-md-grow-0 fade-in fade-in-delay-16 {% if request.endpoint == 'auth.login' %}active{% endif %}" href="{{ url_for('auth.login') }}"><i class="fa fa-sign-in"></i> ログイン</a>
                           <a class="btn btn-outline-secondary flex-fill flex-md-grow-0 fade-in fade-in-delay-20 {% if request.endpoint == 'auth.register' %}active{% endif %}" href="{{ url_for('auth.register') }}"><i class="fa fa-user-plus"></i> 新規登録</a>
                           {% endif %}
-                          {% if not request.path.startswith('/admin') %}
+                          {% if not request.path.startswith('/admin') and request.endpoint not in ('auth.login', 'auth.register') %}
                           <a class="btn btn-outline-secondary flex-fill flex-md-grow-0 fade-in fade-in-delay-24" href="{{ lang_switch_url }}" title="{{ 'Switch to Japanese' if is_english else 'Switch to English' }}">{{ '🇯🇵 JP' if is_english else '🇬🇧 EN' }}</a>
                           {% endif %}
                       </div>
