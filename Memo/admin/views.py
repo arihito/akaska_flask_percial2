@@ -323,12 +323,14 @@ def index():
     bar_chart_data = []
     for memo in latest_memos:
         like_count = Favorite.query.filter_by(memo_id=memo.id).count()
+        _SCORE_KEYS = {'seo', 'tech', 'structure', 'spread', 'translate_score'}
+        ai_score_chart = {k: v for k, v in memo.ai_score.items() if k in _SCORE_KEYS} if memo.ai_score else None
         bar_chart_data.append({
             'id': memo.id,
             'title': memo.title[:20] + ('...' if len(memo.title) > 20 else ''),
             'like_count': like_count,
             'view_count': memo.view_count or 0,
-            'ai_score': memo.ai_score,
+            'ai_score': ai_score_chart,
         })
 
     # 円グラフ1: カテゴリー分布（全記事）
