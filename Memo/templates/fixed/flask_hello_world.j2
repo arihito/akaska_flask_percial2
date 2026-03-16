@@ -1,0 +1,82 @@
+{% extends "fixed/base.j2" %}
+{% block article_body %}
+{% set md %}
+# Flaskで今日も元気でこんにちは！
+
+Webアプリケーション開発の世界へようこそ！今回は、Pythonの軽量Webフレームワークとして世界中で愛されているFlaskを使って、あなたの最初のWebアプリケーションを動かす方法をご紹介します。
+
+Flaskは、そのシンプルさと拡張性の高さから、初心者からベテランまで幅広い開発者に支持されています。
+
+## Flaskって何？
+
+Flaskは、WSGI（Web Server Gateway Interface）に準拠したマイクロWebフレームワークです。マイクロフレームワークとは、コア機能に絞り、必要に応じて拡張機能を追加していくスタイルを指します。これにより、余計な機能に悩まされることなく、必要なものだけを組み合わせて開発を進めることができます。
+
+### なぜFlaskを選ぶのか？
+
+*   **シンプルで学習しやすい:** 最小限のコードでWebアプリケーションの基本構造を理解できます。
+*   **柔軟性が高い:** 拡張機能が豊富で、データベース連携、認証、API開発など、あらゆるニーズに対応できます。
+*   **コミュニティが活発:** 困ったときには、多くの開発者が助けてくれるコミュニティがあります。
+
+## いざ、Flaskで「Hello, World!」
+
+まずは、Flaskをインストールし、簡単なWebページを表示させてみましょう。
+
+### 1. Flaskのインストール
+
+Pythonのパッケージ管理ツールであるpipを使ってインストールします。ターミナル（コマンドプロンプト）を開き、以下のコマンドを実行してください。
+
+```bash
+pip install Flask
+```
+
+### 2. 初めてのFlaskアプリケーション
+
+`app.py` という名前でファイルを作成し、以下のコードを記述します。
+
+```python
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route('/')
+def hello_world():
+    return 'Hello, World!'
+
+if __name__ == '__main__':
+    app.run(debug=True)
+```
+
+このコードは非常にシンプルです。
+
+*   `from flask import Flask`: Flaskクラスをインポートします。
+*   `app = Flask(__name__)`: Flaskアプリケーションのインスタンスを作成します。`__name__` は、現在のモジュールの名前をFlaskに伝えるための特別な変数です。
+*   `@app.route('/')`: デコレータと呼ばれる機能で、URLのパスとPythonの関数を紐付けます。ここでは、ルートURL（`/`）にアクセスがあった場合に、その下にある `hello_world` 関数が実行されるように指定しています。
+*   `def hello_world():`: `/` にアクセスされたときに実行される関数です。この関数が返す文字列が、ブラウザに表示される内容となります。
+*   `if __name__ == '__main__':`: このスクリプトが直接実行された場合に、以下のコードを実行します。これは、Pythonスクリプトでよく使われるおまじないのようなものです。
+*   `app.run(debug=True)`: Flaskアプリケーションを起動します。`debug=True` は、開発中にエラーが発生した場合に詳細な情報が表示され、コードを変更すると自動的にサーバーが再起動される便利な機能です。
+
+### 3. アプリケーションの実行
+
+ターミナルで、`app.py` が保存されているディレクトリに移動し、以下のコマンドを実行してアプリケーションを起動します。
+
+```bash
+python app.py
+```
+
+サーバーが起動すると、以下のようなメッセージが表示されるはずです。
+
+```
+ * Serving Flask app "app"
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment.
+Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+```
+
+ブラウザを開き、`http://127.0.0.1:5000/` にアクセスしてみてください。画面に「Hello, World!」と表示されれば成功です！
+
+## 次のステップへ
+
+これで、あなたの最初のFlaskアプリケーションが稼働しました。ここから、HTMLテンプレートを使ってよりリッチなページを作成したり、データベースと連携して動的なデータを扱ったりと、さらに奥深い世界が広がっています。Flaskの旅は始まったばかりです。今日も元気いっぱいにコーディングを楽しんでいきましょう！
+{% endset %}{{ md | markdown | safe }}
+{% endblock article_body %}
